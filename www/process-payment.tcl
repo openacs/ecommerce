@@ -74,7 +74,7 @@ if { [empty_string_p $order_id] } {
     # Then they probably got here by pushing "Back", so just redirect
     # them to index.tcl
 
-    ad_returnredirect index.tcl
+    rp_internal_redirect index
     ad_script_abort
 }
 
@@ -86,7 +86,7 @@ if { [db_string get_shopping_cart_no "
     select count(*) 
     from ec_items 
     where order_id=:order_id"] == 0 } {
-    ad_returnredirect shopping-cart.tcl
+    rp_internal_redirect shopping-cart
     ad_script_abort
 }
 
@@ -99,7 +99,7 @@ set order_owner [db_string get_order_owner "
     from ec_orders 
     where order_id=:order_id"]
 if { $order_owner != $user_id } {
-    ad_returnredirect checkout.tcl
+    rp_internal_redirect checkout
     ad_script_abort
 }
 
@@ -137,7 +137,7 @@ set shipping_method [db_string get_shipping_method "
     from ec_orders 
     where order_id=:order_id"]
 if { [empty_string_p $shipping_method] } {
-    ad_returnredirect checkout-2.tcl
+    rp_internal_redirect checkout-2
     ad_script_abort
 }
 
@@ -228,7 +228,7 @@ if { $gift_certificate_covers_cost_p == "f" } {
 
 	    # Probably form surgery
 
-	    ad_returnredirect checkout-2.tcl
+	    rp_internal_redirect checkout-2
             ad_script_abort
 	}
 
@@ -240,7 +240,7 @@ if { $gift_certificate_covers_cost_p == "f" } {
 
 	    # Probably form surgery
 
-	    ad_returnredirect checkout-2.tcl
+	    rp_internal_redirect checkout-2
             ad_script_abort
 	}
 
@@ -307,4 +307,4 @@ db_transaction {
 }
 
 db_release_unused_handles
-ad_returnredirect checkout-3.tcl
+rp_internal_redirect checkout-3

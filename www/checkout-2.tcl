@@ -47,7 +47,7 @@ if { ! $success_p } {
     # No rows came back, so they probably got here by pushing "Back",
     # so just redirect them to index.tcl
 
-    ad_returnredirect [ec_url]index.tcl
+    rp_internal_redirect index
     ad_script_abort
 } 
 
@@ -73,7 +73,7 @@ if { [db_string get_ec_item_count "
     select count(*) 
     from ec_items
     where order_id=:order_id"] == 0 } {
-    ad_returnredirect [ec_url]shopping-cart
+    rp_internal_redirect shopping-cart
     ad_script_abort
 }
 

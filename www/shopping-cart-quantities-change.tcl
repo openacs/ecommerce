@@ -50,7 +50,7 @@ set order_id [db_string get_order_id "select order_id from ec_orders where order
 # so just return them to their empty cart
 
 if { [empty_string_p $order_id] } {
-    ad_returnredirect "shopping-cart"
+    rp_internal_redirect "shopping-cart"
     ad_script_abort
 }
 
@@ -157,7 +157,7 @@ db_release_unused_handles
 if { [info exists return_url] } {
     ad_returnredirect $return_url
 } else {
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
 }
 
 

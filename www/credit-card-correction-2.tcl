@@ -106,9 +106,9 @@ if { [empty_string_p $order_id] } {
 			where o2.user_id = :user_id 
 			and o2.confirmed_date is not null)" -default ""]
     if { [empty_string_p $most_recently_confirmed_order] } {
-	ad_returnredirect index
+	rp_internal_redirect index
     } else {
-	ad_returnredirect thank-you
+	rp_internal_redirect thank-you
     }
     ad_script_abort
 }
@@ -121,7 +121,7 @@ if { [db_string get_ec_item_count "
     select count(*) 
     from ec_items
     where order_id=:order_id"] == 0 } {
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
     ad_script_abort
 }
 
@@ -134,7 +134,7 @@ set order_owner [db_string get_order_owner "
     from ec_orders
     where order_id=:order_id"]
 if { $order_owner != $user_id } {
-    ad_returnredirect checkout
+    rp_internal_redirect checkout
     ad_script_abort
 }
 
@@ -166,4 +166,4 @@ db_transaction {
 
 }
 db_release_unused_handles
-ad_returnredirect finalize-order
+rp_internal_redirect finalize-order

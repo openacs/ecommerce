@@ -51,7 +51,7 @@ if { ! $success_p } {
     # No rows came back, so they probably got here by pushing "Back",
     # so just redirect them to index.tcl
 
-    ad_returnredirect index
+    rp_internal_redirect index
     ad_script_abort
 } 
 
@@ -70,7 +70,7 @@ if { $order_owner != $user_id } {
     # otherwise they've probably gotten here via url surgery, so
     # redirect them to checkout.tcl
     
-    ad_returnredirect checkout
+    rp_internal_redirect checkout
     ad_script_abort
 }
 
@@ -99,7 +99,7 @@ if { [db_string get_ec_item_cart_count "
     select count(*) 
     from ec_items 
     where order_id=:order_id"] == 0 } {
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
     ad_script_abort
 }
 

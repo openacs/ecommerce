@@ -27,7 +27,7 @@ ad_page_contract {
 # selected.
 
 if {![info exists category_id] || ([info exists category_id] && [empty_string_p $category_id])} {
-    ad_returnredirect index
+    rp_internal_redirect index
     ad_script_abort
 }
 

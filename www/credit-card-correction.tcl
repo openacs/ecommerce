@@ -51,7 +51,7 @@ set order_id [db_string  get_order_id "
     where user_session_id = :user_session_id
     and order_state = 'in_basket'" -default ""]
 if { [empty_string_p $order_id] } {
-    ad_returnredirect index
+    rp_internal_redirect index
     ad_script_abort
 }
 
@@ -65,7 +65,7 @@ if { [db_string get_ec_item_count_inbasket "
     select count(*) 
     from ec_items
     where order_id = :order_id"] == 0 } {
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
     ad_script_abort
 }
 
@@ -78,7 +78,7 @@ set order_owner [db_string get_order_owner "
     from ec_orders
     where order_id = :order_id"]
 if { $order_owner != $user_id } {
-    ad_returnredirect checkout
+    rp_internal_redirect checkout
     ad_script_abort
 }
 
@@ -93,7 +93,7 @@ if { [db_0or1row get_cc_info "
     where c.creditcard_id = o.creditcard_id
     and order_id = :order_id
     and c.billing_address = a.address_id"] == 0 } {
-    ad_returnredirect checkout-2
+    rp_internal_redirect checkout-2
     ad_script_abort
 }
 

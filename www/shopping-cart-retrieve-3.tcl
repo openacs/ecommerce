@@ -39,7 +39,7 @@ if { 0 == [db_string get_order_exists_p "
     select count(*) 
     from ec_orders 
     where order_id=:order_id"] } {
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
     ad_script_abort
 }
 
@@ -69,7 +69,7 @@ if { 0 == [db_string confirm_have_basket "
     where order_id=:order_id 
     and order_state='in_basket' 
     and saved_p='t'"] } {
-    ad_returnredirect "shopping-cart"
+    rp_internal_redirect "shopping-cart"
     ad_script_abort
 }
 
@@ -205,7 +205,7 @@ if { $submit == "View" } {
 	}
 
 	db_release_unused_handles
-	ad_returnredirect "shopping-cart"
+	rp_internal_redirect "shopping-cart"
         ad_script_abort
     } else {
 
@@ -236,7 +236,7 @@ if { $submit == "View" } {
 	where user_session_id=:user_session_id 
 	and order_state='in_basket'" -default ""]
     if { [empty_string_p $current_basket] } {
-	ad_returnredirect shopping-cart
+	rp_internal_redirect shopping-cart
         ad_script_abort
     }
     db_transaction {
@@ -286,7 +286,7 @@ if { $submit == "View" } {
     }
 
     db_release_unused_handles
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
     ad_script_abort
 } elseif { $submit == "Replace" } {
 
@@ -302,7 +302,7 @@ if { $submit == "View" } {
 	where user_session_id=:user_session_id 
 	and order_state='in_basket'" -default ""]
     if { [empty_string_p $current_basket] } {
-	ad_returnredirect shopping-cart
+	rp_internal_redirect shopping-cart
         ad_script_abort
     }
 
@@ -356,7 +356,7 @@ if { $submit == "View" } {
     }
 
     db_release_unused_handles
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
     ad_script_abort
 } elseif { $submit == "Discard" } {
     if { [info exists discard_confirmed_p] && $discard_confirmed_p == "t" } {
@@ -369,7 +369,7 @@ if { $submit == "View" } {
 		where order_id=:order_id"
 	}
 
-	ad_returnredirect "shopping-cart"
+	rp_internal_redirect "shopping-cart"
         ad_script_abort
     }
 
@@ -385,7 +385,7 @@ if { $submit == "View" } {
     ad_return_template
     return
 } elseif { $submit == "Save it for Later" } {
-    ad_returnredirect "shopping-cart-retrieve-2"
+    rp_internal_redirect "shopping-cart-retrieve-2"
     ad_script_abort
 }
 
@@ -393,5 +393,5 @@ if { $submit == "View" } {
 
 ns_log Notice "Error: [ec_url]shopping-cart-retrieve-3.tcl was called with an unexpected value of submit: $submit"
 db_release_unused_handles
-ad_returnredirect "shopping-cart"
+rp_internal_redirect "shopping-cart"
 

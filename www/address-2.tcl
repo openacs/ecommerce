@@ -72,7 +72,7 @@ if { $referer != "gift-certificate-billing" } {
 	# They probably got here by pushing "Back", so just redirect
 	# them to index.tcl
 
-	ad_returnredirect index.tcl
+	rp_internal_redirect index
         ad_script_abort
     }
 }

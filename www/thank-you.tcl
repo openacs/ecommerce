@@ -48,7 +48,7 @@ set order_id [db_string  get_order_id_info "
 	and o2.confirmed_date is not null)" -default ""]
 
 if { [empty_string_p $order_id] } {
-    ad_returnredirect index
+    rp_internal_redirect index
     ad_stript_abort
 }
 

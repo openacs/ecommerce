@@ -51,7 +51,7 @@ if { [empty_string_p $order_id] } {
     # Then they probably got here by pushing "Back", so just redirect
     # them to index.tcl
 
-    ad_returnredirect index
+    rp_internal_redirect index
     ad_script_abort
 }
 
@@ -63,7 +63,7 @@ if { [db_string get_ec_item_count "
     select count(*) 
     from ec_items 
     where order_id=:order_id"] == 0 } {
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
     ad_script_abort
 }
 
@@ -76,7 +76,7 @@ set order_owner [db_string get_order_owner "
     from ec_orders 
     where order_id=:order_id"]
 if { $order_owner != $user_id } {
-    ad_returnredirect checkout
+    rp_internal_redirect checkout
     ad_script_abort
 }
 
@@ -138,7 +138,7 @@ set shipping_method [db_string get_shipping_method "
     from ec_orders 
     where order_id=:order_id" -default ""]
 if { [empty_string_p $shipping_method] || ([empty_string_p $creditcard_id] && (![info exists gift_certificate_covers_cost_p] || $gift_certificate_covers_cost_p == "f")) } {
-    ad_returnredirect checkout-2
+    rp_internal_redirect checkout-2
     ad_script_abort
 }
 

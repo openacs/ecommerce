@@ -24,7 +24,7 @@ if {$user_id == 0} {
 
 set user_session_id [ec_get_user_session_id]
 if { $user_session_id == 0 } {
-    ad_returnredirect "index"
+    rp_internal_redirect "index"
     ad_script_abort
 }
 
@@ -34,7 +34,7 @@ set order_id [db_string get_order_id_for_claim "
     where user_session_id = :user_session_id 
     and order_state='in_basket'" -default ""]
 if { [empty_string_p $order_id] } {
-    ad_returnredirect "index"
+    rp_internal_redirect "index"
     ad_script_abort
 }
 

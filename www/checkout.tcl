@@ -32,7 +32,7 @@ if { [empty_string_p $order_id] } {
     # Then they probably got here by pushing "Back", so just redirect
     # them to index.tcl
 
-    ad_returnredirect index
+    rp_internal_redirect index
     ad_script_abort
 } else {
     db_dml update_ec_order_set_uid "

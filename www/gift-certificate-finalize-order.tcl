@@ -167,7 +167,7 @@ if { [db_string get_gift_c_id "
 
 	    # Present a thank you page
 
-	    ad_returnredirect "gift-certificate-thank-you"
+	    rp_internal_redirect "gift-certificate-thank-you"
             ad_script_abort
 	}
 
@@ -451,7 +451,7 @@ if { [db_string get_gift_c_id "
 
 		    # Present a thank-you page.
 
-		    ad_returnredirect "gift-certificate-thank-you"
+		    rp_internal_redirect "gift-certificate-thank-you"
                     ad_script_abort
 		}
 
@@ -479,7 +479,7 @@ if { [db_string get_gift_c_id "
 
 		    # Present a thank-you page.
 
-		    ad_returnredirect "gift-certificate-thank-you"
+		    rp_internal_redirect "gift-certificate-thank-you"
                     ad_script_abort
 		}
 

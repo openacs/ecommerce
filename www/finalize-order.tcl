@@ -80,9 +80,9 @@ if { [empty_string_p $order_id] } {
 			and o2.confirmed_date is not null)" -default ""]
 
     if { [empty_string_p $most_recently_confirmed_order] } {
-	ad_returnredirect index
+	rp_internal_redirect index
     } else {
-	ad_returnredirect thank-you
+	rp_internal_redirect thank-you
     }
     ad_script_abort
 }
@@ -97,7 +97,7 @@ if { [db_string get_in_basket_count "
     select count(*) 
     from ec_items 
     where order_id = :order_id"] == 0 } {
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
     ad_script_abort
 }
 
@@ -110,7 +110,7 @@ set order_owner [db_string get_order_owner "
     from ec_orders 
     where order_id = :order_id"]
 if { $order_owner != $user_id } {
-    ad_returnredirect checkout
+    rp_internal_redirect checkout
     ad_script_abort
 }
 
@@ -171,7 +171,7 @@ set shipping_method [db_string get_shipping_method "
     from ec_orders
     where order_id=:order_id" -default ""]
 if { [empty_string_p $shipping_method] || ([empty_string_p $creditcard_id] && (![info exists gift_certificate_covers_cost_p] || $gift_certificate_covers_cost_p == "f")) } {
-    ad_returnredirect checkout-2
+    rp_internal_redirect checkout-2
     ad_script_abort
 }
 
@@ -246,7 +246,7 @@ if {$hard_goods_cost > 0} {
 		# 'authorized'.
 
 		ec_update_state_to_authorized $order_id 
-		ad_returnredirect thank-you
+		rp_internal_redirect thank-you
 
 	    } else {
 
@@ -283,7 +283,7 @@ if {$hard_goods_cost > 0} {
 		}
 
 		if { [string equal $result "authorized"] || [string equal $result "no_recommendation"] } {
-		    ad_returnredirect thank-you
+		    rp_internal_redirect thank-you
                     ad_script_abort
 		} elseif { [string equal $result "failed_authorization"] } {
 
@@ -292,7 +292,7 @@ if {$hard_goods_cost > 0} {
 
 		    ec_update_state_to_in_basket $order_id
 
-		    ad_returnredirect credit-card-correction
+		    rp_internal_redirect credit-card-correction
                     ad_script_abort
 		} else {
 
@@ -370,7 +370,7 @@ if {$hard_goods_cost > 0} {
 			    where transaction_id = :pgw_transaction_id"
 		    }
 
- 		    ad_returnredirect thank-you
+ 		    rp_internal_redirect thank-you
 
 		} elseif { [string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
 
@@ -406,7 +406,7 @@ if {$hard_goods_cost > 0} {
 
 		    ec_update_state_to_in_basket $order_id
 
-		    ad_returnredirect credit-card-correction
+		    rp_internal_redirect credit-card-correction
                     ad_script_abort
 		} else {
 
@@ -511,7 +511,7 @@ if {$hard_goods_cost > 0} {
 			    set authorized_date = sysdate
 			    where transaction_id = :transaction_id"
 			
-			ad_returnredirect thank-you
+			rp_internal_redirect thank-you
 			
 		    } elseif {[string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
 
@@ -539,7 +539,7 @@ if {$hard_goods_cost > 0} {
 			# confirmed order fails
 
 			ec_update_state_to_in_basket $order_id
-			ad_returnredirect credit-card-correction
+			rp_internal_redirect credit-card-correction
 
 		    } else {
 
@@ -565,7 +565,7 @@ if {$hard_goods_cost > 0} {
 
 		    ec_update_state_to_in_basket $order_id
 
-		    ad_returnredirect credit-card-correction
+		    rp_internal_redirect credit-card-correction
                     ad_script_abort
 		} else {
 
@@ -597,7 +597,7 @@ if {$hard_goods_cost > 0} {
 	    # 'authorized'.
 
 	    ec_update_state_to_authorized $order_id 
-	    ad_returnredirect thank-you
+	    rp_internal_redirect thank-you
 
 	} else {
 
@@ -633,7 +633,7 @@ if {$hard_goods_cost > 0} {
 	    }
 
 	    if { [string equal $result "authorized"] || [string equal $result "no_recommendation"] } {
-		ad_returnredirect thank-you
+		rp_internal_redirect thank-you
                 ad_script_abort
 	    } elseif { [string equal $result "failed_authorization"] } {
 
@@ -668,7 +668,7 @@ if {$hard_goods_cost > 0} {
 
 		ec_update_state_to_in_basket $order_id
 
-		ad_returnredirect credit-card-correction
+		rp_internal_redirect credit-card-correction
                 ad_script_abort
 	    } else {
 
@@ -703,7 +703,7 @@ if {$hard_goods_cost > 0} {
 	    # 'authorized'.
 
 	    ec_update_state_to_authorized $order_id 
-	    ad_returnredirect thank-you
+	    rp_internal_redirect thank-you
 
 	} else {
 
@@ -757,7 +757,7 @@ if {$hard_goods_cost > 0} {
 			set marked_date = sysdate
 			where transaction_id = :pgw_transaction_id"
 		}
-		ad_returnredirect thank-you
+		rp_internal_redirect thank-you
 	    }
 
 	    if {[string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
@@ -793,7 +793,7 @@ if {$hard_goods_cost > 0} {
 		
 		ec_update_state_to_in_basket $order_id
 		
-		ad_returnredirect credit-card-correction
+		rp_internal_redirect credit-card-correction
                 ad_script_abort
 
 	    } else {
@@ -820,6 +820,6 @@ if {$hard_goods_cost > 0} {
 	# 'authorized'.
 
 	ec_update_state_to_authorized $order_id 
-	ad_returnredirect thank-you
+	rp_internal_redirect thank-you
     }
 }

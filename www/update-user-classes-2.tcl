@@ -75,4 +75,4 @@ db_transaction {
 }
 db_release_unused_handles
 
-ad_returnredirect "account"
+rp_internal_redirect "account"

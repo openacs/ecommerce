@@ -84,7 +84,7 @@ if { [empty_string_p $order_id] } {
     # Then they probably got here by pushing "Back", so just redirect
     # them to index.tcl
 
-    ad_returnredirect index
+    rp_internal_redirect index
     ad_script_abort
 }
 
@@ -96,7 +96,7 @@ if { [db_string get_count_cart "
     select count(*) 
     from ec_items
     where order_id = :order_id"] == 0 } {
-    ad_returnredirect shopping-cart
+    rp_internal_redirect shopping-cart
     db_release_unused_handles
     ad_script_abort
 }
@@ -111,7 +111,7 @@ set order_owner [db_string get_order_owner "
     where order_id = :order_id"]
 
 if { $order_owner != $user_id } {
-    ad_returnredirect checkout
+    rp_internal_redirect checkout
     ad_script_abort
 }
 
@@ -136,7 +136,7 @@ if { [empty_string_p $address_id] } {
 	and i.order_id = :order_id
 	group by no_shipping_avail_p"]} {
 
-	ad_returnredirect checkout
+	rp_internal_redirect checkout
         ad_script_abort
     }
 }
@@ -284,4 +284,4 @@ db_dml set_shipping_charges "
     where order_id=:order_id"
 
 db_release_unused_handles
-ad_returnredirect billing
+rp_internal_redirect billing
