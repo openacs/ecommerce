@@ -53,7 +53,7 @@ if { [db_string doubleclick_select "
 	from ec_shipments 
 	where shipment_id=:shipment_id"] > 0 } {
     ad_returnredirect "fulfillment"
-    return
+    ad_script_abort
 }
 
 set shipping_method [db_string shipping_method_select "
@@ -284,7 +284,7 @@ if { $shipment_cost >= 0 } {
 		    <p>Warning: the credit card authorization for this shipment (shipment_id $shipment_id) of order_id $order_id failed.</p>
 		    <p>You may wish to abort the shipment (if possible) until this is issue is resolved. A note has been made in the problems log.</p>
 		    <p><a href=\"fulfillment\">Continue with order fulfillment.</a></p>"
-		return
+                ad_script_abort
 	    }
 	    if {[string equal $result "failed_p"]} {
 		db_dml transaction_failed_update "

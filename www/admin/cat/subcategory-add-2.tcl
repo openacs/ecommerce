@@ -32,7 +32,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_url_vars category_name category_id subcategory_name subcategory_id]"
 
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # see first whether they already entered this subcategory (in case they
@@ -44,7 +44,7 @@ if {$user_id == 0} {
 if { [db_0or1row sub_id_select "select subcategory_id from ec_subcategories
 where subcategory_id=:subcategory_id"] == 1} {
     ad_returnredirect "category?[export_url_vars category_id category_name]"
-    return
+    ad_script_abort
 }
 
 # now make sure there's no subcategory in this category with that sort key already
@@ -64,7 +64,7 @@ and sort_key = :sort_key"]
 	perhaps someone has changed the subcategories since you last reloaded the page.
 	Please go back to <a href=\"category?[export_url_vars category_id category_name]\">the $category_name page</a>, push
 	\"reload\" or \"refresh\" and try again."
-	return
+        ad_script_abort
     }
     set address [ns_conn peeraddr]
     db_dml ec_subcat_insert "insert into ec_subcategories
@@ -73,11 +73,15 @@ and sort_key = :sort_key"]
     (:category_id, :subcategory_id, :subcategory_name, :sort_key, sysdate, :user_id, :address)"
 
 } on_error {
-    db_release_unused_handles
     ad_return_complaint 1 "Sorry, we couldn't perform your dml request."
-    return
+    ad_script_abort
 }
 
-db_release_unused_handles
-
 ad_returnredirect "category?[export_url_vars category_id category_name]"
+
+
+
+
+
+
+

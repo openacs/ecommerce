@@ -15,7 +15,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Make sure they have an in_basket order and a user_session_id; this
@@ -25,7 +25,7 @@ if {$user_id == 0} {
 set user_session_id [ec_get_user_session_id]
 if { $user_session_id == 0 } {
     ad_returnredirect "index"
-    return
+    ad_script_abort
 }
 
 set order_id [db_string get_order_id_for_claim "
@@ -35,7 +35,7 @@ set order_id [db_string get_order_id_for_claim "
     and order_state='in_basket'" -default ""]
 if { [empty_string_p $order_id] } {
     ad_returnredirect "index"
-    return
+    ad_script_abort
 }
 
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Claim a Gift Certificate"]]]

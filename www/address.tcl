@@ -25,7 +25,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Retrieve the saved address with address_id. 
@@ -41,6 +41,7 @@ if { [info exists address_id] } {
 
     if { ![string equal $country_code "US"] } {
 	ad_returnredirect "address-international?[export_url_vars address_id address_type referer]"
+        ad_script_abort
     }
 
     if { [info exists usps_abbrev] } {

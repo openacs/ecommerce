@@ -1490,7 +1490,7 @@ ad_proc -private ec_create_new_session_if_necessary {
 
 		ad_set_cookie -replace "t" -path "/" user_session_id $cookie_value
 		ad_returnredirect $final_page
-                template::adp_abort
+                ad_script_abort
             } else {
 
                 # usca_p has been set, but user id is still 0! So,

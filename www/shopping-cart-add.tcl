@@ -54,7 +54,7 @@ if { $n_confirmed_orders > 0 } {
 	<p>Sorry, you have an order for which credit card authorization has not yet taken place. 
 	Please wait for the authorization to complete before adding new items to your shopping cart.</p>
 	<p>Thank you.</p>"
-    return
+    ad_script_abort
 }
 
 set order_id [db_string get_order_id "
@@ -102,7 +102,7 @@ if { [empty_string_p $order_id] } {
 	    values
 	    (ec_problem_id_sequence.nextval, sysdate,:errormsg)"
 	ad_returnredirect "product?[export_url_vars product_id]"
-	return
+        ad_script_abort
     }
 }
 
@@ -122,4 +122,4 @@ db_dml insert_new_item_in_order "
      where not exists (select 1 from ec_items where order_id=:order_id and product_id=:product_id and color_choice  [ec_decode $color_choice "" "is null" "= :color_choice"]  and size_choice [ec_decode $size_choice "" "is null" "= :size_choice"] and style_choice [ec_decode $style_choice "" "is null" "= :style_choice"]))"
 
 db_release_unused_handles
-ad_returnredirect shopping-cart.tcl?[export_url_vars product_id]
+ad_returnredirect shopping-cart?[export_url_vars product_id]

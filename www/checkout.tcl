@@ -33,7 +33,7 @@ if { [empty_string_p $order_id] } {
     # them to index.tcl
 
     ad_returnredirect index
-    template::adp_abort
+    ad_script_abort
 } else {
     db_dml update_ec_order_set_uid "
 	update ec_orders 
@@ -86,6 +86,7 @@ if {[db_0or1row shipping_avail "
 if { $shipping_required == "false" } {
     set address_id ""
     ad_returnredirect "checkout-2?[export_url_vars address_id address_type]"
+    ad_script_abort
 }
 
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]

@@ -16,7 +16,7 @@ set user_id [ad_verify_and_get_user_id]
 set return_url "[ec_url]shopping-cart-save-2"
 if {$user_id == 0} {
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 set user_name [db_string get_full_name "

@@ -30,7 +30,7 @@ set user_id [ad_get_user_id]
 
 if { $old_column_type != "char(1)" && $column_type == "char(1)"} {
     ad_return_complaint 1 "<li>The Kind of Information cannot be changed from non-boolean to boolean.</li>"
-    return
+    ad_script_abort
 }
 
 if {[catch {
@@ -54,7 +54,7 @@ if {[catch {
     }
 } errmsg]} {
     ad_return_complaint 1 "<li>The modification of Kind of Information failed.  Here is the error message that the database gave us:<blockquote>$errmsg</blockquote></li>"
-    return
+    ad_script_abort
 }
 
 set peeraddr [ns_conn peeraddr]

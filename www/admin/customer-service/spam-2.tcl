@@ -35,7 +35,7 @@ set customer_service_rep [ad_get_user_id]
 
 if {$customer_service_rep == 0} {
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 append doc_body "[ad_admin_header "Spam Users, Cont."]
@@ -93,7 +93,7 @@ if { [info exists show_users_p] && $show_users_p == "t" } {
 	set start ""
 	set end ""
         ad_return_complaint 1 "<li>I could not determine who you wanted to spam.  Please go back and make a selection."
-        return
+        ad_script_abort
 
     }
 

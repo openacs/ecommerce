@@ -28,10 +28,10 @@ if { [string compare $hash $computed_hash] != 0 } {
     # although this technically is not an expired login, we'll
     # just use it anyway.
     ad_returnredirect "login-expired"
-    return
+    ad_script_abort
 } elseif { $time < [ns_time] - [ad_parameter -package_id [ad_acs_kernel_id] LoginExpirationTime security 600] } {
     ad_returnredirect "login-expired"
-    return
+    ad_script_abort
 }
 
 # Obtain the user ID corresponding to the provided email address.
@@ -47,7 +47,7 @@ if { ![db_0or1row user_login_user_id_from_email {
     ad_set_client_property -persistent "f" register password $password
     ad_returnredirect "user-new?[ad_export_vars { email return_url persistent_cookie_p }]"
 
-    return
+    ad_script_abort
 }
 
 
@@ -57,7 +57,7 @@ switch $member_state {
     "approved" {
 	if { $email_verified_p == "f" } {
 	    ad_returnredirect "awaiting-email-verification?user_id=$user_id"
-	    return
+            ad_script_abort
 	}
 	if { [ad_check_password $user_id $password] } {
 	    # The user has provided a correct, non-empty password. Log
@@ -81,29 +81,29 @@ switch $member_state {
 		ec_create_new_session_if_necessary
 	    }
 	    ad_returnredirect $return_url
-	    return
+	    ad_script_abort
 	}
     }
     "banned" { 
 	ad_returnredirect "banned-user?user_id=$user_id" 
-	return
+	ad_script_abort
     }
     "deleted" {  
 	ad_returnredirect "deleted-user?user_id=$user_id" 
-	return
+	ad_script_abort
     }
     "rejected" {
 	ad_returnredirect "awaiting-approval?user_id=$user_id"
-	return
+	ad_script_abort
     }
     "" {
 	ad_returnredirect "awaiting-approval?user_id=$user_id"
-	return
+	ad_script_abort
     }
     default {
 	ns_log Warning "Problem with registration state machine on user-login.tcl"
 	ad_return_error "Problem with login" "There was a problem authenticating the account: $user_id. Most likely, the database contains users with no user_state."
-	return
+	ad_script_abort
     }
 }
 

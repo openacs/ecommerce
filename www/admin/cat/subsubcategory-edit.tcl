@@ -31,7 +31,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_url_vars category_name category_id subcategory_id subcategory_name]"
 
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 
@@ -42,6 +42,5 @@ last_modified=sysdate,
 last_modifying_user=:user_id,
 modified_ip_address=:address
 where subsubcategory_id=:subsubcategory_id"
-db_release_unused_handles
 
 ad_returnredirect "subsubcategory?[export_url_vars category_id category_name subcategory_id subcategory_name subsubcategory_id subsubcategory_name]"

@@ -19,7 +19,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # user sessions:
@@ -46,7 +46,7 @@ if { ! $success_p } {
     # so just redirect them to index.tcl
 
     ad_returnredirect [ec_url]index.tcl
-    return
+    ad_script_abort
 } 
 
 if { $order_owner != $user_id } {
@@ -61,7 +61,7 @@ if { $order_owner != $user_id } {
     # or they messed w/their user_session_id cookie;
 
     ad_returnredirect [ec_securelink [ec_url]checkout.tcl]
-    return
+    ad_script_abort
 }
 
 # make sure there's something in their shopping cart, otherwise
@@ -73,7 +73,7 @@ if { [db_string get_ec_item_count "
     from ec_items 
     where order_id=:order_id"] == 0 } {
     ad_returnredirect [ec_url]shopping-cart
-    return
+    ad_script_abort
 }
 
 # Make sure there is an address for this order, otherwise they've
@@ -97,7 +97,7 @@ if { [empty_string_p $address_id] } {
 	and i.order_id = :order_id
 	group by no_shipping_avail_p"]} {
 	ad_returnredirect [ec_securelink [ec_url]checkout]
-	return
+        ad_script_abort
     }
 }
 

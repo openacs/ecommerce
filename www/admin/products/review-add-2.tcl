@@ -24,7 +24,7 @@ set user_id [ad_get_user_id]
 # see if this review is already there
 if { [db_string doubleclick_select "select count(*) from ec_product_reviews where review_id=:review_id"] > 0 } {
     ad_returnredirect "reviews.tcl?[export_url_vars product_id]"
-    return
+    ad_script_abort
 }
 
 set peeraddr [ns_conn peeraddr]

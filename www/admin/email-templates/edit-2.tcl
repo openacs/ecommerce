@@ -32,7 +32,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
 
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 set f [ec_adp_function_p $message]

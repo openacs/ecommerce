@@ -36,7 +36,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Make sure they have an in_basket order
@@ -52,7 +52,7 @@ set order_id [db_string  get_order_id "
     and order_state = 'in_basket'" -default ""]
 if { [empty_string_p $order_id] } {
     ad_returnredirect index
-    return
+    ad_script_abort
 }
 
 # This isn't necessary for security, but might as well do it anyway,
@@ -66,7 +66,7 @@ if { [db_string get_ec_item_count_inbasket "
     from ec_items
     where order_id = :order_id"] == 0 } {
     ad_returnredirect shopping-cart
-    return
+    ad_script_abort
 }
 
 # Make sure the order belongs to this user_id, otherwise they managed
@@ -79,7 +79,7 @@ set order_owner [db_string get_order_owner "
     where order_id = :order_id"]
 if { $order_owner != $user_id } {
     ad_returnredirect checkout
-    return
+    ad_script_abort
 }
 
 # Make sure there is a credit card for this order, otherwise they've
@@ -94,7 +94,7 @@ if { [db_0or1row get_cc_info "
     and order_id = :order_id
     and c.billing_address = a.address_id"] == 0 } {
     ad_returnredirect checkout-2
-    return
+    ad_script_abort
 }
 
 # Check done. Set the credit card variables

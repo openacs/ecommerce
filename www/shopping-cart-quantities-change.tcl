@@ -41,7 +41,7 @@ if { $user_session_id == 0 } {
 
     [ec_continue_shopping_options]
     "
-    return
+    ad_script_abort
 }
 
 set order_id [db_string get_order_id "select order_id from ec_orders where order_state='in_basket' and user_session_id=:user_session_id" -default ""]
@@ -51,7 +51,7 @@ set order_id [db_string get_order_id "select order_id from ec_orders where order
 
 if { [empty_string_p $order_id] } {
     ad_returnredirect "shopping-cart"
-    return
+    ad_script_abort
 }
 
 db_foreach get_products_w_attribs  "

@@ -62,7 +62,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # first do all the usual checks
@@ -134,12 +134,12 @@ if { [regexp {[^0-9]} $creditcard_number] } {
 
 if { $exception_count > 0 } {
     ad_return_complaint $exception_count $exception_text
-    return
+    ad_script_abort
 }
 
 if { [empty_string_p $gift_certificate_id] } {
     ad_returnredirect "gift-certificate-order-4?[export_entire_form_as_url_vars]"
-    return
+    ad_script_abort
 }
 
 # User session tracking
@@ -168,7 +168,7 @@ if { [db_string get_gift_c_id "
 	    # Present a thank you page
 
 	    ad_returnredirect "gift-certificate-thank-you"
-	    return
+            ad_script_abort
 	}
 
 	"failed_authorization" {
@@ -452,7 +452,7 @@ if { [db_string get_gift_c_id "
 		    # Present a thank-you page.
 
 		    ad_returnredirect "gift-certificate-thank-you"
-		    return
+                    ad_script_abort
 		}
 
 		"success" {
@@ -480,7 +480,7 @@ if { [db_string get_gift_c_id "
 		    # Present a thank-you page.
 
 		    ad_returnredirect "gift-certificate-thank-you"
-		    return
+                    ad_script_abort
 		}
 
 		"not_supported" -

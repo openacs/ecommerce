@@ -28,7 +28,7 @@ if { [db_string doublclick_select "
     from ec_items
     where item_id = :item_id"] > 0 } {
     ad_returnredirect "one?[export_url_vars order_id]"
-    return
+    ad_script_abort
 }
 
 # Must have associated credit card
@@ -40,7 +40,7 @@ if {[empty_string_p [db_string creditcard_id_select "
     ad_return_error "Unable to add items to this order." "
        <p>This order does not have an associated credit card, so new items cannot be added.</p>
        <p>Please create a new order instead.</p>"
-    return
+    ad_script_abort
 }
 
 set shipping_method [db_string shipping_method_select "

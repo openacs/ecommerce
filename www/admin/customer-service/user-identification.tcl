@@ -17,7 +17,7 @@ db_1row get_user_id_info "select * from ec_user_identification where user_identi
 
 if { ![empty_string_p $user_id] } {
     ad_returnredirect "[ec_acs_admin_url]users/one.tcl?user_id=$user_id"
-    return
+    ad_script_abort
 }
 
 

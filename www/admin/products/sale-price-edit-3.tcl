@@ -24,11 +24,11 @@ ad_require_permission [ad_conn package_id] admin
 
 if {![regexp {^[0-9|.]+$}  $sale_price  match ] } {
     ad_return_complaint 1 "<li>Please enter a number for sale price.</li>"
-    return
+    ad_script_abort
 } 
 if {[regexp {^[.]$}  $sale_price match ]} {
     ad_return_complaint 1 "<li>Please enter a number for the sale price.<li>"
-    return
+    ad_script_abort
 }
 
 # We need them to be logged in

@@ -21,16 +21,16 @@ if {$delete_the_view && ![empty_string_p $item]} {
           where user_id = $user_id and item = $DBQitem and item_group = $DBQitem_group
             and item_type = $DBQitem_type"} errmsg]} {
         ad_return_complaint 1 "<li>I was unable to delete the view.  The database said <pre>$errmsg</pre>\n"
-        return
+        ad_script_abort
     }
-    ns_returnredirect "$return_url"
-    return
+    ad_returnredirect "$return_url"
+    ad_script_abort
 }
 
         
 if {[empty_string_p $item]} {
     ad_return_complaint 1 "<li>You did not specify a name for this table view"
-    return
+    ad_script_abort
 }
 
 set col_clean [list]
@@ -44,7 +44,7 @@ foreach c $col {
 
 if {[empty_string_p $col_clean]} {
     ad_return_complaint 1 "<li>You did not specify any columns to display"
-    return
+    ad_script_abort
 }
 
 util_dbq {item item_original item_type value_type item_group}
@@ -58,8 +58,8 @@ with_transaction $db {
       returning value into :1" $col_clean
 } {
     ad_return_complaint 1 "<li>I was unable to insert your table customizations.  The database said <pre>$errmsg</pre>\n"
-    return
+    ad_script_abort
 }
 
-ns_returnredirect "$return_url&$item_group=[ns_urlencode $item]"
+ad_returnredirect "$return_url&$item_group=[ns_urlencode $item]"
 

@@ -31,7 +31,7 @@ set customer_service_rep [ad_get_user_id]
 if {$customer_service_rep == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Make sure they haven't already inserted this refund
@@ -42,7 +42,7 @@ if { [db_string get_refund_count "
     where refund_id=:refund_id"] > 0 } {
     ad_return_complaint 1 "
 	<li>This refund has already been inserted into the database. Are you using an old form? <a href=\"one?[export_url_vars order_id]\">Return to the order.</a>"
-    return
+    ad_script_abort
 }
 
 set exception_count 0
@@ -63,7 +63,7 @@ if { ![info exists all_items_p] && ![info exists item_id] } {
 
 if { $exception_count > 0 } {
     ad_return_complaint 1 $exception_text
-    return
+    ad_script_abort
 }
 
 append doc_body "

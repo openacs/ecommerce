@@ -40,6 +40,7 @@ if { [db_string doubleclick_select "
     # custom-fields.tcl
 
     ad_returnredirect "custom-fields"
+    ad_script_abort
 }
 
 if { [catch { db_dml custom_field_insert "
@@ -50,7 +51,7 @@ if { [catch { db_dml custom_field_insert "
     ad_return_error "Unable to Add Field" "
 	<p>Sorry, we were unable to add the field you requested.</p>
 	<p>Here's the error message: <blockquote><pre>$errmsg</pre></blockquote></p>"
-    return
+    ad_script_abort
 }
 
 # Have to alter ec_custom_product_field_values, the corresponding
@@ -72,7 +73,7 @@ if {[catch { db_dml alter_ec_custom_field_values_table "
 	<p>The error occurred when adding the column $field_identifier to ec_custom_product_field_values, 
 	  so we've deleted the row containing $field_identifier from ec_custom_product_fields as well (for consistency).</p>
 	<p>Here's the error message: <blockquote><pre>$errmsg</pre></blockquote><p>"
-    return
+    ad_script_abort
 }
 
 if {[catch {db_dml alter_ec_custom_field_values_audit_table "
@@ -96,7 +97,7 @@ if {[catch {db_dml alter_ec_custom_field_values_audit_table "
 	  so we've dropped that column from ec_custom_product_field_values and we've deleted the row containing $field_identifier 
 	  from ec_custom_product_fields as well (for consistency).</p>
 	<p>Here's the error message: <blockquote><pre>$errmsg</pre></blockquote></p>"
-    return
+    ad_script_abort
 }
 
 # Determine what the new trigger should be

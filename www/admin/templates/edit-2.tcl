@@ -25,7 +25,7 @@ if {$f != 0} {
     have functions in them for security reasons. Only HTML and 
     <%= \$variable %> style code may be used.
     This template appears to contain <tt>$f</tt>."
-    return
+    ad_script_abort
 }
 
 db_dml update_ec_templates "update ec_templates
@@ -33,4 +33,4 @@ set template_name=:template_name, template=:template
 where template_id=:template_id"
 db_release_unused_handles
 
-ad_returnredirect index.tcl
+ad_returnredirect index

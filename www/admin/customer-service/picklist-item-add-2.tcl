@@ -29,7 +29,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
 
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # see first whether they already entered this category (in case they
@@ -41,7 +41,7 @@ if {$user_id == 0} {
 if { [db_0or1row get_picklist_item_id "select picklist_item_id from ec_picklist_items
 where picklist_item_id=:picklist_item_id"] == 1 } {
     ad_returnredirect "picklists"
-    return
+    ad_script_abort
 }
 
 # now make sure that there is no picklist_item with the
@@ -60,7 +60,7 @@ if { $n_conflicts > 0 } {
     last reloaded the page.
     Please go back to <a href=\"picklists\">the picklist management page</a>,
     push \"reload\" or \"refresh\" and try again."
-    return
+    ad_script_abort
 }
 set address [ns_conn peeraddr]
 db_dml insert_new_picklist_item "insert into ec_picklist_items

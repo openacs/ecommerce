@@ -24,7 +24,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # user sessions:
@@ -51,7 +51,7 @@ if { ! $success_p } {
     # so just redirect them to index.tcl
 
     ad_returnredirect [ec_url]index
-    return
+    ad_script_abort
 } 
 
 if { $order_owner != $user_id } {
@@ -66,7 +66,7 @@ if { $order_owner != $user_id } {
     # or they messed w/their user_session_id cookie;
 
     ad_returnredirect [ec_securelink [ec_url]checkout]
-    return
+    ad_script_abort
 }
 
 # make sure there's something in their shopping cart, otherwise
@@ -78,7 +78,7 @@ if { [db_string get_ec_item_count "
     from ec_items 
     where order_id=:order_id"] == 0 } {
     ad_returnredirect [ec_url]shopping-cart
-    return
+    ad_script_abort
 }
 
 db_0or1row shipping_avail "
@@ -109,7 +109,7 @@ if { [info exists address_id] && ![empty_string_p $address_id] } {
 	and user_id=:user_id"]
     if {$n_this_address_id_for_this_user == 0} {
 	ad_returnredirect [ec_securelink [ec_url]checkout]
-	return
+        ad_script_abort
     }
 
     # It checks out ok
@@ -130,7 +130,7 @@ if { [info exists address_id] && ![empty_string_p $address_id] } {
 
 	if {[info exists no_shipping_avail_p] && [string equal $no_shipping_avail_p "f"]} {
 	    ad_returnredirect [ec_securelink [ec_url]checkout]
-	    return
+            ad_script_abort
 	}
     }
 }
@@ -255,6 +255,7 @@ if {[info exists no_shipping_avail_p] && [string equal $no_shipping_avail_p "f"]
     # process-order-quantity-shipping so that prices
     # for items can be inserted into ec_items.
     ad_returnredirect "[ec_securelink [ec_url]process-order-quantity-shipping]"
+    # JCD: should this fall through???
 }
 
 

@@ -13,7 +13,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 set user_session_id [ec_get_user_session_id]
@@ -32,7 +32,7 @@ if { $user_session_id == 0 } {
     	<p></i>In Microsoft Internet Explorer 4.0 and later, you can enable cookies from View -> 
     	   Internet Options -> Advanced -> Security. </i></p>
     	[ec_continue_shopping_options]"
-    return
+    ad_script_abort
 }
 
 # Set the user_id of the order so that we'll know who it belongs to

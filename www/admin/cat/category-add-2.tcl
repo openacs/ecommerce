@@ -27,7 +27,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
 
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # see first whether they already entered this category (in case they
@@ -39,7 +39,7 @@ if {$user_id == 0} {
 if { [db_0or1row get_category_confirmation "select category_id from ec_categories
 where category_id=:category_id"]==1} {
     ad_returnredirect "index"
-    return
+    ad_script_abort
 }
 
 # now make sure there's no category with that sort key already
@@ -57,7 +57,7 @@ if { $n_conflicts > 0 } {
     perhaps someone has changed the categories since you last reloaded the page.
     Please go back to <a href=\"index\">the category page</a>, push
     \"reload\" or \"refresh\" and try again."
-    return
+    ad_script_abort
 }
 
 set peeraddr [ns_conn peeraddr]
@@ -67,3 +67,4 @@ values
 (:category_id, :category_name, :sort_key, sysdate, :user_id, :peeraddr)"
 db_release_unused_handles
 ad_returnredirect "index"
+ad_script_abort

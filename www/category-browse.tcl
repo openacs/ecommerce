@@ -28,6 +28,7 @@ ad_page_contract {
 
 if {![info exists category_id] || ([info exists category_id] && [empty_string_p $category_id])} {
     ad_returnredirect index
+    ad_script_abort
 }
 
 proc ident {x} {

@@ -22,7 +22,7 @@ set customer_service_rep [ad_get_user_id]
 
 if {$customer_service_rep == 0} {
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 
@@ -59,7 +59,7 @@ if { [empty_string_p $email_to_use] } {
     [ad_admin_footer]
     "
     doc_return  200 text/html $doc_body
-    return
+    ad_script_abort
 }
 
 

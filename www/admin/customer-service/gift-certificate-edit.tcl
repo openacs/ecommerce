@@ -21,7 +21,7 @@ set customer_service_rep [ad_get_user_id]
 
 if {$customer_service_rep == 0} {
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 

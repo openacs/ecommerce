@@ -55,7 +55,7 @@ set peeraddr [ns_conn peeraddr]
 # make sure this product isn't already in the database (implying they pushed reload)
 if { [db_string doubleclick_select "select count(*) from ec_products where product_id=:product_id"] > 0 } {
     ad_returnredirect "one?[export_url_vars product_id]"
-    return
+    ad_script_abort
 }
 
 set user_class_id_list [db_list user_class_select "select user_class_id from ec_user_classes"]

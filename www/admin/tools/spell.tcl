@@ -98,12 +98,12 @@ if { $merge_p == "" || $merge_p == 0 } {
     ns_unlink $tmpfile
 
     if { $try == $max_retry } {
-	ns_return 200 text/html "[ad_header "Spell Checker Error"]
+	doc_return 200 text/html "[ad_header "Spell Checker Error"]
 <h2>Spell Checker Error</h2>
 <hr>
 The spell checker was unable to process your document.  Please hit \"Reload\" to try again  If this message occurs again, please contact <a href=\"mailto:[ad_system_owner]\">[ad_system_owner]</a>.
 [ad_footer]"
-        return
+        ad_script_abort
     }
     
     set ispell_lines [split $ispell_text "\n"]
@@ -255,7 +255,7 @@ if { $merge_p != "" && $merge_p } {
 
 #    set merge_text [ns_urlencode $merge_text]
 
-#    ns_returnredirect "$target_url?$var_to_spellcheck=$merge_text&[export_url_vars $form]"
+#    ad_returnredirect "$target_url?$var_to_spellcheck=$merge_text&[export_url_vars $form]"
 
     ReturnHeaders
 

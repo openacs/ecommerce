@@ -47,7 +47,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # User sessions:
@@ -75,7 +75,7 @@ if { [empty_string_p $order_id] } {
     # them to index.tcl
 
     ad_returnredirect index.tcl
-    return
+    ad_script_abort
 }
 
 # Make sure there's something in their shopping cart, otherwise
@@ -87,7 +87,7 @@ if { [db_string get_shopping_cart_no "
     from ec_items 
     where order_id=:order_id"] == 0 } {
     ad_returnredirect shopping-cart.tcl
-    return
+    ad_script_abort
 }
 
 # Make sure the order belongs to this user_id, otherwise they managed
@@ -100,7 +100,7 @@ set order_owner [db_string get_order_owner "
     where order_id=:order_id"]
 if { $order_owner != $user_id } {
     ad_returnredirect checkout.tcl
-    return
+    ad_script_abort
 }
 
 # Make sure there is an address for this order, otherwise they've
@@ -124,7 +124,7 @@ if { [empty_string_p $address_id] } {
 	and i.order_id = :order_id
 	group by no_shipping_avail_p"]} {
 	ad_returnredirect [ec_securelink [ec_url]checkout]
-	return
+        ad_script_abort
     }
 }
 
@@ -138,7 +138,7 @@ set shipping_method [db_string get_shipping_method "
     where order_id=:order_id"]
 if { [empty_string_p $shipping_method] } {
     ad_returnredirect checkout-2.tcl
-    return
+    ad_script_abort
 }
 
 # Now do error checking; It is required that either
@@ -170,7 +170,7 @@ if { $gift_certificate_covers_cost_p == "f" } {
 	    # have they entered new credit card info
 
 	    ad_return_complaint 1 "<li> You forgot to specify which credit card you'd like to use."
-	    return
+            ad_script_abort
 	} else {
 
 	    # Then they are using a new credit card and we just have
@@ -207,7 +207,7 @@ if { $gift_certificate_covers_cost_p == "f" } {
 	    
 	    if { $exception_count > 0 } {
 		ad_return_complaint $exception_count $exception_text
-		return
+                ad_script_abort
 	    }
 
 	    # A valid credit card number has been provided and thus a
@@ -215,7 +215,7 @@ if { $gift_certificate_covers_cost_p == "f" } {
 
 	    if {![info exists billing_address_id] || ([info exists billing_address_id] && [empty_string_p $billing_address_id])} {
 		ad_return_complaint 1 "<li> You forgot to provide your billing address.</li>"
-		return
+                ad_script_abort
 	    }
 	}
     } else {
@@ -229,7 +229,7 @@ if { $gift_certificate_covers_cost_p == "f" } {
 	    # Probably form surgery
 
 	    ad_returnredirect checkout-2.tcl
-	    return
+            ad_script_abort
 	}
 
 	set creditcard_owner [db_string get_cc_owner "
@@ -241,7 +241,7 @@ if { $gift_certificate_covers_cost_p == "f" } {
 	    # Probably form surgery
 
 	    ad_returnredirect checkout-2.tcl
-	    return
+            ad_script_abort
 	}
 
 	# A valid credit card number has been provided and thus a
@@ -249,7 +249,7 @@ if { $gift_certificate_covers_cost_p == "f" } {
 
 	if {![info exists billing_address_id] || ([info exists billing_address_id] && [empty_string_p $billing_address_id])} {
 	    ad_return_complaint 1 "<li> You forgot to provide your billing address.</li>"
-	    return
+            ad_script_abort
 	}
 
     }

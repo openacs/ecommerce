@@ -44,7 +44,7 @@ foreach possible_exception $possible_exception_list {
 
 if { $exception_count > 0 } {
     ad_return_complaint $exception_count $exception_text
-    return
+    ad_script_abort
 }
 
 # We need them to be logged in
@@ -53,7 +53,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Make sure they have an in_basket order unless they are ordering a
@@ -73,7 +73,7 @@ if { $referer != "gift-certificate-billing" } {
 	# them to index.tcl
 
 	ad_returnredirect index.tcl
-	return
+        ad_script_abort
     }
 }
 

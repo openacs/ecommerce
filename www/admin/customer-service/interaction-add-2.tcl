@@ -74,7 +74,7 @@ if {$insert_id ==1} {
 if {$customer_service_rep == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 if { ![info exists interaction_id] } {
@@ -95,7 +95,7 @@ if { ![info exists interaction_id] } {
     
     if { $exception_count > 0 } {
 	ad_return_complaint $exception_count $exception_text
-	return
+        ad_script_abort
     }
 
     # done error checking

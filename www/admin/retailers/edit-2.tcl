@@ -67,7 +67,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
 
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 set audit_update "last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address='[DoubleApos [ns_conn peeraddr]]'"

@@ -33,7 +33,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Make sure they have an in_basket order, otherwise they've probably
@@ -52,7 +52,7 @@ if { [empty_string_p $order_id] } {
     # them to index.tcl
 
     ad_returnredirect index
-    return
+    ad_script_abort
 }
 
 # Make sure there's something in their shopping cart, otherwise
@@ -64,7 +64,7 @@ if { [db_string get_ec_item_count "
     from ec_items 
     where order_id=:order_id"] == 0 } {
     ad_returnredirect shopping-cart
-    return
+    ad_script_abort
 }
 
 # Make sure the order belongs to this user_id, otherwise they managed
@@ -77,7 +77,7 @@ set order_owner [db_string get_order_owner "
     where order_id=:order_id"]
 if { $order_owner != $user_id } {
     ad_returnredirect checkout
-    return
+    ad_script_abort
 }
 
 # Make sure there is an address for this order, otherwise they've
@@ -101,7 +101,7 @@ if { [empty_string_p $address_id] } {
 	and i.order_id = :order_id
 	group by no_shipping_avail_p"]} {
 	ad_returnredirect [ec_securelink [ec_url]checkout]
-	return
+        ad_script_abort
     }
 }
 
@@ -139,7 +139,7 @@ set shipping_method [db_string get_shipping_method "
     where order_id=:order_id" -default ""]
 if { [empty_string_p $shipping_method] || ([empty_string_p $creditcard_id] && (![info exists gift_certificate_covers_cost_p] || $gift_certificate_covers_cost_p == "f")) } {
     ad_returnredirect checkout-2
-    return
+    ad_script_abort
 }
 
 # Done with all the checks.  Their order is ready to go!  Now show

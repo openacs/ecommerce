@@ -61,7 +61,7 @@ if {[ad_parameter RegistrationProvidesRandomPasswordP security 0]} {
 
 if {$exception_count > 0} {
     ad_return_complaint $exception_count $exception_text
-    return
+    ad_script_abort
 }
 
 # Get whether they requre some sort of approval
@@ -97,6 +97,7 @@ if { $member_state == "approved" && $email_verified_p == "t"} {
     }
 
     ad_returnredirect $return_url
+    # continue here since we want to mail below
 
 } elseif { $email_verified_p == "f" }  { 
 
@@ -107,6 +108,7 @@ if { $member_state == "approved" && $email_verified_p == "t"} {
     set title "Please read your email"
 
     ad_return_template
+
 } elseif { $member_state == "" } {
 
     # this user won't be able to use the system until an admin has

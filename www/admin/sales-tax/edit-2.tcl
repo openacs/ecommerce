@@ -21,7 +21,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
 
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 
@@ -54,6 +54,7 @@ foreach usps_abbrev $usps_abbrev_list {
 
 if { $exception_count > 0 } {
     ad_return_complaint $exception_count $exception_text
+    ad_script_abort
 }
 
 set old_states_with_taxes_set [db_list unused "select usps_abbrev from ec_sales_tax_by_state"]

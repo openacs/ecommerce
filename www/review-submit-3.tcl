@@ -31,7 +31,7 @@ if {$user_id == 0} {
 	set return_url "[ad_conn url]?[export_url_vars product_id rating one_line_summary user_comment comment_id]"
     }
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # user session tracking

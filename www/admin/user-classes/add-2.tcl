@@ -22,7 +22,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
 
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # see if it's already in the database, meaning the user pushed reload
@@ -31,7 +31,7 @@ if {$user_id == 0} {
 
 if { [db_string get_uc_count "select count(*) from ec_user_classes where user_class_id=:user_class_id"] > 0 } {
     ad_returnredirect index.tcl
-    return
+    ad_script_abort
 }
 
 db_dml insert_new_uc "insert into ec_user_classes

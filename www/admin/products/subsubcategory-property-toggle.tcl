@@ -33,6 +33,7 @@ if { [info exists publisher_favorite_p] && ![empty_string_p $publisher_favorite_
 
 if { ![info exists thing_to_update] } {
     ad_return_complaint 1 "<li>No column to update has been specified.\n"
+    ad_script_abort
 }
 
 

@@ -25,8 +25,8 @@ if {$user_id == 0} {
     
     set return_url "[ad_conn url]?[export_url_vars template_id template_name template]"
 
-    ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_returnredirect "/register?[export_url_vars return_url]"
+    ad_script_abort
 }
 
 set exception_count 0
@@ -44,15 +44,15 @@ if { ![info exists template] || [empty_string_p $template] } {
 
 if { $exception_count > 0 } {
     ad_return_complaint $exception_count $exception_text
-    return
+    ad_script_abort
 }
 
 
 
 # see if the template's already in there, which means they pushed reload
 if { [db_string get_dclick_temp "select count(*) from ec_templates where template_id=:template_id"] > 0 } {
-    ad_returnredirect index.tcl
-    return
+    ad_returnredirect index
+    ad_script_abort
 }
 
 db_dml insert_new_template "insert into ec_templates
@@ -61,4 +61,4 @@ values
 (:template_id, :template_name, :template, sysdate, :user_id, '[DoubleApos [ns_conn peeraddr]]')"
 db_release_unused_handles
 
-ad_returnredirect index.tcl
+ad_returnredirect index

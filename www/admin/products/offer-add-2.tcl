@@ -32,7 +32,7 @@ set product_name [ec_product_name $product_id]
 
 if { [db_string doubleclick_select "select count(*) from ec_offers where offer_id=:offer_id"] > 0 } {
     ad_returnredirect "offers.tcl?[export_url_vars product_id]"
-    return
+    ad_script_abort
 }
 
 if { [info exists shipping_unavailable_p] } {

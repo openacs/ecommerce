@@ -30,7 +30,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_url_vars category_name category_id subcategory_id subcategory_name subsubcategory_id]"
 
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # What has to be done (in order, so that no constraints are violated):
@@ -59,6 +59,5 @@ db_dml delete_subsubcats "delete from ec_subsubcategories where subsubcategory_i
 ec_audit_delete_row [list $subsubcategory_id] [list subsubcategory_id] ec_subsubcategories_audit
 
 }
-db_release_unused_handles
 
 ad_returnredirect "subcategory?[export_url_vars subcategory_id subcategory_name category_id category_name]"

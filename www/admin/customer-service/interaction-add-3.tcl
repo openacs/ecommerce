@@ -74,7 +74,7 @@ if { [db_string get_service_action_count "select count(*) from ec_customer_servi
 	set insert_id 1
 	ad_returnredirect "interaction-add-2.tcl?[export_url_vars interaction_id interaction_type postal_code c_user_identification_id insert_id interaction_originator]"
     }
-    return
+    ad_script_abort
 }
 
 # the customer service rep must be logged on
@@ -84,7 +84,7 @@ set customer_service_rep [ad_get_user_id]
 if {$customer_service_rep == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # error checking
@@ -118,7 +118,7 @@ if { [info exists order_id] && [regexp "\[^0-9\]+" $order_id] } {
 
 if { $exception_count > 0 } {
     ad_return_complaint $exception_count $exception_text
-    return
+    ad_script_abort
 }
 
 # now for the painful checks
@@ -139,7 +139,7 @@ if { ![empty_string_p $issue_id] } {
     and i.issue_id=:issue_id"]==0 } {
 
 	ad_return_complaint 1 "<li>The issue ID that you specified is invalid.  Please go back and check the issue ID you entered.  If this is a new issue, please leave the issue ID blank.\n"
-	return
+        ad_script_abort
     }
     
 
@@ -174,7 +174,7 @@ if { ![empty_string_p $issue_id] } {
 		
 		[ad_admin_footer]
 		"
-		return
+                ad_script_abort
 	    }
 	} elseif { ![info exists d_user_identification_id] || [string compare $d_user_identification_id $issue_user_identification_id] != 0 } {
 	    # if d_user_identification_id doesn't match the issue's user_identification_id, give
@@ -206,7 +206,7 @@ if { ![empty_string_p $issue_id] } {
 	    
 	    [ad_admin_footer]
 	    "
-	    return
+            ad_script_abort
 	}
 
     } else {
@@ -224,10 +224,10 @@ if { ![empty_string_p $issue_id] } {
 	    if { [empty_string_p $c_user_id] } {
 		ad_return_complaint 1 "The issue ID you specified belongs to the registered user
 		<a href=\"[ec_acs_admin_url]users/one?user_id=$issue_user_id\">[db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:issue_user_id"]</a>.  However, you haven't associated this interaction with any registered user.  You've associated it with the unregistered user [ec_user_identification_summary $c_user_identification_id].  If these are really the same user, match them up by clicking on the \"user info\" link and then you can reload this page without getting this error message." 
-		return
+                ad_script_abort
 	    } elseif { [string compare $c_user_id $issue_user_id] != 0 } {
 		ad_return_complaint 1 "The issue ID you specified does not belong to the user you specified."
-		return
+                ad_script_abort
 	    }
 	}
     }
@@ -239,7 +239,7 @@ if { [info exists order_id] && ![empty_string_p $order_id] } {
     set row_exists_p [db_0or1row get_order_owner "select user_id as order_user_id from ec_orders where order_id=:order_id"]
     if { $row_exists_p==0 } {
 	ad_return_complaint 1 "<li>The order ID that you specified is invalid.  Please go back and check the order ID you entered.  If this issue is not about a specific order, please leave the order ID blank.\n"
-	return
+        ad_script_abort
     }
     
 
@@ -274,7 +274,7 @@ if { [info exists order_id] && ![empty_string_p $order_id] } {
 		
 		[ad_admin_footer]
 		"
-		return
+                ad_script_abort
 	    }
 	} else {
 	    # interaction_id exists
@@ -286,10 +286,10 @@ if { [info exists order_id] && ![empty_string_p $order_id] } {
 	    if { [empty_string_p $c_user_id] } {
 		ad_return_complaint 1 "The order ID you specified belongs to the registered user
 		<a href=\"[ec_acs_admin_url]users/one?user_id=$order_user_id\">[db_stringget_user_full_name "select first_names || ' ' || last_name from cc_users where user_id=:order_user_id"]</a>.  However, you haven't associated this interaction with any registered user.  You've associated it with the unregistered user [ec_user_identification_summary $c_user_identification_id].  If these are really the same user, match them up by clicking on the \"user info\" link and then you can reload this page without getting this error message." 
-		return
+                ad_script_abort
 	    } elseif { [string compare $c_user_id $order_user_id] != 0 } {
 		ad_return_complaint 1 "The order ID you specified does not belong to the user you specified."
-		return
+                ad_script_abort
 	    }
 	
 	}
@@ -446,7 +446,7 @@ foreach info_used $info_used_list {
 }
 
 }
-db_release_unused_handles
+
 if { $submit == "Interaction Complete" } {
     if { ![info exists return_to_issue] } {
 	ad_returnredirect interaction-add

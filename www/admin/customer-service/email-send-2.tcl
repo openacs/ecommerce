@@ -37,7 +37,7 @@ ad_require_permission [ad_conn package_id] admin
 
 if { [db_string check_csa_doubleclick "select count(*) from ec_customer_service_actions where action_id=:action_id"] > 0 } {
     ad_returnredirect "issue.tcl?[export_url_vars issue_id]"
-    return
+    ad_script_abort
 }
 
 # 1. create interaction

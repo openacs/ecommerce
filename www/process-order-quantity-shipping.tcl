@@ -42,7 +42,7 @@ if {[info exists quantity]} {
     }
     set return_url "process-order-quantity-shipping?[export_url_vars creditcard_id creditcard_number creditcard_type creditcard_expire_1 creditcard_expire_2 address_id shipping_method shipping_gateway tax_exempt_p]"
     ad_returnredirect "shopping-cart-quantities-change?[export_url_vars return_url]&[eval export_url_vars $fullarraynames]"
-    return
+    ad_script_abort
 }
 
 # We need them to be logged in
@@ -56,7 +56,7 @@ if {$user_id == 0} {
         set return_url "[ad_conn url]"
     }
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # User sessions:
@@ -85,7 +85,7 @@ if { [empty_string_p $order_id] } {
     # them to index.tcl
 
     ad_returnredirect index
-    return
+    ad_script_abort
 }
 
 # Make sure there's something in their shopping cart, otherwise
@@ -98,7 +98,7 @@ if { [db_string get_count_cart "
     where order_id = :order_id"] == 0 } {
     ad_returnredirect shopping-cart
     db_release_unused_handles
-    return
+    ad_script_abort
 }
 
 # Make sure the order belongs to this user_id, otherwise they managed
@@ -112,7 +112,7 @@ set order_owner [db_string get_order_owner "
 
 if { $order_owner != $user_id } {
     ad_returnredirect checkout
-    return
+    ad_script_abort
 }
 
 # Make sure there is an address for this order, otherwise they've
@@ -137,7 +137,7 @@ if { [empty_string_p $address_id] } {
 	group by no_shipping_avail_p"]} {
 
 	ad_returnredirect checkout
-	return
+        ad_script_abort
     }
 }
 

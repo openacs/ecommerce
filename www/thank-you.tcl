@@ -20,7 +20,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "[ad_conn package_url]register?[export_url_vars return_url]"
-    template::adp_abort
+    ad_script_abort
 }
 
 # wtem@olywa.net, 2001-03-21
@@ -49,6 +49,7 @@ set order_id [db_string  get_order_id_info "
 
 if { [empty_string_p $order_id] } {
     ad_returnredirect index
+    ad_stript_abort
 }
 
 set order_summary [ec_order_summary_for_customer $order_id $user_id]

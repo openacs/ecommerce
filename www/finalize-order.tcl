@@ -43,7 +43,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]"
 
     ad_returnredirect "/register?[export_url_vars return_url]"
-    template::adp_abort
+    ad_script_abort
 }
 
 # make sure they have an in_basket order
@@ -84,7 +84,7 @@ if { [empty_string_p $order_id] } {
     } else {
 	ad_returnredirect thank-you
     }
-    template::adp_abort
+    ad_script_abort
 }
 
 # Make sure there's something in their shopping cart, otherwise
@@ -98,7 +98,7 @@ if { [db_string get_in_basket_count "
     from ec_items 
     where order_id = :order_id"] == 0 } {
     ad_returnredirect shopping-cart
-    template::adp_abort
+    ad_script_abort
 }
 
 # Make sure the order belongs to this user_id, otherwise they managed
@@ -111,7 +111,7 @@ set order_owner [db_string get_order_owner "
     where order_id = :order_id"]
 if { $order_owner != $user_id } {
     ad_returnredirect checkout
-    template::adp_abort
+    ad_script_abort
 }
 
 # Make sure there is an address for this order, otherwise they've
@@ -135,7 +135,7 @@ if { [empty_string_p $address_id] } {
 	and i.order_id = :order_id
 	group by no_shipping_avail_p"]} {
 	ad_returnredirect [ec_securelink [ec_url]checkout]
-	return
+        ad_script_abort
     }
 }
 
@@ -172,7 +172,7 @@ set shipping_method [db_string get_shipping_method "
     where order_id=:order_id" -default ""]
 if { [empty_string_p $shipping_method] || ([empty_string_p $creditcard_id] && (![info exists gift_certificate_covers_cost_p] || $gift_certificate_covers_cost_p == "f")) } {
     ad_returnredirect checkout-2
-    template::adp_abort
+    ad_script_abort
 }
 
 # Done with all the checks!
@@ -284,7 +284,7 @@ if {$hard_goods_cost > 0} {
 
 		if { [string equal $result "authorized"] || [string equal $result "no_recommendation"] } {
 		    ad_returnredirect thank-you
-		    template::adp_abort
+                    ad_script_abort
 		} elseif { [string equal $result "failed_authorization"] } {
 
 		    # Updates everything that needs to be updated if a
@@ -293,7 +293,7 @@ if {$hard_goods_cost > 0} {
 		    ec_update_state_to_in_basket $order_id
 
 		    ad_returnredirect credit-card-correction
-		    template::adp_abort
+                    ad_script_abort
 		} else {
 
 		    # Then result is probably "invalid_input".  This should never
@@ -304,6 +304,7 @@ if {$hard_goods_cost > 0} {
 			<h2>Sorry</h2>
 			<p>There has been an error in the processing of your credit card information.
 			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
+                    ad_script_abort
 		}
 	    }
 	} else {
@@ -406,7 +407,7 @@ if {$hard_goods_cost > 0} {
 		    ec_update_state_to_in_basket $order_id
 
 		    ad_returnredirect credit-card-correction
-		    template::adp_abort
+                    ad_script_abort
 		} else {
 
 		    # Then result is probably "invalid_input".  This should never
@@ -565,7 +566,7 @@ if {$hard_goods_cost > 0} {
 		    ec_update_state_to_in_basket $order_id
 
 		    ad_returnredirect credit-card-correction
-		    template::adp_abort
+                    ad_script_abort
 		} else {
 
 		    # Then result is probably "invalid_input".  This should never
@@ -633,7 +634,7 @@ if {$hard_goods_cost > 0} {
 
 	    if { [string equal $result "authorized"] || [string equal $result "no_recommendation"] } {
 		ad_returnredirect thank-you
-		template::adp_abort
+                ad_script_abort
 	    } elseif { [string equal $result "failed_authorization"] } {
 
 		# If the gateway returns no recommendation then
@@ -668,7 +669,7 @@ if {$hard_goods_cost > 0} {
 		ec_update_state_to_in_basket $order_id
 
 		ad_returnredirect credit-card-correction
-		template::adp_abort
+                ad_script_abort
 	    } else {
 
 		# Then result is probably "invalid_input".  This should never
@@ -793,7 +794,7 @@ if {$hard_goods_cost > 0} {
 		ec_update_state_to_in_basket $order_id
 		
 		ad_returnredirect credit-card-correction
-		template::adp_abort
+                ad_script_abort
 
 	    } else {
 		

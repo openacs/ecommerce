@@ -63,7 +63,7 @@ set exception_count [expr $exception_count + [lindex $additional_count_and_text 
 append exception_text [lindex $additional_count_and_text 1]
 if { $exception_count > 0 } {
     ad_return_complaint $exception_count $exception_text
-    return
+    ad_script_abort
 }
 
 # Then do all the normal checks to make sure nobody is doing url or
@@ -75,7 +75,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_url_vars creditcard_number creditcard_type creditcard_expire_1 creditcard_expire_2].</li>"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Make sure they have an in_basket order unlike previous pages, if
@@ -110,7 +110,7 @@ if { [empty_string_p $order_id] } {
     } else {
 	ad_returnredirect thank-you
     }
-    return
+    ad_script_abort
 }
 
 # Make sure there's something in their shopping cart, otherwise
@@ -122,7 +122,7 @@ if { [db_string get_ec_item_count "
     from ec_items
     where order_id=:order_id"] == 0 } {
     ad_returnredirect shopping-cart
-    return
+    ad_script_abort
 }
 
 # Make sure the order belongs to this user_id, otherwise they managed
@@ -135,7 +135,7 @@ set order_owner [db_string get_order_owner "
     where order_id=:order_id"]
 if { $order_owner != $user_id } {
     ad_returnredirect checkout
-    return
+    ad_script_abort
 }
 
 # Done with all the checks!

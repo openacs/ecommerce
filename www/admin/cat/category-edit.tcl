@@ -21,7 +21,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_url_vars category_name category_id]"
 
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 set address [ns_conn peeraddr]

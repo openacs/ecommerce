@@ -66,14 +66,14 @@ if { [db_string get_log_entries_cnt "
 	<p>You are seeing this page because you probably either hit reload or pushed the Submit button twice.</p>
 	<p>If you wonder whether the users got the spam, just check the customer service issues for one of the users (all mail sent to a user is recorded as a customer service issue).</p>
 	[ad_admin_footer]"
-    return
+    ad_script_abort
 }
 
 set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
 set customer_service_rep [ad_get_user_id]
 if {$customer_service_rep == 0} {
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # 1. Write row to spam log

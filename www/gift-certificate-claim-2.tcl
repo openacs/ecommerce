@@ -18,7 +18,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Make sure they have an in_basket order and a user_session_id; this
@@ -28,7 +28,7 @@ if {$user_id == 0} {
 set user_session_id [ec_get_user_session_id]
 if { $user_session_id == 0 } {
     ad_returnredirect "index"
-    return
+    ad_script_abort
 }
 
 set order_id [db_string get_order_id "
@@ -38,7 +38,7 @@ set order_id [db_string get_order_id "
      and order_state='in_basket'" -default ""]
 if { [empty_string_p $order_id] } {
     ad_returnredirect "index"
-    return
+    ad_script_abort
 }
 
 # See if there's a gift certificate with that claim check
@@ -60,7 +60,7 @@ if { [empty_string_p $gift_certificate_id] } {
     	(problem_id, problem_date, problem_details)
     	values
     	(ec_problem_id_sequence.nextval, sysdate,:prob_details )"
-    return
+    ad_script_abort
 }
 
 # There is a gift certificate with that claim check;

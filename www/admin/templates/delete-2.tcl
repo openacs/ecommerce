@@ -27,7 +27,7 @@ if { $template_id == $default_template_id } {
     If you want to delete this template, you can do so by first setting a different template to
     be the default template.  (To do this, go to a different template and click \"Make this template
     be the default template\".)"
-    return
+    ad_script_abort
 }
 
 set user_id [ad_verify_and_get_user_id]
@@ -36,8 +36,8 @@ if {$user_id == 0} {
     
     set return_url "[ad_conn url]?[export_url_vars template_id]"
 
-    ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_returnredirect "/register?[export_url_vars return_url]"
+    ad_script_abort
 }
 
 
@@ -55,5 +55,5 @@ ec_audit_delete_row [list $template_id] [list template_id] ec_templates_audit
 }
 db_release_unused_handles
 
-ad_returnredirect index.tcl
+ad_returnredirect index
 

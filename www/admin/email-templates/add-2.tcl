@@ -26,7 +26,7 @@ if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
 
     ad_returnredirect "/register.tcl?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # check the entered ADP for functions
@@ -36,7 +36,7 @@ if {$f != 0} {
     <P>We're sorry, but templates added here cannot
     have functions in them for security reasons. Only HTML and 
     <%= \$variable %> style code may be used.  We found <tt>$function</tt> in this template"
-
+    ad_script_abort
 }
 
 
@@ -49,6 +49,7 @@ if { [catch {db_dml unused "insert into ec_email_templates
 values
 (ec_email_template_id_sequence.nextval, :title, :subject, :message, :variables, :when_sent, :issue_type, sysdate, :user_id, '[DoubleApos [ns_conn peeraddr]]')"} errMsg] } {
     ad_return_complaint 1 "Failed to add the email template, Suspect double click/ template already created"
+    ad_script_abort
 }
 
 db_release_unused_handles

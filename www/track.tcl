@@ -17,7 +17,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # user session tracking
@@ -33,7 +33,7 @@ if { [db_string assure_order_is_this_user "
     where o.order_id = s.order_id
     and s.shipment_id = :shipment_id"] != $user_id } {
     ad_return_error "Invalid Order ID" "Invalid Order ID"
-    return
+    ad_script_abort
 }
 
 db_1row get_order_info "

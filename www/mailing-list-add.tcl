@@ -25,7 +25,7 @@ set user_id [ad_verify_and_get_user_id]
 set return_url "[ec_url]mailing-list-add-2?[export_url_vars category_id subcategory_id subsubcategory_id]"
 if {$user_id == 0} {
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # user session tracking
@@ -63,7 +63,7 @@ if { ![info exists subcategory_id] || [empty_string_p $subcategory_id] } {
 	where subsubcategory_id=:subsubcategory_id"]"
 } else {
     ad_return_complaint 1 "You haven't specified which mailing list you want to be added to."
-    return
+    ad_script_abort
 }
 
 set register_link "/register?[export_url_vars return_url]"

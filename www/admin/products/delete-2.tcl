@@ -40,7 +40,7 @@ set product_name [ec_product_name $product_id]
 
 if { [db_string order_count_select "select count(*) from ec_items where product_id=:product_id"] > 0 } {
     doc_return  200 text/html "[ad_admin_header "Sorry"]\nSorry, you cannot delete a product for which an order has already been made.  Instead, you can <a href=\"toggle-active-p?[export_url_vars product_id product_name]&active_p=f\">Mark It Inactive</a>, which will make it no longer show up in the consumer pages."
-    return
+    ad_script_abort
 }
 
 db_transaction {

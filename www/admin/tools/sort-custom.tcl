@@ -3,7 +3,7 @@
 # Takes the data generated from ad_table_sort_form function 
 # and inserts into the user_custom table
 #
-# on succes it does an ns_returnredirect to return_url&$item_group=$item
+# on succes it does an ad_returnredirect to return_url&$item_group=$item
 #
 # davis@xarg.net 20000105
 
@@ -23,15 +23,15 @@ if {$delete_the_sort && ![empty_string_p $item]} {
         ad_return_complaint 1 "<li>I was unable to delete the sort.  The database said <pre>$errmsg</pre>\n"
         return
     }
-    ns_returnredirect "$return_url"
-    return
+    ad_returnredirect "$return_url"
+    ad_script_abort
 }
 
         
    
 if {[empty_string_p $item]} {
     ad_return_complaint 1 "<li>You did not specify a name for this sort"
-    return
+    ad_script_abort
 }
 
 
@@ -50,7 +50,7 @@ foreach c $col {
 
 if {[empty_string_p $col_clean]} {
     ad_return_complaint 1 "<li>You did not specify any columns to sort by"
-    return
+    ad_script_abort
 }
 
 set col_clean [join $col_clean ","]
@@ -66,8 +66,8 @@ with_transaction $db {
       returning value into :1" $col_clean
 } {
     ad_return_complaint 1 "<li>I was unable to insert your table customizations.  The database said <pre>$errmsg</pre>\n"
-    return
+    ad_script_abort
 }
 
-ns_returnredirect "$return_url&$item_group=[ns_urlencode $item]"
+ad_returnredirect "$return_url&$item_group=[ns_urlencode $item]"
 

@@ -38,7 +38,7 @@ set n_occurrences [db_string n_occurrences_select "select count(*) from ec_produ
 
 if { $n_occurrences > 0 } {
     ad_returnredirect "recommendations.tcl"
-    return
+    ad_script_abort
 }
 
 set peeraddr [ns_conn peeraddr]

@@ -21,7 +21,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_form_vars category_id subcategory_id subsubcategory_id]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # user session tracking
@@ -74,7 +74,7 @@ if { [info exists subsubcategory_id] && ![empty_string_p $subsubcategory_id] } {
 
 if { ![info exists mailing_list_name] } {
     ad_return_complaint 1 "You haven't specified which mailing list you want to be removed from."
-    return
+    ad_script_abort
 }
 
 db_dml remove_user_from_mailing_list $delete_string

@@ -22,17 +22,17 @@ if {$delete_the_set && ![empty_string_p $item]} {
           where user_id = $user_id and item = $DBQitem and item_group = $DBQitem_group
             and item_type = $DBQitem_type"} errmsg]} {
         ad_return_complaint 1 "<li>I was unable to delete the defaults.  The database said <pre>$errmsg</pre>\n"
-        return
+        ad_script_abort
     }
-    ns_returnredirect "$return_url"
-    return
+    ad_returnredirect "$return_url"
+    ad_script_abort
 }
 
         
    
 if {[empty_string_p $item]} {
     ad_return_complaint 1 "<li>You did not specify a name for this default set."
-    return
+    ad_script_abort
 }
 
 set form [ns_getform]
@@ -45,7 +45,7 @@ for {set i 0} { $i < [ns_set size $form]} {incr i} {
 
 if {[empty_string_p $data]} {
     ad_return_complaint 1 "<li>You did not specify any default data."
-    return
+    ad_script_abort
 }
 
 util_dbq {item item_original item_type value_type item_group}
@@ -59,7 +59,7 @@ with_transaction $db {
       returning value into :1" $data
 } {
     ad_return_complaint 1 "<li>I was unable to insert your defaults. The database said <pre>$errmsg</pre>\n"
-    return
+    ad_script_abort
 }
 
-ns_returnredirect "$return_url"
+ad_returnredirect "$return_url"

@@ -22,7 +22,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Make sure they have an in_basket order, otherwise they've probably
@@ -52,7 +52,7 @@ if { ! $success_p } {
     # so just redirect them to index.tcl
 
     ad_returnredirect index
-    return
+    ad_script_abort
 } 
 
 if { $order_owner != $user_id } {
@@ -71,7 +71,7 @@ if { $order_owner != $user_id } {
     # redirect them to checkout.tcl
     
     ad_returnredirect checkout
-    return
+    ad_script_abort
 }
 
 if { [empty_string_p $address_id] } {
@@ -87,7 +87,7 @@ if { [empty_string_p $address_id] } {
 	and i.order_id = :order_id
 	group by no_shipping_avail_p"]} {
 	ad_returnredirect [ec_securelink [ec_url]checkout]
-	return
+        ad_script_abort
     }
 }
 
@@ -100,7 +100,7 @@ if { [db_string get_ec_item_cart_count "
     from ec_items 
     where order_id=:order_id"] == 0 } {
     ad_returnredirect shopping-cart
-    return
+    ad_script_abort
 }
 
 # Everything is ok now; the user has a non-empty in_basket order and

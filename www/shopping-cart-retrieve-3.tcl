@@ -29,7 +29,7 @@ set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
-    return
+    ad_script_abort
 }
 
 # Make sure order exists (they might have discarded it then pushed
@@ -40,7 +40,7 @@ if { 0 == [db_string get_order_exists_p "
     from ec_orders 
     where order_id=:order_id"] } {
     ad_returnredirect shopping-cart
-    return
+    ad_script_abort
 }
 
 # Make sure this order is theirs
@@ -60,7 +60,7 @@ if { !$order_theirs_p } {
 	<p>The order you have selected either does not exist or does not belong to you. 
 	   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> if this is incorrect.</p>
 	[ec_footer]"
-    return
+    ad_script_abort
 }
 
 # Make sure the order is still a "saved shopping basket", otherwise
@@ -73,7 +73,7 @@ if { 0 == [db_string confirm_have_basket "
     and order_state='in_basket' 
     and saved_p='t'"] } {
     ad_returnredirect "shopping-cart"
-    return
+    ad_script_abort
 }
 
 # End security checks
@@ -138,7 +138,7 @@ if { $submit == "View" } {
     set ec_system_owner [ec_system_owner]
     db_release_unused_handles
     ad_return_template
-    return
+    ad_script_abort
 } elseif { $submit == "Retrieve" } {
 
     # First see if they already have a non-empty shopping basket, in
@@ -209,7 +209,7 @@ if { $submit == "View" } {
 
 	db_release_unused_handles
 	ad_returnredirect "shopping-cart"
-	return
+        ad_script_abort
     } else {
 
 	# The hard case, either they can merge their saved order with
@@ -223,7 +223,7 @@ if { $submit == "View" } {
 	set ec_system_owner [ec_system_owner]
 
 	ad_return_template
-	return
+        ad_script_abort
     }
 } elseif { $submit == "Merge" } {
 
@@ -240,7 +240,7 @@ if { $submit == "View" } {
 	and order_state='in_basket'" -default ""]
     if { [empty_string_p $current_basket] } {
 	ad_returnredirect shopping-cart
-	return
+        ad_script_abort
     }
     db_transaction {
 	db_dml update_order_basket_pr "
@@ -290,7 +290,7 @@ if { $submit == "View" } {
 
     db_release_unused_handles
     ad_returnredirect shopping-cart
-    return
+    ad_script_abort
 } elseif { $submit == "Replace" } {
 
     # Delete the items in the current basket and update the items in
@@ -306,7 +306,7 @@ if { $submit == "View" } {
 	and order_state='in_basket'" -default ""]
     if { [empty_string_p $current_basket] } {
 	ad_returnredirect shopping-cart
-	return
+        ad_script_abort
     }
 
     db_transaction {
@@ -360,7 +360,7 @@ if { $submit == "View" } {
 
     db_release_unused_handles
     ad_returnredirect shopping-cart
-    return
+    ad_script_abort
 } elseif { $submit == "Discard" } {
     if { [info exists discard_confirmed_p] && $discard_confirmed_p == "t" } {
 	db_transaction {
@@ -373,7 +373,7 @@ if { $submit == "View" } {
 	}
 
 	ad_returnredirect "shopping-cart"
-	return
+        ad_script_abort
     }
 
     # Otherwise I have to give them a confirmation page
@@ -386,10 +386,10 @@ if { $submit == "View" } {
     set ec_system_owner [ec_system_owner]
 
     ad_return_template
-    return
+    ad_script_abort
 } elseif { $submit == "Save it for Later" } {
     ad_returnredirect "shopping-cart-retrieve-2"
-    return
+    ad_script_abort
 }
 
 # There shouldn't be any other cases, but log it if there are

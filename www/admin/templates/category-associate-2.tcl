@@ -31,15 +31,15 @@ and m.category_id=:category_id"] ==0 } {
 
     db_dml insert_cat_temp_map "insert into ec_category_template_map (category_id, template_id) values (:category_id, :template_id)"
 
-    ad_returnredirect "index.tcl"
-    return
+    ad_returnredirect "index"
+    ad_script_abort
 } elseif { [info exists confirmed] && $confirmed == "yes" } {
     # then the user has confirmed that they want to overwrite old mapping
 
     db_dml update_cat_temp_map "update ec_category_template_map set template_id=:template_id where category_id=:category_id"
 
-    ad_returnredirect "index.tcl"
-    return
+    ad_returnredirect "index"
+    ad_script_abort
 }
 
 # to get old_template
