@@ -51,7 +51,7 @@
 
   <fullquery name="ec_add_to_cart_link.available_date_select">      
     <querytext>
-      select to_char(available_date,'Month DD, YYYY') available_date
+      select to_char(available_date,'Month DD, YYYY') as available_date
       from ec_products
       where product_id = :product_id
     </querytext>
