@@ -1,7 +1,7 @@
 #  www/[ec_url_concat [ec_url] /admin]/products/extras-upload-2.tcl
 ad_page_contract {
   This file updates ec_custom_product_field_values (as opposed to inserting
-  new rows) because upload*.tcl (which are to be run before extras-upload*.tcl)
+  new rows) because custom-field-add*.tcl (which are to be run before extras-upload*.tcl)
   insert rows into ec_custom_product_field_values (with everything empty except
   product_id and the audit columns) when they insert the rows into ec_products
   (for consistency with add*.tcl).

@@ -82,7 +82,7 @@
       last_modified, 
       last_modifying_user, 
       modified_ip_address) values 
-      (:val_$product_id_column, 
+      (:product_id, 
       now(), 
       :user_id, 
       :peeraddr)

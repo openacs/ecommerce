@@ -270,7 +270,12 @@ if { [db_string num_custom_product_fields_select "select count(*) from ec_custom
     "
     
     db_foreach custom_fields_select "select field_identifier, field_name, default_value, column_type from ec_custom_product_fields where active_p='t' order by creation_date" {
-      doc_body_append "<tr><td>$field_name</td><td>[ec_custom_product_field_form_element $field_identifier $column_type [db_string custom_field_value_select "select $field_identifier from ec_custom_product_field_values where product_id=:product_id" -default "" ]]</td></tr>\n"
+        set current_field_value [db_string custom_field_value_select "select $field_identifier from ec_custom_product_field_values where product_id=:product_id" -default "$default_value" ]
+        # check for cases where field is blank and nontext, because custom_field_value_select -default does not catch them
+        if { [empty_string_p $current_field_value] && [regexp $column_type "timestampdatenumericintegerboolean"]} {
+            set current_field_value $default_value
+        }
+        doc_body_append "<tr><td>$field_name</td><td>[ec_custom_product_field_form_element $field_identifier $column_type $current_field_value]</td></tr>\n"
     }
 
     doc_body_append "</table>\n"
