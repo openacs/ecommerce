@@ -190,6 +190,8 @@
             <file type="content_page" path="www/admin/customer-reviews/index.tcl"/>
             <file type="content_page" path="www/admin/customer-reviews/one.tcl"/>
             <file type="query_file" path="www/admin/customer-reviews/one.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/actions-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/actions-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/actions.tcl"/>
             <file type="query_file" path="www/admin/customer-service/actions.xql"/>
             <file type="content_page" path="www/admin/customer-service/active-toggle.tcl"/>
@@ -206,6 +208,8 @@
             <file type="content_page" path="www/admin/customer-service/canned-response-edit.tcl"/>
             <file type="query_file" path="www/admin/customer-service/canned-response-edit.xql"/>
             <file type="content_page" path="www/admin/customer-service/canned-responses.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/customer-search-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/customer-search-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/customer-search.tcl"/>
             <file type="query_file" db_type="oracle" path="www/admin/customer-service/email-send-2-oracle.xql"/>
             <file type="query_file" db_type="postgresql" path="www/admin/customer-service/email-send-2-postgresql.xql"/>
@@ -251,6 +255,8 @@
             <file type="content_page" path="www/admin/customer-service/interaction-summary.tcl"/>
             <file type="query_file" path="www/admin/customer-service/interaction-summary.xql"/>
             <file type="content_page" path="www/admin/customer-service/interaction.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/interactions-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/interactions-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/interactions.tcl"/>
             <file type="query_file" path="www/admin/customer-service/interactions.xql"/>
             <file type="content_page" path="www/admin/customer-service/issue-edit-2.tcl"/>
@@ -300,6 +306,8 @@
             <file type="content_page" path="www/admin/customer-service/spam-log.tcl"/>
             <file type="query_file" path="www/admin/customer-service/spam-log.xql"/>
             <file type="content_page" path="www/admin/customer-service/spam.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/statistics-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/statistics-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/statistics.tcl"/>
             <file type="query_file" path="www/admin/customer-service/statistics.xql"/>
             <file type="content_page" path="www/admin/customer-service/user-identification-edit.tcl"/>
@@ -691,6 +699,12 @@
             <file type="query_file" path="www/admin/templates/make-default.xql"/>
             <file type="template" path="www/admin/templates/one.tcl"/>
             <file type="query_file" path="www/admin/templates/one.xql"/>
+            <file type="tcl_util" path="www/admin/tools/form-custom.tcl"/>
+            <file type="tcl_util" path="www/admin/tools/sort-custom.tcl"/>
+            <file type="tcl_util" path="www/admin/tools/spell.tcl"/>
+            <file type="tcl_util" path="www/admin/tools/spelling-dictionary-add-to.tcl"/>
+            <file type="tcl_util" path="www/admin/tools/table-custom.tcl"/>
+            <file path="www/admin/tools/webspell"/>
             <file type="query_file" db_type="oracle" path="www/admin/user-classes/add-2-oracle.xql"/>
             <file type="query_file" db_type="postgresql" path="www/admin/user-classes/add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/user-classes/add-2.tcl"/>
