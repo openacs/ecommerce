@@ -100,7 +100,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_templates_audit_tr
-before update or delete on ec_templates
+after update or delete on ec_templates
 for each row execute procedure ec_templates_audit_tr ();
 
 -- this is where the ec_templates insert was
@@ -147,7 +147,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_categories_audit_tr
-before update or delete on ec_categories
+after update or delete on ec_categories
 for each row execute procedure ec_categories_audit_tr ();
 
 create sequence ec_subcategory_id_seq;
@@ -197,7 +197,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_subcategories_audit_tr
-before update or delete on ec_subcategories
+after update or delete on ec_subcategories
 for each row execute procedure ec_subcategories_audit_tr ();
 
 -- a view with category_name also
@@ -255,7 +255,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_subsubcategories_audit_tr
-before update or delete on ec_subsubcategories
+after update or delete on ec_subsubcategories
 for each row execute procedure ec_subsubcategories_audit_tr ();
 
 -- a view with full subcategory and category info as well 
@@ -458,7 +458,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_products_audit_tr
-before update or delete on ec_products
+after update or delete on ec_products
 for each row execute procedure ec_products_audit_tr ();
 
 
@@ -540,7 +540,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_sale_prices_audit_tr
-before update or delete on ec_sale_prices
+after update or delete on ec_sale_prices
 for each row execute procedure ec_sale_prices_audit_tr ();
 
 
@@ -585,7 +585,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_product_series_map_audit_tr
-before update or delete on ec_product_series_map
+after update or delete on ec_product_series_map
 for each row execute procedure ec_product_series_map_audit_tr ();
 
 
@@ -679,7 +679,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_user_classes_audit_tr
-before update or delete on ec_user_classes
+after update or delete on ec_user_classes
 for each row execute procedure ec_user_classes_audit_tr ();
 
 
@@ -725,7 +725,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_product_u_c_prices_audit_tr
-before update or delete on ec_product_user_class_prices
+after update or delete on ec_product_user_class_prices
 for each row execute procedure ec_product_u_c_prices_audit_tr ();
 
 
@@ -792,7 +792,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_product_recommend_audit_tr
-before update or delete on ec_product_recommendations
+after update or delete on ec_product_recommendations
 for each row execute procedure ec_product_recommend_audit_tr ();
 
 create view ec_recommendations_cats_view as
@@ -866,7 +866,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_user_class_user_audit_tr
-before update or delete on ec_user_class_user_map
+after update or delete on ec_user_class_user_map
 for each row execute procedure ec_user_class_user_audit_tr ();
 
 
@@ -907,7 +907,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_product_links_audit_tr
-before update or delete on ec_product_links
+after update or delete on ec_product_links
 for each row execute procedure ec_product_links_audit_tr ();
 
 create sequence ec_product_comment_id_seq start 1;
@@ -965,7 +965,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_product_comments_audit_tr
-before update or delete on ec_product_comments
+after update or delete on ec_product_comments
 for each row execute procedure ec_product_comments_audit_tr ();
 
 
@@ -1027,7 +1027,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_product_reviews_audit_tr
-before update or delete on ec_product_reviews
+after update or delete on ec_product_reviews
 for each row execute procedure ec_product_reviews_audit_tr ();
 
 
@@ -1075,7 +1075,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_cat_prod_map_audit_tr
-before update or delete on ec_category_product_map
+after update or delete on ec_category_product_map
 for each row execute procedure ec_cat_prod_map_audit_tr ();
 
 
@@ -1122,7 +1122,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_subcat_prod_map_audit_tr
-before update or delete on ec_subcategory_product_map
+after update or delete on ec_subcategory_product_map
 for each row execute procedure ec_subcat_prod_map_audit_tr ();
 
 
@@ -1167,7 +1167,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_subsubcat_prod_map_audit_tr
-before update or delete on ec_subsubcategory_product_map
+after update or delete on ec_subsubcategory_product_map
 for each row execute procedure ec_subsubcat_prod_map_audit_tr ();
 
 -- A template can have more than 1 category associated
@@ -1237,7 +1237,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_custom_prod_fields_audit_tr
-before update or delete on ec_custom_product_fields
+after update or delete on ec_custom_product_fields
 for each row execute procedure ec_custom_prod_fields_audit_tr ();
 
 -- more columns are added to this table (by Tcl scripts) when the 
@@ -1276,7 +1276,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_custom_p_f_values_audit_tr
-before update or delete on ec_custom_product_field_values
+after update or delete on ec_custom_product_field_values
 for each row execute procedure ec_custom_p_f_values_audit_tr();
 
 
@@ -1431,7 +1431,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_shipment_address_update_tr
-before insert on ec_shipments
+after insert on ec_shipments
 for each row execute procedure ec_shipment_address_update_tr ();
 
 create table ec_shipments_audit (
@@ -1474,7 +1474,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_shipments_audit_tr
-before update or delete on ec_shipments
+after update or delete on ec_shipments
 for each row execute procedure ec_shipments_audit_tr ();
 
 create sequence refund_id_seq;
@@ -1733,7 +1733,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_admin_settings_audit_tr
-before update or delete on ec_admin_settings
+after update or delete on ec_admin_settings
 for each row execute procedure ec_admin_settings_audit_tr ();
 
 -- this is where the ec_amdin_settings insert was
@@ -1781,7 +1781,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_sales_tax_by_state_audit_tr
-before update or delete on ec_sales_tax_by_state
+after update or delete on ec_sales_tax_by_state
 for each row execute procedure ec_sales_tax_by_state_audit_tr ();
 
 -- these tables are used if MultipleRetailersPerProductP is 1 in the
@@ -1891,7 +1891,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_retailers_audit_tr
-before update or delete on ec_retailers
+after update or delete on ec_retailers
 for each row execute procedure ec_retailers_audit_tr ();
 
 create sequence ec_retailer_location_seq start 1;
@@ -1996,7 +1996,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_retailer_locations_audit_tr
-before update or delete on ec_retailer_locations
+after update or delete on ec_retailer_locations
 for each row execute procedure ec_retailer_locations_audit_tr ();
 
 
@@ -2090,7 +2090,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_offers_audit_tr
-before update or delete on ec_offers
+after update or delete on ec_offers
 for each row execute procedure ec_offers_audit_tr ();
 
 -- Gift certificate stuff ----
@@ -2215,7 +2215,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_gift_certificates_audit_tr
-before update or delete on ec_gift_certificates
+after update or delete on ec_gift_certificates
 for each row execute procedure ec_gift_certificates_audit_tr ();
 
 
@@ -2278,7 +2278,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_user_identificate_date_tr
-before insert on ec_user_identification
+after insert on ec_user_identification
 for each row execute procedure ec_user_identificate_date_tr ();
 
 
@@ -2308,7 +2308,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_cs_interaction_inserts
-before insert on ec_customer_serv_interactions
+after insert on ec_customer_serv_interactions
 for each row execute procedure ec_cs_interaction_inserts ();
 
 create view ec_customer_service_reps
@@ -2357,7 +2357,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_cs_issue_inserts
-before insert on ec_customer_service_issues
+after insert on ec_customer_service_issues
 for each row execute procedure ec_cs_issue_inserts ();
 
 create table ec_customer_service_actions (
@@ -2425,7 +2425,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_picklist_items_audit_tr
-before update or delete on ec_picklist_items
+after update or delete on ec_picklist_items
 for each row execute procedure ec_picklist_items_audit_tr ();
 
 -- Canned responses for customer support
@@ -2503,7 +2503,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_email_templates_audit_tr
-before update or delete on ec_email_templates
+after update or delete on ec_email_templates
 for each row execute procedure ec_email_templates_audit_tr ();
 
 -- 6 default templates are predefined ecommerce-defaults.
@@ -2651,7 +2651,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger fin_trans_ccard_update_tr
-before insert on ec_financial_transactions
+after insert on ec_financial_transactions
 for each row execute procedure fin_trans_ccard_update_tr ();
 
 create table ec_cybercash_log (
@@ -3075,7 +3075,7 @@ END;
 ' language 'plpgsql';
 
 create trigger ec_cert_amount_remains
-before update on ec_gift_certificate_usage
+after update on ec_gift_certificate_usage
 for each row
 execute procedure trig_ec_cert_amount_remains();
 
