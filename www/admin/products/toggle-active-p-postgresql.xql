@@ -7,7 +7,7 @@
       <querytext>
       
 update ec_products 
-set active_p = logical_negation(active_p),
+set active_p = util__logical_negation(active_p),
     last_modified = current_timestamp, 
     last_modifying_user = :user_id,
     modified_ip_address = :peeraddr

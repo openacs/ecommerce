@@ -7,7 +7,7 @@
       <querytext>
       
 update ec_products 
-set no_shipping_avail_p = logical_negation(no_shipping_avail_p),
+set no_shipping_avail_p = util__logical_negation(no_shipping_avail_p),
     last_modified = current_timestamp, 
     last_modifying_user = :user_id,
     modified_ip_address = :peeraddr
