@@ -33,6 +33,8 @@ set deleted_address [ec_display_as_html [ec_pretty_mailing_address_from_args $li
 
 set header_set [ns_conn headers]
 set action [ns_set get [ns_conn headers] Referer]
+# This will set "action" to be "foo" out of "http://bar.com/baz/foo"
+set action [string range $action [expr [string last "/" $action] + 1] end]
 
 # Get the form vars that were passed on delete-address so that they
 # can be passed back to the calling url. gift-certificate-billing has
