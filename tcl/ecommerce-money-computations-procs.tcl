@@ -285,7 +285,11 @@ ad_proc ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item {
 	    set total_shipping_cost [expr $total_shipping_cost + ([ec_decode $weight "" 0 $weight] * $add_exp_amount_by_weight)]
 	}
     }
-    
+    # See if this is a pickup item
+    if { $shipping_method == "pickup" } {
+        set total_shipping_cost 0
+    }
+
     # To return:
 
     set shipping_to_return $total_shipping_cost
