@@ -77,11 +77,14 @@ if { $view_carrier == "all" } {
 }
 
 if { $view_shipment_date == "last_24" } {
-    set shipment_date_query_bit "sysdate-s.shipment_date <= 1"
+    #set shipment_date_query_bit "sysdate-s.shipment_date <= 1"
+    set shipment_date_query_bit [db_map last_24]
 } elseif { $view_shipment_date == "last_week" } {
-    set shipment_date_query_bit "sysdate-s.shipment_date <= 7"
+    #set shipment_date_query_bit "sysdate-s.shipment_date <= 7"
+    set shipment_date_query_bit [db_map last_week]
 } elseif { $view_shipment_date == "last_month" } {
-    set shipment_date_query_bit "months_between(sysdate,s.shipment_date) <= 1"
+    #set shipment_date_query_bit "months_between(sysdate,s.shipment_date) <= 1"
+    set shipment_date_query_bit [db_map last_month]
 } else {
     set shipment_date_query_bit ""
 }

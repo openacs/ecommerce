@@ -45,7 +45,7 @@
  
 <fullquery name="total_shipping_of_items_select">      
       <querytext>
-      select $shipping_of_items + shipping_charged from ec_orders where order_id=:order_id
+      select ${shipping_of_items}::numeric + shipping_charged from ec_orders where order_id=:order_id
       </querytext>
 </fullquery>
 
