@@ -12,7 +12,7 @@
         <owner url="mailto:bart.teeuwisse@7-sisters.com">Bart Teeuwisse</owner>
         <owner url="mailto:alfred@thunderstick.com">Alfred Werner</owner>
         <summary>The ACS 3.x based e-commerce solution ported to OpenACS.</summary>
-        <release-date>2005-02-10</release-date>
+        <release-date>2005-03-12</release-date>
         <vendor url="http://www.furfly.net">furfly.net, LLC</vendor>
         <description format="text/plain">This module implements all that IT needs for a standard business-to-consumer Web service. You can find a feature summary in the documentaion.</description>
 
