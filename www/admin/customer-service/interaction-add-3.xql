@@ -99,17 +99,6 @@
 </fullquery>
 
  
-<fullquery name="insert_new_ec_cs_issue">      
-      <querytext>
-      insert into ec_customer_service_issues
-    (issue_id, user_identification_id, order_id, open_date, close_date, closed_by)
-    values
-    (:issue_id, :uiid_to_insert, :order_id, $date_string, [ec_decode $close_issue_p "t" ":date_string" "''"], [ec_decode $close_issue_p "t" ":customer_service_rep" "''"])
-    
-      </querytext>
-</fullquery>
-
- 
 <fullquery name="insert_into_issue_tm">      
       <querytext>
       insert into ec_cs_issue_type_map

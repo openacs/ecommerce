@@ -237,7 +237,7 @@ if { ![empty_string_p $issue_id] } {
 if { [info exists order_id] && ![empty_string_p $order_id] } {
     # see who the order belongs to
     set row_exists_p [db_0or1row get_order_owner "select user_id as order_user_id from ec_orders where order_id=:order_id"]
-    if { { $row_exists_p==0 } } {
+    if { $row_exists_p==0 } {
 	ad_return_complaint 1 "<li>The order ID that you specified is invalid.  Please go back and check the order ID you entered.  If this issue is not about a specific order, please leave the order ID blank.\n"
 	return
     }
@@ -311,7 +311,8 @@ if { [info exists interaction_id] } {
 }
 
 # create the sql string for inserting open_date
-set date_string "to_date(:open_date_str,'YYYY-MM-DD HH24:MI:SS')"
+#set date_string "to_date(:open_date_str,'YYYY-MM-DD HH24:MI:SS')"
+set date_string [db_map date_string_sql]
 
 if { [info exists interaction_id] } {
     set create_new_interaction_p "f"
@@ -398,10 +399,17 @@ if { $create_new_interaction_p == "t" } {
 #     issue_id & issue_type for each issue_type in issue_type_list
 
 if { $create_new_issue_p == "t" } {
+    if { $close_issue_p == "t" } {
+	set customer_service_rep_bit :customer_service_rep
+	set close_date $date_string
+    } else {
+	set customer_service_rep_bit [db_map customer_service_rep_bit_null_sql]
+	set close_date [db_map close_date_null_sql]
+    }
     db_dml insert_new_ec_cs_issue "insert into ec_customer_service_issues
     (issue_id, user_identification_id, order_id, open_date, close_date, closed_by)
     values
-    (:issue_id, :uiid_to_insert, :order_id, $date_string, [ec_decode $close_issue_p "t" ":date_string" "''"], [ec_decode $close_issue_p "t" ":customer_service_rep" "''"])
+    (:issue_id, :uiid_to_insert, :order_id, $date_string, $close_date, $customer_service_rep_bit)
     "
     
     foreach issue_type $issue_type_list {
@@ -441,16 +449,16 @@ foreach info_used $info_used_list {
 db_release_unused_handles
 if { $submit == "Interaction Complete" } {
     if { ![info exists return_to_issue] } {
-	ad_returnredirect interaction-add.tcl
+	ad_returnredirect interaction-add
     } else {
-	ad_returnredirect "issue.tcl?issue_id=$return_to_issue"
+	ad_returnredirect "issue?issue_id=$return_to_issue"
     }
 } else {
     # (in c_user_identification_id, "c" stands for "confirmed" meaning
     # that they've been through interaction-add-3.tcl and now they cannot change
     # the user_identification_id)
     set insert_id 1
-    ad_returnredirect "interaction-add-2.tcl?[export_url_vars interaction_id interaction_type postal_code return_to_issue insert_id interaction_originator]&c_user_identification_id=$uiid_to_insert"
+    ad_returnredirect "interaction-add-2?[export_url_vars interaction_id interaction_type postal_code return_to_issue insert_id interaction_originator]&c_user_identification_id=$uiid_to_insert"
 }
 
 

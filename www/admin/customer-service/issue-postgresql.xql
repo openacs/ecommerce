@@ -12,5 +12,15 @@ where issue_id=:issue_id
       </querytext>
 </fullquery>
 
- 
+
+<fullquery name="get_actions_assoc_w_user">                                           <querytext> 
+select a.action_id, a.interaction_id, a.action_details, a.follow_up_required, i.customer_service_rep, i.interaction_date, to_char(i.interaction_date,'YYYY-MM-DD HH24:MI:SS') as full_interaction_date, i.interaction_originator, i.interaction_type, m.info_used
+from ec_customer_service_actions a
+    JOIN ec_customer_serv_interactions i on (a.interaction_id=i.interaction_id)
+    LEFT JOIN ec_cs_action_info_used_map m on (a.action_id=m.action_id)
+where a.issue_id=:issue_id
+order by a.action_id desc
+      </querytext>
+</fullquery>
+
 </queryset>
