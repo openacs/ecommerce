@@ -3,6 +3,7 @@ ad_page_contract {
   View orders by order state and order time.
 
   @author Eve Anderson (eveander@arsdigita.com)
+  @author Bart Teeuwisse (bart.teeuwisse@7-sisters.com)
   @creation-date Summer 1999
   @cvs-id by-order-state-and-time.tcl,v 3.2.2.3 2000/08/16 16:28:51 seb Exp
   @author ported by Jerry Asher (jerry@theashergroup.com)
@@ -77,25 +78,25 @@ if { $view_order_state == "reportable" } {
 }
 
 if { $view_confirmed == "last_24" } {
-    #set confirmed_query_bit "and sysdate-o.confirmed_date <= 1"
+    #set confirmed_query_bit "where sysdate-o.confirmed_date <= 1"
     set confirmed_query_bit [db_map last_24]
 } elseif { $view_confirmed == "last_week" } {
-    #set confirmed_query_bit "and sysdate-o.confirmed_date <= 7"
+    #set confirmed_query_bit "where sysdate-o.confirmed_date <= 7"
     set confirmed_query_bit [db_map last_week]
 } elseif { $view_confirmed == "last_month" } {
-    #set confirmed_query_bit "and months_between(sysdate,o.confirmed_date) <= 1"
+    #set confirmed_query_bit "where months_between(sysdate,o.confirmed_date) <= 1"
     set confirmed_query_bit [db_map last_month]
 } else {
-    set confirmed_query_bit ""
+    set confirmed_query_bit "where true"
 }
 
 set link_beginning "by-order-state-and-time?[export_url_vars view_order_state view_confirmed]"
 
 set order_by_clause [util_decode $order_by \
-    "order_id" "o.order_id" \
-    "confirmed_date" "o.confirmed_date" \
-    "order_state" "o.order_state" \
-    "name" "u.last_name, u.first_names" \
+    "order_id" "order_id" \
+    "confirmed_date" "confirmed_date" \
+    "order_state" "order_state" \
+    "name" "last_name, first_names" \
     "price" "ec_total_price(o.order_id)" \
     "n_items" "n_items"]
 
