@@ -5,20 +5,20 @@
 
 <partialquery name="last_24">
       <querytext>
-	and now()-i.open_date <= 1
+	and now()-i.open_date <= timespan_days(1)
       </querytext>
 </partialquery>
 
 
 <partialquery name="last_week">
       <querytext>
-	and now()-i.open_date <= 7
+	and now()-i.open_date <= timespan_days(7)
       </querytext>
 </partialquery>
 
 <partialquery name="last_month">
       <querytext>
-	and extract(month from now()) - extract(month from i.open_date) <= 1
+	and now()-i.open_date <= '1 month'::interval
       </querytext>
 </partialquery>
 
