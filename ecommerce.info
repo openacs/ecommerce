@@ -4,6 +4,7 @@
 <package key="ecommerce" url="http://www.arsdgita.com/acs-repository/apm/packages/ecommerce" type="apm_application">
     <package-name>E-Commerce</package-name>
     <pretty-plural>E-Commerce-ii</pretty-plural>
+    <initial-install-p>f</initial-install-p>
     <singleton-p>f</singleton-p>
 
     <version name="4.1a" url="http://www.arsdigita.com/acs-repository/download/apm/ecommerce-4.1a.apm">
@@ -36,288 +37,684 @@
             <file path="sql/oracle/ecommerce.sql.txt"/>
             <file type="data_model" db_type="oracle" path="sql/oracle/pl-sql-utilities-drop.sql"/>
             <file type="data_model" db_type="oracle" path="sql/oracle/pl-sql-utilities.sql"/>
+            <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-product-package-create.sql"/>
+            <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-product-package-drop.sql"/>
+            <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-product-sws-drop.sql"/>
+            <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-product-sws-setup.sql"/>
+            <file type="data_model_create" db_type="postgresql" path="sql/postgresql/ecommerce-create.sql"/>
+            <file type="data_model" db_type="postgresql" path="sql/postgresql/ecommerce-defaults.sql"/>
+            <file type="data_model_drop" db_type="postgresql" path="sql/postgresql/ecommerce-drop.sql"/>
+            <file type="data_model" db_type="postgresql" path="sql/postgresql/pl-sql-utilities-drop.sql"/>
+            <file type="data_model" db_type="postgresql" path="sql/postgresql/pl-sql-utilities.sql"/>
             <file path="tcl/cybercash-emulator-procs.tcl.for.testing"/>
+            <file type="query_file" db_type="oracle" path="tcl/ec-audit-trail-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ec-audit-trail-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ec-audit-trail-procs.tcl"/>
+            <file type="query_file" path="tcl/ec-audit-trail-procs.xql"/>
             <file type="tcl_procs" path="tcl/ec-style-procs.tcl"/>
+            <file type="query_file" path="tcl/ec-style-procs.xql"/>
+            <file type="query_file" db_type="oracle" path="tcl/ecommerce-credit-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ecommerce-credit-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-credit-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-credit-procs.xql"/>
+            <file type="query_file" db_type="oracle" path="tcl/ecommerce-customer-service-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ecommerce-customer-service-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-customer-service-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-customer-service-procs.xql"/>
+            <file type="query_file" db_type="oracle" path="tcl/ecommerce-email-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ecommerce-email-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-email-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-email-procs.xql"/>
+            <file type="query_file" db_type="oracle" path="tcl/ecommerce-money-computations-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ecommerce-money-computations-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-money-computations-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-money-computations-procs.xql"/>
+            <file type="query_file" db_type="oracle" path="tcl/ecommerce-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ecommerce-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-procs.xql"/>
+            <file type="query_file" db_type="oracle" path="tcl/ecommerce-scheduled-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ecommerce-scheduled-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-scheduled-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-scheduled-procs.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-ssl-procs.tcl"/>
+            <file type="query_file" db_type="oracle" path="tcl/ecommerce-state-changes-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ecommerce-state-changes-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-state-changes-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-state-changes-procs.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-styles-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-styles-procs.xql"/>
+            <file type="query_file" db_type="oracle" path="tcl/ecommerce-user-contributions-summary-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ecommerce-user-contributions-summary-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-user-contributions-summary-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-user-contributions-summary-procs.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-utilities-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-utilities-procs.xql"/>
+            <file type="query_file" db_type="oracle" path="tcl/ecommerce-widgets-procs-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="tcl/ecommerce-widgets-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-widgets-procs.tcl"/>
+            <file type="query_file" path="tcl/ecommerce-widgets-procs.xql"/>
             <file type="tcl_procs" path="tcl/ecommerce-zip-codes-procs.tcl"/>
             <file type="tcl_procs" path="tcl/qmail-procs.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/account-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/account-postgresql.xql"/>
             <file type="content_page" path="www/account.tcl"/>
+            <file type="query_file" path="www/account.xql"/>
             <file type="content_page" path="www/address-delete.tcl"/>
             <file type="content_page" path="www/admin/audit-one-id.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/audit-table-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/audit-table-postgresql.xql"/>
             <file type="content_page" path="www/admin/audit-table.tcl"/>
             <file type="content_page" path="www/admin/audit-tables.tcl"/>
             <file type="content_page" path="www/admin/audit.tcl"/>
             <file type="content_page" path="www/admin/cat/category-add-0.tcl"/>
+            <file type="query_file" path="www/admin/cat/category-add-0.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/cat/category-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/cat/category-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/cat/category-add-2.tcl"/>
+            <file type="query_file" path="www/admin/cat/category-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/cat/category-add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/cat/category-add-postgresql.xql"/>
             <file type="content_page" path="www/admin/cat/category-add.tcl"/>
+            <file type="query_file" path="www/admin/cat/category-add.xql"/>
             <file type="content_page" path="www/admin/cat/category-delete-2.tcl"/>
+            <file type="query_file" path="www/admin/cat/category-delete-2.xql"/>
             <file type="content_page" path="www/admin/cat/category-delete.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/cat/category-edit-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/cat/category-edit-postgresql.xql"/>
             <file type="content_page" path="www/admin/cat/category-edit.tcl"/>
             <file type="content_page" path="www/admin/cat/category-swap.tcl"/>
+            <file type="query_file" path="www/admin/cat/category-swap.xql"/>
             <file type="content_page" path="www/admin/cat/category.tcl"/>
+            <file type="query_file" path="www/admin/cat/category.xql"/>
             <file type="content_page" path="www/admin/cat/index.tcl"/>
+            <file type="query_file" path="www/admin/cat/index.xql"/>
             <file type="content_page" path="www/admin/cat/subcategory-add-0.tcl"/>
+            <file type="query_file" path="www/admin/cat/subcategory-add-0.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/cat/subcategory-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/cat/subcategory-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/cat/subcategory-add-2.tcl"/>
+            <file type="query_file" path="www/admin/cat/subcategory-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/cat/subcategory-add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/cat/subcategory-add-postgresql.xql"/>
             <file type="content_page" path="www/admin/cat/subcategory-add.tcl"/>
+            <file type="query_file" path="www/admin/cat/subcategory-add.xql"/>
             <file type="content_page" path="www/admin/cat/subcategory-delete-2.tcl"/>
+            <file type="query_file" path="www/admin/cat/subcategory-delete-2.xql"/>
             <file type="content_page" path="www/admin/cat/subcategory-delete.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/cat/subcategory-edit-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/cat/subcategory-edit-postgresql.xql"/>
             <file type="content_page" path="www/admin/cat/subcategory-edit.tcl"/>
             <file type="content_page" path="www/admin/cat/subcategory-swap.tcl"/>
+            <file type="query_file" path="www/admin/cat/subcategory-swap.xql"/>
             <file type="content_page" path="www/admin/cat/subcategory.tcl"/>
+            <file type="query_file" path="www/admin/cat/subcategory.xql"/>
             <file type="content_page" path="www/admin/cat/subsubcategory-add-0.tcl"/>
+            <file type="query_file" path="www/admin/cat/subsubcategory-add-0.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/cat/subsubcategory-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/cat/subsubcategory-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/cat/subsubcategory-add-2.tcl"/>
+            <file type="query_file" path="www/admin/cat/subsubcategory-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/cat/subsubcategory-add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/cat/subsubcategory-add-postgresql.xql"/>
             <file type="content_page" path="www/admin/cat/subsubcategory-add.tcl"/>
+            <file type="query_file" path="www/admin/cat/subsubcategory-add.xql"/>
             <file type="content_page" path="www/admin/cat/subsubcategory-delete-2.tcl"/>
+            <file type="query_file" path="www/admin/cat/subsubcategory-delete-2.xql"/>
             <file type="content_page" path="www/admin/cat/subsubcategory-delete.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/cat/subsubcategory-edit-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/cat/subsubcategory-edit-postgresql.xql"/>
             <file type="content_page" path="www/admin/cat/subsubcategory-edit.tcl"/>
             <file type="content_page" path="www/admin/cat/subsubcategory-swap.tcl"/>
+            <file type="query_file" path="www/admin/cat/subsubcategory-swap.xql"/>
             <file type="content_page" path="www/admin/cat/subsubcategory.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-reviews/approval-change-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-reviews/approval-change-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-reviews/approval-change.tcl"/>
             <file type="content_page" path="www/admin/customer-reviews/index-2.tcl"/>
             <file type="content_page" path="www/admin/customer-reviews/index.tcl"/>
             <file type="content_page" path="www/admin/customer-reviews/one.tcl"/>
+            <file type="query_file" path="www/admin/customer-reviews/one.xql"/>
             <file type="content_page" path="www/admin/customer-service/actions.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/actions.xql"/>
             <file type="content_page" path="www/admin/customer-service/active-toggle.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/active-toggle.xql"/>
             <file type="content_page" path="www/admin/customer-service/canned-response-add-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/canned-response-add-2.xql"/>
             <file type="content_page" path="www/admin/customer-service/canned-response-add.tcl"/>
             <file type="content_page" path="www/admin/customer-service/canned-response-delete-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/canned-response-delete-2.xql"/>
             <file type="content_page" path="www/admin/customer-service/canned-response-delete.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/canned-response-delete.xql"/>
             <file type="content_page" path="www/admin/customer-service/canned-response-edit-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/canned-response-edit-2.xql"/>
             <file type="content_page" path="www/admin/customer-service/canned-response-edit.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/canned-response-edit.xql"/>
             <file type="content_page" path="www/admin/customer-service/canned-responses.tcl"/>
             <file type="content_page" path="www/admin/customer-service/customer-search.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/email-send-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/email-send-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/email-send-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/email-send-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/email-send-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/email-send-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/email-send.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/email-send.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/gift-certificate-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/gift-certificate-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/gift-certificate-add-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/gift-certificate-add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/gift-certificate-add-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/gift-certificate-add.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/gift-certificate-add.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/gift-certificate-edit-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/gift-certificate-edit-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/gift-certificate-edit.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/gift-certificate-void-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/gift-certificate-void-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/gift-certificate-void-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/gift-certificate-void-2.xql"/>
             <file type="content_page" path="www/admin/customer-service/gift-certificate-void.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/gift-certificates-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/gift-certificates-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/gift-certificates.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/gift-certificates.xql"/>
             <file type="content_page" path="www/admin/customer-service/index.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/index.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/interaction-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/interaction-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/interaction-add-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/interaction-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/interaction-add-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/interaction-add-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/interaction-add-3.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/interaction-add-3.xql"/>
             <file type="content_page" path="www/admin/customer-service/interaction-add.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/interaction-add.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/interaction-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/interaction-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/interaction-summary.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/interaction-summary.xql"/>
             <file type="content_page" path="www/admin/customer-service/interaction.tcl"/>
             <file type="content_page" path="www/admin/customer-service/interactions.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/interactions.xql"/>
             <file type="content_page" path="www/admin/customer-service/issue-edit-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/issue-edit-2.xql"/>
             <file type="content_page" path="www/admin/customer-service/issue-edit.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/issue-edit.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/issue-open-or-close-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/issue-open-or-close-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/issue-open-or-close-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/issue-open-or-close-2.xql"/>
             <file type="content_page" path="www/admin/customer-service/issue-open-or-close.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/issue-open-or-close.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/issue-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/issue-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/issue.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/issue.xql"/>
             <file type="content_page" path="www/admin/customer-service/issues.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/issues.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/picklist-item-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/picklist-item-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/picklist-item-add-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/picklist-item-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/picklist-item-add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/picklist-item-add-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/picklist-item-add.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/picklist-item-add.xql"/>
             <file type="content_page" path="www/admin/customer-service/picklist-item-delete-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/picklist-item-delete-2.xql"/>
             <file type="content_page" path="www/admin/customer-service/picklist-item-delete.tcl"/>
             <file type="content_page" path="www/admin/customer-service/picklist-item-swap.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/picklist-item-swap.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/picklist-row-delete-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/picklist-row-delete-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/picklist-row-delete.tcl"/>
             <file type="content_page" path="www/admin/customer-service/picklist-value-add.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/picklist-value-add.xql"/>
             <file type="content_page" path="www/admin/customer-service/picklists.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/spam-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/spam-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/spam-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/customer-service/spam-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/customer-service/spam-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/customer-service/spam-3.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/spam-3.xql"/>
             <file type="content_page" path="www/admin/customer-service/spam-log.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/spam-log.xql"/>
             <file type="content_page" path="www/admin/customer-service/spam.tcl"/>
             <file type="content_page" path="www/admin/customer-service/statistics.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/statistics.xql"/>
             <file type="content_page" path="www/admin/customer-service/user-identification-edit.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/user-identification-edit.xql"/>
             <file type="content_page" path="www/admin/customer-service/user-identification-match-2.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/user-identification-match-2.xql"/>
             <file type="content_page" path="www/admin/customer-service/user-identification-match.tcl"/>
             <file type="content_page" path="www/admin/customer-service/user-identification-search.tcl"/>
             <file type="content_page" path="www/admin/customer-service/user-identification.tcl"/>
+            <file type="query_file" path="www/admin/customer-service/user-identification.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/email-templates/add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/email-templates/add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/email-templates/add-2.tcl"/>
             <file type="content_page" path="www/admin/email-templates/add.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/email-templates/edit-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/email-templates/edit-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/email-templates/edit-2.tcl"/>
             <file type="content_page" path="www/admin/email-templates/edit.tcl"/>
+            <file type="query_file" path="www/admin/email-templates/edit.xql"/>
             <file type="content_page" path="www/admin/email-templates/index.tcl"/>
             <file type="content_page" path="www/admin/email-templates/variables.tcl"/>
             <file type="content_page" path="www/admin/files.list"/>
             <file type="content_page" path="www/admin/index.tcl"/>
+            <file type="query_file" path="www/admin/index.xql"/>
             <file type="content_page" path="www/admin/mailing-lists/index.tcl"/>
             <file type="content_page" path="www/admin/mailing-lists/member-add-2.tcl"/>
             <file type="content_page" path="www/admin/mailing-lists/member-add.tcl"/>
+            <file type="query_file" path="www/admin/mailing-lists/member-add.xql"/>
             <file type="content_page" path="www/admin/mailing-lists/member-remove-2.tcl"/>
+            <file type="query_file" path="www/admin/mailing-lists/member-remove-2.xql"/>
             <file type="content_page" path="www/admin/mailing-lists/member-remove.tcl"/>
             <file type="content_page" path="www/admin/mailing-lists/one.tcl"/>
             <file type="content_page" path="www/admin/orders/address-add-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/address-add-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/address-add-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/address-add-3.tcl"/>
+            <file type="query_file" path="www/admin/orders/address-add-3.xql"/>
             <file type="content_page" path="www/admin/orders/address-add.tcl"/>
+            <file type="query_file" path="www/admin/orders/address-add.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/by-order-state-and-time-oracle.xql"/>
             <file type="content_page" path="www/admin/orders/by-order-state-and-time.tcl"/>
+            <file type="query_file" path="www/admin/orders/by-order-state-and-time.xql"/>
             <file type="content_page" path="www/admin/orders/comments-edit.tcl"/>
+            <file type="query_file" path="www/admin/orders/comments-edit.xql"/>
             <file type="content_page" path="www/admin/orders/comments.tcl"/>
+            <file type="query_file" path="www/admin/orders/comments.xql"/>
             <file type="content_page" path="www/admin/orders/creditcard-add-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/creditcard-add-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/creditcard-add-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/creditcard-add-3.tcl"/>
+            <file type="query_file" path="www/admin/orders/creditcard-add-3.xql"/>
             <file type="content_page" path="www/admin/orders/creditcard-add.tcl"/>
+            <file type="query_file" path="www/admin/orders/creditcard-add.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/fulfill-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/fulfill-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/fulfill-2.tcl"/>
+            <file type="query_file" path="www/admin/orders/fulfill-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/fulfill-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/fulfill-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/fulfill-3.tcl"/>
+            <file type="query_file" path="www/admin/orders/fulfill-3.xql"/>
             <file type="content_page" path="www/admin/orders/fulfill.tcl"/>
+            <file type="query_file" path="www/admin/orders/fulfill.xql"/>
             <file type="content_page" path="www/admin/orders/fulfillment-items-needed.tcl"/>
+            <file type="query_file" path="www/admin/orders/fulfillment-items-needed.xql"/>
             <file type="content_page" path="www/admin/orders/fulfillment.tcl"/>
+            <file type="query_file" path="www/admin/orders/fulfillment.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/gift-certificate-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/gift-certificate-postgresql.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/gift-certificate-void-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/gift-certificate-void-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/gift-certificate-void-2.tcl"/>
             <file type="content_page" path="www/admin/orders/gift-certificate-void.tcl"/>
             <file type="content_page" path="www/admin/orders/gift-certificate.tcl"/>
             <file type="content_page" path="www/admin/orders/gift-certificates-issued.tcl"/>
+            <file type="query_file" path="www/admin/orders/gift-certificates-issued.xql"/>
             <file type="content_page" path="www/admin/orders/gift-certificates.tcl"/>
+            <file type="query_file" path="www/admin/orders/gift-certificates.xql"/>
             <file type="content_page" path="www/admin/orders/index.tcl"/>
+            <file type="query_file" path="www/admin/orders/index.xql"/>
             <file type="content_page" path="www/admin/orders/items-add-2.tcl"/>
+            <file type="query_file" path="www/admin/orders/items-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/items-add-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/items-add-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/items-add-3.tcl"/>
+            <file type="query_file" path="www/admin/orders/items-add-3.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/items-add-4-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/items-add-4-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/items-add-4.tcl"/>
+            <file type="query_file" path="www/admin/orders/items-add-4.xql"/>
             <file type="content_page" path="www/admin/orders/items-add.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/items-return-2-oracle.xql"/>
             <file type="content_page" path="www/admin/orders/items-return-2.tcl"/>
+            <file type="query_file" path="www/admin/orders/items-return-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/items-return-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/items-return-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/items-return-3.tcl"/>
+            <file type="query_file" path="www/admin/orders/items-return-3.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/items-return-4-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/items-return-4-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/items-return-4.tcl"/>
+            <file type="query_file" path="www/admin/orders/items-return-4.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/items-return-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/items-return-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/items-return.tcl"/>
+            <file type="query_file" path="www/admin/orders/items-return.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/items-void-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/items-void-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/items-void-2.tcl"/>
+            <file type="query_file" path="www/admin/orders/items-void-2.xql"/>
             <file type="content_page" path="www/admin/orders/items-void.tcl"/>
+            <file type="query_file" path="www/admin/orders/items-void.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/one-oracle.xql"/>
             <file type="content_page" path="www/admin/orders/one.tcl"/>
+            <file type="query_file" path="www/admin/orders/one.xql"/>
             <file type="content_page" path="www/admin/orders/refunds.tcl"/>
+            <file type="query_file" path="www/admin/orders/refunds.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/revenue-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/revenue-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/revenue.tcl"/>
             <file type="content_page" path="www/admin/orders/search.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/shipments-oracle.xql"/>
             <file type="content_page" path="www/admin/orders/shipments.tcl"/>
+            <file type="query_file" path="www/admin/orders/shipments.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/track-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/track-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/track.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/void-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/void-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/void-2.tcl"/>
+            <file type="query_file" path="www/admin/orders/void-2.xql"/>
             <file type="content_page" path="www/admin/orders/void.tcl"/>
+            <file type="query_file" path="www/admin/orders/void.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/problems/index-oracle.xql"/>
             <file type="content_page" path="www/admin/problems/index.tcl"/>
+            <file type="query_file" path="www/admin/problems/index.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/problems/resolve-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/problems/resolve-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/problems/resolve-2.tcl"/>
             <file type="content_page" path="www/admin/problems/resolve.tcl"/>
+            <file type="query_file" path="www/admin/problems/resolve.xql"/>
             <file type="content_page" path="www/admin/products/add-2.tcl"/>
+            <file type="query_file" path="www/admin/products/add-2.xql"/>
             <file type="content_page" path="www/admin/products/add-3.tcl"/>
+            <file type="query_file" path="www/admin/products/add-3.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/add-4-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/add-4-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/add-4.tcl"/>
+            <file type="query_file" path="www/admin/products/add-4.xql"/>
             <file type="content_page" path="www/admin/products/add.tcl"/>
+            <file type="query_file" path="www/admin/products/add.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/by-category-oracle.xql"/>
             <file type="content_page" path="www/admin/products/by-category.tcl"/>
+            <file type="query_file" path="www/admin/products/by-category.xql"/>
             <file type="content_page" path="www/admin/products/categories-upload-2.tcl"/>
+            <file type="query_file" path="www/admin/products/categories-upload-2.xql"/>
             <file type="content_page" path="www/admin/products/categories-upload.tcl"/>
             <file type="content_page" path="www/admin/products/custom-field-add-2.tcl"/>
+            <file type="query_file" path="www/admin/products/custom-field-add-2.xql"/>
             <file type="content_page" path="www/admin/products/custom-field-add-3.tcl"/>
+            <file type="query_file" path="www/admin/products/custom-field-add-3.xql"/>
             <file type="content_page" path="www/admin/products/custom-field-add.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/custom-field-edit-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/custom-field-edit-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/custom-field-edit-2.tcl"/>
+            <file type="query_file" path="www/admin/products/custom-field-edit-2.xql"/>
             <file type="content_page" path="www/admin/products/custom-field-edit.tcl"/>
+            <file type="query_file" path="www/admin/products/custom-field-edit.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/custom-field-status-change-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/custom-field-status-change-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/custom-field-status-change.tcl"/>
             <file type="content_page" path="www/admin/products/custom-field.tcl"/>
+            <file type="query_file" path="www/admin/products/custom-field.xql"/>
             <file type="content_page" path="www/admin/products/custom-fields.tcl"/>
+            <file type="query_file" path="www/admin/products/custom-fields.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/delete-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/delete-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/delete-2.tcl"/>
+            <file type="query_file" path="www/admin/products/delete-2.xql"/>
             <file type="content_page" path="www/admin/products/delete.tcl"/>
             <file type="content_page" path="www/admin/products/edit-2.tcl"/>
+            <file type="query_file" path="www/admin/products/edit-2.xql"/>
             <file type="content_page" path="www/admin/products/edit-3.tcl"/>
+            <file type="query_file" path="www/admin/products/edit-3.xql"/>
             <file type="content_page" path="www/admin/products/edit.tcl"/>
+            <file type="query_file" path="www/admin/products/edit.xql"/>
             <file type="content_page" path="www/admin/products/extras-upload-2.tcl"/>
             <file type="content_page" path="www/admin/products/extras-upload.tcl"/>
             <file type="content_page" path="www/admin/products/index.tcl"/>
+            <file type="query_file" path="www/admin/products/index.xql"/>
             <file type="content_page" path="www/admin/products/link-add-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/link-add-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/link-add-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/link-add-3.tcl"/>
+            <file type="query_file" path="www/admin/products/link-add-3.xql"/>
             <file type="content_page" path="www/admin/products/link-add.tcl"/>
+            <file type="query_file" path="www/admin/products/link-add.xql"/>
             <file type="content_page" path="www/admin/products/link-delete-2.tcl"/>
+            <file type="query_file" path="www/admin/products/link-delete-2.xql"/>
             <file type="content_page" path="www/admin/products/link-delete.tcl"/>
             <file type="content_page" path="www/admin/products/link.tcl"/>
+            <file type="query_file" path="www/admin/products/link.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/list-oracle.xql"/>
             <file type="content_page" path="www/admin/products/list.tcl"/>
+            <file type="query_file" path="www/admin/products/list.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/offer-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/offer-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/offer-add-2.tcl"/>
+            <file type="query_file" path="www/admin/products/offer-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/offer-add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/offer-add-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/offer-add.tcl"/>
+            <file type="query_file" path="www/admin/products/offer-add.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/offer-delete-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/offer-delete-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/offer-delete-2.tcl"/>
             <file type="content_page" path="www/admin/products/offer-delete.tcl"/>
             <file type="content_page" path="www/admin/products/offer-edit-2.tcl"/>
+            <file type="query_file" path="www/admin/products/offer-edit-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/offer-edit-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/offer-edit-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/offer-edit-3.tcl"/>
             <file type="content_page" path="www/admin/products/offer-edit.tcl"/>
+            <file type="query_file" path="www/admin/products/offer-edit.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/offers-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/offers-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/offers.tcl"/>
+            <file type="query_file" path="www/admin/products/offers.xql"/>
             <file type="content_page" path="www/admin/products/one-subcategory.tcl"/>
             <file type="content_page" path="www/admin/products/one-subsubcategory.tcl"/>
             <file type="content_page" path="www/admin/products/one.tcl"/>
+            <file type="query_file" path="www/admin/products/one.xql"/>
             <file type="content_page" path="www/admin/products/recommendation-add-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/recommendation-add-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/recommendation-add-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/recommendation-add-3.tcl"/>
+            <file type="query_file" path="www/admin/products/recommendation-add-3.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/recommendation-add-4-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/recommendation-add-4-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/recommendation-add-4.tcl"/>
+            <file type="query_file" path="www/admin/products/recommendation-add-4.xql"/>
             <file type="content_page" path="www/admin/products/recommendation-add.tcl"/>
+            <file type="query_file" path="www/admin/products/recommendation-add.xql"/>
             <file type="content_page" path="www/admin/products/recommendation-delete-2.tcl"/>
+            <file type="query_file" path="www/admin/products/recommendation-delete-2.xql"/>
             <file type="content_page" path="www/admin/products/recommendation-delete.tcl"/>
+            <file type="query_file" path="www/admin/products/recommendation-delete.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/recommendation-text-edit-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/recommendation-text-edit-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/recommendation-text-edit-2.tcl"/>
             <file type="content_page" path="www/admin/products/recommendation-text-edit.tcl"/>
+            <file type="query_file" path="www/admin/products/recommendation-text-edit.xql"/>
             <file type="content_page" path="www/admin/products/recommendation.tcl"/>
+            <file type="query_file" path="www/admin/products/recommendation.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/recommendations-oracle.xql"/>
             <file type="content_page" path="www/admin/products/recommendations.tcl"/>
+            <file type="query_file" path="www/admin/products/recommendations.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/review-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/review-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/review-add-2.tcl"/>
+            <file type="query_file" path="www/admin/products/review-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/review-add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/review-add-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/review-add.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/review-edit-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/review-edit-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/review-edit.tcl"/>
             <file type="content_page" path="www/admin/products/review.tcl"/>
+            <file type="query_file" path="www/admin/products/review.xql"/>
             <file type="content_page" path="www/admin/products/reviews.tcl"/>
+            <file type="query_file" path="www/admin/products/reviews.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/sale-price-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/sale-price-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/sale-price-add-2.tcl"/>
+            <file type="query_file" path="www/admin/products/sale-price-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/sale-price-add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/sale-price-add-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/sale-price-add.tcl"/>
             <file type="content_page" path="www/admin/products/sale-price-edit-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/sale-price-edit-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/sale-price-edit-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/sale-price-edit-3.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/sale-price-edit-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/sale-price-edit-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/sale-price-edit.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/sale-price-expire-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/sale-price-expire-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/sale-price-expire-2.tcl"/>
             <file type="content_page" path="www/admin/products/sale-price-expire.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/sale-prices-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/sale-prices-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/sale-prices.tcl"/>
             <file type="content_page" path="www/admin/products/search.tcl"/>
+            <file type="query_file" path="www/admin/products/search.xql"/>
             <file type="content_page" path="www/admin/products/subsubcategory-property-toggle.tcl"/>
+            <file type="query_file" path="www/admin/products/subsubcategory-property-toggle.xql"/>
             <file type="content_page" path="www/admin/products/supporting-file-delete-2.tcl"/>
+            <file type="query_file" path="www/admin/products/supporting-file-delete-2.xql"/>
             <file type="content_page" path="www/admin/products/supporting-file-delete.tcl"/>
             <file type="content_page" path="www/admin/products/supporting-files-upload-2.tcl"/>
+            <file type="query_file" path="www/admin/products/supporting-files-upload-2.xql"/>
             <file type="content_page" path="www/admin/products/supporting-files-upload.tcl"/>
+            <file type="query_file" path="www/admin/products/supporting-files-upload.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/toggle-active-p-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/toggle-active-p-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/toggle-active-p.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/toggle-no-shipping-avail-p-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/toggle-no-shipping-avail-p-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/toggle-no-shipping-avail-p.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/upload-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/upload-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/upload-2.tcl"/>
             <file type="content_page" path="www/admin/products/upload-utilities.tcl"/>
             <file type="content_page" path="www/admin/products/upload.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/restore-one-id-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/restore-one-id-postgresql.xql"/>
             <file type="content_page" path="www/admin/restore-one-id.tcl"/>
             <file type="content_page" path="www/admin/retailers/add-2.tcl"/>
             <file type="content_page" path="www/admin/retailers/add-3.tcl"/>
+            <file type="query_file" path="www/admin/retailers/add-3.xql"/>
             <file type="content_page" path="www/admin/retailers/add.tcl"/>
             <file type="content_page" path="www/admin/retailers/edit-2.tcl"/>
+            <file type="query_file" path="www/admin/retailers/edit-2.xql"/>
             <file type="content_page" path="www/admin/retailers/edit.tcl"/>
+            <file type="query_file" path="www/admin/retailers/edit.xql"/>
             <file type="content_page" path="www/admin/retailers/index.tcl"/>
+            <file type="query_file" path="www/admin/retailers/index.xql"/>
             <file type="content_page" path="www/admin/retailers/one.tcl"/>
+            <file type="query_file" path="www/admin/retailers/one.xql"/>
             <file type="content_page" path="www/admin/sales-tax/clear-2.tcl"/>
+            <file type="query_file" path="www/admin/sales-tax/clear-2.xql"/>
             <file type="content_page" path="www/admin/sales-tax/clear.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/sales-tax/edit-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/sales-tax/edit-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/sales-tax/edit-2.tcl"/>
+            <file type="query_file" path="www/admin/sales-tax/edit-2.xql"/>
             <file type="content_page" path="www/admin/sales-tax/edit.tcl"/>
+            <file type="query_file" path="www/admin/sales-tax/edit.xql"/>
             <file type="content_page" path="www/admin/sales-tax/index.tcl"/>
+            <file type="query_file" path="www/admin/sales-tax/index.xql"/>
             <file type="content_page" path="www/admin/shipping-costs/edit-2.tcl"/>
+            <file type="query_file" path="www/admin/shipping-costs/edit-2.xql"/>
             <file type="content_page" path="www/admin/shipping-costs/edit.tcl"/>
             <file type="content_page" path="www/admin/shipping-costs/examples.tcl"/>
             <file type="content_page" path="www/admin/shipping-costs/index.tcl"/>
+            <file type="query_file" path="www/admin/shipping-costs/index.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/templates/add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/templates/add-2-postgresql.xql"/>
             <file type="template" path="www/admin/templates/add-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/templates/add-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/templates/add-3-postgresql.xql"/>
             <file type="template" path="www/admin/templates/add-3.tcl"/>
+            <file type="query_file" path="www/admin/templates/add-3.xql"/>
             <file type="template" path="www/admin/templates/add.tcl"/>
+            <file type="query_file" path="www/admin/templates/add.xql"/>
             <file type="template" path="www/admin/templates/category-associate-2.tcl"/>
+            <file type="query_file" path="www/admin/templates/category-associate-2.xql"/>
             <file type="template" path="www/admin/templates/category-associate.tcl"/>
+            <file type="query_file" path="www/admin/templates/category-associate.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/templates/delete-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/templates/delete-2-postgresql.xql"/>
             <file type="template" path="www/admin/templates/delete-2.tcl"/>
+            <file type="query_file" path="www/admin/templates/delete-2.xql"/>
             <file type="template" path="www/admin/templates/delete.tcl"/>
+            <file type="query_file" path="www/admin/templates/delete.xql"/>
             <file type="template" path="www/admin/templates/edit-2.tcl"/>
+            <file type="query_file" path="www/admin/templates/edit-2.xql"/>
             <file type="template" path="www/admin/templates/edit.tcl"/>
+            <file type="query_file" path="www/admin/templates/edit.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/templates/index-oracle.xql"/>
             <file type="template" path="www/admin/templates/index.tcl"/>
+            <file type="query_file" path="www/admin/templates/index.xql"/>
             <file type="template" path="www/admin/templates/make-default-2.tcl"/>
+            <file type="query_file" path="www/admin/templates/make-default-2.xql"/>
             <file type="template" path="www/admin/templates/make-default.tcl"/>
+            <file type="query_file" path="www/admin/templates/make-default.xql"/>
             <file type="template" path="www/admin/templates/one.tcl"/>
+            <file type="query_file" path="www/admin/templates/one.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/user-classes/add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/user-classes/add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/user-classes/add-2.tcl"/>
+            <file type="query_file" path="www/admin/user-classes/add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/user-classes/add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/user-classes/add-postgresql.xql"/>
             <file type="content_page" path="www/admin/user-classes/add.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/admin/user-classes/approve-toggle-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/user-classes/approve-toggle-postgresql.xql"/>
             <file type="content_page" path="www/admin/user-classes/approve-toggle.tcl"/>
             <file type="content_page" path="www/admin/user-classes/delete-2.tcl"/>
+            <file type="query_file" path="www/admin/user-classes/delete-2.xql"/>
             <file type="content_page" path="www/admin/user-classes/delete.tcl"/>
+            <file type="query_file" path="www/admin/user-classes/delete.xql"/>
             <file type="content_page" path="www/admin/user-classes/edit.tcl"/>
+            <file type="query_file" path="www/admin/user-classes/edit.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/user-classes/index-oracle.xql"/>
             <file type="content_page" path="www/admin/user-classes/index.tcl"/>
+            <file type="query_file" path="www/admin/user-classes/index.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/user-classes/member-add-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/user-classes/member-add-2-postgresql.xql"/>
             <file type="content_page" path="www/admin/user-classes/member-add-2.tcl"/>
+            <file type="query_file" path="www/admin/user-classes/member-add-2.xql"/>
             <file type="content_page" path="www/admin/user-classes/member-add.tcl"/>
+            <file type="query_file" path="www/admin/user-classes/member-add.xql"/>
             <file type="content_page" path="www/admin/user-classes/member-delete-2.tcl"/>
+            <file type="query_file" path="www/admin/user-classes/member-delete-2.xql"/>
             <file type="content_page" path="www/admin/user-classes/member-delete.tcl"/>
             <file type="content_page" path="www/admin/user-classes/members.tcl"/>
+            <file type="query_file" path="www/admin/user-classes/members.xql"/>
             <file type="content_page" path="www/admin/user-classes/one.tcl"/>
             <file type="content_page" path="www/category-browse-subcategory.tcl"/>
+            <file type="query_file" path="www/category-browse-subcategory.xql"/>
             <file type="content_page" path="www/category-browse-subsubcategory.tcl"/>
+            <file type="query_file" path="www/category-browse-subsubcategory.xql"/>
             <file type="content_page" path="www/category-browse.tcl"/>
+            <file type="query_file" path="www/category-browse.xql"/>
+            <file type="query_file" db_type="oracle" path="www/checkout-2-oracle.xql"/>
             <file type="content_page" path="www/checkout-2.tcl"/>
+            <file type="query_file" path="www/checkout-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/checkout-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/checkout-3-postgresql.xql"/>
             <file type="content_page" path="www/checkout-3.tcl"/>
+            <file type="query_file" path="www/checkout-3.xql"/>
+            <file type="query_file" db_type="oracle" path="www/checkout-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/checkout-postgresql.xql"/>
             <file type="content_page" path="www/checkout.tcl"/>
+            <file type="query_file" path="www/checkout.xql"/>
+            <file type="query_file" db_type="oracle" path="www/credit-card-correction-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/credit-card-correction-2-postgresql.xql"/>
             <file type="content_page" path="www/credit-card-correction-2.tcl"/>
+            <file type="query_file" path="www/credit-card-correction-2.xql"/>
             <file type="content_page" path="www/credit-card-correction.tcl"/>
+            <file type="query_file" path="www/credit-card-correction.xql"/>
             <file type="documentation" path="www/doc/audit.adp"/>
             <file type="documentation" path="www/doc/ecommerce-customer-service.adp"/>
             <file type="documentation" path="www/doc/ecommerce-customer-service.tcl"/>
@@ -337,16 +734,32 @@
             <file type="documentation" path="www/doc/style-one.tcl"/>
             <file type="documentation" path="www/doc/style.adp"/>
             <file type="documentation" path="www/doc/styles.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/finalize-order-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/finalize-order-postgresql.xql"/>
             <file type="content_page" path="www/finalize-order.tcl"/>
+            <file type="query_file" path="www/finalize-order.xql"/>
+            <file type="query_file" db_type="oracle" path="www/gift-certificate-claim-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/gift-certificate-claim-2-postgresql.xql"/>
             <file type="content_page" path="www/gift-certificate-claim-2.tcl"/>
+            <file type="query_file" path="www/gift-certificate-claim-2.xql"/>
             <file type="content_page" path="www/gift-certificate-claim.tcl"/>
+            <file type="query_file" path="www/gift-certificate-claim.xql"/>
+            <file type="query_file" db_type="oracle" path="www/gift-certificate-finalize-order-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/gift-certificate-finalize-order-postgresql.xql"/>
             <file type="content_page" path="www/gift-certificate-finalize-order.tcl"/>
+            <file type="query_file" path="www/gift-certificate-finalize-order.xql"/>
             <file type="content_page" path="www/gift-certificate-order-2.tcl"/>
+            <file type="query_file" path="www/gift-certificate-order-2.xql"/>
             <file type="content_page" path="www/gift-certificate-order-3.tcl"/>
+            <file type="query_file" path="www/gift-certificate-order-3.xql"/>
+            <file type="query_file" db_type="oracle" path="www/gift-certificate-order-4-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/gift-certificate-order-4-postgresql.xql"/>
             <file type="content_page" path="www/gift-certificate-order-4.tcl"/>
+            <file type="query_file" path="www/gift-certificate-order-4.xql"/>
             <file type="content_page" path="www/gift-certificate-order.tcl"/>
             <file type="content_page" path="www/gift-certificate-thank-you.tcl"/>
             <file type="content_page" path="www/gift-certificate.tcl"/>
+            <file type="query_file" path="www/gift-certificate.xql"/>
             <file type="content_page" path="www/graphics/add-to-cart.gif"/>
             <file type="content_page" path="www/graphics/star-empty.gif"/>
             <file type="content_page" path="www/graphics/star-full.gif"/>
@@ -354,35 +767,64 @@
             <file type="content_page" path="www/graphics/stars/star-empty.gif"/>
             <file type="content_page" path="www/graphics/stars/star-full.gif"/>
             <file type="content_page" path="www/graphics/stars/star-half.gif"/>
+            <file type="query_file" db_type="oracle" path="www/index-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/index-postgresql.xql"/>
             <file type="content_page" path="www/index.tcl"/>
+            <file type="query_file" path="www/index.xql"/>
             <file type="content_page" path="www/mailing-list-add-2.tcl"/>
+            <file type="query_file" path="www/mailing-list-add-2.xql"/>
             <file type="content_page" path="www/mailing-list-add.tcl"/>
+            <file type="query_file" path="www/mailing-list-add.xql"/>
             <file type="content_page" path="www/mailing-list-remove.tcl"/>
+            <file type="query_file" path="www/mailing-list-remove.xql"/>
             <file type="content_page" path="www/order.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/payment-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/payment-postgresql.xql"/>
             <file type="content_page" path="www/payment.tcl"/>
+            <file type="query_file" path="www/payment.xql"/>
+            <file type="query_file" db_type="oracle" path="www/process-order-quantity-shipping-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/process-order-quantity-shipping-postgresql.xql"/>
             <file type="content_page" path="www/process-order-quantity-shipping.tcl"/>
+            <file type="query_file" path="www/process-order-quantity-shipping.xql"/>
+            <file type="query_file" db_type="oracle" path="www/process-payment-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/process-payment-postgresql.xql"/>
             <file type="content_page" path="www/process-payment.tcl"/>
+            <file type="query_file" path="www/process-payment.xql"/>
             <file type="content_page" path="www/product-file/index.vuh"/>
+            <file type="query_file" db_type="oracle" path="www/product-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/product-postgresql.xql"/>
             <file type="content_page" path="www/product-search.tcl"/>
+            <file type="query_file" path="www/product-search.xql"/>
             <file type="content_page" path="www/product.tcl"/>
+            <file type="query_file" path="www/product.xql"/>
             <file type="content_page" path="www/register/awaiting-approval.adp"/>
             <file type="content_page" path="www/register/awaiting-approval.tcl"/>
+            <file type="query_file" path="www/register/awaiting-approval.xql"/>
+            <file type="query_file" db_type="oracle" path="www/register/awaiting-email-verification-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/register/awaiting-email-verification-postgresql.xql"/>
             <file type="content_page" path="www/register/awaiting-email-verification.adp"/>
             <file type="content_page" path="www/register/awaiting-email-verification.tcl"/>
+            <file type="query_file" path="www/register/awaiting-email-verification.xql"/>
             <file type="content_page" path="www/register/bad-password.adp"/>
             <file type="content_page" path="www/register/bad-password.tcl"/>
             <file type="content_page" path="www/register/banned-user.adp"/>
             <file type="content_page" path="www/register/banned-user.tcl"/>
+            <file type="query_file" path="www/register/banned-user.xql"/>
             <file type="content_page" path="www/register/deleted-user.adp"/>
             <file type="content_page" path="www/register/deleted-user.tcl"/>
+            <file type="query_file" path="www/register/deleted-user.xql"/>
             <file type="content_page" path="www/register/email-confirm.adp"/>
             <file type="content_page" path="www/register/email-confirm.tcl"/>
+            <file type="query_file" path="www/register/email-confirm.xql"/>
             <file type="content_page" path="www/register/email-password-2.adp"/>
             <file type="content_page" path="www/register/email-password-2.tcl"/>
+            <file type="query_file" path="www/register/email-password-2.xql"/>
             <file type="content_page" path="www/register/email-password-3.adp"/>
             <file type="content_page" path="www/register/email-password-3.tcl"/>
+            <file type="query_file" path="www/register/email-password-3.xql"/>
             <file type="content_page" path="www/register/email-password.adp"/>
             <file type="content_page" path="www/register/email-password.tcl"/>
+            <file type="query_file" path="www/register/email-password.xql"/>
             <file type="content_page" path="www/register/explain-persistent-cookies.adp"/>
             <file type="content_page" path="www/register/explain-persistent-cookies.tcl"/>
             <file type="content_page" path="www/register/index.adp"/>
@@ -391,27 +833,64 @@
             <file type="content_page" path="www/register/logout.tcl"/>
             <file type="content_page" path="www/register/restore-user.adp"/>
             <file type="content_page" path="www/register/restore-user.tcl"/>
+            <file type="query_file" path="www/register/restore-user.xql"/>
             <file type="content_page" path="www/register/user-login.tcl"/>
+            <file type="query_file" path="www/register/user-login.xql"/>
+            <file type="query_file" db_type="oracle" path="www/register/user-new-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/register/user-new-2-postgresql.xql"/>
             <file type="content_page" path="www/register/user-new-2.adp"/>
             <file type="content_page" path="www/register/user-new-2.tcl"/>
+            <file type="query_file" path="www/register/user-new-2.xql"/>
             <file type="content_page" path="www/register/user-new.adp"/>
             <file type="content_page" path="www/register/user-new.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/review-submit-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/review-submit-2-postgresql.xql"/>
             <file type="content_page" path="www/review-submit-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/review-submit-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/review-submit-3-postgresql.xql"/>
             <file type="content_page" path="www/review-submit-3.tcl"/>
+            <file type="query_file" path="www/review-submit-3.xql"/>
             <file type="content_page" path="www/review-submit.tcl"/>
+            <file type="query_file" path="www/review-submit.xql"/>
+            <file type="query_file" db_type="oracle" path="www/shipping-address-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/shipping-address-2-postgresql.xql"/>
             <file type="content_page" path="www/shipping-address-2.tcl"/>
+            <file type="query_file" path="www/shipping-address-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/shipping-address-international-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/shipping-address-international-2-postgresql.xql"/>
             <file type="content_page" path="www/shipping-address-international-2.tcl"/>
+            <file type="query_file" path="www/shipping-address-international-2.xql"/>
             <file type="content_page" path="www/shipping-address-international.tcl"/>
+            <file type="query_file" path="www/shipping-address-international.xql"/>
             <file type="content_page" path="www/shipping-address.tcl"/>
+            <file type="query_file" path="www/shipping-address.xql"/>
+            <file type="query_file" db_type="oracle" path="www/shopping-cart-add-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/shopping-cart-add-postgresql.xql"/>
             <file type="content_page" path="www/shopping-cart-add.tcl"/>
+            <file type="query_file" path="www/shopping-cart-add.xql"/>
             <file type="content_page" path="www/shopping-cart-delete-from.tcl"/>
+            <file type="query_file" path="www/shopping-cart-delete-from.xql"/>
+            <file type="query_file" db_type="oracle" path="www/shopping-cart-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/shopping-cart-postgresql.xql"/>
+            <file type="query_file" db_type="oracle" path="www/shopping-cart-quantities-change-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/shopping-cart-quantities-change-postgresql.xql"/>
             <file type="content_page" path="www/shopping-cart-quantities-change.tcl"/>
+            <file type="query_file" path="www/shopping-cart-quantities-change.xql"/>
+            <file type="query_file" db_type="oracle" path="www/shopping-cart-retrieve-2-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/shopping-cart-retrieve-2-postgresql.xql"/>
             <file type="content_page" path="www/shopping-cart-retrieve-2.tcl"/>
+            <file type="query_file" db_type="oracle" path="www/shopping-cart-retrieve-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/shopping-cart-retrieve-3-postgresql.xql"/>
             <file type="content_page" path="www/shopping-cart-retrieve-3.tcl"/>
+            <file type="query_file" path="www/shopping-cart-retrieve-3.xql"/>
             <file type="content_page" path="www/shopping-cart-retrieve.tcl"/>
+            <file type="query_file" path="www/shopping-cart-retrieve.xql"/>
             <file type="content_page" path="www/shopping-cart-save-2.tcl"/>
+            <file type="query_file" path="www/shopping-cart-save-2.xql"/>
             <file type="content_page" path="www/shopping-cart-save.tcl"/>
+            <file type="query_file" path="www/shopping-cart-save.xql"/>
             <file type="content_page" path="www/shopping-cart.tcl"/>
+            <file type="query_file" path="www/shopping-cart.xql"/>
             <file type="template" path="www/templates/store/account.plain.adp"/>
             <file type="template" path="www/templates/store/category-browse-subcategory.plain.adp"/>
             <file type="template" path="www/templates/store/category-browse-subsubcategory.plain.adp"/>
@@ -450,65 +929,67 @@
             <file type="template" path="www/templates/store/track.plain.adp"/>
             <file type="template" path="www/templates/store/update-user-classes.plain.adp"/>
             <file type="content_page" path="www/thank-you.tcl"/>
+            <file type="query_file" path="www/thank-you.xql"/>
+            <file type="query_file" db_type="oracle" path="www/track-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/track-postgresql.xql"/>
             <file type="content_page" path="www/track.tcl"/>
+            <file type="query_file" path="www/track.xql"/>
             <file type="content_page" path="www/update-user-classes-2.tcl"/>
+            <file type="query_file" path="www/update-user-classes-2.xql"/>
             <file type="content_page" path="www/update-user-classes.tcl"/>
+            <file type="query_file" path="www/update-user-classes.xql"/>
         </files>
         <parameters>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="WeightUnits"  default="lbs" description="weight units such as pounds, carats, ounces, etc." section_name="units"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Currency"  default="USD" description="currency units, USD, dollars, lira, etc." section_name="units"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ProductsToDisplayPerPage"  default="10" description="this is used on the category browse page (and for subcategories/subsubcategories)" section_name="display"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ProductCommentsAllowP"  default="1" description="whether to allow user comments on products" section_name="display"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ProductCommentsNeedApprovalP"  default="1" description="whether user comments on products (if allowed) need approval before becoming live" section_name="display"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CalcProductRelationshipsP"  default="0" description="whether the system should calculate additional product relationships" section_name="display"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassUserViewP"  default="1" description="whether users can see what user classes they are in" section_name="display"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassAllowSelfPlacement"  default="1" description="whether a user can request to be a member of a user class" section_name="display"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassApproveP"  default="1" description="if a user requests to be in a user class, is approval required before that user becomes a member of the user class" section_name="display"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ShippingRefundPercent"  default="0" description="percentage refunded if an item is returned" section_name="associated charges"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ExpressShippingP"  default="1" description="whether to allow express shipping" section_name="shipping"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="SaveCreditCardDataP"  default="1" description="whether to save credit card data (you have to save it if you're going to do manual billing) -- if you save it, then your users can reuse their credit card with one click" section_name="payment information"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UseCyberCashP"  default="1" description="whether to use cybercash or not (if cyber cash is off, remember to save credit cards otherwise they may be lost before you actually bill customers)" section_name="payment information"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="EnabledP"  default="1" description="set this to 1 if you're using the ecommerce module"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ThumbnailWidth"  default="100" description="for thumbnails of products, specify either width or height (whichever is more important, and then the other will be determined based on the original image size, keeping aspect ratio constant) -- if both are specified, the width setting will take precedence, and if neither is specified, the thumbnail will be width default=100" section_name="display"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ThumbnailHeight"  default="100" description="for thumbnails of products, specify either width or height (whichever is more important, and then the other will be determined based on the original image size, keeping aspect ratio constant) -- if both are specified, the width setting will take precedence, and if neither is specified, the thumbnail will be width default=100" section_name="display"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageO"  default="Out of Stock" description="text of out of stock message" section_name="messages"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageQ"  default="Usually Ships Within 24 Hours" description="text of ships quickly message" section_name="messages"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageM"  default="Usually Ships Within 2-3 Days" description="text of hips moderately quickly message" section_name="messages"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageS"  default="Usually Ships Within 2-4 Weeks" description="text of ships slowly message" section_name="messages"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageI"  default="In Stock" description="in stock" section_name="messages"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CartDuration"  default="30" description="# of days an 'in_basket' order will remain in the system before a cron job expires it" section_name="shopping cart"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="AllowPreOrdersP"  default="1" description="whether customers will be able to place orders for items whose available_date has not yet come" section_name="shopping cart"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="CustomerServiceEmailAddress"  default="service@yourdomain.com" description="all outgoing email is sent from this address" section_name="technical"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="DisplayTransactionMessagesDuringFulfillmentP"  default="1" description="you may or may not wish to have the people recording shipments receive messages like 'unable to authorize payment for shipment' -- depending on whether they they're in a position to do anything about the problem (e.g. abort shipment)" section_name="fulfillment"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="SellGiftCertificatesP"  default="1" description="whether to allow users to buy gift certificates" section_name="gift certificates"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="MinGiftCertificateAmount"  default="5" description="minimum gift certificate amount they can buy (this does not impose minimum amount for administrators giving users gift certificates)" section_name="gift certificates"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="MaxGiftCertificateAmount"  default="300" description="maximum gift certificate amount they can buy" section_name="gift certificates"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="GiftCertificateMonths"  default="12" description="number of months until user-purchased gift certificates expire" section_name="gift certificates"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="InsecureLocation"  description="A URL fragment (protocol, hostname, and port) appended before &amp;amp;amp;amp;amp;amp;quot;insecure&amp;amp;amp;amp;amp;amp;quot; transactions URLs. Defaults to &amp;amp;amp;amp;amp;amp;quot;&amp;amp;amp;amp;amp;amp;quot;" section_name="SSL"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="TemplateRoot"  default="templates" description="A filesystem location of style templates, typically [ad_conn package_url]/templates.  Note the lack of a trailing slash.  If TemplateRoot starts with a leading / or with a ../, the TemplateRoot is interpreted relative to your server's pageroot (/web/yourservername/www, otherwise it is interpreted relative to the pageroot of your ecommerce instance.
-
-Templates are first looked in a directory underneath the templateroot that matches the name 
-of the directory the url was served from, and then if nothing is found, templates are looked for in the templateroot." section_name="style"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="EcommerceDataDirectory"  default="/web/yourservername/data/ecommerce/" description="path to Product data directories (where product files like images are kept).  It is useful to keep this away from the normal pageroot so that uploaded .tcl or .adp files cannot be executed with a URL. IF YOU DON'T SET THIS CORRECTLY, YOUR SYSTEM WON'T WORK!  Make sure to replace yourservername with the correct name.  You also have to create the directories you specify in the file-system.  See technical setup document." section_name="technical"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ProductDataDirectory"  default="product/" description="This path goes on the end of the EcommerceDataDirectory. IF YOU DON'T SET THIS CORRECTLY, YOUR SYSTEM WON'T WORK!  Make sure to replace yourservername with the correct name.  You also have to create the directories you specify in the file-system.  See technical setup document." section_name="technical"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="MultipleRetailersPerProductP"  default="0" description="Set to 1 if you have a comparison shopping service -- Note: support for multiple retailers does not work yet in Version 1.0 of the Ecommerce Module, so leave it as 0" section_name="technical"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="OfferTaxExemptStatusP"  default="0" description="Should we ask people if their organization is tax exempt?" section_name="associated charges"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CacheRefresh"  default="600" description="Seconds between cache (util_memoize) updates" section_name="technical"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SystemOwner"  description="email address of owner of shop" section_name="technical"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SystemName"  default="Store" description="name of ecommerce system"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="HeaderAttributes"  default="size='+2' face='arial' color='990000'" description="font tags used in system headers" section_name="style"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="MultiLingualP"  default="0" description="do we look for language-specific templates. e.g., foobar.en.adp? (and do we offer a user interface to help user choose?)" section_name="style"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="LanguageSiteDefault"  default="en" description="The default site language.  See /doc/ecommerce/style#languagerepresentation for details." section_name="style"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="LanguageCookieP"  default="1" description="Offer visitors a language choice without logging in?" section_name="style"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="PlainFancyP"  default="1" description="do we look for plain, and fancy templates, e.g., foobar.plain.adp? (and do we offer a user interface to allow the user to choose?)" section_name="style"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PlainFancySiteDefault"  default="fancy" description="Most publishers will want &amp;amp;amp;amp;amp;amp;quot;fancy&amp;amp;amp;amp;amp;amp;quot; to be preferred (if available)" section_name="style"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="PlainFancyCookieP"  default="1" description="Offer visitors a graphics choice without logging in?" section_name="style"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="httpsModule"  default="nsopenssl" description="The preferred AOLserver module that implements SSL.  Typical behavior favors nsopenssl over nsssl.  This parameter is only important if your site, for some unusual reason supports both nsopenssl as well as nsssl and you prefer nsssl." section_name="SSL"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="httpModule"  description="The AOLserver module that implements &amp;amp;amp;amp;amp;amp;quot;normal&amp;amp;amp;amp;amp;amp;quot; communications (usually nsunix or nssock)
-Typical behavior favors nsunix over nssock, if both are present.  You only need to set this parameter if your site supports both nsunix and nssock, but you prefer nssock." section_name="SSL"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SecureLocation"  description="A URL fragment (protocol, hostname, and port) appended before &amp;amp;amp;amp;amp;amp;quot;secure&amp;amp;amp;amp;amp;amp;quot; transactions URLs.  Defaults to &amp;amp;amp;amp;amp;amp;quot;&amp;amp;amp;amp;amp;amp;quot;.  If the value is &amp;amp;amp;amp;amp;amp;quot;&amp;amp;amp;amp;amp;amp;quot;, ecommerce will examine the values of httpModule and httpsModule to determine the secure location." section_name="SSL"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ImageMagickPath"  default="/usr/local/bin/convert" description="ImageMagick's Convert utility is required to make thumbnails of products.  This parameter points to the path of convert" section_name="technical"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ECTemplatesMayContainTclFunctionsP"  default="1" description="If yes, administrators editing an ecommerce template can use a tcl function, which may cause security problems." section_name="style"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ImageMagickPath"  default="/usr/local/bin/convert" description="ImageMagick's Convert utility is required to make thumbnails of products.  This parameter points to the path of convert" section_name="technical"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SecureLocation"  description="A URL fragment (protocol, hostname, and port) appended before &amp;amp;amp;amp;amp;amp;quot;secure&amp;amp;amp;amp;amp;amp;quot; transactions URLs.  Defaults to &amp;amp;amp;amp;amp;amp;quot;&amp;amp;amp;amp;amp;amp;quot;.  If the value is &amp;amp;amp;amp;amp;amp;quot;&amp;amp;amp;amp;amp;amp;quot;, ecommerce will examine the values of httpModule and httpsModule to determine the secure location." section_name="SSL"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="httpModule"  description="The AOLserver module that implements &amp;amp;amp;amp;amp;amp;quot;normal&amp;amp;amp;amp;amp;amp;quot; communications (usually nsunix or nssock) Typical behavior favors nsunix over nssock, if both are present.  You only need to set this parameter if your site supports both nsunix and nssock, but you prefer nssock." section_name="SSL"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="httpsModule"  default="nsopenssl" description="The preferred AOLserver module that implements SSL.  Typical behavior favors nsopenssl over nsssl.  This parameter is only important if your site, for some unusual reason supports both nsopenssl as well as nsssl and you prefer nsssl." section_name="SSL"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="PlainFancyCookieP"  default="1" description="Offer visitors a graphics choice without logging in?" section_name="style"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PlainFancySiteDefault"  default="fancy" description="Most publishers will want &amp;amp;amp;amp;amp;amp;quot;fancy&amp;amp;amp;amp;amp;amp;quot; to be preferred (if available)" section_name="style"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="PlainFancyP"  default="1" description="do we look for plain, and fancy templates, e.g., foobar.plain.adp? (and do we offer a user interface to allow the user to choose?)" section_name="style"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="LanguageCookieP"  default="1" description="Offer visitors a language choice without logging in?" section_name="style"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="LanguageSiteDefault"  default="en" description="The default site language.  See /doc/ecommerce/style#languagerepresentation for details." section_name="style"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="MultiLingualP"  default="0" description="do we look for language-specific templates. e.g., foobar.en.adp? (and do we offer a user interface to help user choose?)" section_name="style"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="HeaderAttributes"  default="size='+2' face='arial' color='990000'" description="font tags used in system headers" section_name="style"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SystemName"  default="Store" description="name of ecommerce system"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SystemOwner"  description="email address of owner of shop" section_name="technical"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CacheRefresh"  default="600" description="Seconds between cache (util_memoize) updates" section_name="technical"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="OfferTaxExemptStatusP"  default="0" description="Should we ask people if their organization is tax exempt?" section_name="associated charges"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="MultipleRetailersPerProductP"  default="0" description="Set to 1 if you have a comparison shopping service -- Note: support for multiple retailers does not work yet in Version 1.0 of the Ecommerce Module, so leave it as 0" section_name="technical"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ProductDataDirectory"  default="product/" description="This path goes on the end of the EcommerceDataDirectory. IF YOU DON'T SET THIS CORRECTLY, YOUR SYSTEM WON'T WORK!  Make sure to replace yourservername with the correct name.  You also have to create the directories you specify in the file-system.  See technical setup document." section_name="technical"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="EcommerceDataDirectory"  default="/web/yourservername/data/ecommerce/" description="path to Product data directories (where product files like images are kept).  It is useful to keep this away from the normal pageroot so that uploaded .tcl or .adp files cannot be executed with a URL. IF YOU DON'T SET THIS CORRECTLY, YOUR SYSTEM WON'T WORK!  Make sure to replace yourservername with the correct name.  You also have to create the directories you specify in the file-system.  See technical setup document." section_name="technical"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="TemplateRoot"  default="templates" description="A filesystem location of style templates, typically [ad_conn package_url]/templates.  Note the lack of a trailing slash.  If TemplateRoot starts with a leading / or with a ../, the TemplateRoot is interpreted relative to your server's pageroot (/web/yourservername/www, otherwise it is interpreted relative to the pageroot of your ecommerce instance.  Templates are first looked in a directory underneath the templateroot that matches the name  of the directory the url was served from, and then if nothing is found, templates are looked for in the templateroot." section_name="style"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="InsecureLocation"  description="A URL fragment (protocol, hostname, and port) appended before &amp;amp;amp;amp;amp;amp;quot;insecure&amp;amp;amp;amp;amp;amp;quot; transactions URLs. Defaults to &amp;amp;amp;amp;amp;amp;quot;&amp;amp;amp;amp;amp;amp;quot;" section_name="SSL"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="GiftCertificateMonths"  default="12" description="number of months until user-purchased gift certificates expire" section_name="gift certificates"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="MaxGiftCertificateAmount"  default="300" description="maximum gift certificate amount they can buy" section_name="gift certificates"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="MinGiftCertificateAmount"  default="5" description="minimum gift certificate amount they can buy (this does not impose minimum amount for administrators giving users gift certificates)" section_name="gift certificates"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="SellGiftCertificatesP"  default="1" description="whether to allow users to buy gift certificates" section_name="gift certificates"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="DisplayTransactionMessagesDuringFulfillmentP"  default="1" description="you may or may not wish to have the people recording shipments receive messages like 'unable to authorize payment for shipment' -- depending on whether they they're in a position to do anything about the problem (e.g. abort shipment)" section_name="fulfillment"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="CustomerServiceEmailAddress"  default="service@yourdomain.com" description="all outgoing email is sent from this address" section_name="technical"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="AllowPreOrdersP"  default="1" description="whether customers will be able to place orders for items whose available_date has not yet come" section_name="shopping cart"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CartDuration"  default="30" description="# of days an 'in_basket' order will remain in the system before a cron job expires it" section_name="shopping cart"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageI"  default="In Stock" description="in stock" section_name="messages"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageS"  default="Usually Ships Within 2-4 Weeks" description="text of ships slowly message" section_name="messages"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageM"  default="Usually Ships Within 2-3 Days" description="text of hips moderately quickly message" section_name="messages"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageQ"  default="Usually Ships Within 24 Hours" description="text of ships quickly message" section_name="messages"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageO"  default="Out of Stock" description="text of out of stock message" section_name="messages"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ThumbnailHeight"  default="100" description="for thumbnails of products, specify either width or height (whichever is more important, and then the other will be determined based on the original image size, keeping aspect ratio constant) -- if both are specified, the width setting will take precedence, and if neither is specified, the thumbnail will be width default=100" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ThumbnailWidth"  default="100" description="for thumbnails of products, specify either width or height (whichever is more important, and then the other will be determined based on the original image size, keeping aspect ratio constant) -- if both are specified, the width setting will take precedence, and if neither is specified, the thumbnail will be width default=100" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="EnabledP"  default="1" description="set this to 1 if you're using the ecommerce module"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UseCyberCashP"  default="1" description="whether to use cybercash or not (if cyber cash is off, remember to save credit cards otherwise they may be lost before you actually bill customers)" section_name="payment information"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="SaveCreditCardDataP"  default="1" description="whether to save credit card data (you have to save it if you're going to do manual billing) -- if you save it, then your users can reuse their credit card with one click" section_name="payment information"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ExpressShippingP"  default="1" description="whether to allow express shipping" section_name="shipping"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ShippingRefundPercent"  default="0" description="percentage refunded if an item is returned" section_name="associated charges"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassApproveP"  default="1" description="if a user requests to be in a user class, is approval required before that user becomes a member of the user class" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassAllowSelfPlacement"  default="1" description="whether a user can request to be a member of a user class" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassUserViewP"  default="1" description="whether users can see what user classes they are in" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CalcProductRelationshipsP"  default="0" description="whether the system should calculate additional product relationships" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ProductCommentsNeedApprovalP"  default="1" description="whether user comments on products (if allowed) need approval before becoming live" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ProductCommentsAllowP"  default="1" description="whether to allow user comments on products" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ProductsToDisplayPerPage"  default="10" description="this is used on the category browse page (and for subcategories/subsubcategories)" section_name="display"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Currency"  default="USD" description="currency units, USD, dollars, lira, etc." section_name="units"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="WeightUnits"  default="lbs" description="weight units such as pounds, carats, ounces, etc." section_name="units"/>
         </parameters>
 
     </version>
