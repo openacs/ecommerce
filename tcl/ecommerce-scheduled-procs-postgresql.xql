@@ -9,7 +9,7 @@
       select order_id, ec_order_cost(order_id) as total_order_price
       from ec_orders
       where order_state = 'confirmed' 
-      and (current_timestamp - confirmed_date) > 1/96
+      and (current_timestamp - confirmed_date) > timespan_days(1/96::float)
   
       </querytext>
 </fullquery>
@@ -34,7 +34,7 @@
       from ec_gift_certificates g, ec_financial_transactions t
       where g.gift_certificate_id=t.gift_certificate_id
       and g.gift_certificate_state = 'confirmed' 
-      and (current_timestamp - g.issue_date) > 1/96
+      and (current_timestamp - g.issue_date) > timespan_days(1/96::float)
   
       </querytext>
 </fullquery>
@@ -66,7 +66,7 @@
  
 <fullquery name="ec_expire_old_carts.expired_carts_update">      
       <querytext>
-      update ec_orders set order_state='expired', expired_date=current_timestamp where order_state='in_basket' and current_timestamp-in_basket_date > [util_memoize {ad_parameter -package_id [ec_id] CartDuration ecommerce} [ec_cache_refresh]]
+      update ec_orders set order_state='expired', expired_date=current_timestamp where order_state='in_basket' and current_timestamp-in_basket_date > timespan_days([util_memoize {ad_parameter -package_id [ec_id] CartDuration ecommerce} [ec_cache_refresh]]::float)
       </querytext>
 </fullquery>
 
@@ -83,7 +83,7 @@
       
 	select transaction_id, order_id from ec_financial_transactions
 	where to_be_captured_p='t'
-	and current_timestamp-to_be_captured_date > 1/48
+	and current_timestamp-to_be_captured_date > timespan_days(1/48::float)
 	and authorized_date is null
 	and failed_p='f'
     
@@ -162,7 +162,7 @@
  
 <fullquery name="ec_unsettled_transactions.two_days_since_order_was_marked_p">      
       <querytext>
-      select case when extract(day from (current_timestamp-marked_date)) >= 2 then 1 else 0 end from ec_financial_transactions where transaction_id=:transaction_id
+      select case when marked_date + '2 days'::interval < now() then 1 else 0 end from ec_financial_transactions where transaction_id=:transaction_id
       </querytext>
 </fullquery>
 
@@ -184,7 +184,7 @@
       
 	select transaction_id, order_id from ec_financial_transactions
 	where transaction_type='refund'
-	and current_timestamp - inserted_date > 1/48
+	and current_timestamp - inserted_date > timespan_days(1/48::float)
 	and refunded_date is null
 	and failed_p='f'
     
@@ -227,7 +227,7 @@
  
 <fullquery name="ec_unrefund_settled_transactions.two_days_since_order_was_refunded_p">      
       <querytext>
-      select case when extract(day from (current_timestamp-marked_date)) >= 2  then 1 else 0 end from ec_financial_transactions where transaction_id=:transaction_id
+      select case when refunded_date + '2 days'::interval < now() then 1 else 0 end from ec_financial_transactions where transaction_id=:transaction_id
       </querytext>
 </fullquery>
 
