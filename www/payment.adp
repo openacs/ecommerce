@@ -1,11 +1,9 @@
 <master>
-  <property name="title">Completing Your Order</property>
+  <property name="title">Completing Your Order: Payment information</property>
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
   <include src="checkout-progress" step="5">
-
-<h2>Payment Info</h2>
 
 <blockquote>
 
