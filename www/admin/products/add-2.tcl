@@ -175,7 +175,7 @@ if { [info exists upload_file] && ![string compare $upload_file ""] == 0 } {
     set file_extension [file extension $upload_file]
 
     # copies this temp file into a permanent file
-    set perm_filename "$full_dirname/product$file_extension"
+    set perm_filename "$full_dirname/product[string tolower $file_extension]"
     ns_cp $tmp_filename $perm_filename
     
     # create thumbnails
