@@ -10,12 +10,12 @@
     <version name="4.6.1" url="http://www.arsdigita.com/acs-repository/download/apm/ecommerce-4.6.1.apm">
         <owner url="mailto:janine@furfly.net">Janine Sisk</owner>
         <owner url="mailto:bart.teeuwisse@thecodemill.biz">Bart Teeuwisse</owner>
-        <summary>ACS 3.x based e-commerce solution.See the documentation for more information.	</summary>
+        <summary>ACS 3.x based e-commerce solution.See the documentation for more information.</summary>
         <release-date>2003-03-23</release-date>
         <vendor url="http://www.furfly.net">furfly.net, LLC</vendor>
         <description format="text/plain">This module implements all that IT needs for a standard business-to-consumer Web service.  You can find a feature summary in the documentaion.</description>
 
-        <provides url="ecommerce" version="4.6.1"/>
+        <provides url="ecommerce" version="5.0"/>
         <requires url="acs-kernel" version="4.1"/>
         <requires url="acs-datetime" version="4.0"/>
         <requires url="ref-countries" version="0.1d"/>
