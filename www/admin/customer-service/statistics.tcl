@@ -29,22 +29,26 @@ set important_issue_type_list [db_list get_issue_type_list "select picklist_item
 
 # for sorting
 if { [llength $important_issue_type_list] > 0 } {
-    set issue_type_decode ", decode(issue_type,"
+    #set issue_type_decode ", decode(issue_type,"
+    set issue_type_decode [db_map initial_issue_type_decode_bit]
     set issue_type_counter 0
     foreach issue_type $important_issue_type_list {
-	append issue_type_decode "'[DoubleApos $issue_type]',$issue_type_counter,"
+	#append issue_type_decode "'[DoubleApos $issue_type]',$issue_type_counter,"
+	append issue_type_decode [db_map middle_issue_type_decode_bit]
 	incr issue_type_counter
     }
-    append issue_type_decode "$issue_type_counter)"
+    #append issue_type_decode "$issue_type_counter)"
+    append issue_type_decode [db_map end_issue_type_decode_bit]
 } else {
     set issue_type_decode ""
 }
 
-set sql "select issue_type, count(*) as n_issues
-from ec_customer_service_issues, ec_cs_issue_type_map
-where ec_customer_service_issues.issue_id=ec_cs_issue_type_map.issue_id(+)
-group by issue_type
-order by decode(issue_type,null,1,0) $issue_type_decode"
+set sql [db_map get_issues_type_counts_sql]
+#set sql "select issue_type, count(*) as n_issues
+#from ec_customer_service_issues, ec_cs_issue_type_map
+#where ec_customer_service_issues.issue_id=ec_cs_issue_type_map.issue_id(+)
+#group by issue_type
+#order by decode(issue_type,null,1,0) $issue_type_decode"
 
 set other_issue_type_count 0
 db_foreach get_issues_type_counts $sql {
@@ -70,10 +74,11 @@ append doc_body "</ul>
 <ul>
 "
 
-set sql "select interaction_originator, count(*) as n_interactions
-from ec_customer_serv_interactions
-group by interaction_originator
-order by decode(interaction_originator,'customer',0,'rep',1,'automatic',2)"
+set sql [db_map get_actions_by_originator_sql]
+#set sql "select interaction_originator, count(*) as n_interactions
+#from ec_customer_serv_interactions
+#group by interaction_originator
+#order by decode(interaction_originator,'customer',0,'rep',1,'automatic',2)"
 
 db_foreach get_actions_by_originator $sql {
     
@@ -87,12 +92,13 @@ append doc_body "</ul>
 <ul>
 "
 
-set sql "
-  select customer_service_rep, first_names, last_name, count(*) as n_interactions
-    from ec_customer_serv_interactions, cc_users
-   where ec_customer_serv_interactions.customer_service_rep=cc_users.user_id
-group by customer_service_rep, first_names, last_name
-order by count(*) desc"
+set sql [db_map get_actions_by_cs_rep_sql]
+#set sql "
+#  select customer_service_rep, first_names, last_name, count(*) as n_interactions
+#    from ec_customer_serv_interactions, cc_users
+#   where ec_customer_serv_interactions.customer_service_rep=cc_users.user_id
+#group by customer_service_rep, first_names, last_name
+#order by count(*) desc"
 
 db_foreach get_actions_by_cs_rep $sql {
     
@@ -111,22 +117,26 @@ set important_info_used_list [db_list get_important_info_list "select picklist_i
 
 # for sorting
 if { [llength $important_info_used_list] > 0 } {
-    set info_used_decode ", decode(info_used,"
+    #set info_used_decode ", decode(info_used,"
+    set info_used_decode [db_map initial_info_used_decode_bit]
     set info_used_counter 0
     foreach info_used $important_info_used_list {
-	append info_used_decode "'[DoubleApos $info_used]',$info_used_counter,"
+	#append info_used_decode "'[DoubleApos $info_used]',$info_used_counter,"
+	append info_used_decode [db_map middle_info_used_decode_bit]
 	incr info_used_counter
     }
-    append info_used_decode "$info_used_counter)"
+    #append info_used_decode "$info_used_counter)"
+    append info_used_decode [db_map end_info_used_decode_bit]
 } else {
     set info_used_decode ""
 }
 
-set sql "select info_used, count(*) as n_actions
-from ec_customer_service_actions, ec_cs_action_info_used_map
-where ec_customer_service_actions.action_id=ec_cs_action_info_used_map.action_id(+)
-group by info_used
-order by decode(info_used,null,1,0) $info_used_decode"
+set sql [db_map get_info_used_query_sql]
+#set sql "select info_used, count(*) as n_actions
+#from ec_customer_service_actions, ec_cs_action_info_used_map
+#where ec_customer_service_actions.action_id=ec_cs_action_info_used_map.action_id(+)
+#group by info_used
+#order by decode(info_used,null,1,0) $info_used_decode"
 
 set other_info_used_count 0
 db_foreach get_info_used_query $sql {
