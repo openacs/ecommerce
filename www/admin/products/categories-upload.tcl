@@ -6,10 +6,10 @@ ad_page_contract {
 
   The file format should be:
 
-    product_id_1, category_description_1
-    product_id_2, category_description_2
+    sku_1, category_description_1
+    sku_2, category_description_2
     ...
-    product_id_n, category_description_n
+    sku_n, category_description_n
 
   Where each line contains a product id, category name pair. There may
   be multiple lines for a single product id which will cause the
@@ -66,10 +66,10 @@ This is probably not generally useful for people who have clean data...
 The file format should be:
 <p>
 <blockquote>
-<code>product_id_1, category_description_1<br>
-product_id_2, category_description_2<br>
+<code>sku_1, category_description_1<br>
+sku_2, category_description_2<br>
 ...<br>
-product_id_n, category_description_n</code>
+sku_n, category_description_n</code>
 </blockquote>
 <p>
 Where each line contains a product id, category name pair.  There may be multiple lines for a single product id
