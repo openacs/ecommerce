@@ -15,8 +15,8 @@ ad_page_contract {
     picklist_item_id
     picklist_item
     picklist_name
-    prev_sort_key
-    next_sort_key
+    prev_sort_key:notnull
+    next_sort_key:notnull
 }
 # 
 ad_require_permission [ad_conn package_id] admin
@@ -28,7 +28,7 @@ if {$user_id == 0} {
     
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
 
-    ad_returnredirect "/register.tcl?[export_url_vars return_url]"
+    ad_returnredirect "/register?[export_url_vars return_url]"
     return
 }
 
@@ -40,17 +40,19 @@ if {$user_id == 0} {
 
 if { [db_0or1row get_picklist_item_id "select picklist_item_id from ec_picklist_items
 where picklist_item_id=:picklist_item_id"] == 1 } {
-    ad_returnredirect "picklists.tcl"
+    ad_returnredirect "picklists"
     return
 }
 
 # now make sure that there is no picklist_item with the
 # same picklist_name with a sort key equal to the new sort key
 
+set sort_key [expr ($prev_sort_key + $next_sort_key)/2]
+
 set n_conflicts [db_string get_n_conflicts "select count(*)
 from ec_picklist_items
 where picklist_name=:picklist_name
-and sort_key = (:prev_sort_key + :next_sort_key)/2"]
+and sort_key = :sort_key"]
 
 if { $n_conflicts > 0 } {
     ad_return_complaint 1 "<li>The picklist management page you came from appears
@@ -64,6 +66,6 @@ set address [ns_conn peeraddr]
 db_dml insert_new_picklist_item "insert into ec_picklist_items
 (picklist_item_id, picklist_item, picklist_name, sort_key, last_modified, last_modifying_user, modified_ip_address)
 values
-(:picklist_item_id, :picklist_item, :picklist_name, (:prev_sort_key + :next_sort_key)/2, sysdate, :user_id,:address)"
+(:picklist_item_id, :picklist_item, :picklist_name, ($prev_sort_key + $next_sort_key)/2, sysdate, :user_id,:address)"
 db_release_unused_handles
-ad_returnredirect "picklists.tcl"
+ad_returnredirect "picklists"

@@ -6,7 +6,7 @@
       select count(*)
 from ec_picklist_items
 where picklist_name=:picklist_name
-and sort_key = (:prev_sort_key + :next_sort_key)/2
+and sort_key = :sort_key
       </querytext>
 </fullquery>
 
