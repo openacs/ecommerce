@@ -43,9 +43,9 @@ ad_proc ec_update_state_to_in_basket {
 	    ec_reinst_gift_cert_on_order (:order_id); 
 	end;"
 # following cleans up errors resulting from ccard failures with shipping fulfill-3.tcl
-    db_dml update_transaction_state "
+    db_dml ec_update_transaction_state "
         update ec_financial_transactions
-        set to_be_captured = 'f'
+        set to_be_captured_p = 'f'
         where order_id=:order_id
         and creditcard_id=:creditcard_id"
 }

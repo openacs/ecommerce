@@ -25,6 +25,15 @@
       where creditcard_id=:creditcard_id
     </querytext>
   </fullquery>
+
+  <fullquery name="ec_update_state_to_in_basket.ec_update_transaction_state">
+    <querytext>
+      update ec_financial_transactions
+      set to_be_captured_p = 'f'
+      where order_id=:order_id
+      and creditcard_id =: creditcard_id
+    </querytext>
+  </fullquery>
   
   <fullquery name="ec_update_state_to_authorized.transaction_select">      
     <querytext>
