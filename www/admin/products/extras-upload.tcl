@@ -15,7 +15,7 @@ ad_page_contract {
   populated by this script.
 
   Note: last_modified, last_modifying_user and modified_ip_address are
-  set automatically and should not appear in the CSV file.
+  set automatically and should not appear in the data file.
 
   @author Eve Andersson (eveander@arsdigita.com)
   @creation-date Summer 1999
@@ -36,11 +36,15 @@ doc_body_append "[ad_admin_header "Upload Product Extras"]
 
 <blockquote>
 
-<form enctype=multipart/form-data action=extras-upload-2 method=post>
-CSV Filename <input name=csv_file type=file>
-<p>
+<form enctype=\"multipart/form-data\" action=\"extras-upload-2\" method=\"post\">
+Data Filename <input name=\"csv_file\" type=\"file\">
+<br>
+<input type=\"radio\" name=\"file_type\" value=\"csv\" checked>CSV format<br>
+<input type=\"radio\" name=\"file_type\" value=\"tab\">Tab Delimited format<br>
+<input type=\"radio\" name=\"file_type\" value=\"delim\">Delimited by: <input name=\"delimiter\" value=\" \" type=\"text\"> (single character).<br>
+ <br>
 <center>
-<input type=submit value=Upload>
+<input type=submit value=\"Upload\">
 </center>
 </form>
 
@@ -51,7 +55,7 @@ CSV Filename <input name=csv_file type=file>
 <blockquote>
 <p>
 
-This page uploads a CSV file containing product information into the database.  The file format should be:
+This page uploads a data file containing product information into the database.  The file format should be:
 <p>
 <blockquote>
 <code>field_name_1, field_name_2, ... field_name_n<br>
@@ -76,7 +80,7 @@ db_with_handle db {
     if { [lsearch -exact $undesirable_cols $col_to_print] == -1 } {
       doc_body_append "$col_to_print"
       if { [lsearch -exact $required_cols $col_to_print] != -1 } {
-	doc_body_append " (required)"
+	doc_body_append " (required, can use sku instead)"
       }
       doc_body_append "\n"
     }
