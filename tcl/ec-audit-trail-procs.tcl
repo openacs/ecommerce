@@ -51,7 +51,7 @@ ad_proc ec_audit_trail {
         record to the main table. Form variables for the page: id
         id_column main_table_name audit_table_name and rowi
 } {
-ns_log debug eatp end_date $end_date
+ns_log debug "eatp end_date $end_date"
     # These values will be part of an audit entry description
     # and do not need to be reported seperately
     lappend columns_not_reported modifying_user_name
@@ -424,7 +424,7 @@ be given the calling arguments for ec_audit_trail.
         set date_val "to_date(:start_date,'YYYY-MM-DD HH24:MI:SS')"
         lappend date_clause_list "last_modified > $date_val"
     }
-ns_log debug eatp date_clause_list $date_clause_list
+ns_log debug "eatp date_clause_list $date_clause_list"
     # Generate a list of ids for records that where modified in the time
     # between start_date and end_date.
     set id_list [db_list audit_table_column_select "
@@ -433,7 +433,7 @@ ns_log debug eatp date_clause_list $date_clause_list
          where [join $date_clause_list "\nand "]
     "]
     # Don't free the ns_set as we reuse it down below
-ns_log debug eatp id_list:[llength $id_list] $id_list
+ns_log debug "eatp id_list:[llength $id_list] $id_list"
     # Display the grouped modifications to each id in id_list
     foreach id $id_list {
         # Set the HTML link tags to a page which displays the full
@@ -493,7 +493,7 @@ ns_log debug eatp id_list:[llength $id_list] $id_list
             set id_href_close ""
         }
 
-        ns_log debug ec_audit_trail_for_table dIs
+        ns_log debug "ec_audit_trail_for_table dIs"
 
         set cell [ec_audit_trail $id $audit_table_name \
                 $main_table_name $id_column "" \
