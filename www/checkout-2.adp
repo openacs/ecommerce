@@ -19,10 +19,10 @@
 	<th align="left">Quantity</th>
 	<th align="left">Item</th>
       </tr>
-      @rows_of_items@
+      @rows_of_items;noquote@
     </table>
     
-    <p>@tax_exempt_options@</p>
+    <p>@tax_exempt_options;noquote@</p>
 
     <center><input type="submit" value="Continue"></center>
 

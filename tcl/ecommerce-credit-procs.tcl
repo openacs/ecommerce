@@ -51,7 +51,7 @@ ad_proc -public ec_creditcard_authorization {
     # PaymentGateway.
 
     if {[empty_string_p $payment_gateway] || ![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
-	set outcome(response_code) "failure"
+	set outcome(response_code) "failed_authorization"
 	set outcome(transaction_id) "$transaction_id"
 	return [array get outcome]
     }

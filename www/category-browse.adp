@@ -12,23 +12,23 @@
         <td width="50%">
 	  <h4>Browse:</h4>
 	  <ul>
-	    @subcategories@
+	    @subcategories;noquote@
 	  </ul>
         </td>
       </if>
       <if @recommendations@ >
         <td>
 	  <h4>We recommend:</h4>
-	  @recommendations@
+	  @recommendations;noquote@
         </td>
      </if>
     </tr>
   </table>      
 
   <h4>@category_name@ products:</h4>
-  @products@
+  @products;noquote@
 
-  @prev_link@ @separator@ @next_link@
+  @prev_link;noquote@ @separator;noquote@ @next_link;noquote@
 </blockquote>
 
 <p><a href="mailing-list-add?category_id=@the_category_id@">Add yourself to the @the_category_name@ mailing list!</a></p>

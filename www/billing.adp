@@ -23,26 +23,26 @@
 	    <tr bgcolor="#eeeeee">
 	  </else>
 	  <td>
-	    @billing_addresses.formatted@
+	    @billing_addresses.formatted;noquote@
 	  </td>
 	  <td>
 	    <table>
 	      <tr>
 		<td>
 		  <form method="post" action="payment">
-		    @billing_addresses.use@
+		    @billing_addresses.use;noquote@
 		    <input type="submit" value="Use"></input>
 		  </form>
 		</td>
 		<td>
 		  <form method="post" action="address">
-		    @billing_addresses.edit@
+		    @billing_addresses.edit;noquote@
 		    <input type="submit" value="Edit"></input>
 		  </form>
 		</td>
 		<td>
 		  <form method="post" action="delete-address">
-		    @billing_addresses.delete@
+		    @billing_addresses.delete;noquote@
 		    <input type="submit" value="Delete"></input>
 		  </form>
 		</td>
@@ -68,7 +68,7 @@
 	      <tr bgcolor="#eeeeee">
 	    </else>
 	    <td>
-	      @shipping_addresses.formatted@
+	      @shipping_addresses.formatted;noquote@
 	    </td>
 	    <td>
 	      <table>
@@ -76,7 +76,7 @@
 		  <td>
 		    <form method="post" action="payment">
 		      <input type="hidden" name="address_type" value="shipping">
-			@shipping_addresses.use@
+			@shipping_addresses.use;noquote@
 			<input type="submit" value="Use"></input>
 		    </form>
 		  </td>
@@ -100,7 +100,7 @@
     <tr>
       <td>
 	<form method="post" action="address">
-	  @hidden_form_vars@
+	  @hidden_form_vars;noquote@
 	  <input type="submit" value="Enter a new U.S. address">
 	</form>
       </td>
@@ -109,7 +109,7 @@
       </td>
       <td>
 	<form method="post" action="address-international">
-	  @hidden_form_vars@
+	  @hidden_form_vars;noquote@
 	  <input type="submit" value="Enter a new INTERNATIONAL address">
 	</form>
       </td>

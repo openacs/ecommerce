@@ -10,7 +10,7 @@ ad_page_contract {
     usca_p:optional
 }
 
-ec_redirect_to_https_if_possible_and_necessary
+# ec_redirect_to_https_if_possible_and_necessary
 
 # Make sure they have an in_basket order, otherwise they've probably
 # gotten here by pushing Back, so return them to index.tcl
