@@ -13,7 +13,7 @@
   <fullquery name="ec_update_state_to_in_basket.order_state_update">      
     <querytext>
       update ec_orders 
-      set order_state='in_basket', confirmed_date=null 
+      set order_state='in_basket', confirmed_date=null, saved_p = 't' 
       where order_id=:order_id
     </querytext>
   </fullquery>
