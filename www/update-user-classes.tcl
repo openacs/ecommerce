@@ -29,7 +29,7 @@ ec_create_new_session_if_necessary
 ec_log_user_as_user_id_for_this_session
 
 # two variables for the ADP page
-set user_classes_need_approval [util_memoize {ad_parameter -package_id [ec_id] UserClassApproveP ecommerce} [ec_cache_refresh]]
+set user_classes_need_approval [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce]
 
 set user_class_select_list [ec_user_class_select_widget [db_list get_user_class_list_for_uid "select user_class_id 
 from ec_user_class_user_map 

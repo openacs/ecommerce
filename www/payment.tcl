@@ -131,7 +131,7 @@ if { $show_creditcard_form_p == "t" } {
     set customer_can_use_old_credit_cards 1
 
     # see if the administrator lets customers reuse their credit cards
-    if { [util_memoize {ad_parameter -package_id [ec_id] SaveCreditCardDataP ecommerce} [ec_cache_refresh]] } {
+    if { [ad_parameter -package_id [ec_id] SaveCreditCardDataP ecommerce] } {
 	# then see if we have any credit cards on file for this user
 	# for this shipping address only (for security purposes)
 	set to_print_before_creditcards "<table>

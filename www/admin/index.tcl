@@ -57,7 +57,7 @@ doc_body_append "
 <p>
 "
 
-if { [util_memoize {ad_parameter -package_id [ec_id] ProductCommentsAllowP ecommerce} [ec_cache_refresh]] } {
+if { [ad_parameter -package_id [ec_id] ProductCommentsAllowP ecommerce] } {
     doc_body_append "<li><a href=\"customer-reviews/\">Customer Reviews</a> <font size=-1>([db_string non_approved_comments_select "select count(*) from ec_product_comments where approved_p is null"] not yet approved)</font>
     <p>
     "
@@ -71,7 +71,7 @@ doc_body_append "<li><a href=\"user-classes/\">User Classes</a>
 <p>
 "
 
-set multiple_retailers_p [util_memoize {ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce} [ec_cache_refresh]]
+set multiple_retailers_p [ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce]
 
 if { $multiple_retailers_p } {
     doc_body_append "<li><a href=\"retailers/\">Retailers</a>\n"

@@ -42,7 +42,7 @@ from ec_admin_settings"
 <p>
 <blockquote>
 
-All prices are in [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]].  The price should
+All prices are in [ad_parameter -package_id [ec_id] Currency ecommerce].  The price should
 be written as a decimal number (no special characters like \$).  If a
 section is not applicable, just leave it blank.
 
@@ -93,9 +93,9 @@ these methods <b>(fill in only one)</b>:
 <li>
 
 Weight Charge: <input type=text size=5 name=weight_shipping_cost value=\"$weight_shipping_cost\">
-[util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+[ad_parameter -package_id [ec_id] Currency ecommerce]
 /
-[util_memoize {ad_parameter -package_id [ec_id] WeightUnits ecommerce} [ec_cache_refresh]]
+[ad_parameter -package_id [ec_id] WeightUnits ecommerce]
 
   </ul>
 
@@ -123,9 +123,9 @@ Ignore this section if you do not do express shipping.  The amounts you specify 
 
 Additional Amount by Weight: 
 <input type=text name=add_exp_amount_by_weight size=5 value=\"$add_exp_amount_by_weight\">
-[util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+[ad_parameter -package_id [ec_id] Currency ecommerce]
 /
-[util_memoize {ad_parameter -package_id [ec_id] WeightUnits ecommerce} [ec_cache_refresh]]
+[ad_parameter -package_id [ec_id] WeightUnits ecommerce]
 
   </ul>
 

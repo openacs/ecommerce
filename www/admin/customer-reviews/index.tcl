@@ -19,7 +19,7 @@ append doc_body "[ad_admin_header "Customer Reviews"]
 <hr>
 "
 
-if {[util_memoize {ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP ecommerce} [ec_cache_refresh]]} {
+if {[ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP ecommerce]} {
     append doc_body "Comments must be approved before they will appear on the web site."
 } else {
     append doc_body "Your ecommerce system is set up so that comments automatically appear on the web site, unless you specifically Disapprove them.  Even though it's not necessary, you may also wish to specifically Approve comments so that you can distinguish them from comments that you have not yet looked at."

@@ -23,7 +23,7 @@ ad_proc ec_sendmail_from_service { email_to reply_to email_subject email_body {a
 	ns_set merge $extra_headers $additional_headers
     }
 
-    set from "\"[util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce} [ec_cache_refresh]]\" <$reply_to>"
+    set from "\"[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]\" <$reply_to>"
     qmail $email_to $from $email_subject $email_body $extra_headers
 }
 
@@ -78,7 +78,7 @@ ad_proc ec_email_new_order { order_id } "Use this to send out the \"New Order\" 
     db_transaction {
 
 	# create a customer service issue/interaction/action
-	set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]\nSubject: $email_subject" $order_id $issue_type_list $email_body $user_id]
+	set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" $order_id $issue_type_list $email_body $user_id]
 
 	set user_identification_id [lindex $user_identification_and_issue_id 0]
 	set issue_id [lindex $user_identification_and_issue_id 1]
@@ -161,7 +161,7 @@ ad_proc ec_email_delayed_credit_denied { order_id } "Use this to send out the \"
     db_transaction {
 
       # create a customer service issue/interaction/action
-        set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]\nSubject: $email_subject" $order_id $issue_type_list $email_body $user_id]
+        set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" $order_id $issue_type_list $email_body $user_id]
 
       set user_identification_id [lindex $user_identification_and_issue_id 0]
       set issue_id [lindex $user_identification_and_issue_id 1]
@@ -245,7 +245,7 @@ ad_proc ec_email_order_shipped { shipment_id } "Use this to send out the \"Order
     db_transaction {
 
       # create a customer service issue/interaction/action
-        set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]\nSubject: $email_subject" $order_id $issue_type_list $email_body $user_id]
+        set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" $order_id $issue_type_list $email_body $user_id]
 
       set user_identification_id [lindex $user_identification_and_issue_id 0]
       set issue_id [lindex $user_identification_and_issue_id 1]
@@ -303,7 +303,7 @@ ad_proc ec_email_new_gift_certificate_order { gift_certificate_id } {
     db_transaction {
 
       # create a customer service issue/interaction/action
-        set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]\nSubject: $email_subject" "" $issue_type_list $email_body $user_id "" "f" $gift_certificate_id]
+        set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" "" $issue_type_list $email_body $user_id "" "f" $gift_certificate_id]
 
       set user_identification_id [lindex $user_identification_and_issue_id 0]
       set issue_id [lindex $user_identification_and_issue_id 1]
@@ -375,7 +375,7 @@ ad_proc ec_email_gift_certificate_order_failure { gift_certificate_id } "Use thi
     db_transaction {
 
       # create a customer service issue/interaction/action
-        set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [util_memoize {ad_parameter -package_id [ec_id]  CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]\nSubject: $email_subject" "" $issue_type_list $email_body $user_id "" "f" $gift_certificate_id]
+        set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [ad_parameter -package_id [ec_id]  CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" "" $issue_type_list $email_body $user_id "" "f" $gift_certificate_id]
 
       set user_identification_id [lindex $user_identification_and_issue_id 0]
       set issue_id [lindex $user_identification_and_issue_id 1]
@@ -454,7 +454,7 @@ ad_proc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this to
 
       # create a customer service issue/interaction/action
       if { ![empty_string_p $user_id] } {
-          set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]\nSubject: $email_subject" "" $issue_type_list $email_body $user_id "" "f" $gift_certificate_id]
+          set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" "" $issue_type_list $email_body $user_id "" "f" $gift_certificate_id]
 	set user_identification_id [lindex $user_identification_and_issue_id 0]
       } else {
 	# check if the recipient is an unregistered user of the system
@@ -473,7 +473,7 @@ ad_proc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this to
 
 	}
 
-	set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]\nSubject: $email_subject" "" $issue_type_list $email_body "" $user_identification_id "f" $gift_certificate_id]
+	set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" "" $issue_type_list $email_body "" $user_identification_id "f" $gift_certificate_id]
       }
 
       set issue_id [lindex $user_identification_and_issue_id 1]

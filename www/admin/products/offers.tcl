@@ -83,7 +83,7 @@ doc_body_append "[ad_admin_header "Retailer Offers on $product_name"]
 <h3>Current Offers</h3>
 <ul>
 "
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
 db_foreach offers_select "
 select o.offer_id, o.retailer_id, r.retailer_name, price, shipping,
@@ -176,7 +176,7 @@ Pick Up only
 
 <ul>
 "
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
 db_foreach non_current_offers_select "
 select o.offer_id, o.retailer_id, retailer_name, price, shipping,

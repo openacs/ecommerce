@@ -61,8 +61,8 @@ doc_body_append "[ad_admin_header "Confirm New Product"]
 <hr>
 <h3>Please confirm that the information below is correct:</h3>
 "
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
-set multiple_retailers_p [util_memoize {ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce} [ec_cache_refresh]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
+set multiple_retailers_p [ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce]
 
 doc_body_append "<form method=post action=add-4>
 <center>
@@ -230,7 +230,7 @@ doc_body_append "<tr>
 Weight
 </td>
 <td>
-[ec_message_if_null $weight] [ec_decode $weight "" "" [util_memoize {ad_parameter -package_id [ec_id] WeightUnits ecommerce} [ec_cache_refresh]]]
+[ec_message_if_null $weight] [ec_decode $weight "" "" [ad_parameter -package_id [ec_id] WeightUnits ecommerce]]
 </td>
 </tr>
 "

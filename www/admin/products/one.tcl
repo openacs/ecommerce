@@ -28,8 +28,8 @@ set subcategory_list [db_list subcategories_select "select subcategory_id from e
 
 set subsubcategory_list [db_list subsubcategories_select "select subsubcategory_id from ec_subsubcategory_product_map where product_id=:product_id"]
 
-set multiple_retailers_p [util_memoize {ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce} [ec_cache_refresh]]
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+set multiple_retailers_p [ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
 set n_professional_reviews [db_string n_professional_reviews_select "select count(*) from ec_product_reviews where product_id = :product_id"]
 
@@ -292,7 +292,7 @@ doc_body_append "<tr>
 Weight:
 </td>
 <td>
-[ec_message_if_null $weight] [ec_decode $weight "" "" [util_memoize {ad_parameter -package_id [ec_id] WeightUnits ecommerce} [ec_cache_refresh]]]
+[ec_message_if_null $weight] [ec_decode $weight "" "" [ad_parameter -package_id [ec_id] WeightUnits ecommerce]]
 </td>
 </tr>
 "

@@ -35,7 +35,7 @@ db_foreach get_uc_info_lines "
 
     append page_html "<li><a href=\"one?[export_url_vars user_class_id user_class_name]\">$user_class_name</a> <font size=-1>($n_users user[ec_decode $n_users "1" "" "s"]"
 
-    if { [util_memoize {ad_parameter -package_id [ec_id] UserClassApproveP ecommerce} [ec_cache_refresh]] } {
+    if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
 	set n_approved_users [db_string get_n_approved_users "
         select count(*) as approved_n_users
           from ec_user_class_user_map

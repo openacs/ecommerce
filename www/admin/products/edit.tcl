@@ -30,7 +30,7 @@ doc_body_append "[ad_admin_header "Edit $product_name"]
 All fields are optional except Product Name.
 <p>
 "
-set multiple_retailers_p [util_memoize {ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce} [ec_cache_refresh]]
+set multiple_retailers_p [ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce]
 
 db_1row product_select "
 select product_id, sku, product_name, 
@@ -146,7 +146,7 @@ if { !$multiple_retailers_p } {
     doc_body_append "<tr>
     <td>Regular Price</td>
     <td><input type=text size=6 name=price value=\"$price\"></td>
-    <td>All prices are in [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]].  The price should
+    <td>All prices are in [ad_parameter -package_id [ec_id] Currency ecommerce].  The price should
     be written as a decimal number (no special characters like \$).
     </tr>
     "
@@ -216,7 +216,7 @@ if { !$multiple_retailers_p } {
     doc_body_append "[export_form_vars shipping shipping_additional]\n"
 }
 doc_body_append "<tr>
-<td>Weight ([util_memoize {ad_parameter -package_id [ec_id] WeightUnits ecommerce} [ec_cache_refresh]])</td>
+<td>Weight ([ad_parameter -package_id [ec_id] WeightUnits ecommerce])</td>
 <td><input type=text size=3 name=weight value=\"$weight\"></td>
 </tr>
 <tr>

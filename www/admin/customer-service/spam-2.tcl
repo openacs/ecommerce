@@ -120,13 +120,13 @@ append doc_body "
 <table border=0 cellspacing=0 cellpadding=10>
 <tr>
 <td>From</td>
-<td>[util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]</td>
+<td>[ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]</td>
 </tr>
 <tr><td>Subject Line</td><td><input type=text name=subject size=30></td></tr>
 <tr><td valign=top>Message</td><td><TEXTAREA wrap=hard name=message COLS=50 ROWS=15></TEXTAREA></td></tr>
 <tr>
 <td>Gift Certificate*</td>
-<td>Amount <input type=text name=amount size=5> ([util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]) &nbsp; &nbsp; Expires [ec_gift_certificate_expires_widget "in 1 year"]</td>
+<td>Amount <input type=text name=amount size=5> ([ad_parameter -package_id [ec_id] Currency ecommerce]) &nbsp; &nbsp; Expires [ec_gift_certificate_expires_widget "in 1 year"]</td>
 </tr>
 <tr><td valign=top>Issue Type**</td><td valign=top>[ec_issue_type_widget "spam"]</td></tr>
 </table>

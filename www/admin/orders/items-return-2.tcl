@@ -73,7 +73,7 @@ append doc_body "[ad_admin_header "Specify refund amount"]
 <hr>
 "
 
-set shipping_refund_percent [util_memoize {ad_parameter -package_id [ec_id] ShippingRefundPercent ecommerce} [ec_cache_refresh]]
+set shipping_refund_percent [ad_parameter -package_id [ec_id] ShippingRefundPercent ecommerce]
 
 if { ![info exists all_items_p] } {
     set item_id_list $item_id

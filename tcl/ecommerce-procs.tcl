@@ -29,7 +29,7 @@ ad_proc ec_system_name {} {
 }
 
 ad_proc -private ec_system_name_mem {} {} {
-    return [util_memoize {ad_parameter -package_id [ec_id] SystemName "" Store} [ec_cache_refresh]]
+    return [ad_parameter -package_id [ec_id] SystemName "" Store]
 }
 
 ad_proc ec_header_image {} {
@@ -43,7 +43,7 @@ ad_proc ec_header_image {} {
 }
 
 ad_proc -private ec_header_image_mem {} {} {
-    return [util_memoize {ad_parameter -package_id [ec_id] HeaderAttributes "" "size=+2 face='arial' color=990000"} [ec_cache_refresh]]
+    return [ad_parameter -package_id [ec_id] HeaderAttributes "" "size=+2 face='arial' color=990000"]
 }
 
 ad_proc ec_system_owner {} {
@@ -53,7 +53,7 @@ ad_proc ec_system_owner {} {
 }
 
 ad_proc -private ec_system_owner_mem {} {} {
-    set so [util_memoize {ad_parameter -package_id [ec_id] SystemOwner "" ""} [ec_cache_refresh]]
+    set so [ad_parameter -package_id [ec_id] SystemOwner "" ""]
     if {[string equal "" $so]} {
         return [ad_system_owner]
     } else {
@@ -202,7 +202,7 @@ ad_proc ec_product_directory {} {
 
 ad_proc -private ec_product_directory_mem {} {
 } {
-    return [util_memoize {ad_parameter -package_id [ec_id] ProductDataDirectory "" product/} [ec_cache_refresh]]
+    return [ad_parameter -package_id [ec_id] ProductDataDirectory "" product/]
 }
 
 # current_location can be "Shopping Cart", "Your Account", "Home", or
@@ -222,7 +222,7 @@ ad_proc ec_footer { {current_location ""} {category_id ""} {search_text ""} } { 
     if { [string compare $current_location "Your Account"] == 0 } {
 	append to_return "<b>Your Account</b>"
     } else {
-	append to_return "<a href=\"[ec_insecurelink [util_memoize {ad_parameter -package_id [ec_id] EcommercePath} [ec_cache_refresh]]account]\">Your Account</a>"
+	append to_return "<a href=\"[ec_insecurelink [ad_parameter -package_id [ec_id] EcommercePath]account]\">Your Account</a>"
     }
     append to_return " | "
     if { [string compare $current_location Home] == 0 } {
@@ -247,7 +247,7 @@ ad_proc ec_footer { {current_location ""} {category_id ""} {search_text ""} } { 
 # For administrators
 ad_proc ec_shipping_cost_summary { base_shipping_cost default_shipping_per_item weight_shipping_cost add_exp_base_shipping_cost add_exp_amount_per_item add_exp_amount_by_weight } { returns cost summary } {
 
-    set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+    set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
     if { ([empty_string_p $base_shipping_cost] || $base_shipping_cost == 0) && ([empty_string_p $default_shipping_per_item] || $default_shipping_per_item == 0) && ([empty_string_p $weight_shipping_cost] || $weight_shipping_cost == 0) && ([empty_string_p $add_exp_base_shipping_cost] || $add_exp_base_shipping_cost == 0) && ([empty_string_p $add_exp_amount_per_item] || $add_exp_amount_per_item == 0) && ([empty_string_p $add_exp_amount_by_weight] || $add_exp_amount_by_weight == 0) } {
 	return "The customers are not charged for shipping beyond what is specified for each product individually."
@@ -264,7 +264,7 @@ ad_proc ec_shipping_cost_summary { base_shipping_cost default_shipping_per_item 
     } elseif { [empty_string_p $weight_shipping_cost] || $weight_shipping_cost == 0 } {
 	append shipping_summary "the per-item cost is [ec_pretty_price $default_shipping_per_item $currency], unless the \"Shipping Price\" has been set for that product (or \"Shipping Price - Additional\", if more than one of the same product is ordered).  "
     } else {
-	append shipping_summary "the per-item-cost is equal to [ec_pretty_price $weight_shipping_cost $currency] times its weight in [util_memoize {ad_parameter -package_id [ec_id] WeightUnits ecommerce} [ec_cache_refresh]], unless the \"Shipping Price\" has been set for that product (or \"Shipping Price - Additional\", if more than one of the same product is ordered).  "
+	append shipping_summary "the per-item-cost is equal to [ec_pretty_price $weight_shipping_cost $currency] times its weight in [ad_parameter -package_id [ec_id] WeightUnits ecommerce], unless the \"Shipping Price\" has been set for that product (or \"Shipping Price - Additional\", if more than one of the same product is ordered).  "
     }
 
     if { ([empty_string_p $add_exp_base_shipping_cost] || $add_exp_base_shipping_cost == 0) && ([empty_string_p $add_exp_amount_per_item] || $add_exp_amount_per_item == 0) && ([empty_string_p $add_exp_amount_by_weight] || $add_exp_amount_by_weight == 0) } {
@@ -277,7 +277,7 @@ ad_proc ec_shipping_cost_summary { base_shipping_cost default_shipping_per_item 
 	    append express_part_of_shipping_summary "An additional amount of [ec_pretty_price $add_exp_amount_per_item $currency] is added for each item, on top of the amount charged for Regular Shipping.  "
 	}
 	if { ![empty_string_p $add_exp_amount_by_weight] && $add_exp_amount_by_weight != 0 } {
-	    append express_part_of_shipping_summary "An additional amount of [ec_pretty_price $add_exp_amount_by_weight $currency] times the weight in [util_memoize {ad_parameter -package_id [ec_id] WeightUnits ecommerce} [ec_cache_refresh]] of each item is added, on top of the amount charged for Regular Shipping.  "
+	    append express_part_of_shipping_summary "An additional amount of [ec_pretty_price $add_exp_amount_by_weight $currency] times the weight in [ad_parameter -package_id [ec_id] WeightUnits ecommerce] of each item is added, on top of the amount charged for Regular Shipping.  "
 	}
     }
 
@@ -574,14 +574,14 @@ ad_proc ec_professional_reviews_if_they_exist { product_id } { returns professio
 # this won't show anything if ProductCommentsAllowP=0
 ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url ""} {prev_args_list ""} } { returns customer comments } {
 
-    if { [util_memoize {ad_parameter -package_id [ec_id] ProductCommentsAllowP ecommerce} [ec_cache_refresh]] == 0 } {
+    if { [ad_parameter -package_id [ec_id] ProductCommentsAllowP ecommerce] == 0 } {
 	return ""
     }
 
     set end_of_comment_query ""
     set sort_blurb ""
 
-    if { [util_memoize {ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP ecommerce} [ec_cache_refresh]] == 1 } {
+    if { [ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP ecommerce] == 1 } {
 	append end_of_comment_query "and c.approved_p = 't'"
     } else {
 	append end_of_comment_query "and (c.approved_p = 't' or c.approved_p is null)\n"
@@ -627,7 +627,7 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
             select avg(rating) from ec_product_comments where product_id = :product_id and approved_p = 't'
         }]]<br>
 	Number of reviews: [db_string n_reviews_select "
-            select count(*) from ec_product_comments where product_id = :product_id and (approved_p='t' [ec_decode [util_memoize {ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP ecommerce} [ec_cache_refresh]] "0" "or approved_p is null" ""])
+            select count(*) from ec_product_comments where product_id = :product_id and (approved_p='t' [ec_decode [ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP ecommerce] "0" "or approved_p is null" ""])
         "] ($sort_blurb)
 
 	<p>
@@ -715,7 +715,7 @@ ad_proc ec_add_to_cart_link {
           from ec_products
          where product_id = :product_id
         "]
-	if { [util_memoize {ad_parameter -package_id [ec_id] AllowPreOrdersP ecommerce} [ec_cache_refresh]] } {
+	if { [ad_parameter -package_id [ec_id] AllowPreOrdersP ecommerce] } {
 	    set r "
             <form method=post action=\"$form_action\">
 	    [export_form_vars product_id]
@@ -880,7 +880,7 @@ ad_proc ec_order_summary_for_customer { order_id user_id {show_item_detail_p "f"
 	    set options "$options; "
 	}
 
-	append items_ul "<li>Quantity $quantity: $product_name; $options$price_name: [ec_pretty_price $price_charged [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]]\n"
+	append items_ul "<li>Quantity $quantity: $product_name; $options$price_name: [ec_pretty_price $price_charged [ad_parameter -package_id [ec_id] Currency ecommerce]]\n"
 	if { $show_item_detail_p == "t" } {
 	    append items_ul "<br>
 	    [ec_shipment_summary_sub $product_id $color_choice $size_choice $style_choice $price_charged $price_name $order_id]
@@ -1076,7 +1076,7 @@ ad_proc ec_price_line { product_id user_id {offer_code "" } {order_confirmed_p "
     if {![string equal "" $lowest_price_description]} {
         append lowest_price_description :
     }
-    set currency [util_memoize {ad_parameter -package_id [ec_id] Currency} [ec_cache_refresh]]
+    set currency [ad_parameter -package_id [ec_id] Currency]
     return "$lowest_price_description [ec_pretty_price [lindex $lowest_price_and_price_name 0] $currency]"
 }
 
@@ -1181,7 +1181,7 @@ ad_proc ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order {order_
     set gift_certificate [lindex $price_shipping_gift_certificate_and_tax 2]
     set tax [lindex $price_shipping_gift_certificate_and_tax 3]
 
-    set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+    set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
     set price_summary_line_1_list [list "Item(s) Subtotal:" [ec_pretty_price $price $currency]]
     set price_summary_line_2_list [list "Shipping & Handling:" [ec_pretty_price $shipping $currency]]
     set price_summary_line_3_list [list "" "-------"]
@@ -1343,7 +1343,7 @@ ad_proc ec_user_class_display { user_id { link_p "f" } } {
 	    set to_append "$user_class_name"
 	}
 
-	if { [util_memoize {ad_parameter -package_id [ec_id] UserClassApproveP ecommerce} [ec_cache_refresh]] } {
+	if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
 	    append to_append " <font size=-1>([ec_decode $user_class_approved_p "t" "approved" "unapproved"])</font>"
 	}
 	lappend to_return $to_append
@@ -1357,7 +1357,7 @@ ad_proc ec_export_entire_form_as_url_vars_maybe {} { exports form as url variabl
 }
 
 ad_proc ec_use_cybercash_p {} {Should we use cybercash? Use ad_parameter UseCyberCashP and default value 1 to find out.} {
-    return [util_memoize {ad_parameter -package_id [ec_id] UseCyberCashP ecommerce 1} [ec_cache_refresh]]
+    return [ad_parameter -package_id [ec_id] UseCyberCashP ecommerce 1]
 }
 
 ### concatenate two pieces of a url.  Gets number of /s right.

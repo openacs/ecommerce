@@ -29,7 +29,7 @@ ad_proc ec_register_styletag {
 }
 
 ad_proc ec_style_template_root_internal {} { returns template root } {
-    set templateroot [util_memoize {ad_parameter -package_id [ec_id] TemplateRoot "style"} [ec_cache_refresh]]
+    set templateroot [ad_parameter -package_id [ec_id] TemplateRoot "style"]
     if {[empty_string_p $templateroot]} {
         return [ec_url_concat [ec_pageroot] templates]
     } 
@@ -104,17 +104,17 @@ takes list of raw filenames and returns a list of lists
     # set defaults
     set user_preferred_language ""
     set user_preferred_plain_fancy ""
-    set site_default_language [util_memoize {ad_parameter -package_id [ec_id] LanguageSiteDefault style} [ec_cache_refresh]]
-    set site_default_plain_fancy [util_memoize {ad_parameter -package_id [ec_id] PlainFancySiteDefault style} [ec_cache_refresh]]
+    set site_default_language [ad_parameter -package_id [ec_id] LanguageSiteDefault style]
+    set site_default_plain_fancy [ad_parameter -package_id [ec_id] PlainFancySiteDefault style]
     # let's figure out first whether or not this is a logged-in person
     set user_id [ad_get_user_id]
     if { $user_id == 0 } {
 	# not logged in, maybe cookied though
-	if [util_memoize {ad_parameter -package_id [ec_id] LanguageCookieP style} [ec_cache_refresh]] {
+	if [ad_parameter -package_id [ec_id] LanguageCookieP style] {
 	    # let's at least look for a cookie
 	    set user_preferred_language [ec_style_language_from_cookie]
 	}
-	if [util_memoize {ad_parameter -package_id [ec_id] PlainFancyCookieP style} [ec_cache_refresh]] {
+	if [ad_parameter -package_id [ec_id] PlainFancyCookieP style] {
 	    set user_preferred_plain_fancy [ec_style_plain_fancy_from_cookie]
 	}
     } else {

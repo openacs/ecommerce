@@ -82,8 +82,8 @@ if { ![info exists offer_code] } {
     set offer_code ""
 }
 
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
-set allow_pre_orders_p [util_memoize {ad_parameter -package_id [ec_id] AllowPreOrdersP ecommerce} [ec_cache_refresh]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
+set allow_pre_orders_p [ad_parameter -package_id [ec_id] AllowPreOrdersP ecommerce]
 
 # get all the information from both the products table
 # and any custom product fields added by this publisher

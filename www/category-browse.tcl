@@ -18,7 +18,7 @@ ad_page_contract {
     category_id:notnull,naturalnum
     subcategory_id:optional,naturalnum
     subsubcategory_id:optional,naturalnum
-    {how_many:naturalnum {[util_memoize {ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce} [ec_cache_refresh]]}}
+    {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
     {start:naturalnum "0"}
     usca_p:optional
 }
@@ -87,7 +87,7 @@ set recommendations ""
 set header_to_print "<b>We Recommend</b><p>"
 set header_printed 0
 
-if { [util_memoize {ad_parameter -package_id [ec_id] UserClassApproveP ecommerce} [ec_cache_refresh]] } {
+if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
 } else {
     set user_class_approved_p_clause ""

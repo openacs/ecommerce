@@ -38,7 +38,7 @@ append doc_body "[ad_admin_header $page_title]
 set expiration_to_print [db_string get_exipre_from_Db "select [ec_decode $expires "" "null" $expires] from dual"]
 set expiration_to_print [ec_decode $expiration_to_print "" "never" [util_AnsiDatetoPrettyDate $expiration_to_print]]
 
-append doc_body "Please confirm that you wish to add [ec_pretty_price $amount [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]] to
+append doc_body "Please confirm that you wish to add [ec_pretty_price $amount [ad_parameter -package_id [ec_id] Currency ecommerce]] to
 <a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">[db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:user_id"]</a>'s gift certificate account (expires $expiration_to_print).
 
 <p>

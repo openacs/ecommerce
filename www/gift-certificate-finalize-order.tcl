@@ -90,12 +90,12 @@ if { [string length $certificate_message] > 200 } {
 #      incr exception_count
 #      append exception_text "<li>The amount, $amount needs to be a number with no special characters."
 #  } elseif
-if { $amount < [util_memoize {ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce} [ec_cache_refresh]] } {
+if { $amount < [ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce] } {
     incr exception_count
-    append exception_text "<li>The amount, $amount needs to be at least [ec_pretty_price [util_memoize {ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce} [ec_cache_refresh]]]"
-} elseif { $amount > [util_memoize {ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce} [ec_cache_refresh]] } {
+    append exception_text "<li>The amount, $amount needs to be at least [ec_pretty_price [ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce]]"
+} elseif { $amount > [ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce] } {
     incr exception_count
-    append exception_text "<li>The amount, $amount cannot be higher than [ec_pretty_price [util_memoize {ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce} [ec_cache_refresh]]]"
+    append exception_text "<li>The amount, $amount cannot be higher than [ec_pretty_price [ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce]]"
 }
 
 #  if {![philg_email_valid_p $recipient_email]} {
@@ -201,7 +201,7 @@ if { [db_string get_gift_c_id "select count(*) from ec_gift_certificates where g
 
 
 	set peeraddr [ns_conn peeraddr]
-	set gc_months [util_memoize {ad_parameter -package_id [ec_id] GiftCertificateMonths ecommerce} [ec_cache_refresh]]
+	set gc_months [ad_parameter -package_id [ec_id] GiftCertificateMonths ecommerce]
 	db_dml insert_new_gc_into_db  "insert into ec_gift_certificates
     (gift_certificate_id, gift_certificate_state, amount, issue_date, purchased_by, expires, claim_check, certificate_message, certificate_to, certificate_from, recipient_email, last_modified, last_modifying_user, modified_ip_address)
     values
@@ -221,7 +221,7 @@ if { [db_string get_gift_c_id "select count(*) from ec_gift_certificates where g
     # try to authorize the transaction
     set cc_args [ns_set new]
     
-    ns_set put $cc_args "amount" "[util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]] $amount"
+    ns_set put $cc_args "amount" "[ad_parameter -package_id [ec_id] Currency ecommerce] $amount"
     ns_set put $cc_args "card-number" "$creditcard_number"
     ns_set put $cc_args "card-exp" "$creditcard_expire_1/$creditcard_expire_2"
     ns_set put $cc_args "card-zip" "$billing_zip_code"

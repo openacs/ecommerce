@@ -170,8 +170,8 @@ if { [exists_and_not_null upload_file] } {
     # thumbnails are all jpg files
     
     # set thumbnail dimensions
-    if [catch {set thumbnail_width [util_memoize {ad_parameter -package_id [ec_id] ThumbnailWidth ecommerce} [ec_cache_refresh]]} ] {
-	if [catch {set thumbnail_height [util_memoize {ad_parameter -package_id [ec_id] ThumbnailHeight ecommerce} [ec_cache_refresh]]} ] {
+    if [catch {set thumbnail_width [ad_parameter -package_id [ec_id] ThumbnailWidth ecommerce]} ] {
+	if [catch {set thumbnail_height [ad_parameter -package_id [ec_id] ThumbnailHeight ecommerce]} ] {
 	    set convert_dimensions "100x10000"
 	} else {
 	    set convert_dimensions "10000x$thumbnail_height"
@@ -209,8 +209,8 @@ doc_body_append "[ad_admin_header "Confirm Product Changes"]
 <h3>Please confirm that the information below is correct:</h3>
 "
 
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
-set multiple_retailers_p [util_memoize {ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce} [ec_cache_refresh]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
+set multiple_retailers_p [ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce]
 
 doc_body_append "<form method=post action=edit-3>
 <center>
@@ -378,7 +378,7 @@ doc_body_append "<tr>
 Weight
 </td>
 <td>
-[ec_message_if_null $weight] [ec_decode $weight "" "" [util_memoize {ad_parameter -package_id [ec_id] WeightUnits ecommerce} [ec_cache_refresh]]]
+[ec_message_if_null $weight] [ec_decode $weight "" "" [ad_parameter -package_id [ec_id] WeightUnits ecommerce]]
 </td>
 </tr>
 "

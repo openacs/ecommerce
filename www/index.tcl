@@ -9,7 +9,7 @@ ad_page_contract {
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     usca_p:optional
-    {how_many:naturalnum {[util_memoize {ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce} [ec_cache_refresh]]}}
+    {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
     {start "0"}
 }
 
@@ -54,7 +54,7 @@ set recommendations_if_there_are_any ""
 set header_to_print "<b>We Recommend</b><p><blockquote>"
 set header_printed 0
 
-if { [util_memoize {ad_parameter -package_id [ec_id] UserClassApproveP ecommerce} [ec_cache_refresh]] } {
+if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
 } else {
     set user_class_approved_p_clause ""
@@ -90,7 +90,7 @@ $recommendation_text
 
 append recommendations_if_there_are_any "</blockquote>"
 
-if { [util_memoize {ad_parameter -package_id [ec_id] SellGiftCertificatesP ecommerce} [ec_cache_refresh]] == 1 } {
+if { [ad_parameter -package_id [ec_id] SellGiftCertificatesP ecommerce] == 1 } {
     set gift_certificates_are_allowed 1
 } else {
     set gift_certificates_are_allowed 0

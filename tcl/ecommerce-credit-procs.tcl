@@ -63,7 +63,7 @@ ad_proc ec_creditcard_authorization { order_id {transaction_id ""} } {
 	return "authorized_plus_avs"
     }
 
-    set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+    set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
     # The above decode, "youth", gives a 1 is the order is younger than 95% of 
     # a day old and a 0 otherwise.  It is used to determine whether the
@@ -230,7 +230,7 @@ ad_proc ec_creditcard_marking { transaction_id } { performs credit card marking
 	    ns_log Notice "Eve debug 3"
 	    set cc_args [ns_set new]
 
-	    set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+	    set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
 	    ns_set put $cc_args "amount" "$currency $transaction_amount"
 	    ns_set put $cc_args "order-id" "$transaction_id"
@@ -307,7 +307,7 @@ ad_proc ec_creditcard_return { transaction_id } { marks order for return } {
 
 	    set cc_args [ns_set new]
 	    
-	    ns_set put $cc_args "amount" "[util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]] $transaction_amount"
+	    ns_set put $cc_args "amount" "[ad_parameter -package_id [ec_id] Currency ecommerce] $transaction_amount"
 	    ns_set put $cc_args "order-id" "$transaction_id"
 	    ns_set put $cc_args "card-number" "$creditcard_number"
 	    ns_set put $cc_args "card-exp" "$creditcard_expire"
@@ -387,7 +387,7 @@ ad_proc ec_talk_to_cybercash { txn_attempted_type cc_args } "This procedure talk
     # variables are slightly renamed to stick with legal tcl variable
     # names and our own naming conventions.
 
-    set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+    set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
     if { [ns_set get $cc_args "amount"] != "" } {
 	# This is to take care of cases where the tax table has output an
@@ -543,7 +543,7 @@ ad_proc ec_talk_to_cybercash { txn_attempted_type cc_args } "This procedure talk
 	    ns_set put $ttcc_output "batch_id" [ec_get_from_quasi_form $relevant_cc_data batch-id]
 	    set long_amount [ec_get_from_quasi_form $relevant_cc_data amount]
 	    regsub -all {[^0-9\.]} $long_amount "" numeric_amount
-	    # regexp {^[util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]] (.*)} $long_amount garbage numeric_amount
+	    # regexp {^[ad_parameter -package_id [ec_id] Currency ecommerce] (.*)} $long_amount garbage numeric_amount
 	    if { [info exists numeric_amount] } {
 		ns_set put $ttcc_output "amount" $numeric_amount	
 	    } else {

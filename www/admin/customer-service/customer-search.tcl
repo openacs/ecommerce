@@ -47,7 +47,7 @@ append doc_body "[ad_admin_header "Customer Search"]
 [ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Customer Search"]
 
 <hr>
-Customers who spent more than [ec_pretty_price $amount [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]] in the last $days days:
+Customers who spent more than [ec_pretty_price $amount [ad_parameter -package_id [ec_id] Currency ecommerce]] in the last $days days:
 <ul>
 "
 

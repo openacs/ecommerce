@@ -120,7 +120,7 @@ where order_id=:order_id"
 # 2. put the prices into ec_items
 
 # set some things to use as arguments when setting prices
-if { [util_memoize {ad_parameter -package_id [ec_id] UserClassApproveP ecommerce} [ec_cache_refresh]] } {
+if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
     set additional_user_class_restriction "and user_class_approved_p = 't'"
 } else {
     set additional_user_class_restriction "and (user_class_approved_p is null or user_class_approved_p='t')"

@@ -73,13 +73,13 @@ if { $gift_certificate_balance > 0 } {
 # if any user classes exist
 set user_classes ""
 
-if { [util_memoize {ad_parameter -package_id [ec_id] UserClassUserViewP ecommerce} [ec_cache_refresh]] == 1 && ![empty_string_p [db_string  get_user_view_classes "select 1 from dual where exists (select 1 from ec_user_classes)" -default ""]]} {
+if { [ad_parameter -package_id [ec_id] UserClassUserViewP ecommerce] == 1 && ![empty_string_p [db_string  get_user_view_classes "select 1 from dual where exists (select 1 from ec_user_classes)" -default ""]]} {
 
     set user_classes_to_display [ec_user_class_display $user_id]
 
     append user_classes "<p><li>User Classes: $user_classes_to_display"
 
-    if { [util_memoize {ad_parameter -package_id [ec_id] UserClassAllowSelfPlacement ecommerce} [ec_cache_refresh]] } {
+    if { [ad_parameter -package_id [ec_id] UserClassAllowSelfPlacement ecommerce] } {
 	append user_classes " (<a href=\"update-user-classes\">[ec_decode $user_classes_to_display "" "sign up for one" "update"]</a>)"
     }
 

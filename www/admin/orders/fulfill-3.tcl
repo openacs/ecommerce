@@ -190,7 +190,7 @@ db_transaction {
 	(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
 	"
 
-		if { [util_memoize {ad_parameter -package_id [ec_id] DisplayTransactionMessagesDuringFulfillmentP ecommerce} [ec_cache_refresh]] } {
+		if { [ad_parameter -package_id [ec_id] DisplayTransactionMessagesDuringFulfillmentP ecommerce] } {
 		    ad_return_warning "Credit Card Failure" "Warning: the credit card authorization for this shipment (shipment_id $shipment_id) of order_id $order_id failed.  You may wish to abort the shipment (if possible) until this is issue is resolved.  A note has been made in the problems log.<p><a href=\"fulfillment\">Continue with order fulfillment.</a>"
 		    return
 		}

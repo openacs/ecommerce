@@ -11,21 +11,21 @@ ad_library {
 }
 
 ad_proc ec_customer_service_email_address { {user_identification_id ""} {issue_id ""}} { returns the customer server email address } {
-    return [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]
+    return [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]
 }
 
 ad_proc ec_customer_service_signature {-html:boolean} {
     if $html_p {
-        return "Customer Service<br>
-[util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]<br>
+        return "[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]<br>
+[ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]<br>
 [ec_insecure_location][ec_url]
 "
     } else {
-        return "Customer Service
-[util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]
+        return "[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]
+[ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]
 [ec_insecure_location][ec_url]
 "
-}
+    }
 }
 
 ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_originator interaction_type interaction_headers order_id issue_type_list action_details {user_id ""} {user_identification_id ""} {begin_new_transaction_p "f"} {gift_certificate_id ""} } { 

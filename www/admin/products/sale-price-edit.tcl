@@ -33,7 +33,7 @@ db_1row sale_price_select "select sale_price, to_char(sale_begins,'YYYY-MM-DD HH
 doc_body_append "<table>
 <tr>
 <td>Sale Price</td>
-<td><input type=text name=sale_price size=6 value=\"$sale_price\"> (in [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]])</td>
+<td><input type=text name=sale_price size=6 value=\"$sale_price\"> (in [ad_parameter -package_id [ec_id] Currency ecommerce])</td>
 </tr>
 <tr>
 <td>Name</td>

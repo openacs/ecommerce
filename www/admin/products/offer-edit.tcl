@@ -58,7 +58,7 @@ select price, shipping, stock_status, shipping_unavailable_p, offer_begins,
 where offer_id=:offer_id
 "
 
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
 doc_body_append "</select>
 </td>

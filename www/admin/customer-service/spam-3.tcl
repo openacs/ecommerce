@@ -190,7 +190,7 @@ db_transaction {
 db_foreach get_users_for_spam $sql {
     
     # create a customer service issue/interaction/action
-    set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]\nSubject: $subject" "" $issue_type_list $message $user_id "" "f"]
+    set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $subject" "" $issue_type_list $message $user_id "" "f"]
     
     set user_identification_id [lindex $user_identification_and_issue_id 0]
     set issue_id [lindex $user_identification_and_issue_id 1]

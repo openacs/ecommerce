@@ -73,7 +73,7 @@ if { !$comment_found_p } {
 "
 }
 
-set comments_need_approval [util_memoize {ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP} [ec_cache_refresh]]
+set comments_need_approval [ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP]
 set system_owner_email [ec_system_owner]
 set product_link "product?[export_url_vars product_id]"
 db_release_unused_handles

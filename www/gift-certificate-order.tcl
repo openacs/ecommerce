@@ -9,12 +9,10 @@ ad_page_contract {
 
 }
 
-
-
 set system_name [ad_system_name]
-set expiration_time [ec_decode [util_memoize {ad_parameter -package_id [ec_id] GiftCertificateMonths ecommerce} [ec_cache_refresh]] "12" "1 year" "24" "2 years" "[util_memoize {ad_parameter -package_id [ec_id] GiftCertificateMonths ecommerce} [ec_cache_refresh]] months"]
-set minimum_amount [ec_pretty_price [util_memoize {ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce} [ec_cache_refresh]]]
-set maximum_amount [ec_pretty_price [util_memoize {ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce} [ec_cache_refresh]]]
+set expiration_time [ec_decode [ad_parameter -package_id [ec_id] GiftCertificateMonths ecommerce] "12" "1 year" "24" "2 years" "[ad_parameter -package_id [ec_id] GiftCertificateMonths ecommerce] months"]
+set minimum_amount [ec_pretty_price [ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce]]
+set maximum_amount [ec_pretty_price [ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce]]
 
 # wtem@olywa.net, 2001-03-29
 # changed to relative link from ec_securelink

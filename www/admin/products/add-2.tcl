@@ -182,8 +182,8 @@ if { [info exists upload_file] && ![string compare $upload_file ""] == 0 } {
     # thumbnails are all jpg files
     
     # set thumbnail dimensions
-    if [catch {set thumbnail_width [util_memoize {ad_parameter -package_id [ec_id] ThumbnailWidth ecommerce} [ec_cache_refresh]]} ] {
-	if [catch {set thumbnail_height [util_memoize {ad_parameter -package_id [ec_id] ThumbnailHeight ecommerce} [ec_cache_refresh]]} ] {
+    if [catch {set thumbnail_width [ad_parameter -package_id [ec_id] ThumbnailWidth ecommerce]} ] {
+	if [catch {set thumbnail_height [ad_parameter -package_id [ec_id] ThumbnailHeight ecommerce]} ] {
 	    set convert_dimensions "100x10000"
 	} else {
 	    set convert_dimensions "10000x$thumbnail_height"

@@ -37,7 +37,7 @@ append doc_body "<b>Customer:</b> <a href=\"[ec_acs_admin_url]users/one?user_id=
 <table>
 <tr>
 <td>Amount</td>
-<td><input type=text name=amount size=5> ([util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]])</td>
+<td><input type=text name=amount size=5> ([ad_parameter -package_id [ec_id] Currency ecommerce])</td>
 <td rowspan=2><input type=submit value=\"Grant\"></td>
 </tr>
 <tr>

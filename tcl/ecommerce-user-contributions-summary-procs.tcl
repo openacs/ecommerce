@@ -20,7 +20,7 @@ ad_proc ecommerce_user_contributions { user_id purpose} {Returns list items, one
     if { $purpose != "site_admin" } {
 	return [list]
     }
-    if ![util_memoize {ad_parameter -package_id [ec_id] EnabledP ecommerce 0} [ec_cache_refresh]] {
+    if ![ad_parameter -package_id [ec_id] EnabledP ecommerce 0] {
 	return [list]
     }
     set moby_string ""

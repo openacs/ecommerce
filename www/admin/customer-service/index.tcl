@@ -116,7 +116,7 @@ append doc_body "</ul>
 <form method=post action=customer-search>
 <li>Customers who have spent over
 <input type=text size=5 name=amount>
-([util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]])
+([ad_parameter -package_id [ec_id] Currency ecommerce])
 in the last <input type=text size=2 name=days> days
 <input type=submit value=\"Go\">
 </form>

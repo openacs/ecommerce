@@ -421,7 +421,7 @@ ad_proc ec_delayed_credit_denied {}  { Sends "Credit Denied" email to consumers 
 
 ad_proc ec_expire_old_carts {} { expires old carts } {
     db_transaction {
-      db_dml expired_carts_update "update ec_orders set order_state='expired', expired_date=sysdate where order_state='in_basket' and sysdate-in_basket_date > [util_memoize {ad_parameter -package_id [ec_id] CartDuration ecommerce} [ec_cache_refresh]]"
+      db_dml expired_carts_update "update ec_orders set order_state='expired', expired_date=sysdate where order_state='in_basket' and sysdate-in_basket_date > [ad_parameter -package_id [ec_id] CartDuration ecommerce]"
       db_dml item_state_update "update ec_items set item_state='expired', expired_date=sysdate where item_state='in_basket' and order_id in (select order_id from ec_orders where order_state='expired')"
     }
 }
@@ -429,7 +429,7 @@ ad_proc ec_expire_old_carts {} { expires old carts } {
 ad_proc ec_remove_creditcard_data {} { remove credit card data } {
     # if SaveCreditCardDataP=0 we should remove the creditcard_number for the cards whose numbers are
     # no longer needed (i.e. all their orders are fulfilled, returned, void, or expired)
-    if { [util_memoize {ad_parameter -package_id [ec_id] SaveCreditCardDataP ecommerce} [ec_cache_refresh]] == 0 } {
+    if { [ad_parameter -package_id [ec_id] SaveCreditCardDataP ecommerce] == 0 } {
 	db_dml creditcard_update {
 	    update ec_creditcards
 	    set creditcard_number=null
@@ -732,7 +732,7 @@ ad_proc ec_unrefund_settled_transactions {} { unrefunded settled transactions } 
 ## Schedule these procedures
 
 set ec_procs_scheduled_p 0
-set ep [util_memoize {ad_parameter -package_id [ec_id] EnabledP ecommerce 0} [ec_cache_refresh]]
+set ep [ad_parameter -package_id [ec_id] EnabledP ecommerce 0]
 
 if { !$ec_procs_scheduled_p  && $ep} {
     set ec_procs_scheduled_p 1

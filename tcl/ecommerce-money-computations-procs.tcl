@@ -27,7 +27,7 @@ ad_proc ec_lowest_price_and_price_name_for_an_item { product_id user_id {offer_c
 	set lowest_price_name "Our Price"
     }
 
-    if { [util_memoize {ad_parameter -package_id [ec_id] UserClassApproveP ecommerce} [ec_cache_refresh]] } {
+    if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
 	set additional_user_class_restriction "and m.user_class_approved_p = 't'"
     } else {
 	set additional_user_class_restriction "and (m.user_class_approved_p is null or m.user_class_approved_p='t')"
@@ -44,7 +44,7 @@ ad_proc ec_lowest_price_and_price_name_for_an_item { product_id user_id {offer_c
 	    set lowest_price $price
 	    # only include the user_class_name in the name of the price if
 	    # the user is allowed to see what user classes they're in
-	    if { [util_memoize {ad_parameter -package_id [ec_id] UserClassUserViewP ecommerce} [ec_cache_refresh]] == 1 } {
+	    if { [ad_parameter -package_id [ec_id] UserClassUserViewP ecommerce] == 1 } {
 		set lowest_price_name "$user_class_name Price"
 	    } else {
 		set lowest_price_name "Special Price"
@@ -147,7 +147,7 @@ ad_proc ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item { produ
 		set lowest_price $price
 	    # only include the user_class_name in the name of the price if
 	    # the user is allowed to see what user classes they're in
-		if { [util_memoize {ad_parameter -package_id [ec_id] UserClassUserViewP ecommerce} [ec_cache_refresh]] == 1 } {
+		if { [ad_parameter -package_id [ec_id] UserClassUserViewP ecommerce] == 1 } {
 		    set lowest_price_name "$user_class_name Price"
 		} else {
 		    set lowest_price_name "Special Price"

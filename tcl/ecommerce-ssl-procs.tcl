@@ -43,7 +43,7 @@ ad_proc ec_preferred_drivers {} {
         set nsunix [ns_config ns/server/[ns_info server]/modules nsunix]
 
         if {![empty_string_p $nssock] && ![empty_string_p $nsunix]} {
-            set driver [util_memoize {ad_parameter -package_id [ec_id] httpModule ecommerce nsunix} [ec_cache_refresh]]
+            set driver [ad_parameter -package_id [ec_id] httpModule ecommerce nsunix]
         } elseif {[empty_string_p $nssock]} {
             set driver nsunix
         } else {
@@ -60,7 +60,7 @@ ad_proc ec_preferred_drivers {} {
     set nsopenssl [ns_config ns/server/[ns_info server]/modules nsopenssl]
 
     if {![empty_string_p $nsssl] && ![empty_string_p $nsopenssl]} {
-        set sdriver [util_memoize {ad_parameter -package_id [ec_id] httpsModule ecommerce nsopenssl} [ec_cache_refresh]]
+        set sdriver [ad_parameter -package_id [ec_id] httpsModule ecommerce nsopenssl]
     } elseif {[empty_string_p $nsssl]} {
         set sdriver nsopenssl
     } else {
@@ -73,10 +73,10 @@ ad_proc ec_preferred_drivers {} {
 ad_proc ec_secure_location {} {
     @return the secure location https://host:port, favoring the https module specified as an ecommerce parameter.
 } {
-    # set loc [util_memoize {ad_parameter -package_id [ec_id] SecureLocation} [ec_cache_refresh]]
+    # set loc [ad_parameter -package_id [ec_id] SecureLocation]
     set loc [ad_parameter -package_id [ec_id] SecureLocation]
     if {[empty_string_p $loc] || [string equal -nocase $loc "No Value"]} {
-        # set sdriver [util_memoize {ad_parameter -package_id [ec_id] httpsModule} [ec_cache_refresh]]
+        # set sdriver [ad_parameter -package_id [ec_id] httpsModule]
         set sdriver [ad_parameter -package_id [ec_id] httpsModule]
         if {[empty_string_p $sdriver]} {
             array set drivers [ec_preferred_drivers]
@@ -108,9 +108,9 @@ ad_proc ec_secure_location {} {
 ad_proc ec_insecure_location {} {
     @return the insecure location, favoring the InsecureLocation ecommerce parameter.
 } {
-    set loc [util_memoize {ad_parameter -package_id [ec_id] InsecureLocation} [ec_cache_refresh]]
+    set loc [ad_parameter -package_id [ec_id] InsecureLocation]
     if {[empty_string_p $loc] || [string equal -nocase $loc "No Value"]} {
-        # set sdriver [util_memoize {ad_parameter -package_id [ec_id] httpsModule} [ec_cache_refresh]]
+        # set sdriver [ad_parameter -package_id [ec_id] httpsModule]
         set driver [ad_parameter -package_id [ec_id] httpModule]
         if {[empty_string_p $driver] || [string equal -nocase $loc "No Value"]} {
             array set drivers [ec_preferred_drivers]

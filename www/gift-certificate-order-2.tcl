@@ -32,9 +32,9 @@ set user_id [ad_verify_and_get_user_id]
 # wtem@olywa.net, 2001-03-29
 # user login rolled into ec_redirect_to_https_if_possible_and_necessary
 
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
-set minimum_amount [ec_pretty_price [util_memoize {ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce} [ec_cache_refresh]]]
-set maximum_amount [ec_pretty_price [util_memoize {ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce} [ec_cache_refresh]]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
+set minimum_amount [ec_pretty_price [ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce]]
+set maximum_amount [ec_pretty_price [ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce]]
 
 
 ec_return_template

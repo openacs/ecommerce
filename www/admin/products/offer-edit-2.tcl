@@ -121,7 +121,7 @@ doc_body_append "[ad_admin_header "Confirm Retailer Offer on $product_name"]
 <hr>
 "
 
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
 doc_body_append "<table>
 <tr>

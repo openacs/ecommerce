@@ -54,12 +54,12 @@ if { [string length $recipient_email] > 100 } {
     append exception_text "<li>The recipient email address you entered is too long.  It needs to contain fewer than 100 characters (the current length is [string length $recipient_email] characters)."
 }
 
-if { $amount < [util_memoize {ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce} [ec_cache_refresh]] } {
+if { $amount < [ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce] } {
     incr exception_count
-    append exception_text "<li>The amount needs to be at least [ec_pretty_price [util_memoize {ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce} [ec_cache_refresh]]]"
-} elseif { $amount > [util_memoize {ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce} [ec_cache_refresh]] } {
+    append exception_text "<li>The amount needs to be at least [ec_pretty_price [ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce]]"
+} elseif { $amount > [ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce] } {
     incr exception_count
-    append exception_text "<li>The amount cannot be higher than [ec_pretty_price [util_memoize {ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce} [ec_cache_refresh]]]"
+    append exception_text "<li>The amount cannot be higher than [ec_pretty_price [ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce]]"
 }
 
 #  if { [empty_string_p $recipient_email] } {

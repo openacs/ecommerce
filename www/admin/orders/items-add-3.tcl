@@ -39,7 +39,7 @@ Make modifications as needed:
 
 <blockquote>
 <input type=text name=price_name value=\"[ad_quotehtml [lindex $lowest_price_and_price_name 1]]\" size=15>
-<input type=text name=price_charged value=\"[format "%0.2f" [lindex $lowest_price_and_price_name 0]]\" size=4> ([util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]])
+<input type=text name=price_charged value=\"[format "%0.2f" [lindex $lowest_price_and_price_name 0]]\" size=4> ([ad_parameter -package_id [ec_id] Currency ecommerce])
 </blockquote>
 
 </blockquote>

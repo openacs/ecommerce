@@ -176,7 +176,7 @@ db_foreach get_shipping_data "
 set shipping_options ""
 set checkout_step    verify
 
-if { [util_memoize {ad_parameter -package_id [ec_id] ExpressShippingP ecommerce} [ec_cache_refresh]] } {
+if { [ad_parameter -package_id [ec_id] ExpressShippingP ecommerce] } {
     if { $shipping_avail_p } {
         set checkout_step shipping
         append shipping_options "<p>
@@ -200,7 +200,7 @@ if { [util_memoize {ad_parameter -package_id [ec_id] ExpressShippingP ecommerce}
 }
 set tax_exempt_options ""
 
-if { [util_memoize {ad_parameter -package_id [ec_id] OfferTaxExemptStatusP ecommerce 0} [ec_cache_refresh]] } {
+if { [ad_parameter -package_id [ec_id] OfferTaxExemptStatusP ecommerce 0] } {
   append tax_exempt_options "<p>
   <b><li>Is your organization tax exempt? (If so, we will ask you to
   provide us with an exemption certificate.)</b>

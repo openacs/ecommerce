@@ -44,7 +44,7 @@ if { [db_string check_csa_doubleclick "select count(*) from ec_customer_service_
 # 2. create action
 # 3. send email
 
-set email_from [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]
+set email_from [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]
 
 set action_details "From: $email_from
 To: $email_to_use
@@ -84,9 +84,9 @@ values
 set extra_headers [ns_set new]
 if { [info exists cc_to] && $cc_to != "" } {
     ns_set put $extra_headers "Cc" "$cc_to"
-    ec_sendmail_from_service $email_to_use [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]] $subject $message $extra_headers $bcc_to
+    ec_sendmail_from_service $email_to_use [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce] $subject $message $extra_headers $bcc_to
 } else {
-    ec_sendmail_from_service $email_to_use [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]] $subject $message "" $bcc_to
+    ec_sendmail_from_service $email_to_use [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce] $subject $message "" $bcc_to
 }
 db_release_unused_handles
 

@@ -75,7 +75,7 @@ append doc_body "If you are not [db_string get_full_name "select first_names || 
 <table>
 <tr>
 <td align=right><b>From</td>
-<td>[util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]</td>
+<td>[ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]</td>
 </tr>
 <tr>
 <td align=right><b>To</td>

@@ -56,7 +56,7 @@ doc_body_append "[ad_admin_header "Sale Prices for $product_name"]
 <h3>Current Sale Prices</h3>
 <ul>
 "
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
 
 set sale_price_counter 0
@@ -126,7 +126,7 @@ doc_body_append "</ul>
 
 <ul>
 "
-set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
 
 set sale_price_counter 0

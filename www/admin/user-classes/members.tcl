@@ -33,13 +33,13 @@ and m.user_class_id=:user_class_id" {
 
     append page_html "<li><a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$first_names $last_name</a> ($email) "
 
-    if { [util_memoize {ad_parameter -package_id [ec_id] UserClassApproveP ecommerce} [ec_cache_refresh]] } {
+    if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
 	append page_html "<font size=-1>[ec_decode $user_class_approved_p "t" "" "un"]approved</font> "
     }
 
     append page_html "(<a href=\"member-delete?[export_url_vars user_class_name user_class_id user_id]\">remove</a>"
 
-    if { [util_memoize {ad_parameter -package_id [ec_id] UserClassApproveP ecommerce} [ec_cache_refresh]] } {
+    if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
 	if { $user_class_approved_p == "t" } {
 	    append page_html " | <a href=\"approve-toggle?[export_url_vars user_class_id user_id user_class_approved_p]\">unapprove</a>"
 	} else {
