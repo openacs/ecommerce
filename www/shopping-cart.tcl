@@ -29,8 +29,14 @@ if {[info exists product_id]} {
 
 # We don't need them to be logged in, but if they are they might get a
 # lower price
+set first_names ""
+set last_name ""
+set email ""
 
 set user_id [ad_verify_and_get_user_id]
+if { $user_id != 0 } {
+    ad_get_user_info
+}
 
 # user sessions:
 # 1. get user_session_id from cookie
@@ -41,11 +47,13 @@ set user_id [ad_verify_and_get_user_id]
 
 set user_session_id [ec_get_user_session_id]
 ec_create_new_session_if_necessary
-set n_items_in_cart [db_string get_n_items "
-    select count(*) 
-    from ec_orders o, ec_items i
-    where o.order_id=i.order_id
-    and o.user_session_id=:user_session_id and o.order_state='in_basket'"]
+
+# This is not being used anywhere
+#set n_items_in_cart [db_string get_n_items "
+#    select count(*) 
+#    from ec_orders o, ec_items i
+#    where o.order_id=i.order_id
+#    and o.user_session_id=:user_session_id and o.order_state='in_basket'"]
 
 set product_counter 0
 set total_price 0

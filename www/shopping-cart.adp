@@ -2,7 +2,11 @@
 <property name="title">Your Shopping Cart</property>
 <property name="navbar">Your Shopping Cart</property>
 
-<h2>Your Shopping Cart</h2>
+<h3>Shopping Cart</h3> 
+<if @user_id@ ne 0>
+  for @first_names@ @last_name@ (if you're not @first_names@ @last_name@, 
+  <a href=/register/>click here</a>).
+</if>
 
 <blockquote>
   <multiple name="in_cart">
