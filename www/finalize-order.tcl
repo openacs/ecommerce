@@ -301,7 +301,6 @@ if {$hard_goods_cost > 0} {
 
 		    ns_log Notice "Order $order_id received a result of $result"
 		    ad_return_error "Sorry" "
-			<h2>Sorry</h2>
 			<p>There has been an error in the processing of your credit card information.
 			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
                     ad_script_abort
