@@ -7,5 +7,5 @@
 
 <blockquote>
   <p><b>Please print this page for your records</b></p>
-  @order_summary@
+  @order_summary;noquote@
 </blockquote>
