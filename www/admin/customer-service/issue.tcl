@@ -49,7 +49,7 @@ if { [empty_string_p $close_date] } {
 }
 
 append doc_body "
-\[ <a href=\"issue-edit?[export_url_vars issue_id]\">edit</a> | $open_close_link | <a href=\"email-send?[export_url_vars issue_id user_identification_id]\">send email</a> | <a href=\"interaction-add?[export_url_vars issue_id user_identification_id]\">record an interaction</a> \]
+\[ <a href=\"issue-edit?[export_url_vars issue_id]\">change issue type</a> | $open_close_link | <a href=\"email-send?[export_url_vars issue_id user_identification_id]\">send email</a> | <a href=\"interaction-add?[export_url_vars issue_id user_identification_id]\">record an interaction</a> \]
 
 <p>
 

@@ -150,6 +150,7 @@ doc_body_append "
     </ul>
 
     <h3>Complete Record</h3>
+       <a href=\"edit?[export_url_vars product_id]\">Edit This Item</a>
 
     <blockquote>"
 

@@ -87,9 +87,13 @@ If you want to start from scratch, <a href=\"clear\">clear all settings</a>.
 
 In general, you must collect sales tax on orders shipped to states
 where you have some kind of physical presence, e.g., a warehouse, a
-sales office, or a retail store.  A reliable source of data on sales
-tax rates by zip code is 
-<a href=\"http://www.salestax.com\">www.salestax.com</a>.
+sales office, or a retail store.  
+
+Some sources of data on sales tax rates by zip codes are: 
+<ul>
+<li><a href=\"http://www.salestax.com\">www.salestax.com</a> - their Sales Tax Assistant - All States, Single User was $1,650 as of 3/8/2004.
+<li><a href=\"http://www.simpova.com\">www.simpova.com</a> - approximately 99.95 for a national, by zip, tax table or online lookup.
+</ul>
 
 <p>
 
@@ -98,10 +102,7 @@ taxing jurisdictions (e.g., that New York City collects tax on top of
 what New York State collects).  If you're a Fortune 500 company with
 nexus in 50 states, you'll probably have to add in a fair amount of
 complexity to collect tax more precisely or at least <em>remit</em>
-sales tax more precisely.  See 
-<a href=\"http://www.arsdigita.com/books/panda/ecommerce.html\">the ecommerce chapter
- of Philip and Alex's Guide to Web Publishing</a> for 
-more on this mournful topic.
+sales tax more precisely.  
 
 <h3>Audit Trail</h3>
 
