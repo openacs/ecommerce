@@ -40,7 +40,7 @@
           and color_choice  [ec_decode $color_choice "" "is null" "= :color_choice"]  
           and size_choice [ec_decode $size_choice "" "is null" "= :size_choice"] 
           and style_choice [ec_decode $style_choice "" "is null" "= :style_choice"] 
-          and ((sysdate() - in_cart_date) * 86400 < 5)))
+          and ((sysdate - in_cart_date) * 86400 < 5)))
     </querytext>
   </fullquery>
 
