@@ -99,7 +99,7 @@ ad_proc ec_shipping_price_for_one_item {item_id product_id order_id shipping_met
 	set reg_shipping [expr $weight * $weight_shipping_cost]
     } else {
 	set reg_shipping 0
-    } test [list bart tatyana]
+    }
 
     set total_shipping_cost $reg_shipping
     # see if we have to add something for express shipping

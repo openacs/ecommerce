@@ -43,7 +43,6 @@ ec_register_styletag "ec_footer" "insert the standard ecommerce section footer; 
     upvar search_text search_text
 
     if { ![info exists category_id] || $category_id == ""} {
-	ns_log debug "BART category_id does not exist or is empty"
 	set category [ns_set get $tagset "category"]
 	if {$category == ""} {
 	    set category_id ""

@@ -77,6 +77,7 @@
 		    from ec_cybercash_log
 		   where transaction_id = :transaction_id 
 		     and avs_code != ''
+		     and txn_attempted_type != 'query'
 		     and txn_attempted_time = (select MAX(txn_attempted_time)
 					         from ec_cybercash_log log2
 					        where log2.transaction_id = :transaction_id)

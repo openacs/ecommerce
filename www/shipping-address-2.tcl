@@ -60,7 +60,7 @@ if { [empty_string_p $order_id] } {
     return
 }
 
-if { [info exists address_id] } {
+if { [info exists address_id] && $address_id != "" } {
     # This is an existing address that has been edited.
     db_transaction {
 	db_dml update_address "update ec_addresses 

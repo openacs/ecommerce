@@ -27,7 +27,7 @@ if { [db_string doublclick_select "select count(*) from ec_items where item_id=:
 }
 
 # must have associated credit card
-if [empty_string_p [db_string creditcard_id_select "select creditcard_id from ec_orders where order_id=:order_id"]] {
+if {[empty_string_p [db_string creditcard_id_select "select creditcard_id from ec_orders where order_id=:order_id"]]} {
     ad_return_error "Unable to add items to this order." "
        This order does not have an associated credit card, so new items cannot be added.
        <br>Please create a new order instead."
