@@ -49,8 +49,8 @@ if { [exists_and_not_null shipment_time(time)] } {
 set temp_expected_arrival_date ""
 if { [exists_and_not_null expected_arrival_date(date)] } {
     append temp_expected_arrival_date $expected_arrival_date(date)
-    set expected_arrival_time(time) [ec_timeentrywidget_time_check $expected_arrival_time(time)]
     if { [exists_and_not_null expected_arrival_time(time)] } {
+        set expected_arrival_time(time) [ec_timeentrywidget_time_check $expected_arrival_time(time)]
 	append temp_expected_arrival_date " $expected_arrival_time(time)$expected_arrival_time(ampm)"
     } else {
 	append temp_expected_arrival_date " 12:00:00AM"
