@@ -1,19 +1,8 @@
-<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> -->
-
 <master>
   <property name="title">@title@</property>
   <property name="signatory">@signatory@</property>
   <property name="header_stuff"><link href="index.css" type="text/css" rel="stylesheet"></property>
-
-  <h2>@title@</h2>
-  <table width="100%">
-    <tbody>
-      <tr>
-	<td align="left">@context_bar@</td>
-      </tr>
-    </tbody>
-  </table>
-  <hr>
+  <property name="context_bar">@context_bar@</property>
 
   <h2>GNU General Public License</h2>
 

@@ -1,23 +1,7 @@
-<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> -->
-
 <master>
   <property name="title">@title@</property>
   <property name="signatory">@signatory@</property>
-
-  <h2>@title@</h2>
-  <table width="100%">
-    <tbody>
-      <tr>
-	<td align="left">@context_bar@</td>
-	<td align="right">
-          <if @admin_p@ eq 1>
-            [ <a href="@package_url@admin/">Administer</a> ]
-          </if>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <hr>
+  <property name="context_bar">@context_bar@</property>
 
   <p>@package_name@ implements all the IT needs for a standard
     business-to-consumer web service.  Most importantly, it is tightly

@@ -29,7 +29,7 @@ set shipping_gateway_installed [apm_package_installed_p "shipping-gateway"]
 
 # Set the context bar.
 
-set context_bar [ad_context_bar [list "." "$package_name Documentation"] "Feature overview"]
+set context_bar [ad_context_bar [list "." "Ecommerce Documentation"] "Feature overview"]
 
 # Set signatory for at the bottom of the page
 

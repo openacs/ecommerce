@@ -192,43 +192,6 @@ ad_proc -private ec_product_directory_mem {} {
     return [ad_parameter -package_id [ec_id] ProductDataDirectory "" product/]
 }
 
-# current_location can be "Shopping Cart", "Your Account", "Home", or
-# any category_id
-# ad_proc ec_footer { {current_location ""} {category_id ""} {subcategory_id ""} {search_text ""} } { returns the ecommerce footer } {
-#     set to_return "
-#         <hr>
-#         <center>
-#         [ec_search_widget "$category_id|$subcategory_id"  $search_text]"
-#     if { [string compare $current_location "Shopping Cart"] == 0 } {
-# 	append to_return "<b>Shopping Cart</b>"
-#     } else {
-# 	append to_return "<a href=\"[ec_insecurelink shopping-cart]\">Shopping Cart</a>"
-#     }
-#     append to_return " | "
-#     if { [string compare $current_location "Your Account"] == 0 } {
-# 	append to_return "<b>Your Account</b>"
-#     } else {
-# 	append to_return "<a href=\"[ec_insecurelink [ad_parameter -package_id [ec_id] EcommercePath]account]\">Your Account</a>"
-#     }
-#     append to_return " | "
-#     if { [string compare $current_location Home] == 0 } {
-# 	append to_return "<b>[ec_system_name] Home</b>"
-#     } else {
-# 	append to_return "<a href=\"[ec_insecurelink index]\">[ec_system_name] Home</a>"
-#     }
-#     if { [llength [info procs ds_link]] == 1 } {
-# 	set ds_link [ds_link]
-#     } else {
-# 	set ds_link ""
-#     }
-#     append to_return "<br>
-#         <a href='[ad_url]'>[ad_system_name]</a>
-#         </center>
-#         <hr>
-#         $ds_link"
-#     return $to_return
-# }
-
 # For administrators
 ad_proc ec_shipping_cost_summary { base_shipping_cost default_shipping_per_item weight_shipping_cost add_exp_base_shipping_cost add_exp_amount_per_item add_exp_amount_by_weight } { returns cost summary } {
 

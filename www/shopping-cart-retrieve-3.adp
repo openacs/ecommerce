@@ -49,4 +49,10 @@
     </form>
   </if>
 
+  <if @page_function@ eq "invalid_order">
+     <p>The order you have selected either does not exist or does not
+       belong to you.  Please contact <a href="mailto@ec_system_owner@">@ec_system_owner@</a> 
+       if this is incorrect.</p>
+  </if>
+
 </blockquote>

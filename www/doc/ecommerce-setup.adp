@@ -1,18 +1,7 @@
-<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> -->
-
 <master>
   <property name=title>Setup of the Ecommerce Module</property>
   <property name="signatory">@signatory@</property>
-
-  <h2>@title@</h2>
-  <table width="100%">
-    <tbody>
-      <tr>
-	<td align="left">@context_bar@</td>
-      </tr>
-    </tbody>
-  </table>
-  <hr>
+  <property name="context_bar">@context_bar@</property>
 
   <p>This is intended to be a guide for the content administrators of
     @package_name@.  Content administrators are not assumed to have any

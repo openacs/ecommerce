@@ -1,18 +1,7 @@
-<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> -->
-
 <master>
   <property name=title>@title@</property>
   <property name="signatory">@signatory@</property>
-
-  <h2>@title@</h2>
-  <table width="100%">
-    <tbody>
-      <tr>
-	<td align="left">@context_bar@</td>
-      </tr>
-    </tbody>
-  </table>
-  <hr>
+  <property name="context_bar">@context_bar@</property>
 
   <p>The Customer Service Module can be found at <a
    href="@package_url@admin/customer-service/">@package_url@admin/customer-service/</a>

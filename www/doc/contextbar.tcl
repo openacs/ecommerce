@@ -24,7 +24,7 @@ if {[empty_string_p $context_addition]} {
 # Check for admin rights to this (the ecommerce) package.
 
 set ec_admin_p [ad_permission_p [ad_conn package_id] admin]
-set ec_admin_link admin/
+set ec_admin_link [apm_package_url_from_id [ec_id]]admin/
 
 # Get the name of the ecommerce package
 

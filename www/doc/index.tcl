@@ -27,7 +27,7 @@ set package_url [apm_package_url_from_key "ecommerce"]
 
 # Set the context bar.
 
-set context_bar [ad_context_bar $package_name]
+set context_bar [template::adp_parse [acs_root_dir]/packages/ecommerce/www/doc/contextbar [list context_addition [list $title]]]
 
 # Set signatory for at the bottom of the page
 

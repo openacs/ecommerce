@@ -1,18 +1,7 @@
-<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> -->
-
 <master>
   <property name=title>Operation of the Ecommerce Module</property>
   <property name="signatory">@signatory@</property>
-
-  <h2>@title@</h2>
-  <table width="100%">
-    <tbody>
-      <tr>
-	<td align="left">@context_bar@</td>
-      </tr>
-    </tbody>
-  </table>
-  <hr>
+  <property name="context_bar">@context_bar@</property>
 
   <p>Before reading this, make sure that you have read about <a
    href="ecommerce-setup">setting up your ecommerce module</a>.  This

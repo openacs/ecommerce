@@ -43,6 +43,9 @@ if { 0 == [db_string get_order_exists_p "
     ad_script_abort
 }
 
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
+set ec_system_owner [ec_system_owner]
+
 # Make sure this order is theirs
 
 set order_theirs_p [db_string get_order_is_theirs "
@@ -52,14 +55,9 @@ set order_theirs_p [db_string get_order_is_theirs "
     and user_id=:user_id"]
 
 if { !$order_theirs_p } {
-    doc_return  200 text/html "
-	[ad_header "Invalid Order"]
-
-	<h2>Invalid Order</h2>
-
-	<p>The order you have selected either does not exist or does not belong to you. 
-	   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> if this is incorrect.</p>
-	[ec_footer]"
+    set page_function "invalid_order"
+    set page_title "Invalid Order"
+    ad_return_template
     ad_script_abort
 }
 
@@ -134,8 +132,6 @@ if { $submit == "View" } {
 	incr product_counter
     }
 
-    set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
-    set ec_system_owner [ec_system_owner]
     db_release_unused_handles
     ad_return_template
     ad_script_abort
