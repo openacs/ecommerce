@@ -76,7 +76,7 @@
     </form>
 
     <center>
-      <form method=post action="checkout">
+      <form method=post action="checkout-one-form">
         <input type=submit value="Proceed to Checkout"><br>
       </form>
     </center>
