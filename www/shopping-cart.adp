@@ -45,7 +45,7 @@
 	       name="quantity.@in_cart.product_id@ {@in_cart.color_choice@} {@in_cart.size_choice@} {@in_cart.style_choice@}" 
 	       value="@in_cart.quantity@" size=4 maxlength=4>
       </td>
-      <td>@in_cart.price@</td>
+      <td>@in_cart.price;noquote@</td>
       <td>
         <a href="shopping-cart-delete-from?@delete_export_vars@">delete</a>
       </td>

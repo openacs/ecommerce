@@ -6,7 +6,7 @@
   <include src="toolbar">
 
   <blockquote>
-    @search_results@
+    @search_results;noquote@
   </blockquote>
 
 
