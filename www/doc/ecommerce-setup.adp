@@ -11,7 +11,7 @@
   <p> These are the basic steps needed to get @package_name@ up and
     running.  Most functions below can be performed using the
     @package_name@ administration pages in <if @package_url@ not nil><a
-    href="@package_url@admin/">@package_url</if>@admin/<if @package_url@ not nil></a></if> (must be
+    href="@package_url@admin/">@package_url@</if>admin/<if @package_url@ not nil></a></if> (must be
     accessed using HTTPS).</p>
 
   <ol>
