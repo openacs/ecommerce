@@ -10,7 +10,7 @@
 -- know whether something happened within last N days (assumes query_date
 -- is in the past)
 
-create function one_if_within_n_days (timestamp, integer)
+create function one_if_within_n_days (timestamptz, integer)
 returns integer as '
 declare
   query_date		alias for $1;
