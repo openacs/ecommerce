@@ -60,15 +60,14 @@
   <fullquery name="ec_order_summary_for_customer.order_info_select">      
     <querytext>
       select eco.confirmed_date, eco.creditcard_id, eco.shipping_method,
-      u.email,
-      eca.line1, eca.line2, eca.city, eca.usps_abbrev, eca.zip_code, eca.country_code,
-      eca.full_state_name, eca.attn, eca.phone, eca.phone_time
+      u.email, eco.shipping_address as shipping_address_id, 
+      ecc.billing_address as billing_address_id
       from ec_orders eco,
       cc_users u,
-      ec_addresses eca
+      ec_creditcards ecc
       where eco.order_id = :order_id
       and eco.user_id = u.user_id(+)
-      and eco.shipping_address = eca.address_id(+)
+      and eco.creditcard_id = ecc.creditcard_id(+)
     </querytext>
   </fullquery>
 
