@@ -61,7 +61,7 @@ db_transaction {
 	# Make sure they checked at least one checkbox
 
 	set item_id_list $item_id
-	if { [llength $item_id_list] == 1 && [lindex 0 $item_id_list] == 0 } {
+	if { [llength $item_id_list] == 1 && [lindex $item_id_list 0] == 0 } {
 	    ad_return_complaint 1 "<li>You didn't check off any items.</li>"
 	    return
 	}
