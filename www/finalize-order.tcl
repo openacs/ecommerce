@@ -734,7 +734,7 @@ if {$hard_goods_cost > 0} {
 
 		db_dml schedule_settlement "
 			update ec_financial_transactions 
-			set authorized_date = sysdate, to_be_capture_p = 't', to_be_captured_date = sysdate
+			set authorized_date = sysdate, to_be_captured_p = 't', to_be_captured_date = sysdate
 			where transaction_id = :transaction_id"
 
 		# Mark the transaction now, rather than waiting for

@@ -100,7 +100,7 @@ if { $shippable_p } {
 
     if { $n_shipments_already == 0 } {
 	set total_shipping_of_items [db_string total_shipping_of_items_select "
-	    select $shipping_of_items + shipping_charged 
+	    select cast($shipping_of_items as numeric) + shipping_charged 
 	    from ec_orders 
 	    where order_id=:order_id"]
     } else {

@@ -80,6 +80,9 @@ ad_proc ec_pretty_price {
 	if { [string compare $formatted_price "-0.00"] == 0 } {
 	    set formatted_price "0.00"
 	}
+
+	set formatted_price [util_commify_number $formatted_price]
+
     }
     
     if { $currency == "USD" } {
@@ -324,18 +327,18 @@ ad_proc ec_linked_thumbnail_if_it_exists {
 	    if { [file exists "$full_dirname/product.jpg"] } {
 		set linked_thumbnail "
                     <a href=\"[ec_url]product-file/$file_path/product.jpg\">
-                    <img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\">
+                    <img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\">
                     </a>"
 	    } elseif { [file exists "$full_dirname/product.gif"] } {
 		set linked_thumbnail "
 		    <a href=\"[ec_url]product-file/$file_path/product.gif\">
-		    <img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\">
+		    <img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\">
 		    </a>"
 	    }
 	} else {
 	    set linked_thumbnail "
 	    	<a href=\"product?[export_url_vars product_id]\">
-	    	<img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\">
+	    	<img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\">
             	</a>"
 	}
     }
@@ -1042,4 +1045,60 @@ ad_proc ec_prune_product_purchase_combinations {
 		      and p.product_id in (ec_product_purchase_comb.product_id, ec_product_purchase_comb.product_0, 
 					   ec_product_purchase_comb.product_1, ec_product_purchase_comb.product_2, 
 					   ec_product_purchase_comb.product_3, ec_product_purchase_comb.product_4))}
+}
+
+
+ad_proc ec_gets_char_delimited_line {
+    fileId
+    varName
+    {delimiter "\t"}
+} {
+    Reads and parses a line of data from a character delimited file 
+    similar to ns_getscsv. Defaults to delimit tabs
+} {
+    upvar $varName split_line
+    if {[eof $fileId]} {
+        set return_val -1
+        set split_line [list]
+    } else {
+        gets $fileId line
+        set split_line [split $line $delimiter]
+        set return_val [llength $split_line]
+    }
+    return $return_val
+}
+
+ad_proc ec_product_url_if_exists { 
+    product_id 
+} { 
+
+    Returns product url of product id, or null if none exists
+
+} {
+    set product_url [db_string get_product_url "
+	select url 
+	from ec_products 
+	where product_id=:product_id" -default ""]
+    return $product_url
+}
+
+ad_proc ec_product_link_if_exists { 
+    product_id 
+    {link_label "more details"}
+} { 
+
+    Returns product link (to ec_products url with link_label wrapped by anchor tag) of product id, or null if no url exists. 
+    link_label defaults to "more details"
+
+} {
+    set product_url [db_string get_product_url "
+	select url 
+	from ec_products 
+	where product_id=:product_id" -default ""]
+    if { ![empty_string_p $product_url] } {
+	set product_link "<a href=\"$product_url\">$link_label</a>" 
+    } else {
+	set product_link ""
+    }
+    return $product_link
 }

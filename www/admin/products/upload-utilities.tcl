@@ -55,5 +55,7 @@ categories listed in the CSV file and those known in the database.
 <p><b>Note:</b>You must create the categories and subcategories before
 you can use the product category map loader.
 
+<h3>Images and thumbnails</h3>
+<p>Currently, there is no feature for bulk uploading images. However, the code will automatically recognize images that are placed in the product's directory. Use the filename \"product\" and either \".gif\" or \".jpg\" extension for product image. Thumbnails use the filename \"product-thumbnail.jpg\". No facility exists for GIF thumbnails, because they tend to have larger file sizes which signifcantly slow page loads via ssl. Note: PNG extensions are not supported either, as there is no ns_pngsize function (at the time of this writing).</p>
 [ad_admin_footer]
 "

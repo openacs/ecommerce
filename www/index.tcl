@@ -55,7 +55,7 @@ if { ![empty_string_p [db_string get_check_of_categories "select 1 from dual whe
     set search_widget ""
 }
 
-set recommendations_if_there_are_any "<table width=100%>"
+set recommendations_if_there_are_any "<table width=\"100%\">"
 
 if [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
@@ -77,7 +77,7 @@ db_foreach get_produc_recs "
 and r.active_p='t'" {
 
     append recommendations_if_there_are_any "
-	<table width=100%>
+	<table width=\"100%\">
 	  <tr>
 	    <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
 	    <td valign=top><a href=\"product?[export_url_vars product_id]\">$product_name</a>
@@ -86,13 +86,13 @@ and r.active_p='t'" {
 	    <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
          </tr>"
 }
-if {[string equal $recommendations_if_there_are_any "<table width=100%>"]} {
+if {[string equal $recommendations_if_there_are_any "<table width=\"100%\">"]} {
     set recommendations_if_there_are_any ""
 } else {
     append recommendations_if_there_are_any "</table>"
 }
 
-set products "<table width=100%>"
+set products "<table width=\"100%\">"
 
 set have_how_many_more_p f
 set count 0
@@ -128,7 +128,7 @@ db_foreach get_tl_products "
 	set have_how_many_more_p f
     }
 }
-if {[string equal $products "<table width=100%>"]} {
+if {[string equal $products "<table width=\"100%\">"]} {
     set products ""
 } else {
     append products "</table>"

@@ -183,14 +183,14 @@ ad_proc ec_sweep_for_payment_zombies {
     db_foreach transactions_select "
 	select o.order_id, ec_order_cost(o.order_id) as total_order_price, 
 	    f.transaction_id, f.inserted_date, f.transaction_amount, c.creditcard_type as card_type, 
-	    p.first_names || ' ' || p.last_name as card_name, 
+	    a.attn as card_name, 
 	    c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type,
 	    a.zip_code as billing_zip,
             a.line1 as billing_address, 
             a.city as billing_city, 
             coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
             a.country_code as billing_country
-	from ec_orders o, ec_financial_transactions f, ec_creditcards c, persons p 
+	from ec_orders o, ec_financial_transactions f, ec_creditcards c, persons p, ec_addresses a 
 	where order_state = 'confirmed' 
 	and (sysdate - confirmed_date) > 1/96
 	and f.failed_p = 'f'
@@ -394,7 +394,7 @@ ad_proc ec_sweep_for_payment_zombie_gift_certificates {
     db_foreach transactions_select "
 	select g.gift_certificate_id, f.transaction_id, f.transaction_amount, f.inserted_date, 
 	    c.creditcard_type, c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, 
-	    p.first_names || ' ' || p.last_name as card_name, 
+	    a.attn as card_name, 
             a.zip_code as billing_zip,
             a.line1 as billing_address, 
 	    a.city as billing_city, 
@@ -687,7 +687,7 @@ ad_proc ec_unauthorized_transactions {
 
     db_foreach transactions_select "
         select f.transaction_id, f.order_id, f.transaction_amount, f.to_be_captured_date, 
-            p.first_names || ' ' || p.last_name as card_name, 
+            a.attn as card_name, 
             substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_number as card_number, c.creditcard_type,
             a.zip_code as billing_zip,
             a.line1 as billing_address, 
@@ -846,7 +846,7 @@ ad_proc ec_unmarked_transactions {
 
     db_foreach transactions_select "
         select f.transaction_id, f.order_id, f.transaction_amount, f.to_be_captured_date,
-            p.first_names || ' ' || p.last_name as card_name, 
+            a.attn as card_name, 
 	    c.creditcard_number as card_number,  c.creditcard_type, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year,
             a.zip_code as billing_zip,
             a.line1 as billing_address, 
@@ -1012,7 +1012,7 @@ ad_proc ec_unrefunded_transactions {
 
     db_foreach transactions_select "
         select f.transaction_id, f.order_id, f.transaction_amount, f.to_be_captured_date, c.creditcard_type as card_type, 
-            p.first_names || ' ' || p.last_name as card_name, c.creditcard_number as card_number, 
+            a.attn as card_name, c.creditcard_number as card_number, 
             c.creditcard_expire as card_expiration, c.creditcard_type
             a.zip_code as billing_zip,
 	    a.line1 as billing_address, 

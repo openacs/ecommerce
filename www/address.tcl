@@ -4,9 +4,11 @@ ad_page_contract {
     @param address_id:optional
     @param referer
 
+    @author
+    @creation-date
     @author ported by Jerry Asher (jerry@theashergroup.com)
     @author revised by Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
-    @creation-date revised April 2002
+    @revision-date April 2002
 
 } {
     address_type
@@ -34,6 +36,16 @@ if { [info exists address_id] } {
 	from ec_addresses 
 	where address_id=:address_id"
 
+    if {[info exists attn]} {
+    # delimiter is triple space (for parsing).
+        set name_delim [string first "   " $attn]
+        if {$name_delim < 0 } {
+            set name_delim 0
+        }
+        set first_names [string trim [string range $attn 0 $name_delim]]
+        set last_name [string range $attn [expr $name_delim + 3 ] end]
+    }
+
     # Redirect to the international address form if the address is
     # outside the United States.
 
@@ -49,10 +61,22 @@ if { [info exists address_id] } {
 
     # Retrieve the default name.
 
+    # get the separate fields for card processing
+    db_0or1row get_names "
+	select first_names, last_name
+	from cc_users
+	where user_id=:user_id"
+    # we could use a single name field for shipping
+    # but shipping address becomes default for billing!
+    # attn has a 3 space delimiter for parsing last/first names
+
+    # set attn just in case it gets used
+    # avoid using it for single field name entry. 
+
     set attn [db_string get_full_name "
-	select first_names || ' ' || last_name as name 
-	from cc_users 
-	where user_id=:user_id"]
+    	select first_names || '   ' || last_name as name 
+    	from cc_users 
+    	where user_id=:user_id"]
 
 }
 if { ![info exists state_widget] } {
@@ -81,6 +105,20 @@ for {set i 0} {$i < [ns_set size $form_set]} {incr i} {
     set [ns_set key $form_set $i] [ns_set value $form_set $i]
     append hidden_form_vars "[export_form_vars [ns_set key $form_set $i]]"
 }
+
+if {[info exists last_name] != 1} {
+   if {[info exists attn]} {
+    # delimiter is triple space (for parsing).
+        set name_delim [string first "   " $attn]
+        if {$name_delim < 0 } {
+            set name_delim 0
+        }
+        set first_names [string trim [string range $attn 0 $name_delim]]
+        set last_name [string range $attn [expr $name_delim + 3 ] end]
+    }
+}
+set user_last_name_with_quotes_escaped [ad_quotehtml $last_name]
+set user_first_names_with_quotes_escaped [ad_quotehtml $first_names]
 
 set user_name_with_quotes_escaped [ad_quotehtml $attn]
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]

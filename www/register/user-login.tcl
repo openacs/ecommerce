@@ -17,7 +17,7 @@ ad_page_contract {
 
 # there may be an old user_session_id cookie lying around
 # we recreate a valid cookie at the end
-ec_user_session_logout
+# ec_user_session_logout
 
 # Security check to prevent the back button exploit.
 

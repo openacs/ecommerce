@@ -3,7 +3,8 @@
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="toolbar" current_location="gift-certificate">
+  <property name="show_toolbar_p">t</property>
+  <property name="current_location">gift-certificate</property>
 
 <blockquote>
   <p>The lucky recipient will be notified by email shortly!</p>
@@ -12,7 +13,7 @@
       <a href="gift-certificate-order-2">Buy another gift certificate</a>
     </li>
     <li>
-      <a href=@home_page@>Return to <%= [ad_system_name] %></a>
+      <a href="@home_page@">Return to <%= [ad_system_name] %></a>
     </li>
   </ul>
 </blockquote>

@@ -2,7 +2,7 @@
   <property name="title">Welcome</property>
   <property name="context_bar">@context_bar;noquote@</property>
 
-  <include src="toolbar">
+  <property name="show_toolbar_p">t</property>
 
     <blockquote>
       <if @user_is_logged_on@ true>

@@ -147,7 +147,7 @@
   <fullquery name="ec_unmarked_transactions.transactions_select">      
     <querytext>
       select f.transaction_id, f.order_id, f.transaction_amount, f.to_be_captured_date, 
-          p.first_names || ' ' || p.last_name as card_name, 
+          a.attn as card_name, 
 	  c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type, 
           a.zip_code as billing_zip,
 	  a.line1 as billing_address, 

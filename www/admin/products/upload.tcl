@@ -1,6 +1,6 @@
 #  www/[ec_url_concat [ec_url] /admin]/products/upload.tcl
 ad_page_contract {
-  This page uploads a CSV file containing store-specific products into
+  This page uploads a data file containing store-specific products into
   the catalog. The file format should be:
 
     field_name_1, field_name_2, ... field_name_n
@@ -56,11 +56,15 @@ doc_body_append "[ad_admin_header "Upload Products"]
 
 <blockquote>
 
-<form enctype=multipart/form-data action=upload-2 method=post>
-CSV Filename <input name=csv_file type=file>
-<p>
+<form enctype=\"multipart/form-data\" action=\"upload-2\" method=\"post\">
+Data Filename <input name=\"csv_file\" type=\"file\">
+<br>
+<input type=\"radio\" name=\"file_type\" value=\"csv\" checked>CSV format<br>
+<input type=\"radio\" name=\"file_type\" value=\"tab\">Tab Delimited format<br>
+<input type=\"radio\" name=\"file_type\" value=\"delim\">Delimited by: <input name=\"delimiter\" value=\" \" type=\"text\"> (single character).<br>
+ <br>
 <center>
-<input type=submit value=Upload>
+<input type=\"submit\" value=\"Upload\">
 </center>
 </form>
 
@@ -71,7 +75,7 @@ CSV Filename <input name=csv_file type=file>
 <blockquote>
 <p>
 
-This page uploads a CSV file containing product information into the database.  The file format should be:
+This page uploads a data file containing product information into the database.  The file format should be:
 <p>
 <blockquote>
 <code>field_name_1, field_name_2, ... field_name_n<br>
@@ -108,7 +112,7 @@ doc_body_append "</pre>
 </blockquote>
 <p>
 Note: <code>[join $undesirable_cols ", "]</code> are set 
-automatically and should not appear in the CSV file.
+automatically and should not appear in the data file.
 
 </blockquote>
 </blockquote>

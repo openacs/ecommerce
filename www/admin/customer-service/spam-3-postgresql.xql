@@ -56,8 +56,8 @@
       (:spam_id, current_timestamp, :message, :mailing_list_category_id, 
       :mailing_list_subcategory_id, :mailing_list_subsubcategory_id, 
       :user_class_id, :product_id, 
-      to_date(:start,'YYYY-MM-DD HH24:MI:SS'), 
-      to_date(:end,'YYYY-MM-DD HH24:MI:SS'))
+      to_date(:start_date,'YYYY-MM-DD HH24:MI:SS'), 
+      to_date(:end_date,'YYYY-MM-DD HH24:MI:SS'))
     </querytext>
   </fullquery>
   

@@ -10,7 +10,7 @@
     <querytext>
       select o.order_id, ec_order_cost(o.order_id) as total_order_price, 
 	  f.transaction_id, f.inserted_date, f.transaction_amount, 
-	  c.creditcard_type as card_type, p.first_names || ' ' || p.last_name as card_name, 
+	  c.creditcard_type as card_type, a.attn as card_name, 
 	  c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type,
           a.zip_code as billing_zip,
           a.line1 as billing_address, 
@@ -41,7 +41,7 @@
     <querytext>
       select g.gift_certificate_id, f.transaction_id, f.transaction_amount, f.inserted_date,
 	  c.creditcard_type, c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year,
-          p.first_names || ' ' || p.last_name as card_name, 
+          a.attn as card_name, 
           a.zip_code as billing_zip,
           a.line1 as billing_address, 
 	  a.city as billing_city, 
@@ -125,7 +125,7 @@
   <fullquery name="ec_unauthorized_transactions.transactions_select">      
     <querytext>
       select f.transaction_id, f.order_id, f.transaction_amount, f.to_be_captured_date, 
-          p.first_names || ' ' || p.last_name as card_name, 
+          a.attn as card_name, 
           substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_number as card_number, c.creditcard_type,
           a.zip_code as billing_zip,
           a.line1 as billing_address, 
@@ -180,7 +180,7 @@
   <fullquery name="ec_unrefunded_transactions.transactions_select">      
     <querytext>
       select f.transaction_id, f.order_id, f.transaction_amount, f.to_be_captured_date, 
-          p.first_names || ' ' || p.last_name as card_name, 
+          a.attn as card_name, 
 	  c.creditcard_number as card_number, c.creditcard_type, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year,
           a.zip_code as billing_zip,
 	  a.line1 as billing_address, 

@@ -143,10 +143,14 @@ if { ![info exists product_id] } {
     set product_id ""
 }
 if { ![info exists start] } {
-    set start ""
+    set start_date ""
+} else {
+    set start_date $start
 }
 if { ![info exists end] } {
-    set end ""
+    set end_date ""
+} else {
+    set end_date $end
 }
 
 db_transaction {
@@ -161,8 +165,8 @@ db_transaction {
         (:spam_id, sysdate, :message, :mailing_list_category_id, 
          :mailing_list_subcategory_id, :mailing_list_subsubcategory_id, 
          :user_class_id, :product_id, 
-         to_date(:start,'YYYY-MM-DD HH24:MI:SS'), 
-         to_date(:end,'YYYY-MM-DD HH24:MI:SS'))"
+         to_date(:start_date,'YYYY-MM-DD HH24:MI:SS'), 
+         to_date(:end_date,'YYYY-MM-DD HH24:MI:SS'))"
 
     set sql $users_query
 

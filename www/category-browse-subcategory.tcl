@@ -84,7 +84,7 @@ if [have subsubcategory_id] {
 
 # Recommended products in this category
 
-set recommendations "<table width=100%>"
+set recommendations {<table width="100%">}
 
 if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
@@ -114,7 +114,7 @@ db_foreach get_recommended_products "
          </tr>"
 }
 
-if {[string equal $recommendations "<table width=100%>"]} {
+if {[string equal $recommendations {<table width="100%">}]} {
     set recommendations ""
 } else {
     append recommendations "</table>"
@@ -136,7 +136,7 @@ select 'x' from $product_map(sub$sub) s, ec_sub${sub}categories c
 "
 }
 
-set products "<table width=90%>"
+set products {<table width="90%">}
 
 set have_how_many_more_p f
 set count 0

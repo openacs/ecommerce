@@ -3,7 +3,8 @@
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="toolbar" current_location="gift-certificate">
+  <property name="show_toolbar_t">t</property>
+  <property name="current_location">gift-certificate</property>
 
 <form method=post action="gift-certificate-order-4">
   @hidden_form_variables@

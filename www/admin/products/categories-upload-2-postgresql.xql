@@ -8,8 +8,27 @@
       where sku = :sku
     </querytext>
   </fullquery>
+  
+  <fullquery name="subsubcategory_insert">
+    <querytext>
+      insert into ec_subsubcategory_product_map (
+      	product_id,
+      	subsubcategory_id,
+      	publisher_favorite_p,
+      	last_modified,
+      	last_modifying_user,
+      	modified_ip_address) 
+      values (
+      	:product_id,
+      	:subsubcategory_id,
+      	'f',
+      	now(),
+      	:user_id,
+      	:ip)
+    </querytext>
+  </fullquery>
 
-  <fullquery name="subcategory_insert">      
+  <fullquery name="subcategory_insert">
     <querytext>
       insert into ec_subcategory_product_map (
       	product_id,

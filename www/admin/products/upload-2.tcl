@@ -8,6 +8,8 @@ ad_page_contract {
 } {
   csv_file
   csv_file.tmpfile:tmpfile
+  file_type
+  delimiter
 }
 
 # We need them to be logged in
@@ -31,7 +33,7 @@ doc_body_append "[ad_admin_header "Uploading Products"]
 <blockquote>
 "
 
-# Get the name of the transfered CSV file
+# Get the name of the transfered data file
 
 set unix_file_name ${csv_file.tmpfile}
 
@@ -39,6 +41,11 @@ set unix_file_name ${csv_file.tmpfile}
 
 if { ![file readable $unix_file_name] } {
     doc_body_append "Cannot read file $unix_file_name"
+    return
+}
+# Check that delimiter is one character, if used
+if { [string length $delimiter] != 1 && [string eq $file_type "delim"]} {
+    doc_body_append "Delimiter is not one character long."
     return
 }
 
@@ -49,13 +56,13 @@ set legal_field_names {sku product_name one_line_description detailed_descriptio
 			   shipping shipping_additional weight present_p active_p url template_id stock_status color_list \ 
     			   size_list style_list email_on_purchase_list}
 
-# Check each entry in the CSV for the following required fields.
+# Check each entry in the datafile for the following required fields.
 # These fields are required so that we can check if a product already
 # in the products table and should be update rather than created.
 
 set required_field_names {sku product_name}
 
-# Initialize each legal field name as the CSV file might not mention
+# Initialize each legal field name as the datafile might not mention
 # each and every one of them.
 
 foreach legal_field_name $legal_field_names {
@@ -63,8 +70,9 @@ foreach legal_field_name $legal_field_names {
 }
 
 # Start reading.
+# use file_type to determine which proc to delimit data
 
-set csvfp [open $unix_file_name]
+set datafilefp [open $unix_file_name]
 set count 0
 set errors 0
 set success_count 0
@@ -72,7 +80,19 @@ set success_count 0
 # Continue reading the file till the end but stop when an error
 # occured.
 
-while { [ns_getcsv $csvfp elements] != -1 && !$errors} {
+# read line, depending  on file type
+if {[string eq $file_type "csv"]} {
+    set line_status [ns_getcsv $datafilefp elements]
+} elseif {[string eq $file_type "tab"]} {
+    set line_status [ec_gets_char_delimited_line $datafilefp elements]
+} elseif {[string eq $file_type "delim"]} {
+    set line_status [ec_gets_char_delimited_line $datafilefp elements $delimiter]
+} else {
+# no valid filetype chosen
+    set line_status -1
+}
+
+while { $line_status != -1 && !$errors} {
     incr count
     if { $count == 1 } {
 
@@ -94,7 +114,7 @@ while { [ns_getcsv $csvfp elements] != -1 && !$errors} {
 	# Subsequent rows, thus a product
 
 	# Reset the required fields to NULL so that we can later check
-	# if the CSV file gave them a value.
+	# if the data file gave them a value.
 
 	foreach required_field_name $required_field_names {
 	    set $required_field_name ""
@@ -113,6 +133,18 @@ while { [ns_getcsv $csvfp elements] != -1 && !$errors} {
 		incr errors
 	    }
 	}
+
+        # be certain that present_p defaults to 't' if no value given
+
+        if {[string equal $present_p "f"] != 1} {
+            set present_p "t"
+        }
+
+        # be certain that no_shipping_avail_p defaults to 'f' if no value given
+
+        if {[string equal no_shipping_avail_p "f"] != 1} {
+            set no_shipping_avail_p "f"
+        }
 
 	# Create or update the product if all the required fields were
 	# given values.
@@ -230,7 +262,21 @@ while { [ns_getcsv $csvfp elements] != -1 && !$errors} {
 	    incr success_count
 	} 
     } 
-} 
+
+    # read next line of data file, depending on file type, or end read loop if error.
+    if {[string eq $file_type "csv"]} {
+        set line_status [ns_getcsv $datafilefp elements]
+    } elseif {[string eq $file_type "tab"]} {
+        set line_status [ec_gets_char_delimited_line $datafilefp elements]
+    } elseif {[string eq $file_type "delim"]} {
+        set line_status [ec_gets_char_delimited_line $datafilefp elements $delimiter]
+    } else {
+    # no valid filetype chosen
+    set line_status -1
+    }
+
+
+}
 
 if { $success_count == 1 } {
     set product_string "product"

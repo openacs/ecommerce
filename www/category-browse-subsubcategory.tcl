@@ -82,7 +82,7 @@ if [have subsubcategory_id] {
 
 # Recommended products in this category
 
-set recommendations "<table width=100%>"
+set recommendations {<table width="100%">}
 
 if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
@@ -111,7 +111,7 @@ db_foreach get_recommended_products "
 	    <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
          </tr>"
 }
-if {[string equal $recommendations "<table width=100%>"]} {
+if {[string equal $recommendations {<table width="100%">}]} {
     set recommendations ""
 } else {
     append recommendations "</table>"

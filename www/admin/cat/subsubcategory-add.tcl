@@ -33,7 +33,7 @@ ad_require_permission [ad_conn package_id] admin
 ### gilbertw - added do the calculation outside of the db.  PostgreSQL encloses
 #   the bind variables in ' '
 #  where sort_key = (:prev_sort_key + :next_sort_key)/2
-set sort_key [expr (double($prev_sort_key) + $next_sort_key)/2]
+set sort_key [expr ($prev_sort_key + $next_sort_key)/2]
 
 set n_conflicts [db_string get_n_conflicts "select count(*)
 from ec_subsubcategories
@@ -54,7 +54,7 @@ set page_html "[ad_admin_header "Confirm New Subsubcategory"]
 
 <h2>Confirm New Subsubcategory</h2>
 
-[ad_context_bar [list "index" "Categories &amp; Subcategories"] "Confirm New Subsubcategory"]
+[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] "Confirm New Subsubcategory"]
 
 <hr>
 

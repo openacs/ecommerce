@@ -23,7 +23,7 @@ set page_html "[ad_admin_header "Confirm Deletion"]
 
 <h2>Confirm Deletion</h2>
 
-[ad_context_bar [list "index" "Categories &amp; Subcategories"] [list "category?[export_url_vars category_id category_name]" $category_name] [list "subcategory?[export_url_vars subcategory_id subcategory_name category_id category_name]" $subcategory_name] "Delete this Subcategory"]
+[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] [list "category?[export_url_vars category_id category_name]" $category_name] [list "subcategory?[export_url_vars subcategory_id subcategory_name category_id category_name]" $subcategory_name] "Delete this Subcategory"]
 
 <hr>
 

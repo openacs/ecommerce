@@ -169,7 +169,8 @@ foreach item_id $item_id_list {
 	select nvl(price_tax_charged,0) as price_tax_charged, nvl(shipping_tax_charged,0) as shipping_tax_charged 
 	from ec_items 
 	where item_id=:item_id"
-    
+
+# torben diagnostics note: following calls for ec_tax, but ec_tax does not exist.    
     set price_tax_to_refund [ec_min $price_tax_charged [db_string get_tax_charged "
 	select ec_tax(:price_bind_variable,0,:order_id) 
 	from dual"]]
@@ -251,7 +252,7 @@ while { $refund_amount > 0 } {
 
 	    set scheduled_hour [clock format [expr [clock scan $marked_date] + $24hr] -format "%Y-%m-%d %H:%M:%S" -gmt true]
 	}
-
+# torben diagnostics note: following insert does not make it into ec_financial_transactions.
 	db_dml insert_refund_transaction "
 	    insert into ec_financial_transactions
 	    (transaction_id, refunded_transaction_id, order_id, refund_id, creditcard_id, transaction_amount, transaction_type, inserted_date, to_be_captured_date)
@@ -316,7 +317,7 @@ while { $refund_amount > 0 } {
 		insert into ec_financial_transactions
 		(transaction_id, refunded_transaction_id, order_id, refund_id, creditcard_id, transaction_amount, transaction_type, inserted_date, to_be_captured_date)
 		values
-		(:refund_transaction_id, :charged_transaction_id, :order_id, :refund_id, :creditcard_id, :refund_amount, 'refund', sysdate, :scheduled_hour)"
+		(:refund_transaction_id, :charged_transaction_id, :order_id, :refund_id, :creditcard_id, :refund_amount, 'refund', current_timestamp, :scheduled_hour)"
 
 	    # Record the amount that was refunded of the charge transaction.
 

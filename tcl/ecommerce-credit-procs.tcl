@@ -51,7 +51,7 @@ ad_proc -public ec_creditcard_authorization {
     # PaymentGateway.
 
     if {[empty_string_p $payment_gateway] || ![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
-	set outcome(response_code) "failed_authorization"
+	set outcome(response_code) "failure"
 	set outcome(transaction_id) "$transaction_id"
 	return [array get outcome]
     }
@@ -89,7 +89,7 @@ ad_proc -public ec_creditcard_authorization {
 
     if {![db_0or1row creditcard_data_select "
 	    select c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, 
-		c.creditcard_type, p.first_names || ' ' || p.last_name as card_name,
+		c.creditcard_type, a.attn as card_name,
           	a.zip_code as billing_zip,
           	a.line1 as billing_address, 
 	  	a.city as billing_city, 
@@ -259,7 +259,7 @@ ad_proc -public ec_creditcard_marking {
     # transaction.
  
     db_1row transaction_select "
-	select f.transaction_amount, f.transaction_id, c.creditcard_type, p.first_names || ' ' || p.last_name as card_name, 
+	select f.transaction_amount, f.transaction_id, c.creditcard_type, a.attn card_name, 
 	    c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type, 
             a.zip_code as billing_zip,
             a.line1 as billing_address, 
@@ -430,7 +430,7 @@ ad_proc -public ec_creditcard_return {
     if {![db_0or1row transaction_info_select "
              select t.refunded_transaction_id, t.transaction_amount, 
 		c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type,
-		p.first_names || ' ' || p.last_name as card_name, 
+		a.attn as card_name, 
           	a.zip_code as billing_zip,
           	a.line1 as billing_address, 
           	a.city as billing_city, 

@@ -3,7 +3,7 @@
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="toolbar">
+  <property name="show_toolbar_p">t</property>
 
 <form method="post" action="review-submit-2">
   <input type="hidden" name="product_id" value="@product_id@">
@@ -17,7 +17,7 @@
       </li>
     <li>
       <p>Enter your review below: (maximum of 1,000 words)</p>
-      <textarea wrap name="user_comment" rows="6" cols="50"></textarea>
+      <textarea wrap name="user_comment" rows="6" cols="50">
     </li>
   </ol>
   <blockquote>

@@ -18,11 +18,7 @@ if {![info exists context_addition]} {
 if {[empty_string_p $context_addition]} {
     set context_bar [ad_context_bar]
 } else {
-    set cmd [list ad_context_bar --]
-    foreach elem $context_addition {
-        lappend cmd $elem
-    }
-    set context_bar [eval $cmd]
+    set context_bar [eval ad_context_bar $context_addition]
 }
 
 # Check for admin rights to this (the ecommerce) package.

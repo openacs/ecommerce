@@ -2,6 +2,8 @@ ad_page_contract {
     @param address_id:optional
     @param address_type
     @param attn
+    @param first_names
+    @param last_name
     @param line1
     @param line2:optional
     @param city
@@ -20,7 +22,9 @@ ad_page_contract {
 } {
     address_type
     address_id:optional
-    attn
+    attn:optional
+    first_names
+    last_name
     line1
     line2:optional
     city
@@ -31,7 +35,10 @@ ad_page_contract {
     referer
 }
 
-set possible_exception_list [list [list attn name] [list line1 address] [list city city] [list usps_abbrev state] [list zip_code "zip code"] [list phone "telephone number"]]
+# since shipping address becomes default for billing, assume billing config
+# for purposes of checking last_name first_names instead of attn
+# replaced list attn name with cases for first_names and last_name
+    set possible_exception_list [list [list first_names "first name"] [list last_name "last name"] [list line1 address] [list city city] [list usps_abbrev state] [list zip_code "zip code"] [list phone "telephone number"]]
 set exception_count 0
 set exception_text ""
 
@@ -76,6 +83,16 @@ if { $referer != "gift-certificate-billing" } {
         ad_script_abort
     }
 }
+
+# assuming all cases are billing, since shipping defaults as billing addrs
+# if {$address_type == "billing"} {
+# set attn from first_names and last_name 
+# the 3 space delimiter may be used to parse names by specific payment gateway
+# first clean out all multiple spaces 
+    regsub -all { +} $first_names " " first_names
+    regsub -all { +} $last_name " " last_name
+    set attn "[string trim $first_names]   [string trim $last_name]"
+# }
 
 if { [info exists address_id] && $address_id != "" } {
 

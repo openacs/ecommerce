@@ -36,7 +36,7 @@ from
 where cats.category_id = cat_view.category_id(+)
 group by cats.category_id, cats.sort_key, cats.category_name
 order by cats.sort_key" {
-    append items "<li><a href=\"list?[export_url_vars category_id]\">$category_name</a> 
+    append items "<li><a href=\"list?[export_url_vars category_id category_name]\">$category_name</a> 
 &nbsp;
 <font size=-1>($n_products products; $total_sold_in_category sales)</font>\n"
 }

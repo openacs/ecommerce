@@ -3,7 +3,8 @@
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="toolbar" current_location="gift-certificate">
+  <property name="show_toolbar_p">t</property>
+  <property name="current_location">gift-certificate</property>
 
 <blockquote>
   <form method="post" action="gift-certificate-finalize-order">
@@ -21,7 +22,7 @@
 	  </tr>
 	  <tr>
 	    <td colspan="2">
-	      <font size=+1>Your Gift Certificate Order:</font>
+	      <font size="+1">Your Gift Certificate Order:</font>
 	    </td>
 	  </tr>
 	  @to_row@

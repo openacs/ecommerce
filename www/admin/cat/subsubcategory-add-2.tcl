@@ -57,7 +57,7 @@ where subsubcategory_id=:subsubcategory_id"] ==1} {
 ### gilbertw - added do the calculation outside of the db.  PostgreSQL encloses
 #   the bind variables in ' '
 #  where sort_key = (:prev_sort_key + :next_sort_key)/2
-set sort_key [expr (double($prev_sort_key) + $next_sort_key)/2]
+set sort_key [expr ($prev_sort_key + $next_sort_key)/2]
 
 set n_conflicts [db_string get_n_conflicts "select count(*)
 from ec_subsubcategories

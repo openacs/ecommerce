@@ -3,9 +3,10 @@
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="toolbar">
+  <property name="show_toolbar_p">t</property>
 
 <blockquote>
+<if @subcategories@ or @recommendations@>
   <table width="90%">
     <tr valign="top">
       <if @subcategories@ >
@@ -24,11 +25,11 @@
      </if>
     </tr>
   </table>      
-
+</if>
   <h4><a href="category-browse?category_id=@the_category_id@">@category_name@</a> > @subcategory_name@ products:</h4>
-  @products@
+  @products;noquote@
 
   @prev_link@ @separator@ @next_link@
 </blockquote>
 
-<p><a href="mailing-list-add?category_id= @category_id@&subcategory_id= @subcategory_id@">Add yourself to the @the_category_name@ mailing list!</a></p>
+<p><a href="<%= [ns_urlencode mailing-list-add?category_id=@category_id@&subcategory_id=@subcategory_id@] %>">Add yourself to the @the_category_name@ mailing list!</a></p>

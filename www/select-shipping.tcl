@@ -16,7 +16,7 @@ ad_page_contract {
     quantity:array,optional
 }
 
-# ec_redirect_to_https_if_possible_and_necessary
+ec_redirect_to_https_if_possible_and_necessary
 
 # we need them to be logged in
 

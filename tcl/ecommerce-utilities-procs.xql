@@ -95,4 +95,12 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="ec_product_url_if_exists.get_product_url">      
+    <querytext>
+      select url
+      from ec_products
+      where product_id = :product_id
+    </querytext>
+  </fullquery>
+
 </queryset>

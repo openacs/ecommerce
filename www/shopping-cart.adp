@@ -3,7 +3,8 @@
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="toolbar" current_location="shopping-cart">
+  <property name="show_toolbar_p">t</property>
+  <property name="current_location">shopping-cart</property>
 
 <h3>Shopping Cart</h3> 
 <if @user_id@ ne 0>

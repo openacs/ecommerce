@@ -15,8 +15,8 @@ select ep.product_id, ep.product_name, ep.available_date, count(distinct eir.ite
 from ec_products ep
 	LEFT JOIN ec_items_reportable eir using (product_id)
 	LEFT JOIN ec_product_comments epc on (ep.product_id = epc.product_id)
-	$category_exclusion_clause
 group by ep.product_id, ep.product_name, ep.available_date
+$category_exclusion_clause
 $order_by_clause
 
       </querytext>

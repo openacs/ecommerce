@@ -74,7 +74,7 @@
       insert into ec_problems_log
       (problem_id, problem_date, problem_details, gift_certificate_id)
       values
-      (ec_problem_id_sequence.nextval, sysdate, 
+      (ec_problem_id_sequence.nextval, current_timestamp, 
       'Gift-certificate-finalize-order.tcl called payment gateway :payment_gateway for authorizion, which returned: :response_code.', :gift_certificate_id)
     </querytext>
   </fullquery>

@@ -15,20 +15,20 @@
   
   <fullquery name="money_select">      
     <querytext>
-      select to_char(shipment_date,'YYYY') as shipment_year,
+     select to_char(shipment_date,'YYYY') as shipment_year,
       to_char(shipment_date,'Q') as shipment_quarter,
       nvl(sum(bal_price_charged),0) as total_price_charged,
-      nvl(sum(bal_shipping_charged + case when mv.shipment_id = (
+      nvl(sum(bal_shipping_charged + decode(mv.shipment_id,(
           select min(s2.shipment_id) 
           from ec_shipments s2 
-          where s2.order_id=mv.order_id) then (
+          where s2.order_id=mv.order_id),
           (select nvl(o.shipping_charged,0)-nvl(o.shipping_refunded,0) from
-           ec_orders o where o.order_id=mv.order_id) else 0 end),0)  as total_shipping_charged,
-      nvl(sum(bal_tax_charged + case when mv.shipment_id = (
+           ec_orders o where o.order_id=mv.order_id),0)),0)  as total_shipping_charged,
+      nvl(sum(bal_tax_charged + decode(mv.shipment_id,(
            select min(s2.shipment_id) 
-           from ec_shipments s2 where s2.order_id=mv.order_id) then (
+           from ec_shipments s2 where s2.order_id=mv.order_id),(
                select nvl(o.shipping_tax_charged,0)-nvl(o.shipping_tax_refunded,0) from
-               ec_orders o where o.order_id=mv.order_id) else 0 end),0) as total_tax_charged
+               ec_orders o where o.order_id=mv.order_id),0)),0) as total_tax_charged
       from ec_items_money_view mv
       group by to_char(shipment_date,'YYYY'), to_char(shipment_date,'Q')
       order by to_char(shipment_date,'YYYY') || to_char(shipment_date,'Q')

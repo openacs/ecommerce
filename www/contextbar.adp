@@ -1,1 +1,1 @@
-<table width ="100%"> <tbody> <tr> <td>@context_bar;noquote@</td> <if @ec_admin_p@><td align="right">[&nbsp;<a href="@ec_admin_link@" title="Administer @ec_system_name@">Administer</a>&nbsp;]</td></if> </tr> </tbody> </table>
+<p>@context_bar;noquote@ <if @ec_admin_p@>[&nbsp;<a href="@ec_admin_link@" title="Administer @ec_system_name;noquote@">Administer</a>&nbsp;] </if></p>

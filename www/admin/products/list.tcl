@@ -22,7 +22,7 @@ if { ![info exists category_id] || [empty_string_p $category_id] } {
     set category_name [db_string category_name_select "select category_name from ec_categories where category_id = :category_id"]
     set title "$category_name Products"
     set menubar_stub "list.tcl?category_id=$category_id&"
-    set category_exclusion_clause "where exists (select 1 from ec_category_product_map map where map.product_id = ep.product_id and map.category_id = :category_id)"
+    set category_exclusion_clause "having ep.product_id in (select product_id from ec_category_product_map map where map.category_id = :category_id)"
 }
 
 if { ![info exists order_by] || [empty_string_p $order_by] || $order_by == "name"} {
@@ -55,7 +55,7 @@ order by $ordering_options
 
 set list_items ""
 
-db_foreach product_select " *SQL* " {
+db_foreach product_select "SELECT ep.product_id, ep.product_name, ep.available_date, count(distinct eir.item_id) as n_items_ordered, count(distinct epc.comment_id) as n_comments FROM ec_products ep, ec_items_reportable eir, ec_product_comments epc WHERE ep.product_id = eir.product_id(+) AND ep.product_id = epc.product_id(+) GROUP BY ep.product_id, ep.product_name, ep.available_date $category_exclusion_clause $order_by_clause" {
     append list_items "<li><a href=\"one?[export_url_vars product_id]\">$product_name</a>
 <font size=-1>(available since [util_AnsiDatetoPrettyDate $available_date]; $n_items_ordered sold"
     if { $n_comments > 0 } {

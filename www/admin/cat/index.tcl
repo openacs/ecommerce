@@ -10,7 +10,7 @@ set page_html "[ad_admin_header "Product Category Administration"]
 
 <h2>Product Category Administration</h2>
 
-[ad_context_bar "Product Categories"]
+[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Product Categories"]
 
 <hr>
 

@@ -170,7 +170,7 @@ db_transaction {
   # with ec_product.delete pl/sql procedure
   db_exec_plsql product_delete {
       begin
-      ec_product.del(:product_id);
+      ec_product.delete(:product_id);
       end;
   }
 

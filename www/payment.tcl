@@ -99,7 +99,7 @@ if { [db_string get_ec_item_cart_count "
     select count(*) 
     from ec_items 
     where order_id=:order_id"] == 0 } {
-    rp_internal_redirect shopping-cart
+    ad_returnredirect shopping-cart
     ad_script_abort
 }
 
@@ -226,6 +226,8 @@ if { $show_creditcard_form_p == "t" } {
 
     append old_cards_to_choose_from "</table>"
 }
+
+set gift_certificate_p [ad_parameter -package_id [ec_id] SellGiftCertificatesP ecommerce]
 
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
 set ec_system_owner [ec_system_owner]

@@ -28,8 +28,10 @@
     </else>
 
     <if @gift_certificate_covers_whole_order@ false>
+      <if @gift_certificate_p@>
       <p><a href="gift-certificate-claim?address_id=@billing_address_id@">Click here to claim a
       new gift certificate</a></p>
+      </if>
 
       <if @customer_can_use_old_credit_cards@ true>
 	<p>Since we already have a credit card on file for you, you

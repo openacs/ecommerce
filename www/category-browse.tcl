@@ -124,7 +124,7 @@ if [have subsubcategory_id] {
 
 # Recommended products in this category
 
-set recommendations "<table width=100%>"
+set recommendations {<table width="100%">}
 
 if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
@@ -153,7 +153,7 @@ db_foreach get_recommended_products "
 	    <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
          </tr>"
 }
-if {[string equal $recommendations "<table width=100%>"]} {
+if {[string equal $recommendations {<table width="100%">}]} {
     set recommendations ""
 } else {
     append recommendations "</table>"
@@ -173,7 +173,7 @@ if ![at_bottom_level_p] {
 			and c.${sub}category_id = :${sub}category_id)"
 }
 
-set products "<table width=90%>"
+set products {<table width="90%">}
 
 set have_how_many_more_p f
 set count 0
@@ -215,17 +215,17 @@ db_foreach get_regular_product_list "
 append products "</table>"
 
 if { $start >= $how_many } {
-    set prev_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]>Previous $how_many</a>"
+    set prev_link "<a href=\"[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]\">Previous $how_many</a>"
 } else {
     set prev_link ""
 }
 
 if { $have_how_many_more_p == "t" } {
-    set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $how_many</a>"
+    set next_link "<a href=\"[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]\">Next $how_many</a>"
 } else {
     set number_of_remaining_products [expr $count - $start - $how_many]
     if { $number_of_remaining_products > 0 } {
-	set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $number_of_remaining_products</a>"
+	set next_link "<\"a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]\">Next $number_of_remaining_products</a>"
     } else {
 	set next_link ""
     }
@@ -251,7 +251,7 @@ if ![at_bottom_level_p] {
 	order by sort_key, sub${sub}category_name" {
 
 	append subcategories "
-	    <li><a href=category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]>[eval "ident \$sub${sub}category_name"]</a></li>"
+	  &gt;  <a href=\"[ns_urlencode category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]]\">[eval "ident \$sub${sub}category_name"]</a><br>"
   }
 }
 

@@ -14,8 +14,9 @@ ad_proc ec_search_widget {
 } { 
     Creates an ecommerce search widget, using the specified category id and search text if necessary 
 } {
+    set action_url "[ec_url]product-search"
     return "
-	<form method=post action=[ec_insecurelink product-search]>
+	<form method=post action=[ec_insecurelink $action_url]>
       	  <table>
 	    <tbody>
 	      <tr>
@@ -39,9 +40,9 @@ ad_proc ec_combocategory_widget {
     Category widget combining categories and subcategories 
 } {
     if { $multiple_p == "f" } {
-	set select_tag "<select name=combocategory_id><option value=\"\">Entire store</option>\n"
+	set select_tag "<select name=combocategory_id><option value=\"\">Entire catalog</option>\n"
     } else {
-	set select_tag "<select multiple name=category_id size=3><option value=\"\">Entire store</option>\n"
+	set select_tag "<select multiple name=category_id size=3><option value=\"\">Entire catalog</option>\n"
     }
     set to_return ""
     set category_counter 0
@@ -74,9 +75,9 @@ ad_proc ec_combocategory_widget {
 	    # Check if the subcategory has been selected.
 
 	    if { [lsearch -exact $default "$category_id|$subcategory_id"] != -1 || [lsearch -exact $default $subcategory_name] != -1 } {
-		append to_return "<option value=\"$category_id|$subcategory_id\" selected>&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name</option>"	    
+		append to_return "<option value=\"$category_id|$subcategory_id\" selected>&nbsp;&nbsp;&gt;&nbsp;&nbsp;$subcategory_name</option>"	    
 	    } else {
-		append to_return "<option value=\"$category_id|$subcategory_id\">&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name</option>"
+		append to_return "<option value=\"$category_id|$subcategory_id\">&nbsp;&nbsp;&gt;&nbsp;&nbsp;$subcategory_name</option>"
 	    }
 	}
     }
@@ -1014,7 +1015,7 @@ ad_proc ec_timeentrywidget_time_check {
 
 } {
     if { ![regexp -nocase {([0-9]+):([0-9]+):([0-9]+)} $timestamp match hours mins secs]} {
-	ad_return_complaint 1 "<li>The time part of the timestamp is not in the correct format.  It must be HH12:MI:SS" 
+	ad_return_complaint "1" "<li>The time part of the timestamp is not in the correct format.  It must be HH12:MI:SS" 
 	return -code return
     } else {
 

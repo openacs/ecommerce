@@ -22,6 +22,6 @@ Please read and follow the instructions in this email.
 Your registration is in the database now.  A site administrator has
 been notified of your request to use the system.  Once you're
 approved, you'll get an email message and you can return to
-@site_link@ to use the service.
+site_link to use the service.
 
 </else>

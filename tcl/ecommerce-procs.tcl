@@ -13,7 +13,7 @@ ad_library {
 # someone new logs in
 ad_proc ec_user_session_logout {{why ""}} {
     ad_set_cookie -replace t -max_age 0 user_session_id 0
-    ns_log debug "ec_user_session_logout: user_session_id cookie expired"
+    ns_log notice "user_session_id cookie expired"
     return filter_ok
 }
 
@@ -383,7 +383,7 @@ ad_proc ec_mailing_list_link_for_a_product { product_id } {
     db_0or1row mailing_categories {}
 
     if { ![empty_string_p $category_id] || ![empty_string_p $subcategory_id] || ![empty_string_p $subsubcategory_id] } {
-        return "<a href=\"[ec_url]mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]\">Add yourself to the [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] mailing list!</a>"
+        return "<a href=\"[ns_urlencode [ec_url]mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]]\">Add yourself to the [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] mailing list!</a>"
     } else { 
         return ""
     }
@@ -484,7 +484,7 @@ ad_proc ec_professional_reviews_if_they_exist { product_id } { returns professio
 	select publication, author_name, review_date, review from ec_product_reviews where product_id = :product_id and display_p = 't'
     } {
 	if { [empty_string_p $product_reviews] } {
-	    append product_reviews "<font size=+1><b>Professional Reviews</b></font>\n<p>\n"
+	    append product_reviews "<font size=\"+1\"><b>Professional Reviews</b></font>\n<p>\n"
 	}
 	append product_reviews "$review<br>\n -- [ec_product_review_summary $author_name $publication $review_date]<p>\n"
     }
@@ -523,7 +523,7 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
     }
 
     set to_return "<hr>
-    <b><font size=+1>[ad_system_name] Member Reviews:</font></b>
+    <b><font size=\"+1\">[ad_system_name] Member Reviews:</font></b>
     "
 
     set comments_to_print ""
@@ -968,11 +968,9 @@ ad_proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } 
 	[join $item_list "\n"]
 	"
 
-    } elseif { $n_items == 1 } {
+    } else {
 	db_1row item_in_an_order_select $sql
 	return "<input type=checkbox name=item_id value=\"$item_id\" checked> $product_name; $price_name: [ec_pretty_price $price_charged]"
-    } else {
-        return "<b>No items need shipping in this order</b>"
     }
 }
 

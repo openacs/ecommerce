@@ -3,32 +3,36 @@
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="toolbar">
+  <property name="show_toolbar_p">t</property>
 
-<blockquote>
+<if @subcategories@ or @recommendations@>
   <table width="90%">
     <tr valign="top">
       <if @subcategories@ >
         <td width="50%">
-	  <h4>Browse:</h4>
-	  <ul>
+	  <h4>@category_name@ &gt; subcategories</h4>
+	  
 	    @subcategories;noquote@
-	  </ul>
+	  
         </td>
       </if>
       <if @recommendations@ >
         <td>
 	  <h4>We recommend:</h4>
 	  @recommendations;noquote@
+       
         </td>
      </if>
     </tr>
   </table>      
+</if>
 
-  <h4>@category_name@ products:</h4>
+  <if @count@ gt 0>
+  <h4>@category_name@ items:</h4>
   @products;noquote@
 
   @prev_link;noquote@ @separator;noquote@ @next_link;noquote@
-</blockquote>
+  </if>
 
-<p><a href="mailing-list-add?category_id=@the_category_id@">Add yourself to the @the_category_name@ mailing list!</a></p>
+  
+<p align="right"><a href="mailing-list-add?category_id=@the_category_id@">Add yourself to the @the_category_name@ mailing list!</a></p>

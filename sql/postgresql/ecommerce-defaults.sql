@@ -47,6 +47,8 @@ insert into ec_templates (
         || '</table>' || '\n' || '\n'
         || '<p>' || '\n'
         || '<%= $detailed_description %>' || '\n' || '\n'
+        || ' <%= [ec_product_link_if_exists $product_id] %>' || '\n'
+        || ' <br>' || '\n'
         || '<%= [ec_display_product_purchase_combinations $product_id] %>' || '\n' || '\n'
         || '<%= [ec_product_links_if_they_exist $product_id] %>' || '\n' || '\n'
         || '<%= [ec_professional_reviews_if_they_exist $product_id] %>' || '\n' || '\n'

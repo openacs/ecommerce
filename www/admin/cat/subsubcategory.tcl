@@ -27,7 +27,7 @@ set page_html "[ad_admin_header "Subsubcategory: $subsubcategory_name"]
 
 <h2>Subsubcategory: $subsubcategory_name</h2>
 
-[ad_context_bar  [list "index" "Categories &amp; Subcategories"] [list "category?[export_url_vars category_id category_name]" $category_name] [list "subcategory?[export_url_vars category_id category_name subcategory_id subcategory_name]" $subcategory_name] "One Subsubcategory"]
+[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] [list "category?[export_url_vars category_id category_name]" $category_name] [list "subcategory?[export_url_vars category_id category_name subcategory_id subcategory_name]" $subcategory_name] "One Subsubcategory"]
 
 <hr>
 
