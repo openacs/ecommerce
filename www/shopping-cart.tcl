@@ -57,8 +57,9 @@ ec_create_new_session_if_necessary
 
 set product_counter 0
 set total_price 0
+set currency [ad_parameter -package_id [ec_id] Currency]
 
-db_multirow in_cart get_products_in_cart "
+db_multirow -extend { line_subtotal } in_cart get_products_in_cart "
       select p.product_name, p.one_line_description, p.product_id, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice, '' as price 
       from ec_orders o
       join ec_items i on (o.order_id=i.order_id)
@@ -68,7 +69,9 @@ db_multirow in_cart get_products_in_cart "
 	  where usoc.user_session_id=:user_session_id) u on (p.product_id=u.product_id)
       where o.user_session_id=:user_session_id 
       and o.order_state='in_basket'
-      group by p.product_name, p.one_line_description, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice"
+      group by p.product_name, p.one_line_description, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice" {
+          set line_subtotal "$quantity"
+      }
 
 for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
 
@@ -96,6 +99,11 @@ for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
     set lowest_price_and_price_name [ec_lowest_price_and_price_name_for_an_item $product_id $user_id $offer_code]
     set lowest_price [lindex $lowest_price_and_price_name 0]
 
+
+    # Calculate line subtotal for end users
+    set line_subtotal [ec_pretty_price [expr $quantity * $lowest_price] $currency]
+    multirow set in_cart $i line_subtotal $line_subtotal
+
     # Add the price of the item to the total price
 
     set total_price [expr $total_price + ($quantity * $lowest_price)]
@@ -103,15 +111,14 @@ for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
 
     # following line added according to bug 643 at openacs.org
     # http://openacs.org/bugtracker/openacs/com/ecommerce/bug?bug%5fnumber=643
-    #multirow set in_cart $i delete_export_vars $delete_export_vars
+    multirow set in_cart $i delete_export_vars $delete_export_vars
 
-    #multirow set in_cart $i price "[lindex $lowest_price_and_price_name 1]:&nbsp;&nbsp;[ec_pretty_price [lindex $lowest_price_and_price_name 0] [ad_parameter -package_id [ec_id] Currency]]"
+    multirow set in_cart $i price "[lindex $lowest_price_and_price_name 1]:&nbsp;&nbsp;[ec_pretty_price [lindex $lowest_price_and_price_name 0] $currency]"
 
-multirow set in_cart $i delete_export_vars $delete_export_vars
 }
 
 # Add adjust quantities line if there are products in the cart.
-set pretty_total_price [ec_pretty_price $total_price [ad_parameter -package_id [ec_id] Currency]]
+set pretty_total_price [ec_pretty_price $total_price $currency]
 
 # List the states that get charged tax. Although not 100% accurate
 # as shipping might be taxed too this is better than nothing.

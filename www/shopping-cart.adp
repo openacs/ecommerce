@@ -6,7 +6,6 @@
   <property name="show_toolbar_p">t</property>
   <property name="current_location">shopping-cart</property>
 
-<h3>Shopping Cart</h3> 
 <if @user_id@ ne 0>
   for @first_names@ @last_name@ (if you're not @first_names@ @last_name@, 
   <a href=/register/>click here</a>).
@@ -16,13 +15,14 @@
   <multiple name="in_cart">
     <if @in_cart.rownum@ eq 1>
        <form method=post action=shopping-cart-quantities-change>
-         <center>
-           <table border="0" cellspacing="0" cellpadding="5">
-             <tr bgcolor="cccccc">
-               <td>Shopping Cart Items</td>
+
+           <table border="0" cellspacing="0" cellpadding="5" align="center">
+             <tr bgcolor="#cccccc">
+               <td>Item Description</td>
                <td>Options</td>
                <td>Quantity</td>
                <td>Price/Item</td>
+<if @product_counter@ gt 1> <td>Subtotal</td> </if>
                <td>Action</td>
              </tr>
     </if>
@@ -47,6 +47,8 @@
 	       value="@in_cart.quantity@" size=4 maxlength=4>
       </td>
       <td>@in_cart.price;noquote@</td>
+<if @product_counter@ gt 1><td align="right">@in_cart.line_subtotal@</td>
+</if>
       <td>
         <a href="shopping-cart-delete-from?@in_cart.delete_export_vars@">delete</a>
       </td>
@@ -54,9 +56,11 @@
   </multiple>
   
   <if @product_counter@ ne 0>
-    <tr bgcolor="cccccc">
-      <td colspan="2">Total:</td>
+    <tr bgcolor="#cccccc">
+      <td colspan="2" align="right">Total:</td>
       <td>@product_counter@</td>
+<if @product_counter@ gt 1><td bgcolor="#cccccc">&nbsp;</td>
+</if>
       <td align="right">@pretty_total_price@</td>
       <td><input type=submit value="update"></td>
     </tr>
@@ -68,7 +72,7 @@
       </tr>
     </multiple>
     </table>
-    </center>
+
     </form>
 
     <center>
