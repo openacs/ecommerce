@@ -33,7 +33,7 @@
 	select c.one_line_summary,
 	       c.rating,
 	       c.user_comment,
- 	       to_char(c.last_modified,'Day Month DD, YYYY') last_modified_pretty,
+ 	       to_char(c.last_modified,'Day Month DD, YYYY') as last_modified_pretty,
 	       u.email,
 	       u.user_id
 	  from ec_product_comments c,

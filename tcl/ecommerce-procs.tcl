@@ -610,7 +610,7 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
 	select c.one_line_summary,
 	       c.rating,
 	       c.user_comment,
- 	       to_char(c.last_modified,'Day Month DD, YYYY') last_modified_pretty,
+ 	       to_char(c.last_modified,'Day Month DD, YYYY') as last_modified_pretty,
 	       u.email,
 	       u.user_id
 	  from ec_product_comments c,
@@ -748,7 +748,7 @@ ad_proc ec_navbar {{current_location ""}} { returns ec nav bar } {
         set current_location [lindex $current_location 1]
         foreach step {Welcome Address Verify Shipping Payment Confirm} {
             set category_descriptions Checkout:
-            ns_log debug ec_navbar $current_location ::: $step
+            ns_log debug "ec_navbar $current_location ::: $step"
             if {[string equal -nocase $current_location $step]} {
                 lappend linked_category_list "<b>$step</b>"
             } else {
@@ -1481,7 +1481,7 @@ ad_proc -private ec_create_new_session_if_necessary {
                 } elseif {[string compare $_ec_cookie_requirement "cookies_are_not_required"] == 0} {
                     
                     # For this page continue
-                    ns_log debug ec_create_session "cookies are off but that's okay, they aren't required"
+                    ns_log debug "ec_create_session cookies are off but that's okay, they aren't required"
                     
                 } elseif {[string compare $_ec_cookie_requirement "shopping_cart_required"] == 0} {
                     
