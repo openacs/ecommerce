@@ -106,6 +106,7 @@ for {set i 0} {$i < [ns_set size $form_set]} {incr i} {
     append hidden_form_vars "[export_form_vars [ns_set key $form_set $i]]"
 }
 
+# set the defaults for name fields if they are empty
 if {[info exists last_name] != 1} {
    if {[info exists attn]} {
     # delimiter is triple space (for parsing).
