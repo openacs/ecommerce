@@ -62,7 +62,7 @@ set review_as_it_will_appear "
 <b><a href=\"/shared/community-member?[export_url_vars user_id]\">$user_email</a></b> 
 rated this product  
 [ec_display_rating $rating] on <i>$current_date</i> and wrote:<br>
-<b>$one_line_summary</b><br>
+<b>[ad_quotehtml $one_line_summary]</b><br>
 [ec_display_as_html $user_comment]"
 
 set system_name [ad_system_name]
