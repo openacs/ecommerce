@@ -25,7 +25,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-if {![info exists creditcard_id] || ([info exists creditcard_id] && [empty_string_p creditcard_id])} {
+if {![info exists creditcard_id] || ([info exists creditcard_id] && [empty_string_p $creditcard_id])} {
 
     # Insert the address into ec_addresses, update the address in
     # ec_orders

@@ -92,7 +92,7 @@ append page_html "[ad_admin_header "Confirm that these item(s) have been [ec_dec
 
 set shipment_id [db_nextval ec_shipment_id_sequence]
 
-if { [info exists item_id] && ![empty_string_p item_id] } {
+if { [info exists item_id] && ![empty_string_p $item_id] } {
     set selected_items [join $item_id ", "]
     set sql  [db_map selected_items_select]
 } else {
