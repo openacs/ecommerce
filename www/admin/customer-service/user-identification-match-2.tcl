@@ -18,4 +18,5 @@ ad_require_permission [ad_conn package_id] admin
 db_dml update_user_id_set_new_uid "update ec_user_identification set user_id=:d_user_id where user_identification_id=:user_identification_id"
 db_release_unused_handles
 
-ad_returnredirect "[ec_acs_admin_url]users/one.tcl?user_id=$d_user_id"
+# complete the workflow loop, get ready for next interaction
+ad_returnredirect "index"

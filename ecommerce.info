@@ -7,17 +7,17 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="5.01" url="http://openacs.org/repository/download/apm/ecommerce-5.01.apm">
+    <version name="5.05" url="http://openacs.org/repository/download/apm/ecommerce-5.05.apm">
         <owner url="mailto:janine@furfly.net">Janine Sisk</owner>
         <owner url="mailto:bart.teeuwisse@7-sisters.com">Bart Teeuwisse</owner>
         <owner url="mailto:alfred@thunderstick.com">Alfred Werner</owner>
         <summary>The ACS 3.x based e-commerce solution ported to OpenACS.</summary>
-        <release-date>2004-03-10</release-date>
+        <release-date>2005-02-10</release-date>
         <vendor url="http://www.furfly.net">furfly.net, LLC</vendor>
         <description format="text/plain">This module implements all that IT needs for a standard business-to-consumer Web service. You can find a feature summary in the documentaion.</description>
 
-        <provides url="ecommerce" version="5.01"/>
-        <requires url="acs-kernel" version="4.1"/>
+        <provides url="ecommerce" version="5.05"/>
+        <requires url="acs-kernel" version="5.0"/>
         <requires url="acs-datetime" version="4.0"/>
         <requires url="ref-countries" version="0.1d"/>
         <requires url="ref-language" version="0.1d"/>
@@ -31,6 +31,7 @@
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CacheRefresh"  default="600" description="Seconds between cache (util_memoize) updates" section_name="technical"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CalcProductRelationshipsP"  default="0" description="whether the system should calculate additional product relationships" section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CartDuration"  default="30" description="# of days an 'in_basket' order will remain in the system before a cron job expires it" section_name="shopping cart"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CartMaxToAdd"  default="999" description="maximum quantity to add to a shoppng basket item's current quantity. Each unit requires a row insert in db table ec_items." section_name="shopping cart"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="CreditCardsAccepted"  default="v m a" description="A single-letter space delimited list of accepted credit card types. See ec_pretty_creditcard_type for details." section_name="payment information"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Currency"  default="USD" description="currency units, USD, dollars, lira, etc." section_name="units"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="CustomerServiceEmailAddress"  default="service@yourdomain.com" description="all outgoing email is sent from this address" section_name="technical"/>
@@ -68,6 +69,7 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SystemOwner"  description="email address of owner of shop" section_name="technical"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ThumbnailHeight"  default="100" description="for thumbnails of products, specify either width or height (whichever is more important, and then the other will be determined based on the original image size, keeping aspect ratio constant) -- if both are specified, the width setting will take precedence, and if neither is specified, the thumbnail will be width default=100" section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ThumbnailWidth"  default="100" description="for thumbnails of products, specify either width or height (whichever is more important, and then the other will be determined based on the original image size, keeping aspect ratio constant) -- if both are specified, the width setting will take precedence, and if neither is specified, the thumbnail will be width default=100" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ThumbnailSizeOuterlimits"  default="0" description="0 defaults to 'exclusive or' thumbnail sizing as described by ThumbnailHeight and ThumbnailWidth parameters. Set this to 1 to use both dimensions as outer size limits --handy when product image aspect ratios reach toward the extreme limits." section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassAllowSelfPlacement"  default="1" description="whether a user can request to be a member of a user class" section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassApproveP"  default="1" description="if a user requests to be in a user class, is approval required before that user becomes a member of the user class" section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassUserViewP"  default="1" description="whether users can see what user classes they are in" section_name="display"/>

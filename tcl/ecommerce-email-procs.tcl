@@ -193,9 +193,7 @@ ad_proc ec_email_delayed_credit_denied {
 
 	    # Create a customer service issue/interaction/action
 
-	    set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" \ 
-						  "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" \
-						      $order_id $issue_type_list $email_body $user_id]
+	    set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" $order_id $issue_type_list $email_body $user_id]
 
 	    set user_identification_id [lindex $user_identification_and_issue_id 0]
 	    set issue_id [lindex $user_identification_and_issue_id 1]

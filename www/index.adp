@@ -24,5 +24,5 @@
 	@products;noquote@
       </if>
 
-      @prev_link@ @separator@ @next_link@
+      @prev_link;noquote@ @separator@ @next_link;noquote@
     </blockquote>

@@ -10,6 +10,15 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="recent_baskets_select">      
+    <querytext>
+      select 
+      	sum(one_if_within_n_days(in_basket_date,1)) as s_b_in_last_24_hours,
+      	sum(one_if_within_n_days(in_basket_date,7)) as s_b_in_last_7_days
+      from ec_orders
+    </querytext>
+  </fullquery>
+
   <fullquery name="recent_gift_certificates_purchased_select">      
     <querytext>
       select

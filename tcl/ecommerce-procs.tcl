@@ -198,34 +198,34 @@ ad_proc ec_shipping_cost_summary { base_shipping_cost default_shipping_per_item 
     set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 
     if { ([empty_string_p $base_shipping_cost] || $base_shipping_cost == 0) && ([empty_string_p $default_shipping_per_item] || $default_shipping_per_item == 0) && ([empty_string_p $weight_shipping_cost] || $weight_shipping_cost == 0) && ([empty_string_p $add_exp_base_shipping_cost] || $add_exp_base_shipping_cost == 0) && ([empty_string_p $add_exp_amount_per_item] || $add_exp_amount_per_item == 0) && ([empty_string_p $add_exp_amount_by_weight] || $add_exp_amount_by_weight == 0) } {
-	return "The customers are not charged for shipping beyond what is specified for each product individually."
+	return "Customers are not charged for shipping beyond what is specified for each product individually."
     }
 
     if { [empty_string_p $base_shipping_cost] || $base_shipping_cost == 0 } {
 	set shipping_summary "For each order, there is no base cost.  However, "
     } else {
-	set shipping_summary "For each order, there is a base cost of [ec_pretty_price $base_shipping_cost $currency].  On top of that,  "
+	set shipping_summary "For each order, there is a base cost of [ec_pretty_price $base_shipping_cost $currency].  In addition,  "
     }
 
     if { ([empty_string_p $weight_shipping_cost] || $weight_shipping_cost == 0) && ([empty_string_p $default_shipping_per_item] || $default_shipping_per_item == 0) } {
 	append shipping_summary "the per-item cost is set using the amount in the \"Shipping Price\" field of each item (or \"Shipping Price - Additional\", if more than one of the same product is ordered).  "
     } elseif { [empty_string_p $weight_shipping_cost] || $weight_shipping_cost == 0 } {
-	append shipping_summary "the per-item cost is [ec_pretty_price $default_shipping_per_item $currency], unless the \"Shipping Price\" has been set for that product (or \"Shipping Price - Additional\", if more than one of the same product is ordered).  "
+	append shipping_summary "the per-item cost is [ec_pretty_price $default_shipping_per_item $currency], unless the \"Shipping Price\" has been set for that product. A \"Shipping Price - Additional\" amount is added for each additional unit of the same product ordered).  "
     } else {
-	append shipping_summary "the per-item-cost is equal to [ec_pretty_price $weight_shipping_cost $currency] times its weight in [ad_parameter -package_id [ec_id] WeightUnits ecommerce], unless the \"Shipping Price\" has been set for that product (or \"Shipping Price - Additional\", if more than one of the same product is ordered).  "
+	append shipping_summary "the per-item-cost is equal to [ec_pretty_price $weight_shipping_cost $currency] times its weight in [ad_parameter -package_id [ec_id] WeightUnits ecommerce], unless the \"Shipping Price\" has been set for that product. A \"Shipping Price - Additional\" amount is added for each additional unit of the same product ordered).  "
     }
 
     if { ([empty_string_p $add_exp_base_shipping_cost] || $add_exp_base_shipping_cost == 0) && ([empty_string_p $add_exp_amount_per_item] || $add_exp_amount_per_item == 0) && ([empty_string_p $add_exp_amount_by_weight] || $add_exp_amount_by_weight == 0) } {
 	set express_part_of_shipping_summary "There are no additional charges for express shipping.  "
     } else {
 	if { ![empty_string_p $add_exp_base_shipping_cost] && $add_exp_base_shipping_cost != 0 } {
-	    set express_part_of_shipping_summary "An additional amount of [ec_pretty_price $add_exp_base_shipping_cost $currency] is added to the base cost for Regular Shipping.  "
+	    set express_part_of_shipping_summary "Express Shipping adds [ec_pretty_price $add_exp_base_shipping_cost $currency] to the Regular Shipping's base charge.  "
 	}
 	if { ![empty_string_p $add_exp_amount_per_item] && $add_exp_amount_per_item != 0 } {
-	    append express_part_of_shipping_summary "An additional amount of [ec_pretty_price $add_exp_amount_per_item $currency] is added for each item, on top of the amount charged for Regular Shipping.  "
+	    append express_part_of_shipping_summary "Express Shipping adds [ec_pretty_price $add_exp_amount_per_item $currency] for each item, in addition to the amount charged for Regular Shipping.  "
 	}
 	if { ![empty_string_p $add_exp_amount_by_weight] && $add_exp_amount_by_weight != 0 } {
-	    append express_part_of_shipping_summary "An additional amount of [ec_pretty_price $add_exp_amount_by_weight $currency] times the weight in [ad_parameter -package_id [ec_id] WeightUnits ecommerce] of each item is added, on top of the amount charged for Regular Shipping.  "
+	    append express_part_of_shipping_summary "Express Shipping adds [ec_pretty_price $add_exp_amount_by_weight $currency] per [ad_parameter -package_id [ec_id] WeightUnits ecommerce] of each item ordered, in addition to the amount charged for Regular Shipping.  "
 	}
     }
 
@@ -326,11 +326,11 @@ ad_proc ec_product_name {product_id {value_if_not_found ""}} "Returns product na
 }
 
 ad_proc ec_full_categorization_display { {category_id ""} {subcategory_id ""} {subsubcategory_id ""} } { 
-given a category_id, subcategory_id, and subsubcategory_id
-(can be null), displays the full categorization, e.g.
-category_name: subcategory_name: subsubcategory_name.
-If you have a subcategory_id but not a category_id, this
-will look up the category_id to find the category_name.
+    given a category_id, subcategory_id, and subsubcategory_id
+    (can be null), displays the full categorization, e.g.
+    category_name: subcategory_name: subsubcategory_name.
+    If you have a subcategory_id but not a category_id, this
+    will look up the category_id to find the category_name.
 } {
     if { [empty_string_p $category_id] && [empty_string_p $subcategory_id] && [empty_string_p $subsubcategory_id] } {
 	return ""
@@ -395,12 +395,12 @@ ad_proc ec_space_to_nbsp { the_string } { converts space to html nbsp } {
 }
 
 ad_proc ec_display_rating { rating } { 
-Given a product's rating, if the star gifs exist, it will
-print out the appropriate # (to the nearest half); otherwise
-it will just say what the rating is (to the nearest half).
-The stars should be in the subdirectory /graphics of the ecommerce
-user pages and they should be named star-full.gif, star-empty.gif,
-star-half.gif
+    Given a product's rating, if the star gifs exist, it will
+    print out the appropriate # (to the nearest half); otherwise
+    it will just say what the rating is (to the nearest half).
+    The stars should be in the subdirectory /graphics of the ecommerce
+    user pages and they should be named star-full.gif, star-empty.gif,
+    star-half.gif
 } {
     set double_ave_rating [expr $rating * 2]
     set double_rounded_rating [expr round($double_ave_rating)]
@@ -575,7 +575,7 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
 
 ad_proc ec_add_to_cart_link {
     product_id
-    {add_to_cart_button_text "Add to Cart"}
+    {add_to_cart_button_text "Add to Shopping Cart"}
     {preorder_button_text "Pre-order This Now!"}
     {form_action "shopping-cart-add"}
     {order_id ""}
@@ -918,7 +918,7 @@ ad_proc ec_item_summary_for_admins { order_id } { item summary for admins } {
     }
 }
 
-ad_proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } { produced a HTML form fragment for administrators to check off items that are fulfilled or received back } {
+ad_proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } { produces an HTML form fragment for administrators to select from items that are fulfilled or received back } {
 
     if { $for_fulfillment_p == "t" } {
 	set item_view "ec_items_shippable"
@@ -1448,6 +1448,7 @@ ad_proc -private ec_create_new_session_if_necessary {
                     remember what you have in your shopping cart.  Please turn on cookies
                     in your browser.
                     "
+                    ad_script_abort
                 } elseif {[string compare $_ec_cookie_requirement "cookies_are_not_required"] == 0} {
                     
                     # For this page continue
@@ -1467,7 +1468,7 @@ ad_proc -private ec_create_new_session_if_necessary {
 			In Microsoft Internet Explorer 4.0, you can enable cookies from View -> 
 			Internet Options -> Advanced -> Security. </i></p>
 			<p>[ec_continue_shopping_options]</p>"
-
+                    ad_script_abort 
                 } else {
 		    ad_return_error "bug" "we should never get here"
 		}

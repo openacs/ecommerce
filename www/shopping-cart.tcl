@@ -57,7 +57,9 @@ ec_create_new_session_if_necessary
 
 set product_counter 0
 set total_price 0
-set currency [ad_parameter -package_id [ec_id] Currency]
+set currency [parameter::get -parameter Currency]
+set max_quantity_length [string length [parameter::get -parameter CartMaxToAdd]]
+
 
 db_multirow -extend { line_subtotal } in_cart get_products_in_cart "
       select p.product_name, p.one_line_description, p.product_id, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice, '' as price 

@@ -26,6 +26,10 @@ db_1row recent_orders_select "
     select sum(one_if_within_n_days(confirmed_date,1)) as n_o_in_last_24_hours, sum(one_if_within_n_days(confirmed_date,7)) as n_o_in_last_7_days
     from ec_orders_reportable"
 
+db_1row recent_baskets_select "
+    select sum(one_if_within_n_days(in_basket_date,1)) as s_b_in_last_24_hours, sum(one_if_within_n_days(in_basket_date,7)) as s_b_in_last_7_days
+    from ec_orders"
+
 db_1row recent_gift_certificates_purchased_select "
     select sum(one_if_within_n_days(issue_date,1)) as n_g_in_last_24_hours, sum(one_if_within_n_days(issue_date,7)) as n_g_in_last_7_days
     from ec_gift_certificates_purchased"
@@ -46,6 +50,8 @@ doc_body_append "
     <ul>
       <li><p><a href=\"by-order-state-and-time\">Orders</a> 
         <font size=-1>($n_o_in_last_24_hours in last 24 hours; $n_o_in_last_7_days in last 7 days)</font></p></li>
+      <li><p><a href=\"by-state-and-time\">Shopping Basket Activity</a>
+        <font size=-1>($s_b_in_last_24_hours in last 24 hours; $s_b_in_last_7_days in last 7 days)</font></p></li>
       <li><p><a href=\"fulfillment\">Order Fulfillment</a> 
         <font size=-1>"
 

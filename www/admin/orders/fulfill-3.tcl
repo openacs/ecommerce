@@ -57,7 +57,12 @@ if { [db_string doubleclick_select "
 }
 
 set shipping_method [db_string shipping_method_select "
-   select shipping_method 
+   select shipping_method
+   from ec_orders 
+    where order_id=:order_id"]
+
+set creditcard_id [db_string creditcard_id_select "
+   select creditcard_id 
    from ec_orders 
     where order_id=:order_id"]
 
@@ -171,7 +176,7 @@ if { $shipment_cost >= 0 } {
 
     # Verify that the shipment is for the entire order.
 
-    if {$shipment_cost == $order_cost} {
+    if { [ec_same_value $shipment_cost $order_cost] } {
 
 	# The shipment could be for the entire order but it could also
 	# be that a partial shipment, return, and an addition of more
@@ -191,19 +196,20 @@ if { $shipment_cost >= 0 } {
 	# amount and can thus not differentiate between the amount
 	# authorized and the amount to capture.
 
-	if {[string equal $shipment_cost [db_string authorized_amount_select "
+	if { [ec_same_value $shipment_cost [db_string authorized_amount_select "
 	    select transaction_amount
 	    from ec_financial_transactions
 	    where order_id = :order_id
 	    and to_be_captured_p is null
             and authorized_date is not null
-	    and transaction_type = 'charge'" -default ""]]} {
+	    and transaction_type = 'charge'" -default ""] ]} {
 
 	    set transaction_id [db_string transaction_id_select "
 		select transaction_id
 		from ec_financial_transactions 
 		where order_id = :order_id
 		and to_be_captured_p is null
+                and creditcard_id = :creditcard_id
 		and transaction_type = 'charge'" -default ""]
 	    
 	    if { ![empty_string_p $transaction_id] } {
@@ -218,7 +224,7 @@ if { $shipment_cost >= 0 } {
 		set mark_result $response(response_code)
 		set pgw_transaction_id $response(transaction_id)
 		if { [string equal $mark_result "invalid_input"]} {
-		    set problem_details "When trying to mark shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
+		    set problem_details "(ref:fulfill-3,227) When trying to mark shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
 		    db_dml problems_log_insert "
 			insert into ec_problems_log
 			(problem_id, problem_date, problem_details, order_id)
@@ -281,11 +287,11 @@ if { $shipment_cost >= 0 } {
 	# returns failed_authorization, authorized,
 	# no_recommendation, or invalid_input.
 
-	array set response [ec_creditcard_authorization $order_id $transaction_id]
+	array set response [ec_creditcard_authorization $order_id]
 	set result $response(response_code)
 	set pgw_transaction_id $response(transaction_id)
 	if {[string equal $result "failed_authorization"] || [string equal $result "invalid_input"]} {
-	    set problem_details "When trying to authorize shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $result"
+	    set problem_details "(ref:fulfill-3,216) When trying to authorize shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $result"
 	    db_dml problems_insert "
 		    insert into ec_problems_log
 		    (problem_id, problem_date, problem_details, order_id)
@@ -320,7 +326,7 @@ if { $shipment_cost >= 0 } {
 	    set mark_result $response(response_code)
 	    set pgw_transaction_id $response(transaction_id)
 	    if {[string equal $mark_result "invalid_input"]} {
-		set problem_details "When trying to mark shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
+		set problem_details "(ref:fulfill-3,329) When trying to mark shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
 		db_dml problems_insert "
 			insert into ec_problems_log
 	  		(problem_id, problem_date, problem_details, order_id)

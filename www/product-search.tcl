@@ -44,9 +44,6 @@ set user_session_id [ec_get_user_session_id]
 if { ![empty_string_p $combocategory_id] } {
     set category_id [lindex [split $combocategory_id "|"] 0]
     set subcategory_id [lindex [split $combocategory_id "|"] 1]
-} else {
-    set category_id ""
-    set subcategory_id ""
 }
 
 # filter overflow attempts from really long search strings

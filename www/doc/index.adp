@@ -39,9 +39,9 @@
   <blockquote>
     <font size=-2 face="verdana, arial, helvetica">
       <p>If you just want to sell a handful of items and not build a
-	full online community, you're probably better off starting
-	with ArsDigita Shoppe, downloadable from <a
-	href="http://arsdigita.com/free-tools/shoppe">http://arsdigita.com/free-tools/shoppe</a>.</p>
+	full online community, you might want to try 
+	 ArsDigita Shoppe (1999-2001), available from the Web Archive.org archives <a
+	href="http://web.archive.org/web/20011127071655/www.arsdigita.com/free-tools/shoppe.html">http://arsdigita.com/free-tools/shoppe.html</a>.</p>
     </font>
   </blockquote>
 

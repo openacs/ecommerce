@@ -94,6 +94,7 @@ db_foreach get_products_w_attribs  "
 #    set size_choice [lindex $product_color_size_style 2]
 #    set style_choice [lindex $product_color_size_style 3]
 
+set max_quantity_to_add [parameter::get -parameter CartMaxToAdd]
 	 
 db_transaction {
 
@@ -114,7 +115,7 @@ db_transaction {
 	    set style_choice [lindex $product_color_size_style 3]
 
 	    if { $quantity_to_add > 0 } {
-		set remaining_quantity $quantity_to_add
+		set remaining_quantity [min $quantity_to_add $max_quantity_to_add]
 		while { $remaining_quantity > 0 } {
 		    
 		    db_dml insert_new_quantity_to_add "insert into ec_items

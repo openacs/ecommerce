@@ -182,21 +182,32 @@ if { [info exists upload_file] && ![string compare $upload_file ""] == 0 } {
     # thumbnails are all jpg files
     
     # set thumbnail dimensions
-    if [catch {set thumbnail_width [ad_parameter -package_id [ec_id] ThumbnailWidth ecommerce]} ] {
-	if [catch {set thumbnail_height [ad_parameter -package_id [ec_id] ThumbnailHeight ecommerce]} ] {
-	    set convert_dimensions "100x10000"
-	} else {
-	    set convert_dimensions "10000x$thumbnail_height"
-	}
+    set use_both_param_dimensions [parameter::get -parameter ThumbnailSizeOuterlimits]
+    set thumbnail_width_is_blank [catch {set thumbnail_width [parameter::get -parameter ThumbnailWidth]} ]
+    set thumbnail_height_is_blank [catch {set thumbnail_height [parameter::get -parameter ThumbnailHeight]} ]
+    if { $use_both_param_dimensions } {
+        set convert_dimensions "${thumbnail_width}x${thumbnail_height}>"
     } else {
-	set convert_dimensions "${thumbnail_width}x10000"
+        if  { $thumbnail_width_is_blank } {
+	    if  { $thumbnail_height_is_blank } {
+	        set convert_dimensions "100x10000"
+	    } else {
+	        set convert_dimensions "10000x${thumbnail_height}"
+	    }
+        } else {
+	    set convert_dimensions "${thumbnail_width}x10000"
+        }
     }
+
+    set system_url [parameter::get -package_id [ad_acs_kernel_id] -parameter SystemURL]
+    set system_name [parameter::get -package_id [ad_acs_kernel_id] -parameter SystemName]
+    set image_comment "from $system_url $system_name"
 
     set perm_thumbnail_filename "$full_dirname/product-thumbnail.jpg"
 
     set convert [ec_convert_path]
     if {![string equal "" $convert] && [file exists $convert]} {
-        if [catch {exec $convert -geometry $convert_dimensions $perm_filename $perm_thumbnail_filename} errmsg ] {
+        if [catch {exec $convert -geometry $convert_dimensions -comment \"$image_comment\" $perm_filename $perm_thumbnail_filename} errmsg ] {
             ad_return_complaint 1 "
                 I am sorry, an error occurred converting the picture.  $errmsg
             "

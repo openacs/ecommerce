@@ -16,6 +16,7 @@ ad_proc ec_update_state_to_in_basket {
     need to be taken:
 
     1. ec_orders.order_state becomes in_basket
+       ec_orders.saved_p becomes t
     2. ec_creditcards.failed_p becomes t
     3. any gift certificates used should be reinstated
     4. confirmed_date is set to null (because we use existence of
@@ -31,7 +32,7 @@ ad_proc ec_update_state_to_in_basket {
         where order_id=:order_id"
     db_dml order_state_update "
         update ec_orders 
-        set order_state='in_basket', confirmed_date=null 
+        set order_state='in_basket', confirmed_date=null, saved_p = 't'
         where order_id=:order_id"
     db_dml creditcard_update "
         update ec_creditcards 
@@ -45,7 +46,7 @@ ad_proc ec_update_state_to_in_basket {
 # following cleans up errors resulting from ccard failures with shipping fulfill-3.tcl
     db_dml update_transaction_state "
         update ec_financial_transactions
-        set to_be_captured = 'f'
+        set to_be_captured_p = 'f'
         where order_id=:order_id
         and creditcard_id=:creditcard_id"
 }

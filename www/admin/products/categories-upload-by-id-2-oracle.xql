@@ -1,13 +1,7 @@
 <?xml version="1.0"?>
 <queryset>
-  <rdbms><type>postgresql</type><version>7.1</version></rdbms>
+  <rdbms><type>oracle</type><version>7.1</version></rdbms>
 
-  <fullquery name="product_check">      
-    <querytext>
-      select product_id from ec_products 
-      where sku = :sku
-    </querytext>
-  </fullquery>
   
   <fullquery name="subsubcategory_insert">
     <querytext>
@@ -22,7 +16,7 @@
       	:product_id,
       	:subsubcategory_id,
       	'f',
-      	now(),
+      	sysdate,
       	:user_id,
       	:ip)
     </querytext>
@@ -41,7 +35,7 @@
       	:product_id,
       	:subcategory_id,
       	'f',
-      	now(),
+      	sysdate,
       	:user_id,
       	:ip)
     </querytext>
@@ -60,7 +54,7 @@
       	:product_id,
       	:category_id,
       	'f',
-      	now(),
+      	sysdate,
       	:user_id,
       	:ip)
     </querytext>
@@ -79,7 +73,7 @@
       	:product_id,
       	:category_id,
       	'f',
-      	now(),
+      	sysdate,
       	:user_id,
       	:ip)
     </querytext>

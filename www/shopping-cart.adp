@@ -44,7 +44,7 @@
       <td>
         <input type="text" 
 	       name="quantity.@in_cart.product_id@ {@in_cart.color_choice@} {@in_cart.size_choice@} {@in_cart.style_choice@}" 
-	       value="@in_cart.quantity@" size=4 maxlength=4>
+	       value="@in_cart.quantity@" size="@max_quantity_length@" maxlength="@max_quantity_length@">
       </td>
       <td>@in_cart.price;noquote@</td>
 <if @product_counter@ gt 1><td align="right">@in_cart.line_subtotal@</td>
