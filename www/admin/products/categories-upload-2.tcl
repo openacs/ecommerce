@@ -7,8 +7,8 @@ ad_page_contract {
   @cvs-id categories-upload-2.tcl,v 3.1.2.2 2000/07/22 07:57:37 ron Exp
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
-  cvs_file
-  cvs_file.tmpfile:tmpfile
+  csv_file
+  csv_file.tmpfile:tmpfile
 }
 
 ad_require_permission [ad_conn package_id] admin
@@ -41,46 +41,56 @@ set success_count 0
 while { [ns_getcsv $csvfp elements] != -1 } {
     incr count
     # this line is a product
-    set product_id [lindex $elements 0]
+    set sku [lindex $elements 0]
     set category [lindex $elements 1]
 
-    # see if this matches any subcategories
-    set submatch_p 0
-    db_foreach subcategories_select "
-    select c.category_id, c.category_name, s.subcategory_id,
-           s.subcategory_name from ec_subcategories s, ec_categories c
-    where c.category_id = s.category_id
-    and upper(:category) like upper(subcategory_name) || '%'" {
-	set submatch_p 1
-	# add this product to the matched subcategory
-	set sql "insert into ec_subcategory_product_map (product_id, subcategory_id, publisher_favorite_p, last_modified, last_modifying_user, modified_ip_address) values (:product_id, :subcategory_id, 'f', sysdate, :user_id, :ip)"
-	if { [catch {db_dml subcategory_insert $sql} errmsg] } {
-	    #error, probably already loaded this one
-	} else {
-	    doc_body_append "Matched $category to subcategory $subcategory_name in category $category_name<br>\n"
-	}
-	# now add it to the category that owns this subcategory
-	set sql "insert into ec_category_product_map (product_id, category_id, publisher_favorite_p, last_modified, last_modifying_user, modified_ip_address) values (:product_id, :category_id, 'f', sysdate, :user_id, :ip)"
-	if { [catch {db_dml unused_sub $sql} errmsg] } {
-	    #error, probably already loaded this one
-	}
-    }
+    # Check if there is a product with the give sku.
+    # Set product_id to NULL if there is no
+    # product with the given sku.
+    set product_id [db_string product_check {select product_id from ec_products where sku = :sku;} -default ""]
 
-    # see if this matches any categories
-    set match_p 0
-    db_foreach category_match_select "select category_id, category_name from ec_categories where upper(:category) like upper(category_name) || '%'" {
-	set match_p 1
-	set sql "insert into ec_category_product_map (product_id, category_id, publisher_favorite_p, last_modified, last_modifying_user, modified_ip_address) values (:product_id, :category_id, 'f', sysdate, :user_id, :ip)"
-	if { [catch {db_dml cateogry_insert $sql} errmsg] } {
-	    #error, probably already loaded this one
-	} else {
-	    doc_body_append "Matched $category to category $category_name<br>\n"
+    # Match the product with the given (sub)category.
+    if { $product_id != "" } {
+	
+	# see if this matches any subcategories
+	set submatch_p 0
+	db_foreach subcategories_select "
+	select c.category_id, c.category_name, s.subcategory_id,
+	s.subcategory_name from ec_subcategories s, ec_categories c
+	where c.category_id = s.category_id
+	and upper(:category) like upper(subcategory_name) || '%'" {
+	    set submatch_p 1
+	    
+	    # add this product to the matched subcategory
+	    set sql "insert into ec_subcategory_product_map (product_id, subcategory_id, publisher_favorite_p, last_modified, last_modifying_user, modified_ip_address) values (:product_id, :subcategory_id, 'f', sysdate, :user_id, :ip)"
+	    if { [catch {db_dml subcategory_insert $sql} errmsg] } {
+		#error, probably already loaded this one
+	    } else {
+		doc_body_append "Matched $category to subcategory $subcategory_name in category $category_name<br>\n"
+	    }
+	    # now add it to the category that owns this subcategory
+	    set sql "insert into ec_category_product_map (product_id, category_id, publisher_favorite_p, last_modified, last_modifying_user, modified_ip_address) values (:product_id, :category_id, 'f', sysdate, :user_id, :ip)"
+	    if { [catch {db_dml unused_sub $sql} errmsg] } {
+		#error, probably already loaded this one
+	    }
 	}
-    }
-    if { ! ($match_p || $submatch_p) } {
-	doc_body_append "<font color=red>Could not find matching category or subcategory for $category</font><br>\n"
-    } else {
-	incr success_count
+
+	# see if this matches any categories
+	set match_p 0
+	db_foreach category_match_select "select category_id, category_name from ec_categories where upper(:category) like upper(category_name) || '%'" {
+	    set match_p 1
+	    set sql "insert into ec_category_product_map (product_id, category_id, publisher_favorite_p, last_modified, last_modifying_user, modified_ip_address) values (:product_id, :category_id, 'f', sysdate, :user_id, :ip)"
+	    if { [catch {db_dml category_insert $sql} errmsg] } {
+		#error, probably already loaded this one
+	    } else {
+		doc_body_append "Matched $category to category $category_name<br>\n"
+	    }
+	}
+	if { ! ($match_p || $submatch_p) } {
+	    doc_body_append "<font color=red>Could not find matching category or subcategory for $category</font><br>\n"
+	} else {
+	    incr success_count
+	}
     }
 }
 
