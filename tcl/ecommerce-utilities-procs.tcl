@@ -391,6 +391,19 @@ ad_proc ec_location_based_on_zip_code { zip_code } { Get location } {
     return "[join $city_list " or "]"
 }
 
+ad_proc ec_country_name_from_country_code { country_code } {
+    gets country name from country code
+} {
+    if [catch {
+	db_1row country_name {
+	    select default_name from country_names where iso=:country_code
+	}
+    } errmsg] {
+	return "Country not found"
+    }
+    return $name
+}
+
 ad_proc ec_pretty_mailing_address_from_args { line1 line2 city usps_abbrev zip_code country_code full_state_name attn phone phone_time } { get Pretty Mailing Address } {
 
     set lines [list $attn]
@@ -406,7 +419,7 @@ ad_proc ec_pretty_mailing_address_from_args { line1 line2 city usps_abbrev zip_c
     if { ![empty_string_p $country_code] && $country_code != "us" } {
 	lappend lines "$city, $full_state_name $zip_code"
 
-	lappend lines [ad_country_name_from_country_code $country_code]
+	lappend lines [ec_country_name_from_country_code $country_code]
     } else {
 	lappend lines "$city, $usps_abbrev $zip_code"
     }

@@ -490,13 +490,13 @@ ad_proc ec_country_widget { {default ""} {select_name "country_code"} {size_subt
     if { $default == "" } {
         append widget_value "<option value=\"\" SELECTED>Choose a Country</option>\n"
     }
-    set sql "select name, iso from country_names order by name"
+    set sql "select default_name, iso from countries order by default_name"
      db_foreach get_countries $sql {
         
         if { $default == $iso } {
-            append widget_value "<option value=\"$iso\" SELECTED>$name</option>\n" 
+            append widget_value "<option value=\"$iso\" SELECTED>$default_name</option>\n" 
         } else {            
-            append widget_value "<option value=\"$iso\">$name</option>\n"
+            append widget_value "<option value=\"$iso\">$default_name</option>\n"
         }
     }
     append widget_value "</select>\n"

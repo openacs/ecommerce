@@ -49,6 +49,13 @@
       </querytext>
 </fullquery>
 
+
+<fullquery name="ec_country_name_from_country_code.country_name">
+      <querytext> 
+      select default_name from country_names where iso=:country_code
+      </querytext>
+</fullquery>
+
  
 <fullquery name="ec_order_status.get_shippable_p">      
       <querytext>
