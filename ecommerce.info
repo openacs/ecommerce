@@ -468,6 +468,8 @@
             <file type="content_page" path="www/admin/products/categories-upload.tcl"/>
             <file type="content_page" path="www/admin/products/custom-field-add-2.tcl"/>
             <file type="query_file" path="www/admin/products/custom-field-add-2.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/products/custom-field-add-3-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/products/custom-field-add-3-postgresql.xql"/>
             <file type="content_page" path="www/admin/products/custom-field-add-3.tcl"/>
             <file type="query_file" path="www/admin/products/custom-field-add-3.xql"/>
             <file type="content_page" path="www/admin/products/custom-field-add.tcl"/>
