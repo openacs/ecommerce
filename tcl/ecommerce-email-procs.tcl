@@ -11,7 +11,7 @@ ad_library {
     @revision-date April 2002
 }
 
-ad_proc ec_sendmail_from_service { 
+ad_proc -deprecated ec_sendmail_from_service { 
     email_to 
     reply_to 
     email_subject
@@ -19,6 +19,10 @@ ad_proc ec_sendmail_from_service {
     {additional_headers ""} 
     {bcc ""} 
 } {
+    This is deprecated. It is qmail-specific. See acs-mail-lite package.
+    
+    @see acs_mail_lite::send
+
     Use this when you're sending out customer service emails.  It's
     invoked just like ns_sendmail, except that the email will always
     be from the customer service email address.  The reply-to field
@@ -101,9 +105,10 @@ ad_proc ec_email_new_order {
 
 	    # Create a customer service issue/interaction/action
 
-	    set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" \
-						      "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" \
-						      $order_id $issue_type_list $email_body $user_id]
+	    set user_identification_and_issue_id 
+	        [ec_customer_service_simple_issue "" "automatic" "email" \
+			"To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" \
+			      $order_id $issue_type_list $email_body $user_id]
 
 	    set user_identification_id [lindex $user_identification_and_issue_id 0]
 	    set issue_id [lindex $user_identification_and_issue_id 1]
@@ -121,8 +126,9 @@ ad_proc ec_email_new_order {
 	}
 
 	set email_from [ec_customer_service_email_address $user_identification_id $issue_id]
-	
-	ec_sendmail_from_service "$email" "$email_from" "$email_subject" "$email_body"
+	set from_name "\"[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]\" <$email_from>"
+	acs_mail_lite::send -to_addr "$email" -from_addr "$from_name" -subject "$email_subject" -body "$email_body"
+
 	ec_email_product_notification $order_id
     }
 }
@@ -144,7 +150,8 @@ ad_proc ec_email_product_notification {
 	group by ep.email_on_purchase_list, ep.product_name
     } {
 	set email_from [ec_customer_service_email_address]
-	ec_sendmail_from_service $email_on_purchase_list $email_from "An order for $product_name" "
+	set from_name "\"[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]\" <$email_from>"
+	acs_mail_lite::send -to_addr $email_on_purchase_list -from_addr $from_name -subject "An order for $product_name" -body "
 A order for $product_name has been placed at [ec_system_name].
 
 The order can be viewed at:
@@ -210,7 +217,8 @@ ad_proc ec_email_delayed_credit_denied {
 
 	}
 	set email_from [ec_customer_service_email_address $user_identification_id $issue_id]
-	ec_sendmail_from_service "$email" "$email_from" "$email_subject" "$email_body"
+	set from_name "\"[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]\" <$email_from>"
+        acs_mail_lite::send -to_addr "$email" -from_addr "$from_name" -subject "$email_subject" -body "$email_body"
     }
 }
 
@@ -302,7 +310,8 @@ ad_proc ec_email_order_shipped {
 		(:user_identification_id, 2, :order_id, :shipment_id, sysdate)"
 	}
 	set email_from [ec_customer_service_email_address $user_identification_id $issue_id]
-	ec_sendmail_from_service "$email" "$email_from" "$email_subject" "$email_body"
+	set from_name "\"[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]\" <$email_from>"
+        acs_mail_lite::send -to_addr "$email" -from_addr "$from_name" -subject "$email_subject" -body "$email_body"
     }	
 }
 
@@ -368,8 +377,8 @@ ad_proc ec_email_new_gift_certificate_order {
 	}
 
 	set email_from [ec_customer_service_email_address $user_identification_id $issue_id]
-	
-	ec_sendmail_from_service "$email" "$email_from" "$email_subject" "$email_body"
+	set from_name "\"[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]\" <$email_from>"
+        acs_mail_lite::send -to_addr "$email" -from_addr "$from_name" -subject "$email_subject" -body "$email_body"
     }
 }
 
@@ -451,7 +460,8 @@ ad_proc ec_email_gift_certificate_order_failure {
 	}
 
 	set email_from [ec_customer_service_email_address $user_identification_id $issue_id]
-	ec_sendmail_from_service "$email" "$email_from" "$email_subject" "$email_body"
+	set from_name "\"[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]\" <$email_from>"
+        acs_mail_lite::send -to_addr "$email" -from_addr "$from_name" -subject "$email_subject" -body "$email_body"
     }
 }
 
@@ -564,6 +574,7 @@ ad_proc ec_email_gift_certificate_recipient {
 		(:user_identification_id, 5, :gift_certificate_id, sysdate)"
 	}
 	set email_from [ec_customer_service_email_address $user_identification_id $issue_id]
-	ec_sendmail_from_service "$email" "$email_from" "$email_subject" "$email_body"
+	set from_name "\"[ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce]\" <$email_from>"
+        acs_mail_lite::send -to_addr "$email" -from_addr "$from_name" -subject "$email_subject" -body "$email_body"
     }
 }
