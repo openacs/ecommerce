@@ -29,5 +29,20 @@
 
       </querytext>
 </fullquery>
+
+
+<fullquery name="ec_mailing_list_widget.get_category_children">
+      <querytext>
+
+    select c.category_id, c.category_name, s.subcategory_id, s.subcategory_name, ss.subsubcategory_id, ss.subsubcategory_name
+      from ec_categories c, ec_subcategories s, ec_subsubcategories ss, ec_cat_mailing_lists m
+     where m.category_id=c.category_id(+)
+       and m.subcategory_id=s.subcategory_id(+)
+       and m.subsubcategory_id=ss.subsubcategory_id(+)
+ order by decode(c.category_id, null, 0, c.sort_key), decode(s.subcategory_id, null, 0, s.sort_key), decode(ss.subcategory_id, null, 0, ss.sort_key)
+
+      </querytext>
+</fullquery>
+
  
 </queryset>
