@@ -988,9 +988,11 @@ ad_proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } 
 	[join $item_list "\n"]
 	"
 
-    } else {
+    } elseif { $n_items == 1 } {
 	db_1row item_in_an_order_select $sql
 	return "<input type=checkbox name=item_id value=\"$item_id\" checked> $product_name; $price_name: [ec_pretty_price $price_charged]"
+    } else {
+        return "<b>No items need shipping in this order</b>"
     }
 }
 
