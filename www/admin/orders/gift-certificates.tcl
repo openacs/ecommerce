@@ -78,11 +78,14 @@ if { $view_gift_certificate_state == "reportable" } {
 }
 
 if { $view_issue_date == "last_24" } {
-    set issue_date_query_bit "and sysdate-g.issue_date <= 1"
+    #set issue_date_query_bit "and sysdate-g.issue_date <= 1"
+    set issue_date_query_bit [db_map last_24]
 } elseif { $view_issue_date == "last_week" } {
-    set issue_date_query_bit "and sysdate-g.issue_date <= 7"
+    #set issue_date_query_bit "and sysdate-g.issue_date <= 7"
+    set issue_date_query_bit [db_map last_week]
 } elseif { $view_issue_date == "last_month" } {
-    set issue_date_query_bit "and months_between(sysdate,g.issue_date) <= 1"
+    #set issue_date_query_bit "and months_between(sysdate,g.issue_date) <= 1"
+    set issue_date_query_bit [db_map last_month]
 } else {
     set issue_date_query_bit ""
 }
