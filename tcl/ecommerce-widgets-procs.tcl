@@ -16,20 +16,12 @@ ad_proc ec_search_widget {
 } {
     set action_url "[ec_url]product-search"
     return "
-	<form method=post action=[ec_insecurelink $action_url]>
-      	  <table>
-	    <tbody>
-	      <tr>
-	        <td valign=\"middle\">
+	<form method=\"post\" action=\"[ec_insecurelink $action_url]\">
 	       	  <b>Search:</b> 
 	       	  [ec_combocategory_widget "f" $combocategory_id]
 	          for
-	          <input type=text size=25 name=search_text value=\"$search_text\">
-	          <input type=submit value=\"Go\">
-	        </td>
-	      </tr>
-	    </tbody>
-      	  </table>
+	          <input type=\"text\" size=\"25\" name=\"search_text\" value=\"$search_text\">
+	          <input type=\"submit\" value=\"Go\">
 	</form>"
 }
 
@@ -40,9 +32,9 @@ ad_proc ec_combocategory_widget {
     Category widget combining categories and subcategories 
 } {
     if { $multiple_p == "f" } {
-	set select_tag "<select name=combocategory_id><option value=\"\">Entire catalog</option>\n"
+	set select_tag "<select name=\"combocategory_id\"><option value=\"\">Entire catalog</option>\n"
     } else {
-	set select_tag "<select multiple name=category_id size=3><option value=\"\">Entire catalog</option>\n"
+	set select_tag "<select multiple name=\"category_id\" size=\"3\"><option value=\"\">Entire catalog</option>\n"
     }
     set to_return ""
     set category_counter 0
@@ -75,9 +67,9 @@ ad_proc ec_combocategory_widget {
 	    # Check if the subcategory has been selected.
 
 	    if { [lsearch -exact $default "$category_id|$subcategory_id"] != -1 || [lsearch -exact $default $subcategory_name] != -1 } {
-		append to_return "<option value=\"$category_id|$subcategory_id\" selected>&nbsp;&nbsp;&gt;&nbsp;&nbsp;$subcategory_name</option>"	    
+		append to_return "<option value=\"$category_id|$subcategory_id\" selected>&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;$subcategory_name</option>"	    
 	    } else {
-		append to_return "<option value=\"$category_id|$subcategory_id\">&nbsp;&nbsp;&gt;&nbsp;&nbsp;$subcategory_name</option>"
+		append to_return "<option value=\"$category_id|$subcategory_id\">&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;$subcategory_name</option>"
 	    }
 	}
     }
@@ -594,9 +586,9 @@ ad_proc ec_country_widget {
      db_foreach get_countries $sql {
         
         if { $default == $iso } {
-            append widget_value "<option value=\"$iso\" selected>$default_name</option>\n" 
+            append widget_value "<option value=\"$iso\" selected>[ec_capitalize_words $default_name]</option>\n" 
         } else {            
-            append widget_value "<option value=\"$iso\">$default_name</option>\n"
+            append widget_value "<option value=\"$iso\">[ec_capitalize_words $default_name]</option>\n"
         }
     }
     append widget_value "</select>\n"
@@ -1178,4 +1170,26 @@ ad_proc ec_gift_certificate_expires_widget { {default "none"} } "Gives the HTML 
     
     return "[ec_generic_html_form_select_widget $name_of_select $option_spec_list $default]"
 
+}
+
+ad_proc ec_state_widget { {default ""} {select_name "usps_abbrev"} } "Returns a state selection bar, based on state_widget" {
+
+    set widget_value "<select name=\"$select_name\">\n"
+    if {[string length $default] < 2} {
+        append widget_value "<option value=\"\" SELECTED>select US state</option>\n"
+    } elseif { [string length $default] == 2 } {
+	set default [string toupper $default]
+    }
+    append widget_value "<option value=\"\">outside US</option>\n"
+    set sql "select * from us_states order by state_name"
+    db_foreach get_all_states $sql {
+        
+        if { [lsearch $default $abbrev] != -1 } {
+            append widget_value "<option value=\"$abbrev\" SELECTED>[ec_capitalize_words $state_name]</option>\n" 
+        } else {            
+            append widget_value "<option value=\"$abbrev\">[ec_capitalize_words $state_name]</option>\n"
+        }
+    }
+    append widget_value "</select>\n"
+    return $widget_value
 }
