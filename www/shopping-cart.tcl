@@ -59,14 +59,27 @@ set product_counter 0
 set total_price 0
 
 db_multirow in_cart get_products_in_cart "
-    select p.product_name, p.one_line_description, p.product_id, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice
-    from ec_orders o, ec_items i, ec_products p, 
-        (select product_id, offer_code from ec_user_session_offer_codes usoc where usoc.user_session_id=:user_session_id) u
-    where i.product_id=p.product_id
-    and o.order_id=i.order_id
-    and p.product_id=u.product_id(+)
-    and o.user_session_id=:user_session_id and o.order_state='in_basket'
-    group by p.product_name, p.one_line_description, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice" {
+      select p.product_name, p.one_line_description, p.product_id, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice, '' as price 
+      from ec_orders o
+      join ec_items i on (o.order_id=i.order_id)
+      join ec_products p on (i.product_id=p.product_id)
+      left join (select product_id, offer_code 
+	  from ec_user_session_offer_codes usoc 
+	  where usoc.user_session_id=:user_session_id) u on (p.product_id=u.product_id)
+      where o.user_session_id=:user_session_id 
+      and o.order_state='in_basket'
+      group by p.product_name, p.one_line_description, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice"
+
+for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
+
+    set product_name [multirow get in_cart $i product_name]
+    set one_line_description [multirow get in_cart $i one_line_description]
+    set product_id [multirow get in_cart $i product_id]
+    set quantity [multirow get in_cart $i quantity]
+    set offer_code [multirow get in_cart $i offer_code]
+    set color_choice [multirow get in_cart $i color_choice]
+    set size_choice [multirow get in_cart $i size_choice]
+    set style_choice [multirow get in_cart $i style_choice]
 
     # Deletions are done by product_id, color_choice, size_choice,
     # style_choice, not by item_id because we want to delete the
@@ -87,6 +100,10 @@ db_multirow in_cart get_products_in_cart "
 
     set total_price [expr $total_price + ($quantity * $lowest_price)]
     incr product_counter $quantity
+
+    multirow set in_cart $i price "[lindex $lowest_price_and_price_name 1]:&nbsp;&nbsp;[ec_pretty_price [lindex $lowest_price_and_price_name 0] [ad_parameter -package_id [ec_id] Currency]]"
+
+    multirow set in_cart $i price "[lindex $lowest_price_and_price_name 1]:&nbsp;&nbsp;[ec_pretty_price [lindex $lowest_price_and_price_name 0] [ad_parameter -package_id [ec_id] Currency]]"
 }
 
 # Add adjust quantities line if there are products in the cart.
