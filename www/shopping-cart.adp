@@ -64,46 +64,48 @@
       <td align="right">@pretty_total_price@</td>
       <td><input type=submit value="update"></td>
     </tr>
-
+<if @shipping_gateway_in_use@ false>
   <if @no_shipping_options@ false>
       <tr>
       <if @product_counter@ gt 1>
-          <td colspan="3" align="right">
+          <td colspan="4" align="right">
       </if>
       <else>
-          <td colspan="2" align="right">
+          <td colspan="3" align="right">
       </else>
            @shipping_options@</td>
-      <td>Standard</td><td align="right">@total_reg_shipping_price@</td>
+      <td align="right">@total_reg_shipping_price@</td><td>standard</td>
       </tr>
 
       <if @offer_express_shipping_p@ true>
         <tr>
         <if @product_counter@ gt 1>
-            <td colspan="3">
+            <td colspan="4">
         </if>
         <else>
-            <td colspan="2">
+            <td colspan="3">
         </else>
             &nbsp;</td>
-        <td>Express</td><td align="right">@total_exp_shipping_price@</td>
+        <td align="right">@total_exp_shipping_price@</td><td>express</td>
         </tr>
       </if>
 
-      <if @offer_pickup_option_p true>
+      <if @offer_pickup_option_p@ true>
         <tr>
         <if @product_counter@ gt 1>
-            <td colspan="3">
+            <td colspan="4">
         </if>
         <else>
-            <td colspan="2">
+            <td colspan="3">
         </else>
             &nbsp;
         </td>
-        <td>Pickup</td><td align="right">@shipping_method_pickup@</td>
+        <td align="right">@shipping_method_pickup@</td><td>pickup</td>
         </tr>
       </if>
   </if>
+</if>
+
 
     <multiple name="tax_entries">
       <tr>
@@ -114,6 +116,9 @@
     </multiple>
     </table>
 
+<if @shipping_gateway_in_use@ true>
+    @shipping_options;noquote@
+</if>
     </form>
 
     <center>
