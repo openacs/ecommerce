@@ -35,24 +35,16 @@
     <li><a href="porting-diary">4.1a Porting diary</a></li>
   </ol>
 
-  <blockquote>
-    <font size=-2 face="verdana, arial, helvetica">
-      <p>If you just want to sell a handful of items and not build a
-	full online community, you're probably better off starting
-	with ArsDigita Shoppe, downloadable from <a
-	href="http://arsdigita.com/free-tools/shoppe">http://arsdigita.com/free-tools/shoppe</a>.</p>
-    </font>
-  </blockquote>
 
   <p>@package_name@ is part of the <a href="/doc">Open
   Architecture Community System (OpenACS)</a> originally developed
-  by <a href="http://eve.arsdigita.com/">Eve Andersson</a> then ported
+  by <a href="http://www.eveandersson.com/">Eve Andersson</a> then ported
   from the ArsDigita Community System to OpenACS by <a
   href=mailto:jerry-ecommerce@hollyjerry.org>Jerry Asher</a>, <a
   href=mailto:wtem@olywa.net>Walter McGinnis</a>, and <a
   href="http://furfly.net">furfly.net</a> followed by a major overhaul
-  by <a href="mailto:bart.teeuwisse@thecodemill.biz">Bart
-  Teeuwisse</a>.</p>
+  by <a href="http://www.thecodemill.biz">Bart Teeuwisse</a>. Several nice features added by <a href="http://openacs.org/shared/community-member?user%5fid=8291">Torben Brosten</a> and additional upgrades and bug squashing by 
+  <a href="http://openacs.org/shared/community-member?user%5fid=8629">Alfred Werner</a>.</p>
 
   <p>@package_name@ is free software; you can redistribute it
     and/or modify it under the terms of the GNU General Public License
