@@ -19,7 +19,7 @@
   <h3>High-level features</h3>
 
   <p>If your imagination is limited, you can think of this as
-  "Amazon.com in a box".  Is is it impressive to do everything that
+  "Amazon.com(2002) in a box".  Is is it impressive to do everything that
   Amazon does?  Not really.  Ecommerce is a fast-moving field.
   Packaged software always embodies last year's business ideas.  The
   interesting thing is how quickly one can extend an open-source
@@ -28,7 +28,7 @@
   <h3>Feature List</h3>
 
   <blockquote>
-    <table cellspacing="3">
+    <table cellspacing="0" cellpadding="3" border="1">
       <tbody>
 	<tr>
 	  <th>in MBA-speak</th>
@@ -78,18 +78,23 @@
 	  fax, email, and Web)</td>
 
 	  <td valign="top">All interactions logged into same Database
-	  table; inbound <a
-	  href="http://www.arsdigita.com/doc/email-handler">ACS 3.4.8
-	  email handler</a> (Perl script); call center staff sit at
-	  Web browsers and use the @package_name@ admin pages</td>
+	  table by call center staff who sit at
+	  Web browsers and use the @package_name@ admin pages; It is possible that
+          inbound emails can be supported, but this has not been recently confirmed.
+          See <a
+	  href="http://web.archive.org/web/20010807171136/http://www.arsdigita.com/doc/email-handler">http://www.arsdigita.com/doc/email-handler</a>
+         (via archive.org) an ACS 3.4.8 email handling perl script. Note that incoming emails may be better
+          handled by a method used in the OpenACS forums package that imports to email. No
+          support is available for incoming email to this package.
+          </td>
 
 	</tr>
 	<tr>
-	  <td valign="top">CRM</td>
+	  <td valign="top">Customer Relationship Managemement (CRM)</td>
 
 	  <td valign="top">Write custom rules for <a
-	  href="http://www.arsdigita.com/doc/crm">standard ACS 3.4.8
-	  CRM module</a> (to be ported...)</td>
+	  href="http://web.archive.org/web/20020228064957/http://www.arsdigita.com/doc/crm">http://www.arsdigita.com/doc/crm</a>
+         (via archive.org) a standard ACS 3.4.8 CRM module</a> (to be ported...)</td>
 
 	</tr>
 	<tr>
@@ -146,7 +151,7 @@
 	</tr>
 	<tr>
 	  <td valign="top">XML-enabled</td>
-	  <td valign="top">Use the nsxml module for AOLServer</td>
+	  <td valign="top">Use the XML features supported by OpenACS.</td>
 	</tr>
       </tbody>
     </table>
