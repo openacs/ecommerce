@@ -34,5 +34,9 @@
   @prev_link;noquote@ @separator;noquote@ @next_link;noquote@
   </if>
 
+  <if @count@ eq 0 and @subcategories@ eq "">
+	There are currently no items listed in this category.&nbsp;&nbsp;Please check back often for updates.
+  </if>
+
   
 <p align="right"><a href="mailing-list-add?category_id=@the_category_id@">Add yourself to the @the_category_name@ mailing list!</a></p>
