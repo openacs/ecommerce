@@ -120,7 +120,7 @@
 
   <li>
     <p>A /var/lib/aolserver/<i>yourserver</i>/ec-data/ecommerce/product directory is
-      needed to hold the products' supporting files (it's outside the
+      needed to hold the products' supporting files (it is outside the
       web server root so that no uploaded supporting files can be executed).
       The directory has to be write-able by the username used with AOLserver.  
       (You can change
@@ -255,12 +255,11 @@
 
     <p>When a refund is made, a row is also inserted into
       <code>ec_financial_transactions</code>.  A refund is only
-      inserted if when it needs to be captured, so
+      inserted when it needs to be captured, so
       there is no need to set <code>to_be_captured_p</code> if
       <code>transaction_type</code>='refund'.</p>
 
-    <p>Scheduled procs go around and do the follow-through (making
-      sure everything is marked/settled) for every transaction that
+    <p>Scheduled procs periodically mark or settle every transaction that
       needs to be captured.</p>
 
   </blockquote>
@@ -623,7 +622,7 @@
       quite easily be extended to include other credit card types.
       <strong>Be sure to examine <code>ec_creditcard_precheck</code>
       to verify that it does not screen out cards that your 
-      merchant system accepts.</p>
+      merchant system accepts.</strong></p>
 
   </blockquote>
 
