@@ -67,7 +67,7 @@ while { [ns_getcsv $csvfp elements] != -1 } {
 # 	}
 # 	set sql "$columns_sql ) $values_sql )"
 
-	set sql "update ec_custom_product_field_values set last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address=:ip"
+	set sql "update ec_custom_product_field_values set last_modified=(select sysdate from dual), last_modifying_user=:user_id, modified_ip_address=:ip"
 
 	for { set i 0 } { $i < $number_of_columns } { incr i } {
 	  set var_name "var_$i"
