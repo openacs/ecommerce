@@ -1,5 +1,5 @@
 ad_page_contract {
-    @cvs-id awaiting-approval.tcl,v 1.2 2000/09/19 07:24:13 ron Exp
+    @cvs-id $Id$
 } {
     user_id:integer
 } -properties {

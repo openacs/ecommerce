@@ -4,7 +4,7 @@ ad_page_contract {
     Deletes an ecommerce product subcategory.
 
     @param subcategory_id the ID of the subcategory
-    @cvs-id subcategory-delete-2.tcl,v 3.1.6.6 2000/08/18 21:46:53 stevenp Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     subcategory_id:integer,notnull

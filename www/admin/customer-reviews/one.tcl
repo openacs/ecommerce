@@ -4,7 +4,7 @@ ad_page_contract {
     @param comment_id
     @author
     @creation-date
-    @cvs-id one.tcl,v 3.1.6.6 2000/09/22 01:34:50 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     comment_id:naturalnum,notnull

@@ -7,7 +7,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id gift-certificate-edit.tcl,v 3.1.6.4 2000/07/21 03:56:54 ron Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     user_id

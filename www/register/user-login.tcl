@@ -3,7 +3,7 @@ ad_page_contract {
     Accepts an email from the user and attempts to log the user in.
 
     @author Multiple
-    @cvs-id user-login.tcl,v 1.5 2000/11/15 09:12:22 ashah Exp
+    @cvs-id $Id$
 } {
     email:notnull
     {return_url [ad_pvt_home]}

@@ -5,7 +5,7 @@ ad_page_contract {
 
   @author Eve Andersson (eveander@arsdigita.com)
   @creation-date Summer 1999
-  @cvs-id gift-certificate-void-2.tcl,v 3.1.6.3 2000/08/16 21:07:10 seb Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   gift_certificate_id:integer,notnull

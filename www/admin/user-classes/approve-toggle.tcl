@@ -6,7 +6,7 @@ ad_page_contract {
  Toggles a user_class between approved and unapproved
   @author jkoontz@arsdigita.com 
   @creation-date July 22 1999
-  @cvs-id approve-toggle.tcl,v 3.1.6.4 2000/08/18 21:47:00 stevenp Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     user_class_id 

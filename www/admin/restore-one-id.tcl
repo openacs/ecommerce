@@ -13,7 +13,7 @@ ad_page_contract {
 
     @author Jesse 
     @creation-date 7/17
-    @cvs-id restore-one-id.tcl,v 3.1.6.6 2000/09/22 01:34:47 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     id:integer,notnull

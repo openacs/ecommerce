@@ -4,7 +4,7 @@ ad_page_contract {
 
   @author Jesse (jkoontz@mit.edu)
   @creation-date 7/18
-  @cvs-id audit-tables.tcl,v 3.1.6.4 2000/09/06 22:11:07 kevin Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   table_names_and_id_column:optional

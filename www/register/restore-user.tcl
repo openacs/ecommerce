@@ -1,6 +1,6 @@
 ad_page_contract {
     The page restores a user from the deleted state.
-    @cvs-id restore-user.tcl,v 1.2 2000/09/19 07:24:19 ron Exp
+    @cvs-id $Id$
 } {
     user_id:naturalnum
 } -properties {

@@ -1,7 +1,7 @@
 ad_page_contract {
     Handles users where we are waiting for email verification.
     
-    @cvs-id awaiting-email-verification.tcl,v 1.2 2000/09/19 07:24:14 ron Exp
+    @cvs-id $Id$
 
 } {
     user_id:integer

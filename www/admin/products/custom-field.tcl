@@ -3,7 +3,7 @@ ad_page_contract {
 
   @author Eve Andersson (eveander@arsdigita.com)
   @creation-date Summer 1999
-  @cvs-id custom-field.tcl,v 3.1.6.3 2000/08/20 11:00:38 seb Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   field_identifier:sql_identifier

@@ -6,7 +6,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id interaction-summary.tcl,v 3.2.2.5 2000/09/22 01:34:52 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     user_id:optional

@@ -3,7 +3,7 @@ ad_page_contract {
 
   @author Eve Andersson (eveander@arsdigita.com)
   @creation-date Summer 1999
-  @cvs-id void-2.tcl,v 3.1.6.3 2000/08/17 15:19:16 seb Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   order_id:integer,notnull

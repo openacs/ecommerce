@@ -5,7 +5,7 @@ ad_page_contract {
     @param days:optional
     @author
     @creation-date
-    @cvs-id customer-search.tcl,v 3.2.2.3 2000/09/22 01:34:51 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } { 
     amount:optional

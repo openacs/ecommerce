@@ -7,7 +7,7 @@ ad_page_contract {
     @param active_p
     @author
     @creation-date
-    @cvs-id active-toggle.tcl,v 3.1.6.3 2000/07/21 03:56:49 ron Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     table_name

@@ -6,7 +6,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id email-send.tcl,v 3.2.6.6 2000/09/22 01:34:51 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     issue_id

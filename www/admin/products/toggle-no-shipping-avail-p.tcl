@@ -3,7 +3,7 @@ ad_page_contract {
 
   @author Rafael Schloming (rhs@mit.edu)
   @creation-date Summer 2000
-  @cvs-id toggle-no-shipping-avail-p.tcl,v 3.1.2.2 2000/07/21 03:57:02 ron Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   product_id:integer,notnull

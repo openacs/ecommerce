@@ -11,7 +11,7 @@ ad_page_contract {
     @param prev_sort_key the previous sort key
     @param next_sort_key the next sort key
 
-    @cvs-id subsubcategory-add.tcl,v 3.2.2.6 2000/09/22 01:34:48 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_id:integer,notnull

@@ -5,7 +5,7 @@ ad_page_contract {
     @param user_id
   @author
   @creation-date
-  @cvs-id member-delete-2.tcl,v 3.1.6.4 2000/08/16 15:29:23 stevenp Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     user_class_id:naturalnum

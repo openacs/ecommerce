@@ -5,7 +5,7 @@ ad_page_contract {
 
   @author Jesse Koontz (jkoontz@arsdigita.com)
   @creation-date July 21, 1999
-  @cvs-id resolve.tcl,v 3.1.6.5 2000/09/22 01:34:58 kevin Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   problem_id:integer,notnull

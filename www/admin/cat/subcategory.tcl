@@ -6,7 +6,7 @@ ad_page_contract {
     @param subcategory_id the ID of this subcategory
     @param subcategory_name the name of this subcategory
 
-    @cvs-id subcategory.tcl,v 3.2.2.6 2000/09/22 01:34:48 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_id:integer,notnull

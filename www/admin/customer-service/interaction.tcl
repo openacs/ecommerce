@@ -4,7 +4,7 @@ ad_page_contract {
     @param interaction_id
     @author
     @creation-date
-    @cvs-id interaction.tcl,v 3.2.2.4 2000/09/22 01:34:53 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     interaction_id

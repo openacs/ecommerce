@@ -4,7 +4,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id shopping-cart-retrieve-2.tcl,v 3.3.6.5 2000/08/18 21:46:36 stevenp Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
     @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
     @revision-date April 2002

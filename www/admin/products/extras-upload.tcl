@@ -19,7 +19,7 @@ ad_page_contract {
 
   @author Eve Andersson (eveander@arsdigita.com)
   @creation-date Summer 1999
-  @cvs-id extras-upload.tcl,v 3.2.2.2 2000/07/22 07:57:39 ron Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 }

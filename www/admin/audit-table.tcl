@@ -12,7 +12,7 @@ ad_page_contract {
 
   @author Jesse (jkoontz@mit.edu)
   @creation-date 7/18
-  @cvs-id audit-table.tcl,v 3.2.2.5 2000/08/18 20:23:41 stevenp Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 

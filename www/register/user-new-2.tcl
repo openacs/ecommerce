@@ -2,7 +2,7 @@
 
 ad_page_contract {
     Enters a new user into the database.
-    @cvs-id  user-new-2.tcl,v 1.2 2000/09/19 07:24:20 ron Exp
+    @cvs-id $Id$
 } {
     { email }
     { password }

@@ -3,7 +3,7 @@
 ad_page_contract {
     @author
     @creation-date
-    @cvs-id spam.tcl,v 3.2.6.5 2000/09/22 01:34:54 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 }

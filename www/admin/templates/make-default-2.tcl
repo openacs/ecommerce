@@ -3,7 +3,7 @@ ad_page_contract {
     @param template_id
   @author
   @creation-date
-  @cvs-id make-default-2.tcl,v 3.2.2.4 2000/08/16 15:15:45 stevenp Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     template_id:integer

@@ -3,7 +3,7 @@ ad_page_contract {
 
   @author
   @creation-date
-  @cvs-id
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 }

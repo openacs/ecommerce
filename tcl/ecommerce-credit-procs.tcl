@@ -3,7 +3,7 @@ ad_library {
     Procedures related to credit card transactions for the ecommerce module
 
     @author Eve Andersson (eveander@arsdigita.com)
-    @date 1 April 1999
+    @creation-date 1 April 1999
     @author ported by Jerry Asher (jerry@theashergroup.com)
     @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
     @revision-date April 2002

@@ -11,7 +11,7 @@ ad_page_contract {
     @param next_sort_key the next sort key must be a number
     @param prev_sort_key the previous sort key must be a number
 
-    @cvs-id subcategory-add-2.tcl,v 3.2.6.9 2000/08/28 21:05:25 hbrock Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_name:notnull

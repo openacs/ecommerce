@@ -3,7 +3,7 @@ ad_page_contract {
     @param prev_sort_key the previous sort key
     @param next_sort_key the next sort key
 
-    @cvs-id category-add-0.tcl,v 3.2.2.5 2000/09/22 01:34:47 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
  prev_sort_key:notnull

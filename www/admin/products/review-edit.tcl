@@ -4,7 +4,7 @@ ad_page_contract {
 
   @author Eve Andersson (eveander@arsdigita.com)
   @creation-date Summer 1999
-  @cvs-id review-edit.tcl,v 3.1.6.3 2000/08/18 20:23:46 stevenp Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   product_id:integer,notnull

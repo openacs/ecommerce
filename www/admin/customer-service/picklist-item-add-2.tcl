@@ -9,7 +9,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id picklist-item-add-2.tcl,v 3.2.6.5 2000/08/18 21:46:56 stevenp Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     picklist_item_id

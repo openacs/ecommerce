@@ -4,8 +4,8 @@ ad_library {
     Customer service procedures for the ecommerce module 
 
     @author Eve Andersson (eveander@arsdigita.com)
-    @date 1 April 1999
-    @cvs-id ecommerce-customer-service.tcl,v 3.3.2.7 2000/08/17 19:22:08 hbrock Exp
+    @creation-date 1 April 1999
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 
 }

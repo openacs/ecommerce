@@ -6,7 +6,7 @@ ad_page_contract {
 
   @author Jesse
   @creation-date 7/17
-  @cvs-id audit.tcl,v 3.0.12.4 2000/08/20 10:59:30 seb Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   audit_name:html

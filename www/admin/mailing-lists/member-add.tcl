@@ -6,7 +6,7 @@ ad_page_contract {
     @param last_name:optional last name OR
     @param email:optional email 
 
-    @cvs-id member-add.tcl,v 3.1.6.5 2000/09/22 01:34:56 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_id

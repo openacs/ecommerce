@@ -2,7 +2,7 @@ ad_page_contract {
 
     A page to send deleted users to.
     
-    @cvs-id deleted-user.tcl,v 1.2 2000/09/19 07:24:16 ron Exp
+    @cvs-id $Id$
 } { 
     user_id:naturalnum
 } -properties {

@@ -4,7 +4,7 @@ ad_page_contract {
   Deletes ecommerce product category.
 
   @param  category_id the ID of the category to delete
-  @cvs-id category-delete-2.tcl,v 3.1.6.7 2000/08/18 21:46:53 stevenp Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 
 } {

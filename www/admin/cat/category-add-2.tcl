@@ -8,7 +8,7 @@ ad_page_contract {
     @param prev_sort_key the previous sort key
     @param next_sort_key the next sort key
 
-    @cvs-id category-add-2.tcl,v 3.3.2.7 2000/08/28 20:25:25 hbrock Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_name:trim,notnull

@@ -9,7 +9,7 @@ ad_page_contract {
     @param sort_key the sort key
     @param next_sort_key the next sort key
 
-    @cvs-id category-swap.tcl,v 3.1.6.5 2000/08/16 13:57:11 seb Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 

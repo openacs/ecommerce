@@ -5,7 +5,7 @@ ad_page_contract {
     all UI changes on this page will be taken care of automatically
     @author
     @creation-date
-    @cvs-id picklists.tcl,v 3.1.6.4 2000/09/22 01:34:54 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 }

@@ -4,7 +4,7 @@ ad_page_contract {
     @param response_id
     @author
     @creation-date
-    @cvs-id canned-response-edit.tcl,v 3.1.6.4 2000/09/22 01:34:51 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     response_id

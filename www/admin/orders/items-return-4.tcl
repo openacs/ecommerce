@@ -24,7 +24,7 @@ ad_page_contract {
 
     @author Eve Andersson (eveander@arsdigita.com)
     @creation-date  July 22, 1999
-    @cvs-id items-return-4.tcl,v 3.3.2.9 2000/09/22 01:34:58 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } { 
     refund_id:naturalnum,notnull

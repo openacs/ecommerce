@@ -10,7 +10,7 @@ ad_page_contract {
     @param category_id the category ID
     @param category_name the category name
 
-    @cvs-id subcategory-swap.tcl,v 3.1.6.5 2000/08/16 15:54:10 seb Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     subcategory_id:integer,notnull

@@ -8,7 +8,7 @@ ad_page_contract {
     @param subcategory_id the ID of the subcategory
     @param subcategory_name the ID of the subcategory
 
-    @cvs-id subcategory-delete.tcl,v 3.1.6.4 2000/09/22 01:34:48 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_id:integer,notnull

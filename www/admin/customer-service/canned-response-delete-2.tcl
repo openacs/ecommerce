@@ -5,7 +5,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id canned-response-delete-2.tcl,v 3.1.6.3 2000/07/21 03:56:50 ron Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     response_id

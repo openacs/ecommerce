@@ -3,7 +3,7 @@ ad_page_contract {
 
   @author
   @creation-date
-  @cvs-id clear-2.tcl,v 3.1.6.4 2000/08/18 20:23:49 stevenp Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 }

@@ -7,7 +7,7 @@ ad_page_contract {
     @param category_id the ID for the category
     @param category_name the name for the category
 
-    @cvs-id category.tcl,v 3.1.6.6 2000/09/22 01:34:47 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 

@@ -5,7 +5,7 @@ ad_page_contract {
 
   @author
   @creation-date
-  @cvs-id add-2.tcl,v 3.1.6.5 2000/08/18 21:47:00 stevenp Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     user_class_id:naturalnum

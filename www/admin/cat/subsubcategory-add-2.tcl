@@ -12,7 +12,7 @@ ad_page_contract  {
     @param prev_sort_key the previous sort key
     @param next_sort_key the next sort key
 
-    @cvs-id subsubcategory-add-2.tcl,v 3.3.2.10 2000/08/28 21:08:52 hbrock Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_name:notnull

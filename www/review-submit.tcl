@@ -4,7 +4,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id review-submit.tcl,v 3.2.2.6 2000/08/18 21:46:35 stevenp Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
     @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
     @revision-date April 2002

@@ -6,7 +6,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id picklist-row-delete.tcl,v 3.1.6.3 2000/07/21 03:56:58 ron Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     table_name

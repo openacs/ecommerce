@@ -7,7 +7,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id issue-edit-2.tcl,v 3.2.2.4 2000/07/21 07:05:31 ryanlee Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     issue_id 

@@ -4,7 +4,7 @@ ad_page_contract {
 
   @author philg@mit.edu
   @creation-date July 18, 1999
-  @cvs-id recommendation-delete.tcl,v 3.1.6.4 2000/09/22 01:34:59 kevin Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   recommendation_id:integer,notnull

@@ -2,7 +2,7 @@
 
 ad_page_contract {
     Informs the user that they have typed in a bad password.
-    @cvs-id bad-password.tcl,v 1.2 2000/09/19 07:24:15 ron Exp
+    @cvs-id $Id$
 } {
     {user_id:naturalnum}
     {return_url ""}

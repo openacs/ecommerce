@@ -1,7 +1,7 @@
 ad_page_contract {
     Sends the user their password.  Depending on the configuration,
     this password may be a new random password.
-    @cvs-id email-password.tcl,v 1.2 2000/09/19 07:24:18 ron Exp
+    @cvs-id $Id$
 } {
     user_id:integer
 } -properties {

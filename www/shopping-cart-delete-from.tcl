@@ -6,7 +6,7 @@ ad_page_contract {
     @param style_choice
   @author
   @creation-date
-  @cvs-id shopping-cart-delete-from.tcl,v 3.3.2.5 2000/07/21 03:59:30 ron Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     product_id:integer

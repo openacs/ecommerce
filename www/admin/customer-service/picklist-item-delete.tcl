@@ -4,7 +4,7 @@ ad_page_contract {
     @param  picklist_item_id
     @author
     @creation-date
-    @cvs-id picklist-item-delete.tcl,v 3.1.6.3 2000/09/22 01:34:53 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     picklist_item_id

@@ -7,7 +7,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id picklist-item-add.tcl,v 3.1.6.4 2000/09/22 01:34:53 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     picklist_name

@@ -4,7 +4,7 @@ ad_page_contract {
 
     @author Bryan Quinn (bquinn@arsdigita.com)
     @creation-date Mon Oct 16 09:27:34 2000
-    @cvs-id explain-persistent-cookies.tcl,v 1.2 2000/10/18 17:25:54 bquinn Exp
+    @cvs-id $Id$
 } {
 
 } -properties {

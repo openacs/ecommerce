@@ -4,7 +4,7 @@ ad_page_contract {
 
   @author Philip Greenspun (philg@mit.edu)
   @creation-date July 18, 1999
-  @cvs-id list.tcl,v 3.1.6.2 2000/07/22 07:57:40 ron Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   category_id:integer,notnull,optional

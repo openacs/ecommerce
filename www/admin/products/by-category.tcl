@@ -5,7 +5,7 @@ ad_page_contract {
 
   @author philg@mit.edu
   @creation-date July 18, 1999
-  @cvs-id by-category.tcl,v 3.2.2.2 2000/07/22 07:57:36 ron Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 }

@@ -8,7 +8,7 @@ ad_page_contract {
 
   @author
   @creation-date
-  @cvs-id extras-upload-2.tcl,v 3.1.2.4 2000/10/27 23:07:21 kevin Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   csv_file

@@ -12,7 +12,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id subsubcategory-property-toggle.tcl,v 3.2.2.3 2000/07/21 03:57:02 ron Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     product_id

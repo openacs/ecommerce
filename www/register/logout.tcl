@@ -3,7 +3,7 @@
 ad_page_contract {
     Logs a user out
 
-    @cvs-id logout.tcl,v 1.2 2000/09/19 07:24:19 ron Exp
+    @cvs-id $Id$
 
 } {
     

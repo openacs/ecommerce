@@ -11,7 +11,7 @@ ad_library {
     @author Trace Adams (teadams@arsdigita.com)
     @author Jerry Asher (jerry@hollyjerry.org)
     @creation-date August 1999
-    @cvs-id ad-audit-trail.tcl,v 3.1.2.9 2000/08/20 10:32:42 seb Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 
 }

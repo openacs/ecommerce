@@ -1,6 +1,6 @@
 ad_page_contract {
     Prompt the user for email and password.
-    @cvs-id index.tcl,v 1.3 2000/10/31 19:20:44 richardl Exp
+    @cvs-id $Id$
 } {
     { email "" }
     return_url:optional

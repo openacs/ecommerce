@@ -8,7 +8,7 @@ ad_page_contract {
     @param subcategory_id the ID of this subcategory
     @param subcategory the new name of this subcategory
 
-    @cvs-id subcategory-edit.tcl,v 3.2.2.7 2000/08/28 21:06:19 hbrock Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_name:trim,notnull

@@ -4,7 +4,7 @@ ad_page_contract {
     @param category_name the category name
     @param category_id the ID of the category to edit
 
-    @cvs-id category-edit.tcl,v 3.2.2.7 2000/08/28 20:45:54 hbrock Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_name:trim,notnull

@@ -14,7 +14,7 @@ ad_library {
 
   @author Eve Andersson (eveander@arsdigita.com)
   @creation-date Summer 1999
-  @cvs-id ecommerce-money-computations.tcl,v 3.1.2.7 2000/08/20 00:50:23 hbrock Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 }
 

@@ -1,7 +1,7 @@
 # /www/register/email-confirm.tcl
 
 ad_page_contract {
-    @cvs-id email-confirm.tcl,v 1.2 2000/09/19 07:24:16 ron Exp
+    @cvs-id $Id$
 
 } {
     row_id:notnull,trim

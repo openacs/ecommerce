@@ -5,7 +5,7 @@ ad_page_contract {
 
   @author Eve Andersson (eveander@arsdigita.com)
   @creation-date Summer 1999
-  @cvs-id add-3.tcl,v 3.4.2.6 2000/08/21 21:20:10 tzumainn Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 
 } {

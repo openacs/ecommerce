@@ -6,7 +6,7 @@ ad_page_contract {
     @param email:optional
   @author
   @creation-date
-  @cvs-id member-add.tcl,v 3.1.6.6 2000/09/22 01:35:06 kevin Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     user_class_id:naturalnum

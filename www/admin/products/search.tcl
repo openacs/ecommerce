@@ -5,7 +5,7 @@ ad_page_contract {
   @author Eve Andersson (eveander@arsdigita.com)
   @author Bart Teeuwisse (bart.teeuwisse@7-sisters.com)
   @creation-date Summer 1999
-  @cvs-id search.tcl,v 3.2.2.2 2000/07/22 07:57:45 ron Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   sku:notnull,optional

@@ -5,7 +5,7 @@ ad_page_contract {
     @param close_p
     @author
     @creation-date
-    @cvs-id issue-open-or-close.tcl,v 3.3.2.5 2000/09/22 01:34:53 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     issue_id

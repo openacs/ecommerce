@@ -11,7 +11,7 @@ ad_page_contract {
 
   @author Jesse
   @creation-date Summer 1999
-  @cvs-id audit-one-id.tcl,v 3.0.12.5 2000/09/22 01:34:46 kevin Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   id:sql_identifier,notnull

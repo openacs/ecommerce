@@ -8,7 +8,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id member-remove.tcl,v 3.1.6.3 2000/09/22 01:34:56 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_id

@@ -11,7 +11,7 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id one-subsubcategory.tcl,v 3.1.6.4 2000/08/28 20:19:12 hbrock Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_id

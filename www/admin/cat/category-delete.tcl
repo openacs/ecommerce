@@ -5,7 +5,7 @@ ad_page_contract {
     @param category_id the ID of the category to delete
     @param category_name the name of the category to delete
 
-    @cvs-id category-delete.tcl,v 3.1.6.4 2000/09/22 01:34:47 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_id:integer,notnull

@@ -4,7 +4,7 @@ ad_page_contract {
     @param  email_template_id
     @author
     @creation-date
-    @cvs-id edit.tcl,v 3.2.2.6 2000/09/22 01:34:55 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     email_template_id

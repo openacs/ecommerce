@@ -1,7 +1,7 @@
 ad_page_contract {
     
     Page to send banned users when they login.
-    @cvs-id banned-user.tcl,v 1.2 2000/09/19 07:24:15 ron Exp
+    @cvs-id $Id$
 } {
     user_id:naturalnum
 } -properties {

@@ -3,10 +3,9 @@ ad_library {
     Definitions for the ecommerce module
     Note: Other ecommerce procedures can be found in ecommerce-*.tcl
 
-    @cvs-id ecommerce-procs.tcl
-    @author ported by Jerry Asher (jerry@theashergroup.com)
+    @cvs-id $Id$
     @author jerry asher (jerry-ecommerce@hollyjerry.org)
-    @author modified by Walter McGinnis (wtem@olywa.net) March, 2001
+    @author Walter McGinnis (wtem@olywa.net)
     @creation-date Jan, 2001
 }
 

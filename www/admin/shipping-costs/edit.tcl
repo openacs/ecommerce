@@ -9,7 +9,7 @@ ad_page_contract {
     
     @author
     @creation-date
-    @cvs-id edit.tcl,v 3.1.6.5 2000/09/22 01:35:01 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     base_shipping_cost

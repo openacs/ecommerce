@@ -10,7 +10,7 @@ ad_page_contract {
     @param subsubcategory_id sub sub category to delete
     @param subsubcategory_name name of sub sub to delete
 
-    @cvs-id subsubcategory-delete.tcl,v 3.1.6.3 2000/09/22 01:34:49 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     category_id:integer,notnull

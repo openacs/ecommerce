@@ -3,7 +3,7 @@ ad_page_contract {
     Registration form for a new user.  The password property should be set using 
     <code>ad_set_client_property register</code>.
 
-    @cvs-id  user-new.tcl,v 1.3 2000/10/11 17:07:19 bquinn Exp
+    @cvs-id $Id$
 
 } {
     email:notnull

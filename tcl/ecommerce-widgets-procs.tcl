@@ -4,7 +4,7 @@ ad_library {
     Definitions for the ecommerce module
     @author Eve Andersson (eveander@arsdigita.com)
     @creation-date April, 1999
-    @cvs-id ecommerce-widgets.tcl,v 3.3.2.7 2000/08/17 17:37:18 seb Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 }
 

@@ -1,6 +1,6 @@
 ad_page_contract {
 
-    @cvs-id items-return-2.tcl,v 3.2.6.9 2000/09/22 01:34:57 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
     @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
     @revision-date April 2002

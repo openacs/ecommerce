@@ -2,7 +2,7 @@ ad_library {
     Definitions for the ecommerce module
     Note: Other ecommerce procedures can be found in ecommerce-*.tcl
 
-    @cvs-id ecommerce-defs.tcl,v 3.16.2.19 2000/09/22 01:34:00 kevin Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com) 
     @author and Walter McGinnis (wtem@olywa.net)
     @author Eve Andersson (eveander@arsdigita.com)

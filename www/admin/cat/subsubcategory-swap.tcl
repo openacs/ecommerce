@@ -12,7 +12,7 @@ ad_page_contract {
     @param sort_key the sort key
     @param next_sort_key the next sort key
 
-    @cvs-id subsubcategory-swap.tcl,v 3.2.2.5 2000/08/16 16:10:42 seb Exp
+    @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     subsubcategory_id:integer,notnull

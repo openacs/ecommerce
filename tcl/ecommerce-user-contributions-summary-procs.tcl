@@ -4,7 +4,7 @@ ad_library {
    Exists only to show the site owner a user's activities
    on the site in the ecommerce system.
 
-  @cvs-id ecommerce-user-contributions-summary.tcl,v 3.1.6.3 2000/08/17 17:37:17 seb Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 
   @author philg@mit.edu

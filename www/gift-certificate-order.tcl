@@ -3,7 +3,7 @@ ad_page_contract {
  describes gift certificates and presents a link to order a gift certificate
   @author
   @creation-date
-  @cvs-id gift-certificate-order.tcl,v 3.1.10.5 2000/08/17 21:23:07 seb Exp
+  @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
 
