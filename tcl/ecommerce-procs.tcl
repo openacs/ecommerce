@@ -31,20 +31,6 @@ ad_proc -private ec_system_name_mem {} {} {
     return [ad_parameter -package_id [ec_id] SystemName "" Store]
 }
 
-ad_proc ec_header_image {} {
-    @return ec system header html frag
-} {
-    set refresh [ec_cache_refresh]
-    set header_image [util_memoize {ec_header_image_mem} $refresh]
-    set system_name  [util_memoize {ec_system_name} $refresh]
-    
-    return "<font $header_image>$system_name</font>"
-}
-
-ad_proc -private ec_header_image_mem {} {} {
-    return [ad_parameter -package_id [ec_id] HeaderAttributes "" "size=+2 face='arial' color=990000"]
-}
-
 ad_proc ec_system_owner {} {
     @return ec system owner, defaulting to ad_system_owner
  } {

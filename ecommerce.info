@@ -707,6 +707,8 @@
             <file type="content_page" path="www/admin/user-classes/one.tcl"/>
             <file type="content_page" path="www/billing.adp"/>
             <file type="content_page" path="www/billing.tcl"/>
+            <file type="content_page" path="www/browse-categories.adp"/>
+            <file type="content_page" path="www/browse-categories.tcl"/>
             <file type="query_file" db_type="oracle" path="www/category-browse-subcategory-oracle.xql"/>
             <file type="query_file" db_type="postgresql" path="www/category-browse-subcategory-postgresql.xql"/>
             <file type="content_page" path="www/category-browse-subcategory.adp"/>
@@ -729,9 +731,13 @@
             <file type="query_file" path="www/checkout-3.xql"/>
             <file type="query_file" db_type="oracle" path="www/checkout-oracle.xql"/>
             <file type="query_file" db_type="postgresql" path="www/checkout-postgresql.xql"/>
+            <file type="content_page" path="www/checkout-progress.adp"/>
+            <file type="content_page" path="www/checkout-progress.tcl"/>
             <file type="content_page" path="www/checkout.adp"/>
             <file type="content_page" path="www/checkout.tcl"/>
             <file type="query_file" path="www/checkout.xql"/>
+            <file type="content_page" path="www/contextbar.adp"/>
+            <file type="content_page" path="www/contextbar.tcl"/>
             <file type="content_page" path="www/credit-card-correction-2.tcl"/>
             <file type="query_file" path="www/credit-card-correction-2.xql"/>
             <file type="content_page" path="www/credit-card-correction.adp"/>
@@ -772,6 +778,7 @@
             <file type="content_page" path="www/gift-certificate-billing.tcl"/>
             <file type="query_file" db_type="oracle" path="www/gift-certificate-claim-2-oracle.xql"/>
             <file type="query_file" db_type="postgresql" path="www/gift-certificate-claim-2-postgresql.xql"/>
+            <file type="content_page" path="www/gift-certificate-claim-2.adp"/>
             <file type="content_page" path="www/gift-certificate-claim-2.tcl"/>
             <file type="query_file" path="www/gift-certificate-claim-2.xql"/>
             <file type="content_page" path="www/gift-certificate-claim.adp"/>
@@ -944,6 +951,8 @@
             <file type="content_page" path="www/thank-you.adp"/>
             <file type="content_page" path="www/thank-you.tcl"/>
             <file type="query_file" path="www/thank-you.xql"/>
+            <file type="content_page" path="www/toolbar.adp"/>
+            <file type="content_page" path="www/toolbar.tcl"/>
             <file type="query_file" db_type="oracle" path="www/track-oracle.xql"/>
             <file type="query_file" db_type="postgresql" path="www/track-postgresql.xql"/>
             <file type="content_page" path="www/track.adp"/>
@@ -1004,7 +1013,6 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="httpModule"  description="The AOLserver module that implements &quot;normal&quot; communications (usually nsunix or nssock) Typical behavior favors nsunix over nssock, if both are present.  You only need to set this parameter if your site supports both nsunix and nssock, but you prefer nssock." section_name="SSL"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="ShippingGateway"  description="The shipping gateway that should be used to calculate the shipping charges instead of the default ecommerce calculations." section_name="shipping"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ECTemplatesMayContainTclFunctionsP"  default="1" description="Set to 1 if Tcl functions are allowed in the product and e-mail templates. Set to 0 if not." section_name="style"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="HeaderAttributes"  default="size='+2' face='arial' color='990000'" description="The font tags used in system headers" section_name="style"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="CreditCardsAccepted"  default="VISA {American Express} MasterCard" description="A list of accepted credit card types" section_name="payment information"/>
         </parameters>
 
