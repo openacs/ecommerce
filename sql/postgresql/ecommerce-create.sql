@@ -46,6 +46,17 @@ BEGIN
 END;
 ' language 'plpgsql';
 
+-- gilbertw
+-- timespan_days taken from OpenACS 3.2.5
+create function timespan_days(integer) returns interval as '
+DECLARE
+        n_days alias for $1;
+BEGIN
+        return (n_days || '' days'')::interval;
+END;
+' language 'plpgsql';
+
+
 -- I should have named this product_templates because now we
 -- have other kinds of templates.
 
