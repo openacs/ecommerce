@@ -6,6 +6,14 @@
     <version>7.1</version>
   </rdbms>
 
+  <fullquery name="ec_combocategory_widget.get_combocategories">      
+    <querytext>
+      select c.category_id, s.subcategory_id, category_name, subcategory_name 
+      from ec_categories c left
+      outer join ec_subcategories s using (category_id)
+    </querytext>
+  </fullquery>
+  
   <partialquery name="ec_gift_certificate_expires_widget.now">
     <querytext>
       current_timestamp
