@@ -3143,8 +3143,8 @@ create function gift_certificate_amount_left (integer)
 returns numeric as '
 DECLARE
 	v_gift_certificate_id	alias for $1;
-        original_amount         number;
-        amount_used             number;
+        original_amount         numeric;
+        amount_used             numeric;
 BEGIN
         SELECT coalesce(sum(amount_used),0) - coalesce(sum(amount_reinstated),0)
 	into amount_used
