@@ -918,7 +918,7 @@ ad_proc ec_item_summary_for_admins { order_id } { item summary for admins } {
     }
 }
 
-ad_proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } { produced a HTML form fragment for administrators to check off items that are fulfilled or received back } {
+ad_proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } { produces an HTML form fragment for administrators to select from items that are fulfilled or received back } {
 
     if { $for_fulfillment_p == "t" } {
 	set item_view "ec_items_shippable"
@@ -1448,6 +1448,7 @@ ad_proc -private ec_create_new_session_if_necessary {
                     remember what you have in your shopping cart.  Please turn on cookies
                     in your browser.
                     "
+                    ad_script_abort
                 } elseif {[string compare $_ec_cookie_requirement "cookies_are_not_required"] == 0} {
                     
                     # For this page continue
@@ -1467,7 +1468,7 @@ ad_proc -private ec_create_new_session_if_necessary {
 			In Microsoft Internet Explorer 4.0, you can enable cookies from View -> 
 			Internet Options -> Advanced -> Security. </i></p>
 			<p>[ec_continue_shopping_options]</p>"
-
+                    ad_script_abort 
                 } else {
 		    ad_return_error "bug" "we should never get here"
 		}
