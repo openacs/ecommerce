@@ -30,43 +30,41 @@ if { [info exists order_id_query_string] } {
     set product_name ""
     # append order_id_query_string "%"
     set order_id_query_string "%$order_id_query_string%"
-    set query "
-    select o.order_id, o.confirmed_date, o.order_state,
-           ec_total_price(o.order_id) as price_to_display,
-           o.user_id,
-           u.first_names, u.last_name,
-           count(*) as n_items
-      from ec_orders o, cc_users u, ec_items i
-     where o.order_id like :order_id_query_string
-       and o.user_id=u.user_id(+)
-       and o.order_id=i.order_id
-  group by o.order_id, o.confirmed_date, o.order_state,
-           ec_total_price(o.order_id), o.user_id,
-           u.first_names, u.last_name
-  order by order_id
-"
+    set query [db_map order_id_query_string_sql]
+#    select o.order_id, o.confirmed_date, o.order_state,
+#           ec_total_price(o.order_id) as price_to_display,
+#           o.user_id,
+#           u.first_names, u.last_name,
+#           count(*) as n_items
+#      from ec_orders o, cc_users u, ec_items i
+#     where o.order_id like :order_id_query_string
+#       and o.user_id=u.user_id(+)
+#       and o.order_id=i.order_id
+#  group by o.order_id, o.confirmed_date, o.order_state,
+#           ec_total_price(o.order_id), o.user_id,
+#           u.first_names, u.last_name
+#  order by order_id
 } elseif { [info exists product_name_query_string] } {
     set product_header "<td><b>Product</b></td>"
     # append product_name_query_string "%"
     set product_name_query_string "%$product_name_query_string%"
-    set query "
-    select o.order_id, o.confirmed_date, o.order_state,
-           ec_total_price(o.order_id) as price_to_display,
-           o.user_id,
-           u.first_names, u.last_name,
-           p.product_name,
-           count(*) as n_items
-      from ec_orders o, cc_users u, ec_items i, ec_products p
-     where upper(p.product_name) like upper(:product_name_query_string)
-       and i.product_id=p.product_id
-       and o.user_id=u.user_id(+)
-       and o.order_id=i.order_id
-  group by o.order_id, o.confirmed_date, o.order_state,
-           ec_total_price(o.order_id),
-           o.user_id,
-           u.first_names, u.last_name, p.product_name
-  order by order_id
-"
+    set query [db_map product_name_query_string_sql]
+#    select o.order_id, o.confirmed_date, o.order_state,
+#           ec_total_price(o.order_id) as price_to_display,
+#           o.user_id,
+#           u.first_names, u.last_name,
+#           p.product_name,
+#           count(*) as n_items
+#      from ec_orders o, cc_users u, ec_items i, ec_products p
+#     where upper(p.product_name) like upper(:product_name_query_string)
+#       and i.product_id=p.product_id
+#       and o.user_id=u.user_id(+)
+#       and o.order_id=i.order_id
+#  group by o.order_id, o.confirmed_date, o.order_state,
+#           ec_total_price(o.order_id),
+#           o.user_id,
+#           u.first_names, u.last_name, p.product_name
+#  order by order_id
 } elseif { [info exists customer_last_name_query_string] } {
     set product_header ""
     set product_name ""
@@ -75,22 +73,21 @@ if { [info exists order_id_query_string] } {
     # This is because customer_last_name_query_string is too long to
     # be a bind variable
     set cust_last_name_query_string $customer_last_name_query_string
-    set query "
-    select o.order_id, o.confirmed_date, o.order_state,
-           ec_total_price(o.order_id) as price_to_display,
-           o.user_id,
-           u.first_names, u.last_name,
-           count(*) as n_items
-      from ec_orders o, cc_users u, ec_items i
-     where upper(u.last_name) like upper(:cust_last_name_query_string)
-       and o.user_id=u.user_id(+)
-       and o.order_id=i.order_id
-  group by o.order_id, o.confirmed_date, o.order_state,
-           ec_total_price(o.order_id),
-           o.user_id,
-           u.first_names, u.last_name
-  order by order_id
-"
+    set query [db_map default_sql]
+#    select o.order_id, o.confirmed_date, o.order_state,
+#           ec_total_price(o.order_id) as price_to_display,
+#           o.user_id,
+#           u.first_names, u.last_name,
+#           count(*) as n_items
+#      from ec_orders o, cc_users u, ec_items i
+#     where upper(u.last_name) like upper(:cust_last_name_query_string)
+#       and o.user_id=u.user_id(+)
+#       and o.order_id=i.order_id
+#  group by o.order_id, o.confirmed_date, o.order_state,
+#           ec_total_price(o.order_id),
+#           o.user_id,
+#           u.first_names, u.last_name
+#  order by order_id
 
 }
 
@@ -121,6 +118,8 @@ db_foreach order_search_query $query {
 
     if {![string equal "" $product_name]} {
         set product_column "<td>$product_name</td>"
+    } else {
+	set product_column ""
     }
 
     doc_body_append "<tr bgcolor=$bgcolor>
