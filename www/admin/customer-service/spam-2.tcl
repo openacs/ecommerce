@@ -152,7 +152,7 @@ select ec_spam_id_sequence.nextval
 # will export start_date and end_date separately so that they don't have to be re-put-together
 # in spam-3.tcl
 append doc_body "
-<form method=post action=/tools/spell>
+<form method=post action=../tools/spell>
 [ec_hidden_input var_to_spellcheck "message"]
 [ec_hidden_input target_url "[ec_url_concat [ec_url] /admin]/customer-service/spam-3.tcl"]
 [export_entire_form]

@@ -68,7 +68,7 @@ set action_id [db_string get_new_action_id "select ec_action_id_sequence.nextval
 
 append doc_body "If you are not [db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:customer_service_rep"], please <a href=\"/register?[export_url_vars return_url]\">log in</a>
 
-<form name=email_form method=post action=/tools/spell>
+<form name=email_form method=post action=../tools/spell>
 [ec_hidden_input var_to_spellcheck "message"]
 [ec_hidden_input target_url "[ec_url_concat [ec_url] /admin]/customer-service/email-send-2.tcl"]
 [export_form_vars email_to_use action_id issue_id customer_service_rep user_identification_id]
