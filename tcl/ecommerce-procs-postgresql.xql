@@ -15,7 +15,7 @@
 </fullquery>
 
  
-<fullquery name="ec_url_lookup_mem.ec_mountpoint">      
+<fullquery name="ec_package_url_lookup_mem.ec_mountpoint">      
       <querytext>
       
             select site_node__url(s.node_id)
