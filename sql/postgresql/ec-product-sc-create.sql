@@ -1,12 +1,12 @@
 select acs_sc_impl__new(
            'FtsContentProvider',		-- impl_contract_name
-           'Ecommerce Product',	               	-- impl_name
+           'Ecommerce_Product',	               	-- impl_name
            'ecommerce'				-- impl_owner_name
 );
 
 select acs_sc_impl_alias__new(
            'FtsContentProvider',		-- impl_contract_name
-           'Ecommerce Product',			-- impl_name
+           'Ecommerce_Product',			-- impl_name
            'datasource',			-- impl_operation_name
            'ec_products__datasource',		-- impl_alias
            'TCL'				-- impl_pl
@@ -14,7 +14,7 @@ select acs_sc_impl_alias__new(
 
 select acs_sc_impl_alias__new(
            'FtsContentProvider',		-- impl_contract_name
-           'Ecommerce Product',			-- impl_name
+           'Ecommerce_Product',			-- impl_name
            'url',				-- impl_operation_name
            'ec_products__url',			-- impl_alias
            'TCL'				-- impl_pl

@@ -3361,4 +3361,4 @@ END;' language 'plpgsql';
 \i pl-sql-utilities.sql
 \i ec-product-package-create.sql
 \i ecommerce-defaults.sql
-\i ec-products-sc-create.sql
+\i ec-product-sc-create.sql
