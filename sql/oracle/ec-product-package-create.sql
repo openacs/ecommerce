@@ -45,7 +45,7 @@ as
   announcements_expire  in ec_products.announcements_expire%TYPE	default null
  ) return acs_objects.object_id%TYPE;
 
- procedure delete (
+ procedure del (
   product_id in ec_products.product_id%TYPE
  );
 
@@ -105,15 +105,15 @@ as
      return v_object_id;
  end new;
 
- procedure delete (
+ procedure del (
   product_id in ec_products.product_id%TYPE
  )
  is
  begin
      delete from ec_products
-         where product_id = ec_product.delete.product_id;
-     acs_object.delete(product_id);
- end delete;
+         where product_id = ec_product.del.product_id;
+     acs_object.del(product_id);
+ end del;
 
 end ec_product;
 /

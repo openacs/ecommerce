@@ -7,7 +7,7 @@
       <querytext>
       
       begin
-      ec_product.delete(:product_id);
+      ec_product.del(:product_id);
       end;
   
       </querytext>
