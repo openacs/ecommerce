@@ -19,7 +19,7 @@
 <h3>Order list</h3>
  @items_ul;noquote@
 <hr>
-<p>2. Complete this information below, or view other <a href="http://kingsolar.com/order.html">ways of ordering</a> from King Solar.</p>
+<p>2. Complete this information.</p>
 
 <table border="0" bgcolor="#eeeeee"><form method="post" action="checkout-one-form-2">
 @hidden_vars;noquote@
