@@ -4,11 +4,9 @@ ad_page_contract {
     @param address_id:optional
     @param referer
 
-    @author
-    @creation-date
     @author ported by Jerry Asher (jerry@theashergroup.com)
-    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
-    @revision-date April 2002
+    @author revised by Bart Teeuwisse (bart.teeuwisse@7-sisters.com)
+    @creation-date revised April 2002
 
 } {
     address_type
