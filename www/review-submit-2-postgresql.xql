@@ -13,7 +13,7 @@
     from ec_products,
          (select email as user_email
           from   cc_users
-          where  user_id = :user_id)
+          where  user_id = :user_id) as cc_emails
     where product_id=:product_id
 
       </querytext>
