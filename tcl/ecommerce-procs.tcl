@@ -383,7 +383,7 @@ ad_proc ec_mailing_list_link_for_a_product { product_id } {
     db_0or1row mailing_categories {}
 
     if { ![empty_string_p $category_id] || ![empty_string_p $subcategory_id] || ![empty_string_p $subsubcategory_id] } {
-        return "<a href=\"[ns_urlencode [ec_url]mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]]\">Add yourself to the [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] mailing list!</a>"
+        return "<a href=\"mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]\">Add yourself to the [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] mailing list!</a>"
     } else { 
         return ""
     }
