@@ -78,6 +78,17 @@
     </querytext>
   </fullquery>
   
+                                                                                                  
+ <fullquery name="count_remaining_items">
+    <querytext>
+      select count(*)
+      from ec_items
+      where order_id = :order_id
+      and item_state = 'to_be_shipped'
+      and item_id not in ([join $item_id_list ", "])
+    </querytext>
+  </fullquery>
+
   <fullquery name="transaction_failed_update">      
     <querytext>
       update ec_financial_transactions 

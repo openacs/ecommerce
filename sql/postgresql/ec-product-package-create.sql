@@ -16,7 +16,7 @@
 -- gilbertw - PostgreSQL only supports 16 parameters
 -- created a plpgsql block to do the update and insert
 -- start a transaction for the new product creation
-create function ec_product__new (integer,integer,integer,varchar,numeric,varchar,varchar,varchar,varchar,boolean,char,varchar,timestamp,varchar,varchar,varchar)
+create function ec_product__new (integer,integer,integer,varchar,numeric,varchar,varchar,varchar,varchar,boolean,char,varchar,timestamptz,varchar,varchar,varchar)
 returns integer as '
 declare
   new__product_id		alias for $1;  -- default null

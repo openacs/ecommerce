@@ -231,10 +231,22 @@ if { $shipment_cost >= 0 } {
 			where transaction_id = :pgw_transaction_id"
 		}
 
-		# Flag that no new transactions need to be
-		# created for this shipment.
+		# The shipment is a partial shipment but the shipment
+		# cost equals the order cost. This could be due to
+		# voiding of items. A new transaction is required if
+		# there are no more items awaiting shipment and this
+		# shipment thus completes the order.
 
-		set create_new_transaction false
+		if {[string equal 0 [db_string count_remaining_items "
+		    select count(*)
+		    from ec_items
+		    where order_id = :order_id
+		    and item_state = 'to_be_shipped'
+		    and item_id not in ([join $item_id_list ", "])" -default 0]]} {
+		    set create_new_transaction true
+		} else {
+		    set create_new_transaction false
+		}
 	    }
 	} else {
 	    
