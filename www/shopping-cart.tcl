@@ -103,9 +103,11 @@ for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
 
     # following line added according to bug 643 at openacs.org
     # http://openacs.org/bugtracker/openacs/com/ecommerce/bug?bug%5fnumber=643
-    multirow set in_cart $i delete_export_vars $delete_export_vars
+    #multirow set in_cart $i delete_export_vars $delete_export_vars
 
-    multirow set in_cart $i price "[lindex $lowest_price_and_price_name 1]:&nbsp;&nbsp;[ec_pretty_price [lindex $lowest_price_and_price_name 0] [ad_parameter -package_id [ec_id] Currency]]"
+    #multirow set in_cart $i price "[lindex $lowest_price_and_price_name 1]:&nbsp;&nbsp;[ec_pretty_price [lindex $lowest_price_and_price_name 0] [ad_parameter -package_id [ec_id] Currency]]"
+
+multirow set in_cart $i delete_export_vars $delete_export_vars
 }
 
 # Add adjust quantities line if there are products in the cart.

@@ -48,7 +48,7 @@
       </td>
       <td>@in_cart.price;noquote@</td>
       <td>
-        <a href="shopping-cart-delete-from?@delete_export_vars@">delete</a>
+        <a href="shopping-cart-delete-from?@in_cart.delete_export_vars@">delete</a>
       </td>
     </tr>
   </multiple>
