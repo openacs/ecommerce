@@ -64,7 +64,7 @@
       <tr>
 	<td>
 	  <form method="post" action="address">
-	    @hidden_form_vars@
+	    @hidden_form_vars;noquote@
 	    <input type="submit" value="Enter a new U.S. address">
 	  </form>
 	</td>
@@ -73,7 +73,7 @@
 	</td>
 	<td>
 	  <form method="post" action="address-international">
-	    @hidden_form_vars@
+	    @hidden_form_vars;noquote@
 	    <input type="submit" value="Enter a new INTERNATIONAL address">
 	  </form>
 	</td>
