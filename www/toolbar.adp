@@ -1,7 +1,7 @@
 <table width="100%">
   <tbody>
     <tr>
-      <td>@ec_search_widget@</td>
+      <td>@ec_search_widget;noquote@</td>
       <td align="right">
 	<if @gift_certificates_are_allowed@ true and @current_location@ ne "gift-certificate">
 	  [&nbsp;<a href="gift-certificate-order">Order a Gift Certificate</a>&nbsp;]
