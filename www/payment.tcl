@@ -167,7 +167,7 @@ if { $user_gift_certificate_balance >= $order_total_price_pre_gift_certificate }
 }
 
 if { $show_creditcard_form_p == "t" } {
-    set customer_can_use_old_credit_cards 1
+    set customer_can_use_old_credit_cards [ad_parameter -package_id [ec_id] SaveCreditCardDataP ecommerce]
 
     # See if the administrator lets customers reuse their credit cards
 
