@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <queryset>
 
+  <rdbms>
+    <type>postgresql</type>
+    <version>7.1</version>
+  </rdbms>
+
   <fullquery name="recommendations_select">      
     <querytext>
       select r.recommendation_id, r.the_category_name, r.the_subcategory_name, r.the_subsubcategory_name, p.product_name, c.user_class_name
