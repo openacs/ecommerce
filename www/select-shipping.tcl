@@ -251,7 +251,10 @@ if {[info exists no_shipping_avail_p] && [string equal $no_shipping_avail_p "f"]
 	}
     }
 } else {
-    ad_returnredirect "[ec_securelink [ec_url]billing]"
+    # User has no items that require shipping. Redirect to
+    # process-order-quantity-shipping so that prices
+    # for items can be inserted into ec_items.
+    ad_returnredirect "[ec_securelink [ec_url]process-order-quantity-shipping]"
 }
 
 
