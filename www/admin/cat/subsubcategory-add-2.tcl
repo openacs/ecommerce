@@ -54,10 +54,15 @@ where subsubcategory_id=:subsubcategory_id"] ==1} {
 
 # now make sure there's no subsubcategory in this subcategory with that sort key already
 
+### gilbertw - added do the calculation outside of the db.  PostgreSQL encloses
+#   the bind variables in ' '
+#  where sort_key = (:prev_sort_key + :next_sort_key)/2
+set sort_key [expr ($prev_sort_key + $next_sort_key)/2]
+
 set n_conflicts [db_string get_n_conflicts "select count(*)
 from ec_subsubcategories
 where subcategory_id=:subcategory_id
-and sort_key = (:prev_sort_key + :next_sort_key)/2"]
+and sort_key = :sort_key"]
 
 if { $n_conflicts > 0 } {
     ad_return_complaint 1 "<li>The $subcategory_name page appears to be out-of-date;
@@ -71,7 +76,7 @@ set address [ns_conn peeraddr]
 db_dml insert_ec_subsubcat "insert into ec_subsubcategories
 (subcategory_id, subsubcategory_id, subsubcategory_name, sort_key, last_modified, last_modifying_user, modified_ip_address)
 values
-(:subcategory_id, :subsubcategory_id, :subsubcategory_name, (:prev_sort_key + :next_sort_key)/2, sysdate, :user_id,:address)"
+(:subcategory_id, :subsubcategory_id, :subsubcategory_name, :sort_key, sysdate, :user_id,:address)"
 db_release_unused_handles
 
 ad_returnredirect "subcategory?[export_url_vars category_id category_name subcategory_id subcategory_name]"
