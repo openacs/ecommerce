@@ -26,7 +26,7 @@
   </table>      
 
   <h4>@category_name@ products:</h4>
-  @products@
+  @products;noquote@
 
   @prev_link@ @separator@ @next_link@
 </blockquote>
