@@ -106,7 +106,7 @@ db_foreach get_recommended_products "
 
     append recommendations "
 	  <tr>
-	    <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
+	    <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]&nbsp;</td>
 	    <td valign=top><a href=\"product?[export_url_vars product_id]\">$product_name</a>
 	      <p>$recommendation_text</p>
 	    </td>
@@ -142,7 +142,7 @@ set have_how_many_more_p f
 set count 0
 
 db_foreach get_regular_product_list "
-    select p.product_id, p.product_name, p.one_line_description, o.offer_code
+    select p.product_id, p.dirname, p.product_name, p.one_line_description, o.offer_code
     from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
     where p.product_id = m.product_id
     and m.${sub}category_id = :${sub}category_id
@@ -158,7 +158,8 @@ db_foreach get_regular_product_list "
 	      </tr>
 	      <tr valign=top>
 		<td></td>
-		<td>$one_line_description</td>
+		<td>$one_line_description<br>
+                    [ec_add_to_cart_link $product_id "Add to Shopping Cart"]</td>
 		<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
 	      </tr>"
     }
@@ -213,13 +214,14 @@ SELECT * from ec_sub${sub}categories c
  ORDER BY sort_key, sub${sub}category_name
 " {
 
-    ns_log notice "loop"
+    ns_log notice "category-browse-subcategory.tcl: loop"
       append subcategories "<li><a href=category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]>[eval "ident \$sub${sub}category_name"]</a>"
   }
 }
 
 set the_category_id   $category_id
 set the_category_name [eval "ident \$${sub}category_name"]
+set category_url "category-browse?category_id=${$the_category_id"
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list [list "category-browse?category_id=$the_category_id" $category_name] $subcategory_name]]]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
