@@ -9,7 +9,7 @@ ad_proc ec_products__datasource {
                e.product_name as title,
                e.detailed_description as content,
                'text/plain' as mime,
-               search_keywords as keywords,
+               e.search_keywords as keywords,
                'text' as storage_type
         from ec_products e
         where e.product_id = :object_id
