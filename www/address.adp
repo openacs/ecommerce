@@ -18,7 +18,7 @@
 </else>
 
 <form method="post" action="address-2">
-    @hidden_form_vars@
+    @hidden_form_vars;noquote@
     <blockquote>
       <table>
 	<tr>
@@ -41,7 +41,7 @@
 	</tr>
 	<tr>
 	  <td>City</font></td>
-	  <td><input type="text" name="city" size="20" <if @city@ not nil>value="@city@"</if>> &nbsp;State @state_widget@</td>
+	  <td><input type="text" name="city" size="20" <if @city@ not nil>value="@city@"</if>> &nbsp;State @state_widget;noquote@</td>
 	</tr>
 	<tr>
 	  <td>Zip</td>
