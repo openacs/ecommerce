@@ -8,7 +8,7 @@
       insert into ec_subcategories
     (category_id, subcategory_id, subcategory_name, sort_key, last_modified, last_modifying_user, modified_ip_address)
     values
-    (:category_id, :subcategory_id, :subcategory_name, (:prev_sort_key + :next_sort_key)/2, sysdate, :user_id, :address)
+    (:category_id, :subcategory_id, :subcategory_name, :sort_key, sysdate, :user_id, :address)
       </querytext>
 </fullquery>
 

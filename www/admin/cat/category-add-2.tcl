@@ -43,9 +43,14 @@ where category_id=:category_id"]==1} {
 }
 
 # now make sure there's no category with that sort key already
+### gilbertw - added do the calculation outside of the db.  PostgreSQL encloses
+#   the bind variables in ' '
+#  where sort_key = (:prev_sort_key + :next_sort_key)/2
+set sort_key [expr ($prev_sort_key + $next_sort_key)/2]
+
 set n_conflicts [db_string get_n_conflicts "select count(*)
 from ec_categories
-where sort_key = (:prev_sort_key + :next_sort_key)/2"]
+where sort_key = :sort_key"]
 
 if { $n_conflicts > 0 } {
     ad_return_complaint 1 "<li>The category page appears to be out-of-date;
@@ -59,6 +64,6 @@ set peeraddr [ns_conn peeraddr]
 db_dml insert_into_ec_categories "insert into ec_categories
 (category_id, category_name, sort_key, last_modified, last_modifying_user, modified_ip_address)
 values
-(:category_id, :category_name, (:prev_sort_key + :next_sort_key)/2, sysdate, :user_id, :peeraddr)"
+(:category_id, :category_name, :sort_key, sysdate, :user_id, :peeraddr)"
 db_release_unused_handles
 ad_returnredirect "index"

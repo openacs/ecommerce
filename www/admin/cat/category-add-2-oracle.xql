@@ -8,7 +8,7 @@
       insert into ec_categories
 (category_id, category_name, sort_key, last_modified, last_modifying_user, modified_ip_address)
 values
-(:category_id, :category_name, (:prev_sort_key + :next_sort_key)/2, sysdate, :user_id, :peeraddr)
+(:category_id, :category_name, :sort_key, sysdate, :user_id, :peeraddr)
       </querytext>
 </fullquery>
 

@@ -13,7 +13,7 @@ where category_id=:category_id
       <querytext>
       select count(*)
 from ec_categories
-where sort_key = (:prev_sort_key + :next_sort_key)/2
+where sort_key = :sort_key
       </querytext>
 </fullquery>
 

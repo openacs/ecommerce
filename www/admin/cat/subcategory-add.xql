@@ -6,7 +6,7 @@
       select count(*)
 from ec_subcategories
 where category_id=:category_id
-and sort_key = (:prev_sort_key + :next_sort_key)/2
+and sort_key = :sort_key
       </querytext>
 </fullquery>
 

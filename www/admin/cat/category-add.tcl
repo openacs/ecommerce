@@ -18,9 +18,14 @@ ad_require_permission [ad_conn package_id] admin
 # equal to the new sort key (average of prev_sort_key and next_sort_key);
 # otherwise warn them that their form is not up-to-date
 
+### gilbertw - added do the calculation outside of the db.  PostgreSQL encloses
+#   the bind variables in ' '
+#  where sort_key = (:prev_sort_key + :next_sort_key)/2
+set sort_key [expr ($prev_sort_key + $next_sort_key)/2]
+
 set n_conflicts [db_string get_n_conflicts "select count(*)
 from ec_categories
-where sort_key = (:prev_sort_key + :next_sort_key)/2"]
+where sort_key = :sort_key"]
 
 if { $n_conflicts > 0 } {
     ad_return_complaint 1 "<li>The category page appears to be out-of-date;

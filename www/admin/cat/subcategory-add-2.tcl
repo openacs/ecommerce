@@ -50,10 +50,15 @@ where subcategory_id=:subcategory_id"] == 1} {
 # now make sure there's no subcategory in this category with that sort key already
 
 db_transaction {
+    ### gilbertw - added do the calculation outside of the db.  	
+    #   PostgreSQL encloses the bind variables in ' '
+    #  where sort_key = (:prev_sort_key + :next_sort_key)/2
+    set sort_key [expr ($prev_sort_key + $next_sort_key)/2]
+
     set n_conflicts [db_string get_n_conflicts "select count(*)
 from ec_subcategories
 where category_id=:category_id
-and sort_key = (:prev_sort_key + :next_sort_key)/2"]
+and sort_key = :sort_key"]
     if { $n_conflicts > 0 } {
 	ad_return_complaint 1 "<li>The $category_name page appears to be out-of-date;
 	perhaps someone has changed the subcategories since you last reloaded the page.
@@ -65,7 +70,7 @@ and sort_key = (:prev_sort_key + :next_sort_key)/2"]
     db_dml ec_subcat_insert "insert into ec_subcategories
     (category_id, subcategory_id, subcategory_name, sort_key, last_modified, last_modifying_user, modified_ip_address)
     values
-    (:category_id, :subcategory_id, :subcategory_name, (:prev_sort_key + :next_sort_key)/2, sysdate, :user_id, :address)"
+    (:category_id, :subcategory_id, :subcategory_name, :sort_key, sysdate, :user_id, :address)"
 
 } on_error {
     db_release_unused_handles
