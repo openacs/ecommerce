@@ -45,7 +45,7 @@ These utilities help you load catalog data into the database:
  smart by using the SQL \"LIKE\" function to resolve close matches between
  categories listed in the data file and those known in the database.
 </p></li>
-<li><p><a href=\"categories-upload-by-id\">Product Category Map Loader By Index Mapping</a>
+<li><p><a href=\"categories-upload-by-id\">Product Category Map Loader By Index Matching</a>
  creates the product-categories mappings by finding exact matches to the
  category tables' indexes <tt>category_id</tt>, <tt>subcategory_id</tt>, <tt>subsubcategory_id</tt>.
 </p></li>
