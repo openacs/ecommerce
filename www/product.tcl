@@ -165,7 +165,7 @@ if { ![empty_string_p $template_id] } {
             select template
             from ec_templates
             where template_id=(select default_template
-                from ec_admin_settings)"]
+                from ec_admin_settings)" -default ""]
     }
 }
 
