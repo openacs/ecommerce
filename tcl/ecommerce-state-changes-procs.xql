@@ -26,7 +26,7 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="ec_update_state_to_in_basket.ec_update_transaction_state">
+  <fullquery name="ec_update_state_to_in_basket.update_transaction_state">
     <querytext>
       update ec_financial_transactions
       set to_be_captured_p = 'f'
