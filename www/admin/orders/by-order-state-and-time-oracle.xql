@@ -3,6 +3,27 @@
 <queryset>
    <rdbms><type>oracle</type><version>8.1.6</version></rdbms>
 
+<partialquery name="last_24">
+      <querytext>
+      and sysdate-o.confirmed_date <= 1
+      </querytext>
+</partialquery>
+
+
+<partialquery name="last_week">
+      <querytext>
+      and sysdate-o.confirmed_date <= 7
+      </querytext>
+</partialquery>
+
+
+<partialquery name="last_month">
+      <querytext>
+      and months_between(sysdate,o.confirmed_date) <= 1
+      </querytext>
+</partialquery>
+
+
 <fullquery name="orders_select">      
       <querytext>
       select o.order_id, o.confirmed_date, o.order_state, ec_total_price(o.order_id) as price_to_display, o.user_id, u.first_names, u.last_name, count(*) as n_items

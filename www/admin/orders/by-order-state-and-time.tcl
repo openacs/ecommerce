@@ -77,11 +77,14 @@ if { $view_order_state == "reportable" } {
 }
 
 if { $view_confirmed == "last_24" } {
-    set confirmed_query_bit "and sysdate-o.confirmed_date <= 1"
+    #set confirmed_query_bit "and sysdate-o.confirmed_date <= 1"
+    set confirmed_query_bit [db_map last_24]
 } elseif { $view_confirmed == "last_week" } {
-    set confirmed_query_bit "and sysdate-o.confirmed_date <= 7"
+    #set confirmed_query_bit "and sysdate-o.confirmed_date <= 7"
+    set confirmed_query_bit [db_map last_week]
 } elseif { $view_confirmed == "last_month" } {
-    set confirmed_query_bit "and months_between(sysdate,o.confirmed_date) <= 1"
+    #set confirmed_query_bit "and months_between(sysdate,o.confirmed_date) <= 1"
+    set confirmed_query_bit [db_map last_month]
 } else {
     set confirmed_query_bit ""
 }
