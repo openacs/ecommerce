@@ -11,6 +11,11 @@ ad_page_contract {
     usca_p:optional
 }
 
+if { ![ad_parameter -package_id [ec_id] UserClassAllowSelfPlacement ecommerce] } {
+    ad_returnredirect index
+    ad_script_abort
+}
+
 set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"

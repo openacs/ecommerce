@@ -13,6 +13,11 @@ ad_page_contract {
     usca_p:optional
 }
 
+if { ![ad_parameter -package_id [ec_id] UserClassAllowSelfPlacement ecommerce] } {
+    ad_returnredirect index
+    ad_script_abort
+}
+
 set user_class_id_list $user_class_id
 set user_id [ad_verify_and_get_user_id]
 set ip_address [ns_conn peeraddr]
