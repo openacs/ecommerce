@@ -13,18 +13,17 @@ ad_page_contract {
 }
 
 # ec_redirect_to_https_if_possible_and_necessary
-ns_log debug "co2 a"
+
 # we need them to be logged in
 set user_id [ad_verify_and_get_user_id]
 
 if {$user_id == 0} {
     
     set return_url "[ad_conn url]"
-ns_log debug "co2 b user_id $user_id return_url $return_url"
     ad_returnredirect "/register?[export_url_vars return_url]"
     return
 }
-ns_log debug "co2 c"
+
 # user sessions:
 # 1. get user_session_id from cookie
 # 2. if user has no session (i.e. user_session_id=0), attempt to set it if it hasn't been
@@ -33,10 +32,9 @@ ns_log debug "co2 c"
 #    without cookies
 
 set user_session_id [ec_get_user_session_id]
-ns_log debug "co2 d"
 ec_create_new_session_if_necessary [export_url_vars address_id]
+
 # type5
-ns_log debug "co2 e"
 # make sure they have an in_basket order, otherwise they've probably
 # gotten here by pushing Back, so return them to index.tcl
 
@@ -52,7 +50,6 @@ set success_p [db_0or1row get_order_id_and_order_owner "
 if { ! $success_p } {
     # No rows came back, so they probably got here by pushing "Back", so just redirect them
     # to index.tcl
-ns_log debug "co2 f"
     ad_returnredirect index.tcl
     return
 } 
@@ -67,7 +64,6 @@ if { $order_owner != $user_id } {
     # if they get here,
     # either they managed to skip past checkout.tcl, or they messed
     # w/their user_session_id cookie;
-ns_log debug "co2 g"
     ad_returnredirect checkout.tcl
     return
 }
@@ -78,7 +74,6 @@ ns_log debug "co2 g"
 # that it's empty.
 
 if { [db_string get_ec_item_count "select count(*) from ec_items where order_id=:order_id"] == 0 } {
-ns_log debug "co2 h"
     ad_returnredirect shopping-cart
     return
 }
@@ -100,7 +95,6 @@ if { [info exists address_id] && ![empty_string_p $address_id] } {
     set n_this_address_id_for_this_user [db_string get_an_address_id "select count(*) from ec_addresses where address_id=:address_id and user_id=:user_id"]
     if {$n_this_address_id_for_this_user == 0} {
 
-ns_log debug "co2 i"
 	ad_returnredirect checkout
 	return
     }
@@ -109,7 +103,6 @@ ns_log debug "co2 i"
 } else {
     set address_id [db_string  get_address_id "select shipping_address from ec_orders where order_id=:order_id" -default ""]
     if { [empty_string_p $address_id] } {
-ns_log debug "co2 j"
 	ad_returnredirect checkout
 	return
     }
@@ -172,7 +165,6 @@ db_foreach get_shipping_data "
 
     # Trying out the fancy new . arrays. It would be much better to rework this
     # for a 2D array,multiple setup, but I don't have time to think about it now...
-ns_log debug "co2 k"
     append rows_of_items "<tr>
     <td><input type=text name=\"quantity.[list $product_id $color_choice $size_choice $style_choice]\" value=\"$quantity\" size=4 maxlength=4></td>
     <td><a href=\"product?product_id=$product_id\">$product_name</a>[ec_decode $options "" "" ", $options"]<br>
@@ -206,7 +198,6 @@ if { [util_memoize {ad_parameter -package_id [ec_id] ExpressShippingP ecommerce}
         "
     }
 }
-ns_log debug "co2 l"
 set tax_exempt_options ""
 
 if { [util_memoize {ad_parameter -package_id [ec_id] OfferTaxExemptStatusP ecommerce 0} [ec_cache_refresh]] } {
@@ -218,5 +209,4 @@ if { [util_memoize {ad_parameter -package_id [ec_id] OfferTaxExemptStatusP ecomm
   <input type=radio name=tax_exempt_p value=\"f\" checked>No"
 }
 db_release_unused_handles
-ns_log debug "co2 m"
 ec_return_template
