@@ -239,7 +239,7 @@ proc ec_subcategory_with_subsubcategories_widget { category_id {multiple_p "f"} 
 
 # displays all categories, subcategories, and subsubcategories
 # default is a list of all the items you want selected
-proc ec_category_widget { {multiple_p "f"} {default ""} {allow_null_categorization "f"}} {
+proc_doc ec_category_widget { {multiple_p "f"} {default ""} {allow_null_categorization "f"}} { displays all categories, subcategories, and subsubcategories, default is a list of all the items you want selected } {
     if { $multiple_p == "f" } {
 	set to_return "<select name=categorization>\n"
     } else {
