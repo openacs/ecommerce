@@ -809,6 +809,28 @@ ad_proc ec_timeentrywidget {column {timestamp 0}} "Gives a HTML form input for a
 
 }
 
+ad_proc ec_timeentrywidget_time_check { timestamp } {
+    checks to make sure that the time part of the timestamp is in the correct format:  HH12:MI:SS.  For instance 02:20:00.  PostgreSQL does not like it when you leave out a digit (id 2:20:00) and it will complain. 
+} {
+    if { ![regexp -nocase {([0-9]+):([0-9]+):([0-9]+)} $timestamp match hours mins secs]} {
+	ad_return_complaint "1" "<li>The time part of the timestamp is not in the correct format.  It must be HH12:MI:SS" 
+	return -code return
+    } else {
+        #  check to make sure each field has two digits
+        if ![regexp {[0-9][0-9]} $hours] {
+	    set hours 0$hours
+	}
+        if ![regexp {[0-9][0-9]} $mins] {
+	    set mins 0$mins
+	}
+        if ![regexp {[0-9][0-9]} $secs] {
+	    set secs 0$secs
+	}
+        set time "$hours:$mins:$secs"
+    }
+    return $time
+}
+
 ad_proc ec_user_class_widget { {default ""} } { user class select } {
   
     set to_return "<select name=user_class_id>
