@@ -94,14 +94,14 @@
   </fullquery>
 
   <fullquery name="select_unrefund_transactions">
-    <query_text>
+    <querytext>
       select transaction_id, transaction_amount, refunded_transaction_id, to_be_captured_date
       from ec_financial_transactions
       where order_id = :order_id
       and transaction_type = 'refund'
       and refunded_date is null
       and failed_p = 'f'
-    </query_text>
+    </querytext>
   </fullquery>
 
 </queryset>
