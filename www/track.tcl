@@ -67,7 +67,7 @@ if { $carrier == "FedEx" } {
 	    }
 	}
     } {
-	set carrier_info "Unable to retrieve data from UPS.
+	set carrier_info "Unable to retrieve data from UPS."
     } 
     
 }
