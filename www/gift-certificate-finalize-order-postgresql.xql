@@ -13,6 +13,19 @@
       </querytext>
 </fullquery>
 
+
+<fullquery name="report_gc_error_into_log">      
+      <querytext>
+
+      insert into ec_gift_certificates
+     (gift_certificate_id, gift_certificate_state, amount, issue_date, purchased_by, expires, claim_check, certificate_message, certificate_to, certificate_from, recipient_email, last_modified, last_modifying_user, modified_ip_address)
+     values
+     (:gift_certificate_id, 'confirmed', :amount, current_timestamp, :user_id, current_timestamp + ':gc_months months'::interval,:claim_check, :certificate_message, :certificate_to, :certificate_from, :recipient_email, current_timestamp, :user_id, :peeraddr)
+	
+      </querytext>
+</fullquery>
+
+
  
 <fullquery name="get_cc_id">      
       <querytext>
@@ -21,12 +34,12 @@
 </fullquery>
 
  
-<fullquery name="">      
+<fullquery name="insert_new_gc_into_db">      
       <querytext>
       insert into ec_gift_certificates
     (gift_certificate_id, gift_certificate_state, amount, issue_date, purchased_by, expires, claim_check, certificate_message, certificate_to, certificate_from, recipient_email, last_modified, last_modifying_user, modified_ip_address)
-    values
-    (:gift_certificate_id, 'confirmed', :amount, current_timestamp, :user_id, add_months(current_timestamp,:gc_months),:claim_check, :certificate_message, :certificate_to, :certificate_from, :recipient_email, current_timestamp, :user_id, :peeraddr)
+      values
+      (:gift_certificate_id, 'confirmed', :amount, current_timestamp, :user_id, current_timestamp + '$gc_months months'::interval,:claim_check, :certificate_message, :certificate_to, :certificate_from, :recipient_email, current_timestamp, :user_id, :peeraddr)
     
       </querytext>
 </fullquery>
@@ -38,7 +51,7 @@
       </querytext>
 </fullquery>
 
- 
+
 <fullquery name="insert_ec_financial_trans">      
       <querytext>
       insert into ec_financial_transactions
@@ -73,7 +86,10 @@
  
 <fullquery name="get_n_seconds">      
       <querytext>
-      select round((current_timestamp-issue_date)*86400) as n_seconds from ec_gift_certificates where gift_certificate_id = :gift_certificate_id
+      select extract(day from (current_timestamp-issue_date))*86400 +
+      extract(hour from (current_timestamp-issue_date))*3600 +
+      extract(min from (current_timestamp-issue_date))*60 +
+      extract(sec from (current_timestamp-issue_date)) as n_seconds from ec_gift_certificates where gift_certificate_id = :gift_certificate_id
       </querytext>
 </fullquery>
 
