@@ -49,7 +49,7 @@
       select min(item_id) 
       from ec_items 
       where product_id = :product_id
-      and order_id:order_id
+      and order_id = :order_id
     </querytext>
   </fullquery>
   

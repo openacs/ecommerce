@@ -1,17 +1,19 @@
 <master>
-  <property name="title">Enter Your Address</property>
+
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
 <if @address_type@ eq "shipping">
+  <property name="title">Completing Your Order: Shipping Address</property>
   <include src="checkout-progress" step="1">
-  <h2>Enter Your Shipping Address</h2>
+  <h2>Your shipping address</h2>
 </if>
 <else>
+  <property name="title">Completing Your Order: Billing Address</property>
   <if @referer@ ne "gift-certificate-billing">
     <include src="checkout-progress" step="4">
   </if>
-  <h2>Enter Your Billing Address</h2>
+  <h2>Your billing address</h2>
 </else>
 
 <form method="post" action="address-international-2">
@@ -19,8 +21,12 @@
   <blockquote>
     <table>
       <tr>
-	<td>Name</td>
-	<td><input type="text" name="attn" size="30" value="@attn@"></td>
+	  <td>First Name</td>
+          <td><input type="text" name="first_names" size="30" value="@user_first_names_with_quotes_escaped@">
+        </tr>
+        <tr>
+	  <td>Last Name</td>
+	  <td><input type="text" name="last_name" size="30" value="@user_last_name_with_quotes_escaped@"></td>
       </tr>
       <tr>
 	<td>Address</td>
@@ -39,7 +45,7 @@
 	<td><input type="text" name="full_state_name" size="15" <if @full_state_name@ not nil>value="@full_state_name@"</if>></td>
       </tr>
       <tr>
-	<td>Zip Code</td>
+	<td>Postal Code</td>
 	<td><input type="text" maxlength="10" name="zip_code" size="10" <if @zip_code not nil>value="@zip_code@"</if>></td>
       </tr>
       <tr>
@@ -49,15 +55,8 @@
       <tr>
 	<td>Phone</td>
 	<td>
-	  <input type="text" name="phone" size="20" maxlength="20" <if @phone@ not nil>value="@phone@"</if>> <input type="radio" name="phone_time" value="d" 
-	      <if @phone_time@ not nil and @phone_time@ eq "d">
-		checked
-	      </if>
-	      >day &nbsp;&nbsp;&nbsp;<input type="radio" name="phone_time" value="e"
-	      <if @phone_time@ not nil and @phone_time@ eq "e">
-		checked
-	      </if>
-	     > evening
+	  <input type="text" name="phone" size="20" maxlength="20" <if @phone@ not nil>value="@phone@"</if>>
+          <input type="radio" name="phone_time" value="d"<if @phone_time@ nil or @phone_time@ not eq "e"> checked</if>>day&nbsp;&nbsp;&nbsp;<input type="radio" name="phone_time" value="e"<if @phone_time@ not nil and @phone_time@ eq "e"> checked</if>> evening
 	</td>
       </tr>
     </table>

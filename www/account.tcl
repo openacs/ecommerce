@@ -17,6 +17,8 @@ if {$user_id == 0} {
     ad_returnredirect "/register?[export_url_vars return_url]"
     ad_script_abort
 }
+# account info should be served encrypted by default
+ec_redirect_to_https_if_possible_and_necessary
 
 set user_session_id [ec_get_user_session_id]
 ec_create_new_session_if_necessary

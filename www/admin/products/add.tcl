@@ -66,7 +66,10 @@ doc_body_append "<tr>
 <td colspan=2><textarea wrap rows=6 cols=60 name=detailed_description></textarea></td>
 </tr>
 <tr>
-<td>Search Keywords</td>
+<td><p>Search Keywords</p>
+<p>Data from Product's Name, One Line Description, and Other Detailed Description 
+are automatically included in product searches. 
+No need to repeat as keywords.</p></td>
 <td colspan=2><textarea wrap rows=2 cols=60 name=search_keywords></textarea></td>
 </tr>
 <tr>

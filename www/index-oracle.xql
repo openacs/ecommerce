@@ -6,15 +6,6 @@
     <version>8.1.6</version>
   </rdbms>
 
-  <fullquery name="get_check_of_categories">      
-    <querytext>
-      select 1 
-      from dual 
-      where exists (select 1 
-          from ec_categories)
-    </querytext>
-  </fullquery>
-
   <fullquery name="get_produc_recs">      
     <querytext>
       select p.product_id, p.product_name, p.dirname, r.recommendation_text, o.offer_code

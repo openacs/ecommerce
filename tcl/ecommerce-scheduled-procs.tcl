@@ -1038,7 +1038,7 @@ ad_proc ec_unrefunded_transactions {
 	# Connect to the payment gateway to authorize the transaction.
 
 	array set response [acs_sc_call "PaymentGateway" "Return" \
-				[list $marked_transaction_id \
+				[list $transaction_id \
 				     $transaction_amount \
 				     $card_type \
 				     $card_number \

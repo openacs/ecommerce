@@ -40,7 +40,7 @@
 
   <if @page_function@ eq "discard">
     <form method=post action="shopping-cart-retrieve-3">
-    @hidden_form_variables@
+    @hidden_form_variables;noquote@
     <p>If you discard this shopping cart, it will never be
     retrievable.  Are you sure you want to discard it?</p>
     <center>

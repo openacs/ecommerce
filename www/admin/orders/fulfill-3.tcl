@@ -231,11 +231,18 @@ if { $shipment_cost >= 0 } {
 			where transaction_id = :pgw_transaction_id"
 		}
 
-		# The shipment is a partial shipment but the shipment
-		# cost equals the order cost. This could be due to
-		# voiding of items. A new transaction is required if
-		# there are no more items awaiting shipment and this
-		# shipment thus completes the order.
+		# Flag that no new transactions need to be
+		# created for this shipment.
+
+		set create_new_transaction false
+	    }
+	} else {
+	    
+	    # The shipment is a partial shipment but the shipment cost
+	    # equals the order cost. This could be due to voiding of
+	    # items. A new transaction is required if there are no
+	    # more items awaiting shipment and this shipment thus
+	    # completes the order.
 
 		if {[string equal 0 [db_string count_remaining_items "
 		    select count(*)
@@ -249,13 +256,6 @@ if { $shipment_cost >= 0 } {
 		}
 	    }
 	} else {
-	    
-	    # The shipment is a partial shipment but the
-	    # shipment cost equals the order cost. 
-
-	    set create_new_transaction false
-	}
-    } else {
 	set create_new_transaction true
     }
 

@@ -58,7 +58,7 @@
       update ec_financial_transactions 
       set authorized_date = current_timestamp
       where transaction_id = :transaction_id
-    </querytext>*op
+    </querytext>
   </fullquery>
 
   <fullquery name="schedule_settlement">

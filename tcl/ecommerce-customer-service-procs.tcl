@@ -111,48 +111,65 @@ ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_orig
 ad_proc ec_all_cs_issues_by_one_user { {user_id ""} {user_identification_id ""} } { lists all issues by user_id or user_identification } {
     set to_return "<ul>"
 
+    set old_issue_id ""
+    set issue_type_list [list]
+
     if { ![empty_string_p $user_id] } {
 
-	set sql {
+	set sql 
+
+        db_foreach user_customer_service_issue {
 	    select i.issue_id, i.open_date, i.close_date, m.issue_type
 	    from ec_customer_service_issues i, ec_cs_issue_type_map m, ec_user_identification id
 	    where i.issue_id = m.issue_id(+)
 	    and i.user_identification_id = id.user_identification_id
 	    and id.user_id = :user_id
 	    order by i.issue_id
-	}
+	    } {
+
+	    if { $issue_id != $old_issue_id } {
+	        if { [llength $issue_type_list] > 0 } {
+		    append to_return " ([join $issue_type_list ", "])"
+	       	    set issue_type_list [list]
+	        }
+	        append to_return "<li> <a href=\"[ec_url_concat [ec_url] /admin]/customer-service/issue?[export_vars issue_id]\">$issue_id</a>: opened [util_AnsiDatetoPrettyDate $open_date]"
+	        if { ![empty_string_p $close_date] } {
+		    append to_return ", closed [util_AnsiDatetoPrettyDate $close_date]"
+	        }
+	    }
+	    if { ![empty_string_p $issue_type] } {
+	        lappend issue_type_list $issue_type
+	    }
+	    set old_issue_id $issue_id
+        }
 
     } else {
 
-	set sql {
+        db_foreach customer_service_issue {
 	    select i.issue_id, i.open_date, i.close_date, m.issue_type
 	    from ec_customer_service_issues i, ec_cs_issue_type_map m
 	    where i.issue_id = m.issue_id(+)
 	    and i.user_identification_id = :user_identification_id
 	    order by i.issue_id
-	}
+	    } {
+
+	    if { $issue_id != $old_issue_id } {
+	        if { [llength $issue_type_list] > 0 } {
+		    append to_return " ([join $issue_type_list ", "])"
+		    set issue_type_list [list]
+	        }
+	        append to_return "<li> <a href=\"[ec_url_concat [ec_url] /admin]/customer-service/issue?[export_url_vars issue_id]\">$issue_id</a>: opened [util_AnsiDatetoPrettyDate $open_date]"
+	        if { ![empty_string_p $close_date] } {
+		    append to_return ", closed [util_AnsiDatetoPrettyDate $close_date]"
+	        }
+	    }
+	    if { ![empty_string_p $issue_type] } {
+	        lappend issue_type_list $issue_type
+	    }
+	    set old_issue_id $issue_id
+        }
     }
 
-    set old_issue_id ""
-    set issue_type_list [list]
-
-    db_foreach user_customer_service_issue $sql {
-
-	if { $issue_id != $old_issue_id } {
-	    if { [llength $issue_type_list] > 0 } {
-		append to_return " ([join $issue_type_list ", "])"
-		set issue_type_list [list]
-	    }
-	    append to_return "<li> <a href=\"[ec_url_concat [ec_url] /admin]/customer-service/issue?[export_vars issue_id]\">$issue_id</a>: opened [util_AnsiDatetoPrettyDate $open_date]"
-	    if { ![empty_string_p $close_date] } {
-		append to_return ", closed [util_AnsiDatetoPrettyDate $close_date]"
-	    }
-	}
-	if { ![empty_string_p $issue_type] } {
-	    lappend issue_type_list $issue_type
-	}
-	set old_issue_id $issue_id
-    }
 
     if { [llength $issue_type_list] > 0 } {
 	append to_return " ([join $issue_type_list ", "])"

@@ -81,6 +81,7 @@ if { [empty_string_p $order_id] } {
 
     if { [empty_string_p $most_recently_confirmed_order] } {
 	rp_internal_redirect index
+        ns_log Notice "finalize-order.tcl ref(84): no confirmed order for user $user_id. Redirecting user."
     } else {
 	rp_internal_redirect thank-you
     }
@@ -292,6 +293,9 @@ if {$hard_goods_cost > 0} {
 
 		    ec_update_state_to_in_basket $order_id
 
+                    # authorization error is not necessarily the fault of the user's card, so log it for identifying pattern for diagnostics
+                    ns_log Notice "finalize-order.tcl ref(295): failed_authorization for order_id: $order_id. Redirecting user to credit-card-correction."
+
 		    rp_internal_redirect credit-card-correction
                     ad_script_abort
 		} else {
@@ -301,7 +305,6 @@ if {$hard_goods_cost > 0} {
 
 		    ns_log Notice "Order $order_id received a result of $result"
 		    ad_return_error "Sorry" "
-			<h2>Sorry</h2>
 			<p>There has been an error in the processing of your credit card information.
 			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
                     ad_script_abort
@@ -405,7 +408,7 @@ if {$hard_goods_cost > 0} {
 		    # confirmed order fails
 
 		    ec_update_state_to_in_basket $order_id
-
+                    ns_log Notice "finalize-order.tcl ref(411): updated creditcard check failed for order_id $order_id. Redirecting to credit-card-correction"
 		    rp_internal_redirect credit-card-correction
                     ad_script_abort
 		} else {
@@ -415,7 +418,6 @@ if {$hard_goods_cost > 0} {
 
 		    ns_log Notice "Order $order_id received a result of $result"
 		    ad_return_error "Sorry" "
-			<h2>Sorry</h2>
 			<p>There has been an error in the processing of your credit card information.
 			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
 		}
@@ -539,6 +541,7 @@ if {$hard_goods_cost > 0} {
 			# confirmed order fails
 
 			ec_update_state_to_in_basket $order_id
+                        ns_log Notice "finalize-order.tcl ref(544): creditcard check failed. Redirecting user to credit-card-correction."
 			rp_internal_redirect credit-card-correction
 
 		    } else {
@@ -548,7 +551,6 @@ if {$hard_goods_cost > 0} {
 
 			ns_log Notice "Order $order_id received a result of $result"
 			ad_return_error "Sorry" "
-			    <h2>Sorry</h2>
 			    <p>There has been an error in the processing of your credit card information.
 			       Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
 		    }
@@ -574,7 +576,6 @@ if {$hard_goods_cost > 0} {
 
 		    ns_log Notice "Order $order_id received a result of $result"
 		    ad_return_error "Sorry" "
-			<h2>Sorry</h2>
 			<p>There has been an error in the processing of your credit card information.
 			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
 		}
@@ -668,6 +669,9 @@ if {$hard_goods_cost > 0} {
 
 		ec_update_state_to_in_basket $order_id
 
+                # log this just in case this is a symptom of an extended gateway downtime
+                ns_log Notice "finalize-order.tcl, ref(671): creditcard check failed for order_id $order_id. Redirecting to credit-card-correction"
+
 		rp_internal_redirect credit-card-correction
                 ad_script_abort
 	    } else {
@@ -677,7 +681,6 @@ if {$hard_goods_cost > 0} {
 
 		ns_log Notice "Order $order_id received a result of $result"
 		ad_return_error "Sorry" "
-		    <h2>Sorry</h2>
 		    <p>There has been an error in the processing of your credit card information.
 		    Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
 	    }
@@ -792,7 +795,7 @@ if {$hard_goods_cost > 0} {
 		# confirmed order fails
 		
 		ec_update_state_to_in_basket $order_id
-		
+                ns_log Notice "finalize-order.tcl ref(789): creditcard check failed. Redirecting to credit-card-correction"		
 		rp_internal_redirect credit-card-correction
                 ad_script_abort
 
@@ -803,7 +806,6 @@ if {$hard_goods_cost > 0} {
 
 		ns_log Notice "Order $order_id received a result of $result"
 		ad_return_error "Sorry" "
-			<h2>Sorry</h2>
 			<p>There has been an error in the processing of your credit card information.
 			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
 	    }

@@ -1,20 +1,17 @@
 <master>
-  <property name="title">Completing Your Order</property>
+  <property name="title">Completing Your Order: Shipping Address</property>
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
   <include src="checkout-progress" step="1">
 
-<h2>Select Your Shipping Address</h2>
-
 <blockquote>
 
-    <p><b>Please choose your shipping address.</b></p>
 
     <blockquote>
       <table>
 	<if @addresses:rowcount@ ne 0>
-	  <p>You can select an address listed below or enter a new address.</p>
+	  <p>Select an address listed below or enter a new address.</p>
 	</if>
 	<multiple name="addresses">
 	  <if @addresses.rownum@ odd>

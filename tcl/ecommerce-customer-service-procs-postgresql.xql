@@ -29,5 +29,25 @@
       (:issue_id, :user_identification_id, :order_id, current_timestamp, current_timestamp, :customer_service_rep, :gift_certificate_id)
     </querytext>
   </fullquery>
+
+  <fullquery name="user_customer_service_issue">
+    <querytext>
+      select i.issue_id, i.open_date, i.close_date, m.issue_type
+      from ec_user_identification id, ec_customer_service_issues i left join ec_cs_issue_type_map m on (i.issue_id = m.issue_id)
+      where i.user_identification_id = id.user_identification_id
+      and id.user_id = :user_id
+      order by i.issue_id
+    </querytext>
+  </fullquery>
+
+  <fullquery name="customer_service_issue">
+    <querytext>
+      select i.issue_id, i.open_date, i.close_date, m.issue_type
+      from ec_customer_service_issues i left join ec_cs_issue_type_map m
+      on (i.issue_id = m.issue_id)
+      where i.user_identification_id = :user_identification_id
+      order by i.issue_id
+    </querytext>
+  </fullquery>
   
 </queryset>

@@ -1,5 +1,7 @@
 ad_page_contract {
     @param attn
+    @param first_names
+    @param last_name
     @param line1
     @param line2:optional
     @param city 
@@ -19,7 +21,9 @@ ad_page_contract {
 } {
     address_type
     address_id:optional
-    attn:notnull
+    attn:optional
+    first_names
+    last_name
     line1:notnull
     line2:optional
     city:notnull
@@ -27,11 +31,11 @@ ad_page_contract {
     zip_code:optional
     country_code:notnull
     phone
-    {phone_time ""}
+    {phone_time "d"}
     referer
 }
 
-set possible_exception_list [list [list attn name] [list line1 address] [list city city] [list country_code country] [list phone "telephone number"]]
+set possible_exception_list [list [list first_names "first name"] [list last_name "last name"] [list line1 address] [list city city] [list country_code country] [list phone "telephone number"]]
 set exception_count 0
 set exception_text ""
 
@@ -69,6 +73,15 @@ if { [empty_string_p $order_id] } {
     rp_internal_redirect index
     ad_script_abort
 }
+
+# assuming all cases are billing, since shipping defaults as billing addrs
+# if {$address_type == "billing"} {
+# set attn from first_names and last_name 
+# the 3 space delimiter may be used to parse names by specific payment gateway
+# first clean out all multiple spaces 
+    regsub -all { +} $first_names " " first_names
+    regsub -all { +} $last_name " " last_name
+    set attn "[string trim $first_names]   [string trim $last_name]"
 
 if { [info exists address_id] && $address_id != "" } {
 

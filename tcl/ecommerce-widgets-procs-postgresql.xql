@@ -11,6 +11,7 @@
       select c.category_id, s.subcategory_id, category_name, subcategory_name 
       from ec_categories c left
       outer join ec_subcategories s using (category_id)
+      order by c.sort_key, s.sort_key
     </querytext>
   </fullquery>
   

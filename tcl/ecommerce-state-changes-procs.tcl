@@ -20,6 +20,7 @@ ad_proc ec_update_state_to_in_basket {
     3. any gift certificates used should be reinstated
     4. confirmed_date is set to null (because we use existence of
        confirmed_date to see if order is confirmed yet)
+    5. ec_financial_transactions.transaction_type becomes null
 
     Call this procedure from within a transaction
 
@@ -41,6 +42,12 @@ ad_proc ec_update_state_to_in_basket {
 	begin 
 	    ec_reinst_gift_cert_on_order (:order_id); 
 	end;"
+# following cleans up errors resulting from ccard failures with shipping fulfill-3.tcl
+    db_dml update_transaction_state "
+        update ec_financial_transactions
+        set to_be_captured = 'f'
+        where order_id=:order_id
+        and creditcard_id=:creditcard_id"
 }
 
 ad_proc ec_update_state_to_authorized {

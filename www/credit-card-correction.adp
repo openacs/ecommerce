@@ -1,17 +1,21 @@
 <master>
-  <property name="title">Completing Your Order</property>
+  <property name="title">Completing Your Order: Verifying credit card</property>
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
   <include src="checkout-progress" step="6">
 
-<h2>Sorry, We Were Unable to Authorize Your Credit Card</h2>
+<h2>Sorry, There seems to be a problem with completing this transaction.</h3>
 
   <blockquote>
   
   <p>At this time we are unable to receive authorization to charge
     your credit card.  Please check the number and the expiration
     date and try again or use a different credit card.</p>
+<p>If this message persists, there may be a temporary problem, 
+   such as the system not being able to reach the merchant banking system.
+   Try again later, or report this problem to @ec_system_owner;noquote@.
+</p>
 
   <table>
     <tr>

@@ -1,15 +1,13 @@
 <master>
-  <property name="title">Completing Your Order</property>
+  <property name="title">Completing Your Order: Billing address</property>
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
   <include src="checkout-progress" step="4">
 
-<h2>Select Your Billing Address</h2>
-
 <blockquote>
 
-  <p><b>Please choose your billing address.</b></p>
+  <p><b>Billing address</b></p>
 
   <blockquote>
     <table>

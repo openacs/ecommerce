@@ -26,7 +26,7 @@
     </tr>
   </table>      
 </if>
-  <h4><a href="category-browse?category_id=@the_category_id@">@category_name@</a> > @subcategory_name@ products:</h4>
+  <h4><a href="@category_url;noquote@">@category_name@</a> &gt; @subcategory_name@ products:</h4>
   @products;noquote@
 
   @prev_link@ @separator@ @next_link@

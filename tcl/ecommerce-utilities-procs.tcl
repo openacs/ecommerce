@@ -141,13 +141,18 @@ ad_proc ec_custom_product_field_form_element {
 } { 
     Get Custom Form Element.
 } {
-    if { $column_type == "integer" || $column_type == "number"} {
+    if { [string equal $column_type "integer"] || [string equal $column_type "number"] } {
 	return "<input type=text name=\"ec_custom_fields.$field_identifier\" value=\"$default_value\" size=5>"
-    } elseif { $column_type == "date" } {
-	return [ad_dateentrywidget ec_custom_fields.$field_identifier $default_value]
-    } elseif { $column_type == "varchar(200)" } {
+    } elseif { [string equal $column_type "date"] } {
+	return "[ad_dateentrywidget ec_custom_fields.$field_identifier $default_value]"
+    } elseif { [string equal $column_type "timestamp"] } {
+        # timestamp is in form yyyy-mm-dd hh:mm:ss
+	# so ec_timeentrywidget could be added here for lindex default_values 1
+        set default_values [split $default_value " "]
+	return "[ad_dateentrywidget ec_custom_fields.$field_identifier [lindex $default_values 0]]"
+    } elseif { [string equal $column_type "varchar(200)"] } {
 	return "<input type=text name=\"ec_custom_fields.$field_identifier\" value=\"$default_value\" size=50 maxlength=200>"
-    } elseif { $column_type == "varchar(4000)" } {
+    } elseif { [string equal $column_type "varchar(4000)"] } {
 	return "<textarea wrap name=\"ec_custom_fields.$field_identifier\" rows=4 cols=60>$default_value</textarea>"
     } else {
 
@@ -302,7 +307,7 @@ ad_proc ec_linked_thumbnail_if_it_exists {
     set linked_thumbnail ""
 
     if { $border_p == "f" } {
-	set border_part_of_img_tag " border=0 "
+	set border_part_of_img_tag " border=\"0\" "
     } else {
 	set border_part_of_img_tag ""
     }
@@ -326,20 +331,14 @@ ad_proc ec_linked_thumbnail_if_it_exists {
 
 	    if { [file exists "$full_dirname/product.jpg"] } {
 		set linked_thumbnail "
-                    <a href=\"[ec_url]product-file/$file_path/product.jpg\">
-                    <img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\">
-                    </a>"
+                    <a href=\"[ec_url]product-file/$file_path/product.jpg\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\"></a>"
 	    } elseif { [file exists "$full_dirname/product.gif"] } {
 		set linked_thumbnail "
-		    <a href=\"[ec_url]product-file/$file_path/product.gif\">
-		    <img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\">
-		    </a>"
+		    <a href=\"[ec_url]product-file/$file_path/product.gif\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\"></a>"
 	    }
 	} else {
 	    set linked_thumbnail "
-	    	<a href=\"product?[export_vars product_id]\">
-	    	<img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\">
-            	</a>"
+	    	<a href=\"product?[export_vars product_id]\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\"></a>"
 	}
     }
     return $linked_thumbnail
@@ -489,7 +488,7 @@ ad_proc ec_user_identification_summary {
     
     if { ![empty_string_p $user_id] } {
 	set user_name [db_string get_user_name "
-	    select first_names || ' ' || last_name
+	    select first_names || '   ' || last_name
 	    from cc_users 
 	    where user_id=:user_id"]
 	return "Registered user: <a $target_tag href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$user_name</a>."
@@ -564,6 +563,9 @@ ad_proc ec_formatted_full_date {
     be in the format YYYY-MM-DD HH24:MI:SS-TZ.
 
 } {
+    # temporary cludge to get this to work with postgresql timestamp with microseconds
+    # eventually all ecommerce dates should use lc_time_fmt for i8ln
+    set ugly_date [lc_time_fmt $ugly_date "%F %T"]
 
     # Remove the timezone (-TZ) from ugly_date or clock scan will
     # choke on it.
@@ -587,6 +589,10 @@ ad_proc ec_formatted_date {
 
 } {
 
+    # temporary cludge to get this to work with postgresql timestamp with microseconds
+    # eventually all ecommerce dates should use lc_time_fmt for i8ln
+    set ugly_date [lc_time_fmt $ugly_date "%F %T"]
+
     # Remove the timezone information (-TZ) that PostgresSQL can
     # return or the Tcl command 'clock scan' will choke on it.
 
@@ -608,9 +614,12 @@ ad_proc ec_location_based_on_zip_code {
 
 } {
     set sql "
-    	select state_code, city_name, county_name
-      	from zip_codes
-     	where zip_code=:zip_code"
+        select s.abbrev as state_code, z.name as city_name, c.name as county_name
+        from us_zipcodes z, us_states s, us_counties c
+        where  z.fips_state_code = s.fips_state_code and
+            z.fips_county_code = c.fips_county_code and
+            z.fips_state_code = c.fips_state_code and
+            z.zipcode=:zip_code"    
     
     set city_list [list]
     if { [catch {
@@ -1101,4 +1110,56 @@ ad_proc ec_product_link_if_exists {
 	set product_link ""
     }
     return $product_link
+}
+ad_proc ec_capitalize_words {
+    string_of_words
+} {
+    Capitalizes first letter of each word, makes rest lowercase
+} {
+    set word_list [split $string_of_words]
+    set entitled_list ""
+    foreach word $word_list {
+        lappend entitled_list [string totitle $word]
+    }
+    set entitled_words [join $entitled_list]
+    return $entitled_words
+}
+
+ad_proc ec_thumbnail_if_it_exists { 
+    dirname 
+    {border_p "t"} 
+    {image_title "item view"}
+} { 
+
+    This looks at dirname to see if the thumbnail is there and if
+    so returns an html fragment to show thumbnail
+    Otherwise it returns the empty string.
+
+} {
+
+    set thumbnail ""
+
+    if { $border_p == "f" } {
+	set border_part_of_img_tag " border=\"0\" "
+    } else {
+	set border_part_of_img_tag ""
+    }
+
+    # See if there's an image file (and thumbnail)
+    # Get the directory where dirname is stored
+
+    regsub -all {[a-zA-Z]} $dirname "" product_id
+    set subdirectory [ec_product_file_directory $product_id]
+    set file_path "$subdirectory/$dirname"
+    set product_data_directory "[ec_data_directory][ec_product_directory]"
+
+    set full_dirname "$product_data_directory$file_path"
+
+    if { [file exists "$full_dirname/product-thumbnail.jpg"] } {
+	set thumbnail_size [ns_jpegsize "$full_dirname/product-thumbnail.jpg"]
+
+        set thumbnail "<img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" title=\"$image_title\">"
+	
+    }
+    return $thumbnail
 }

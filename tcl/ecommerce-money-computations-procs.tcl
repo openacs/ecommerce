@@ -102,6 +102,7 @@ ad_proc ec_shipping_price_for_one_item {
 	from ec_admin_settings"
     
     # Calculate regular shipping price
+    set reg_shipping 0
 
     if { ![empty_string_p $shipping_additional] } {
 
@@ -285,7 +286,11 @@ ad_proc ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item {
 	    set total_shipping_cost [expr $total_shipping_cost + ([ec_decode $weight "" 0 $weight] * $add_exp_amount_by_weight)]
 	}
     }
-    
+    # See if this is a pickup item
+    if { $shipping_method == "pickup" } {
+        set total_shipping_cost 0
+    }
+
     # To return:
 
     set shipping_to_return $total_shipping_cost
@@ -353,4 +358,58 @@ ad_proc ec_price_shipping_gift_certificate_and_tax_in_an_order {
     }
 
     return [list $total_price $total_shipping $gift_certificate_amount $total_tax]
+}
+
+ad_proc ec_shipping_prices_for_one_item_by_rate { 
+    product_id
+    shipping
+    shipping_additional
+    default_shipping_per_item
+    weight
+    weight_shipping_cost
+    first_instance
+    add_exp_amount_per_item
+    add_exp_amount_by_weight
+} {
+    returns the shipping prices for one item based on rate parameters, no db queries
+} {
+   
+    # needs to return 3 different rates (regular, express, pick up)
+    
+    # calculate regular shipping price
+    set reg_shipping 0
+
+    if { $shipping_additional > 0 } {
+
+	if { $first_instance == 0 } {
+	    set reg_shipping $shipping_additional
+	} elseif { $shipping > 0 } {
+	    set reg_shipping $shipping
+	}
+    } elseif { $shipping > 0 } {
+	set reg_shipping $shipping
+    } elseif { $default_shipping_per_item > 0 } {
+	set reg_shipping $default_shipping_per_item
+    } elseif { $weight > 0 && $weight_shipping_cost > 0 } {
+	set reg_shipping [expr $weight * $weight_shipping_cost]
+    } else {
+	set reg_shipping 0
+    }
+
+    set total_reg_shipping_cost $reg_shipping
+    set total_shipping_cost $reg_shipping
+
+    # calculate express shipping
+
+	if { $add_exp_amount_per_item > 0 } {
+	    set total_shipping_cost [expr $total_shipping_cost + $add_exp_amount_per_item]
+	}
+	if { $add_exp_amount_by_weight > 0 } {
+	    set total_shipping_cost [expr $total_shipping_cost + ([ec_decode $weight "" 0 $weight] * $add_exp_amount_by_weight)]
+	}
+    set total_exp_shipping_cost $total_shipping_cost
+
+    # no need to calculate pick-up shipping
+
+    return [list $total_reg_shipping_cost $total_exp_shipping_cost 0]
 }

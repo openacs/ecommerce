@@ -21,7 +21,7 @@ ec_redirect_to_https_if_possible_and_necessary
 
 # we need them to be logged in
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"
@@ -72,11 +72,7 @@ if { [info exists address_id] } {
 
     # set attn just in case it gets used
     # avoid using it for single field name entry. 
-
-    set attn [db_string get_full_name "
-    	select first_names || '   ' || last_name as name 
-    	from cc_users 
-    	where user_id=:user_id"]
+    set attn "$first_names   $last_name"
 
 }
 if { ![info exists state_widget] } {
@@ -106,6 +102,7 @@ for {set i 0} {$i < [ns_set size $form_set]} {incr i} {
     append hidden_form_vars "[export_form_vars [ns_set key $form_set $i]]"
 }
 
+# set the defaults for name fields if they are empty
 if {[info exists last_name] != 1} {
    if {[info exists attn]} {
     # delimiter is triple space (for parsing).

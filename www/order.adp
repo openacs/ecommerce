@@ -6,5 +6,5 @@
   <property name="show_toolbar_p">t</property>
 
     <blockquote>
-      @order_summary@
+      @order_summary;noquote@
     </blockquote>

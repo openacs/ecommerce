@@ -5,6 +5,7 @@ ad_page_contract {
     summarizes their order before they submit it.
 
     @param usca_p User session begun or not
+    @param referer Referring page
 
     @author
     @creation-date
@@ -14,6 +15,7 @@ ad_page_contract {
 
 } {
     usca_p:optional
+    referer:optional
 }
 
 ec_redirect_to_https_if_possible_and_necessary
@@ -50,7 +52,7 @@ if { [empty_string_p $order_id] } {
 
     # Then they probably got here by pushing "Back", so just redirect
     # them to index.tcl
-
+    ns_log Notice "checkout-3.tcl ref(55): user_id:$user_id, user_session_id:$user_session_id, order_id is empty, redirecting to index"
     rp_internal_redirect index
     ad_script_abort
 }
@@ -63,12 +65,13 @@ if { [db_string get_ec_item_count "
     select count(*) 
     from ec_items 
     where order_id=:order_id"] == 0 } {
+    ns_log Notice "checkout-3.tcl ref(68): order_id:$order_id, no items in basket, redirecting to shopping-cart"
     rp_internal_redirect shopping-cart
     ad_script_abort
 }
 
 # Make sure the order belongs to this user_id, otherwise they managed
-# to skip past checkout.tcl, or they messed w/their user_session_id
+# to skip past checkout*.tcl, or they messed w/their user_session_id
 # cookie
 
 set order_owner [db_string get_order_owner "
@@ -76,6 +79,7 @@ set order_owner [db_string get_order_owner "
     from ec_orders 
     where order_id=:order_id"]
 if { $order_owner != $user_id } {
+    ns_log Notice "checkout-3.tcl ref(82): order_owner:$order_owner not matching order_id:$order_id, redirecting to checkout"
     rp_internal_redirect checkout
     ad_script_abort
 }
@@ -100,6 +104,7 @@ if { [empty_string_p $address_id] } {
 	and p.no_shipping_avail_p = 'f' 
 	and i.order_id = :order_id
 	group by no_shipping_avail_p"]} {
+        ns_log Notice "checkout-3.tcl ref(110): no shipping address needed for order_id:$order_id, redirecting to checkout"
 	ad_returnredirect [ec_securelink [ec_url]checkout]
         ad_script_abort
     }
@@ -137,13 +142,19 @@ set shipping_method [db_string get_shipping_method "
     select shipping_method 
     from ec_orders 
     where order_id=:order_id" -default ""]
-if { [empty_string_p $shipping_method] || ([empty_string_p $creditcard_id] && (![info exists gift_certificate_covers_cost_p] || $gift_certificate_covers_cost_p == "f")) } {
+if { [empty_string_p $shipping_method] || ([empty_string_p $creditcard_id] && [exists_and_equal gift_certificate_covers_cost_p "f"]) } {
+    ns_log Notice "checkout-3.tcl ref(146): no shipping method for order_id:$order_id. Redirecting to checkout-2"
     rp_internal_redirect checkout-2
     ad_script_abort
 }
 
 # Done with all the checks.  Their order is ready to go!  Now show
 # them a summary before they submit their order
+if {[exists_and_equal referer "checkout-one-form-2"]} {
+    set display_progress "f"
+} else {
+    set display_progress "t"
+}
 
 set order_summary [ec_order_summary_for_customer $order_id $user_id]
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]

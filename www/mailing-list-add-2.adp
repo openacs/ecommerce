@@ -6,5 +6,5 @@
   <property name="show_toolbar_p">t</property>
 
 <blockquote>
-  To remove yourself anytime, go to @remove_link;noquote@
+  To remove yourself anytime, go to @remove_link;noquote@ mailing list.
 </blockquote>

@@ -38,15 +38,16 @@ doc_body_append "
     	the name you'll see when adding/updating products.</td>
       </tr>
     
-      <tr>
-        <td>Default Value (if any)</td>
-        <td colspan=2><input type=text size=15 name=default_value maxlength=100></td>
-      </tr>
     
       <tr>
         <td>What kind of information will this field hold?</td>
         <td colspan=2>[ec_column_type_widget]</td>
       </tr>
+      <tr>
+        <td>Default Value (if any)</td>
+        <td><input type=text size=15 name=default_value maxlength=100></td>
+        <td>For <b>Date</b> type, entering \"0\" here will set the default value to the current time of each new item. For other dates, use the format \"YYYY-MM-DD\"</td>       
+</tr>
     </table>
     
     <center>

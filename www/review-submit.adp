@@ -17,8 +17,7 @@
       </li>
     <li>
       <p>Enter your review below: (maximum of 1,000 words)</p>
-      <textarea wrap name="user_comment" rows="6" cols="50">
-</textarea>
+      <textarea wrap name="user_comment" rows="6" cols="50"></textarea>
     </li>
   </ol>
   <blockquote>

@@ -48,12 +48,9 @@ if { $user_is_logged_on && ![string equal $user_session_id "0"]} {
 set ec_user_string ""
 set register_url "/register?return_url=[ns_urlencode [ec_url]]"
 
-# we'll show a search widget at the top if there are categories to search in
-if { ![empty_string_p [db_string get_check_of_categories "select 1 from dual where exists (select 1 from ec_categories)" -default ""]] } {
-    set search_widget [ec_search_widget]
-} else {
-    set search_widget ""
-}
+# the base url allows us to switch connections to http from https if currently an https connection
+# for saving computing SSL resources only when necessary
+set base_url "[ec_insecurelink [ad_conn url]]"
 
 set recommendations_if_there_are_any "<table width=\"100%\">"
 
@@ -80,7 +77,7 @@ and r.active_p='t'" {
 	<table width=\"100%\">
 	  <tr>
 	    <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
-	    <td valign=top><a href=\"product?[export_url_vars product_id]\">$product_name</a>
+<td valign=top><a href=\"${base_url}product?[export_url_vars product_id]\">$product_name</a>
 	      <p>$recommendation_text</p>
 	    </td>
 	    <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
@@ -111,7 +108,7 @@ db_foreach get_tl_products "
 	append products "
 	      <tr valign=top>
 	        <td>[expr $count + 1]</td>
-	        <td colspan=2><a href=\"product?product_id=$product_id\"><b>$product_name</b></a></td>
+	        <td colspan=2><a href=\"${base_url}product?product_id=$product_id\"><b>$product_name</b></a></td>
 	      </tr>
 	      <tr valign=top>
 		<td></td>
@@ -135,17 +132,17 @@ if {[string equal $products "<table width=\"100%\">"]} {
 }
 
 if { $start >= $how_many } {
-    set prev_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]>Previous $how_many</a>"
+    set prev_link "<a href=${base_url}?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]>Previous $how_many</a>"
 } else {
     set prev_link ""
 }
 
 if { $have_how_many_more_p == "t" } {
-    set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $how_many</a>"
+    set next_link "<a href=${base_url}?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $how_many</a>"
 } else {
     set number_of_remaining_products [expr $count - $start - $how_many]
     if { $number_of_remaining_products > 0 } {
-	set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $number_of_remaining_products</a>"
+	set next_link "<a href=${base_url}?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $number_of_remaining_products</a>"
     } else {
 	set next_link ""
     }
@@ -156,7 +153,7 @@ if { [empty_string_p $next_link] || [empty_string_p $prev_link] } {
 } else {
     set separator "|"
 }
-
+set package_instance_name [apm_instance_name_from_id [apm_package_id_from_key ecommerce]]
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar ""]
 db_release_unused_handles
 ad_return_template

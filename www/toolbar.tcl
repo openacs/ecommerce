@@ -25,9 +25,15 @@ foreach parameter {category_id subcategory_id search_text current_location} {
 
 set ecommerce_base_url [ec_url]
 
-# Create a context aware search widget to search for products.
+# we'll show a search widget at the top if there are categories to search in
+if { ![empty_string_p [db_string get_check_of_categories "select 1 from dual where exists (select 1 from ec_categories)" -default ""]] } {
+    # Create a context aware search widget to search for products.
+    set ec_search_widget [ec_search_widget "$category_id|$subcategory_id"  $search_text]
+} else {
+    set ec_search_widget ""
+}
 
-set ec_search_widget [ec_search_widget "$category_id|$subcategory_id"  $search_text]
+
 
 # Determine the URLs to the Shopping Cart and store Account.
 

@@ -17,7 +17,7 @@
   <h3>Your Order History</h3>
 
   <ul>
-    @past_orders@
+    @past_orders;noquote@
   </ul>
 
   @purchased_gift_certificates;noquote@
