@@ -86,7 +86,18 @@
       see <a
       href="http://philip.greenspun.com/panda/images">Chapter 6:
       Adding Images to Your Site</a> of Philip and Alex's Guide to Web
-      Publishing.</p>
+      Publishing.
+      The shopping basket automatically recognizes images that are placed in product directories
+      designated by the ecommerce ProductDataDirectory parameter. 
+      Product images use the filename \"product\" and either \".gif\" or \".jpg\" extension.
+      Thumbnails use the filename \"product-thumbnail.jpg\". No facility exists for displaying
+      GIF thumbnails using the ecommerce procs, because they tend to have larger file sizes
+      that signifcantly delay 
+      image loads via ssl. Note: PNG extensions are not supported, because there is no 
+      fully supported production ready ns_pngsize function, though there
+      may be one soon. See: 
+      <a href="http://www.panoptic.com/wiki/aolserver/216">AOLserver nsimage module</a> (beta)
+</p>
 
   <li>
 
