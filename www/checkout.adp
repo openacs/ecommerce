@@ -6,7 +6,6 @@
 
 <blockquote>
 
-  <if @shipping_required@ >
     <p><b>Please choose your shipping address.</b></p>
 
     <blockquote>
@@ -77,15 +76,5 @@
 	</td>
       </tr>
     </table>
-  </if>
-  <else>
-    <p>Your order does not need a shipping address</p>
-    <form method="post" action="checkout-2">
-      @hidden_form_vars@
-      <center>
-	<input type="submit" value="Continue"></input>
-      </center>
-    </form>
-  </else>
    
 </blockquote>
