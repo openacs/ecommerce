@@ -74,7 +74,7 @@ select address_id, attn,
     [ec_display_as_html [ec_pretty_mailing_address_from_args $line1 $line2 $city $usps_abbrev $zip_code $country_code $full_state_name $attn $phone $phone_time]]
     </td>
     <td>
-    <a href=\"$address_link?[export_url_vars address_id]\">\[use this address\]</a>
+    <a href=\"checkout-2?[export_url_vars address_id]\">\[use this address\]</a>
     </td>
     </tr>
     "
