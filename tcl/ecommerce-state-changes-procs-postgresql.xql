@@ -104,8 +104,8 @@ select ec_reinst_gift_cert_on_order (:order_id)
       insert into ec_gift_certificate_usage
       (gift_certificate_id, order_id, amount_used, used_date)
       VALUES
-	(:gift_certificate_id, :order_id, least(to_number(:gift_certificate_amount_left),
-        to_number(:amount_owed)), current_timestamp)
+      (:gift_certificate_id, :order_id, 
+      least(:gift_certificate_amount_left,:amount_owed), current_timestamp)
         
       </querytext>
 </fullquery>
