@@ -20,7 +20,7 @@ ad_page_contract {
     usca_p:optional
 }
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 
 # Is search request originating from a page from this site? 
 # if not, cookies are created for each image, so consider skiping presenting images

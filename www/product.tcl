@@ -39,7 +39,7 @@ if [template::util::is_nil combocategory_id] { set combocategory_id "" }
 # Users don't need to be logged in but if they are the could get a
 # lower price
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 
 # user sessions:
 # 1. get user_session_id from cookie

@@ -156,8 +156,8 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 } {
     uplevel {
 	# wtem@olywa.net, 2001-03-22
-	# made this simpler by relying on ad_secure_conn_p
-	if {![ad_secure_conn_p]} {
+	# made this simpler by relying on security::secure_conn_p
+	if {![security::secure_conn_p]} {
 	    # see if ssl is installed
 	    # replaced security::https_available_p with ec_ssl_available_p
 	    # which detects nsopenssl
@@ -180,7 +180,7 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 
 		# grab the user_id 
 		# 0 if user is not logged in
-		set user_id [ad_verify_and_get_user_id]
+		set user_id [ad_conn user_id]
 
 		# grab the current user_session_id
 		# otherwise we lose the session 

@@ -17,7 +17,7 @@ ad_page_contract {
 
 # We need them to be logged in
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
     ad_returnredirect "/register?[export_url_vars return_url]"

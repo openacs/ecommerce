@@ -33,7 +33,7 @@ set first_names ""
 set last_name ""
 set email ""
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 if { $user_id != 0 } {
     ad_get_user_info
 }

@@ -23,7 +23,7 @@ ad_page_contract {
 
 # we need them to be logged in
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 if {$user_id == 0} {
     if [info exists usca_p] {
 	set return_url "[ad_conn url]?[export_url_vars product_id rating one_line_summary user_comment comment_id usca_p]"

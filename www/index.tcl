@@ -20,7 +20,7 @@ ad_page_contract {
 
 # see if they're logged in
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 if { $user_id != 0 } {
     set user_name [db_string get_user_name "select first_names || ' ' || last_name from cc_users where user_id=:user_id"]
 } else {

@@ -30,7 +30,7 @@ if { $template_id == $default_template_id } {
     ad_script_abort
 }
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 
 if {$user_id == 0} {
     

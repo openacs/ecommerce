@@ -33,7 +33,7 @@ if {[regexp {^[.]$}  $sale_price match ]} {
 
 # We need them to be logged in
 
-ad_maybe_redirect_for_registration
+auth::require_login
 set user_id [ad_get_user_id]
 set peeraddr [ns_conn peeraddr]
 

@@ -14,7 +14,7 @@ ad_page_contract {
 
 # Authenticate the user
 
-set user_id [ad_maybe_redirect_for_registration]
+set user_id [auth::require_login]
 
 # Check for read privileges
 
