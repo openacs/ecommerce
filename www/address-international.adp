@@ -15,7 +15,7 @@
 </else>
 
 <form method="post" action="address-international-2">
-  @hidden_form_vars@
+  @hidden_form_vars;noquote@
   <blockquote>
     <table>
       <tr>
@@ -44,7 +44,7 @@
       </tr>
       <tr>
 	<td>Country</td>
-	<td>@country_widget@</td>
+	<td>@country_widget;noquote@</td>
       </tr>
       <tr>
 	<td>Phone</td>
