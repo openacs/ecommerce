@@ -13,7 +13,6 @@ ad_page_contract {
   Legal values for field names are the columns in ec_products (see
   ecommerce/sql/ecommerce-create.sql for current column names):
 
-    product_id (required)
     sku
     product_name (required)
     one_line_description:html
@@ -33,7 +32,7 @@ ad_page_contract {
     template_id
     stock_status
 
-  Note: dirname, creation_date, available_date, last_modified,
+  Note: product_id, dirname, creation_date, available_date, last_modified,
   last_modifying_user and modified_ip_address are set automatically
   and should not appear in the CSV file.
 
