@@ -50,7 +50,7 @@ set register_url "/register?return_url=[ns_urlencode [ec_url]]"
 
 # the base url allows us to switch connections to http from https if currently an https connection
 # for saving computing SSL resources only when necessary
-set baseurl "[ec_insecurelink [ad_conn url]]"
+set base_url "[ec_insecurelink [ad_conn url]]"
 
 set recommendations_if_there_are_any "<table width=\"100%\">"
 

@@ -42,11 +42,39 @@ if { [info exists address_id] } {
 } else {
     set country_widget [ec_country_widget]
 
-    set attn [ad_quotehtml [db_string get_full_name "
-	select first_names || ' ' || last_name as name 
-	from cc_users 
-	where user_id=:user_id"]]
+    # Retrieve the default name.
+
+    # get the separate fields for card processing
+    db_0or1row get_names "
+	select first_names, last_name
+	from cc_users
+	where user_id=:user_id"
+    # we could use a single name field for shipping
+    # but shipping address becomes default for billing!
+    # attn has a 3 space delimiter for parsing last/first names
+
+    # set attn just in case it gets used
+    # avoid using it for single field name entry. 
+    set attn "$first_names   $last_name"
+
 }
+
+# set the defaults for name fields if they are empty
+if {[info exists last_name] != 1} {
+   if {[info exists attn]} {
+    # delimiter is triple space (for parsing).
+        set name_delim [string first "   " $attn]
+        if {$name_delim < 0 } {
+            set name_delim 0
+        }
+        set first_names [string trim [string range $attn 0 $name_delim]]
+        set last_name [string range $attn [expr $name_delim + 3 ] end]
+    }
+}
+set user_last_name_with_quotes_escaped [ad_quotehtml $last_name]
+set user_first_names_with_quotes_escaped [ad_quotehtml $first_names]
+
+set user_name_with_quotes_escaped [ad_quotehtml $attn]
 
 # Get the form vars that were passed on delete-address so that they
 # can be passed back to the calling url. gift-certificate-billing has

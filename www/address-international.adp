@@ -56,7 +56,7 @@
 	<td>Phone</td>
 	<td>
 	  <input type="text" name="phone" size="20" maxlength="20" <if @phone@ not nil>value="@phone@"</if>>
-          <input type="radio" name="phone_time" value="d"<if @phone_time@ not nil and @phone_time@ eq "d"> checked</if>>day&nbsp;&nbsp;&nbsp;<input type="radio" name="phone_time" value="e"<if @phone_time@ not nil and @phone_time@ eq "e"> checked</if>> evening
+          <input type="radio" name="phone_time" value="d"<if @phone_time@ nil or @phone_time@ not eq "e"> checked</if>>day&nbsp;&nbsp;&nbsp;<input type="radio" name="phone_time" value="e"<if @phone_time@ not nil and @phone_time@ eq "e"> checked</if>> evening
 	</td>
       </tr>
     </table>

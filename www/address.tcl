@@ -72,11 +72,7 @@ if { [info exists address_id] } {
 
     # set attn just in case it gets used
     # avoid using it for single field name entry. 
-
-    set attn [db_string get_full_name "
-    	select first_names || '   ' || last_name as name 
-    	from cc_users 
-    	where user_id=:user_id"]
+    set attn "$first_names   $last_name"
 
 }
 if { ![info exists state_widget] } {
