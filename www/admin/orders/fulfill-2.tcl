@@ -40,6 +40,7 @@ if { ![empty_string_p $carrier_other] } {
 
 set temp_shipment_date $shipment_date(date)
 if { [exists_and_not_null shipment_time(time)] } {
+    set shipment_time(time) [ec_timeentrywidget_time_check $shipment_time(time)]
     append temp_shipment_date " $shipment_time(time)$shipment_time(ampm)"
 } else {
     append temp_shipment_date " 12:00:00AM"
@@ -48,6 +49,7 @@ if { [exists_and_not_null shipment_time(time)] } {
 set temp_expected_arrival_date ""
 if { [exists_and_not_null expected_arrival_date(date)] } {
     append temp_expected_arrival_date $expected_arrival_date(date)
+    set expected_arrival_time(time) [ec_timeentrywidget_time_check $expected_arrival_time(time)]
     if { [exists_and_not_null expected_arrival_time(time)] } {
 	append temp_expected_arrival_date " $expected_arrival_time(time)$expected_arrival_time(ampm)"
     } else {
@@ -143,6 +145,10 @@ db_foreach get_items_to_ship $sql {
     set options [join $option_list ", "]
 
    append items_to_print "<li> $product_name; [ec_decode $options "" "" "$options; "]$price_name: [ec_pretty_price $price_charged]"
+}
+
+if { [info exists all_items_p] } {
+    set item_id $item_id_list
 }
 
 append page_html "<form method=post action=fulfill-3>
