@@ -55,10 +55,12 @@ set peeraddr [ns_conn peeraddr]
 # we have to generate audit information
 # First, write as insert
 set audit_fields "last_modified, last_modifying_user, modified_ip_address"
-set audit_info "sysdate, :user_id, :peeraddr"
+# set audit_info "sysdate, :user_id, :peeraddr"
+set audit_info [db_map audit_info_sql]
 
 # Or otherwise write as update
-set audit_update "last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address=:peeraddr"
+#set audit_update "last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address=:peeraddr"
+set audit_update [db_map audit_update_sql]
 
 db_transaction {
 

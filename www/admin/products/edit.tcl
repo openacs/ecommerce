@@ -32,7 +32,18 @@ All fields are optional except Product Name.
 "
 set multiple_retailers_p [util_memoize {ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce} [ec_cache_refresh]]
 
-db_1row product_select "select * from ec_products where product_id=:product_id"
+db_1row product_select "
+select product_id, sku, product_name, 
+to_char(creation_date, 'YYYY-MM-DD') as creation_date, one_line_description, 
+detailed_description, search_keywords, price, no_shipping_avail_p, shipping, 
+shipping_additional, weight, dirname, present_p, active_p, 
+to_char(available_date, 'YYYY-MM-DD') as available_date, announcements, 
+to_char(announcements_expire, 'YYYY-MM-DD') as announcements_expire, url, 
+template_id, stock_status, color_list, size_list, style_list, 
+email_on_purchase_list, to_char(last_modified, 'YYYY-MM-DD') as last_modified, 
+last_modifying_user, modified_ip_address
+from ec_products where product_id=:product_id
+"
 
 doc_body_append "<form enctype=multipart/form-data method=post action=edit-2>
 [export_form_vars product_id]
