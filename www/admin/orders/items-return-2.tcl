@@ -19,7 +19,7 @@ ad_require_permission [ad_conn package_id] admin
 
 set received_back_datetime $received_back_date(date)
 if { [exists_and_not_null received_back_time(time)] } {
-    append received_back_datetime " $received_back_time(time)$received_back_time(ampm)"
+    append received_back_datetime " [ec_timeentrywidget_time_check \"$received_back_time(time)\"]$received_back_time(ampm)"
 } else {
     append received_back_datetime " 12:00:00AM"
 }
