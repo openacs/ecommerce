@@ -5,7 +5,7 @@ ad_page_contract {
     @author Eve Andersson (eveander@arsdigita.com)
     @creation-date Summer 1999
     @author ported by Jerry Asher (jerry@theashergroup.com)
-    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author revised by Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @revision-date May 2002
 
 } {

@@ -12,7 +12,7 @@ ad_page_contract {
     @author
     @creation-date
     @author ported by Jerry Asher (jerry@theashergroup.com)
-    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author revised by Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @revision-date May 2002
 } {
     category_id:optional,naturalnum

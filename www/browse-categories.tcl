@@ -2,7 +2,7 @@ ad_page_contract {
 
     Present a list of top level product categories to browse.
 
-    @author Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @creation-date September 2002
     @cvs_id
 

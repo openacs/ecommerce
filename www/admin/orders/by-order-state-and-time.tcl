@@ -2,10 +2,10 @@ ad_page_contract {
     View orders by order state and order time.
 
     @author Eve Anderson (eveander@arsdigita.com)
-    @author Bart Teeuwisse (bart.teeuwisse@7-sisters.com)
+    @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @creation-date Summer 1999
     @author ported by Jerry Asher (jerry@theashergroup.com)
-    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author revised by Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @revision-date April 2002
 
 } {

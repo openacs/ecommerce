@@ -51,7 +51,7 @@
   href=mailto:jerry-ecommerce@hollyjerry.org>Jerry Asher</a>, <a
   href=mailto:wtem@olywa.net>Walter McGinnis</a>, and <a
   href="http://furfly.net">furfly.net</a> followed by a major overhaul
-  by <a href="mailto:bart.teeuwisse@7-sisters.com">Bart
+  by <a href="mailto:bart.teeuwisse@thecodemill.biz">Bart
   Teeuwisse</a>.</p>
 
   <p>@package_name@ is free software; you can redistribute it

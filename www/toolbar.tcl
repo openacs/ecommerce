@@ -7,7 +7,7 @@
 #     @param search_text
 #     @current_location
 
-#     @author Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+#     @author Bart Teeuwisse <bart.teeuwisse@thecodemill.biz
 #     @cvs-id $Id$
 #     @creation-date September 2002
 

@@ -5,7 +5,7 @@ ad_page_contract {
     @author
     @creation-date
     @author ported by Jerry Asher (jerry@theashergroup.com)
-    @author Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @revision-date April 20002
 
 } {

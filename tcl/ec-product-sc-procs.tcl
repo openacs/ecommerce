@@ -2,7 +2,7 @@ ad_proc ec_products__datasource {
     object_id
 } {
     @author Gilbert Wong
-    @author Bart Teeuwisse (bart.teeuwisse@7-sisters.com)
+    @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
 } {
     db_0or1row ec_products_datasource {
         select e.product_id as object_id,

@@ -6,7 +6,7 @@ ad_page_contract {
     @param address_id
     @param referer
 
-    @author Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @creation-date April 2002
 } {
     address_id

@@ -2,7 +2,7 @@
 
 #     @param context_addition
 
-#     @author Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+#     @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
 #     @cvs-id $Id$
 #     @creation-date September 2002
 
@@ -24,9 +24,10 @@ if {[empty_string_p $context_addition]} {
 # Check for admin rights to this (the ecommerce) package.
 
 set ec_admin_p [ad_permission_p [ad_conn package_id] admin]
-set ec_admin_link [apm_package_url_from_id [ec_id]]admin/
+set ec_admin_link [apm_package_url_from_key ecommerce]admin/
+set ec_installed_p [apm_package_installed_p "ecommerce"]
 
 # Get the name of the ecommerce package
 
-set ec_system_name [ec_system_name]
+set ec_system_name [ad_parameter -package_id [apm_package_id_from_key ecommerce] SystemName "" Store]
 

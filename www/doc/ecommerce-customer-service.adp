@@ -3,8 +3,8 @@
   <property name="signatory">@signatory@</property>
   <property name="context_bar">@context_bar@</property>
 
-  <p>The Customer Service Module can be found at <a
-   href="@package_url@admin/customer-service/">@package_url@admin/customer-service/</a>
+  <p>The Customer Service Module can be found at <if @package_url@ not nil><a
+   href="@package_url@admin/customer-service/">@package_url@</if>admin/customer-service/<if @package_url@ not nil></a></if>
    (it is also linked to from the main Ecommerce Administration
    page).</p>
 
@@ -68,15 +68,15 @@
     will become part of the record for that customer service issue.</p>
 
   <p> If you find yourself using the same phrases over and over again
-    when you respond to customers' emails, the <a
-    href="@package_url@admin/customer-service/canned-responses">Canned
-    Response System</a> will be useful to you.  You can enter your
+    when you respond to customers' emails, the <if @package_url@ not nil><a
+    href="@package_url@admin/customer-service/canned-responses"></if>Canned
+    Response System<if @package_url@ not nil></a></if> will be useful to you.  You can enter your
     commonly used phrases once, and then whenever you send email
     you'll be able to automatically insert any number of these
     phrases.</p>
 
-  <p>If you want to send email to customers in bulk, then use the <a
-    href="@package_url@admin/customer-service/spam">Spam System</a>.
+  <p>If you want to send email to customers in bulk, then use the <if @package_url@ not nil><a
+    href="@package_url@admin/customer-service/spam"></if>Spam System<if @package_url@ not nil></a></if>.
     You can spam users based on what products they've bought, what
     products they've even looked at, by when they've last visited, by
     how much they've spent at your site, by which mailing lists
@@ -91,9 +91,9 @@
   <p>When your customer service data entry people are recording
     customer interactions, you want it to take as little effort as
     possible.  One way to help is to predefine picklists that they can
-    choose from when entering data.  With the <a
-    href="@package_url@admin/customer-service/picklists">Picklist
-    Management tool</a>, you can specify what goes in what picklist in
+    choose from when entering data.  With the <if @package_url@ not nil><a
+    href="@package_url@admin/customer-service/picklists"></if>Picklist
+    Management tool<if @package_url@ not nil></a></if>, you can specify what goes in what picklist in
     what order.</p>
 
   <h3>Reports</h3>

@@ -4,7 +4,7 @@ ad_page_contract {
 
     @param usca_p User session started or not
 
-    @author Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @creation-date April 2002
 
 } {

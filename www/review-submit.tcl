@@ -6,7 +6,7 @@ ad_page_contract {
     @creation-date
     @cvs-id $Id$
     @author ported by Jerry Asher (jerry@theashergroup.com)
-    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author revised by Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @revision-date April 2002
 
 } {

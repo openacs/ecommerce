@@ -7,7 +7,7 @@
 --
 -- ported to OpenACS by Gilbert wong (gwong@orchardlabs.com)
 -- July 2001
--- OpenFTS Search added by Bart Teeuwisse (bart.teeuwisse@7-sisters.com
+-- OpenFTS Search added by Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
 --
 -- Besides the tables defined here, you also need to import
 -- zip_codes, which contains the following columns:

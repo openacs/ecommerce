@@ -5,7 +5,7 @@ ad_page_contract {
     @param referer
 
     @author ported by Jerry Asher (jerry@theashergroup.com)
-    @author revised by Bart Teeuwisse (bart.teeuwisse@7-sisters.com)
+    @author revised by Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @creation-date revised April 2002
 
 } {

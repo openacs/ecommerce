@@ -3,7 +3,7 @@ ad_page_contract {
   Search for a product based on name or sku.
 
   @author Eve Andersson (eveander@arsdigita.com)
-  @author Bart Teeuwisse (bart.teeuwisse@7-sisters.com)
+  @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
   @creation-date Summer 1999
   @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)

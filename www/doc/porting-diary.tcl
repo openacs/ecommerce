@@ -3,7 +3,7 @@ ad_page_contract {
     Porting diary of the ecommerce package, a package to implement
     business-to-consumer web services.
 
-    @author Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @creation-date May 2002
 
 } {
@@ -33,4 +33,4 @@ set context_bar [ad_context_bar [list "." "$package_name Documentation"] "4.1a P
 
 # Set signatory for at the bottom of the page
 
-set signatory "bart.teeuwisse@7-sisters.com"
+set signatory "bart.teeuwisse@thecodemill.biz"
