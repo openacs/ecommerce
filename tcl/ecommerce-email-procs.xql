@@ -16,6 +16,7 @@
       from ec_items ei, ec_products ep
       where ei.product_id = ep.product_id
       and ei.order_id = :order_id
+      and email_on_purchase_list is not null
       group by ep.email_on_purchase_list, ep.product_name
     </querytext>
   </fullquery>
