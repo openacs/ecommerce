@@ -34,12 +34,3 @@ ad_proc qmail {to from subject body {extraheaders {}}} {
     puts -nonewline $qmail_pipe $msg
     close $qmail_pipe
 }
-
-# Inject a fully formed message into qmail.
-ad_proc qmail_send_complete_message {from msg} {
-    sends message using qmail
- } {
-    set qmail_pipe [open "| /var/qmail/bin/qmail-inject -h -f$from" "w"]
-    puts -nonewline $qmail_pipe $msg
-    close $qmail_pipe
-}
