@@ -34,8 +34,8 @@ ec_create_new_session_if_necessary
 # Retrieve the saved address with address_id. 
 
 if { [info exists address_id] } {
-    db_0or1row shipping_address "
-	select *
+    db_0or1row select_address "
+        select attn, line1, line2, city, usps_abbrev, zip_code, phone, country_code, full_state_name, phone_time 
 	from ec_addresses 
 	where address_id=:address_id"
     set country_widget [ec_country_widget $country_code]
