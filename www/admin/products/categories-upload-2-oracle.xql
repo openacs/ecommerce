@@ -78,10 +78,5 @@
       	:ip)
     </querytext>
   </fullquery>
-  
-  <fullquery name="">      
-    <querytext>
-    </querytext>
-  </fullquery>
-  
+    
 </queryset>
