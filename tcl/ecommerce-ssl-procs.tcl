@@ -341,6 +341,7 @@ ad_proc ec_insecurelink {new_page} {
            regexp {^(.*)/} $current_url match new_url_dir
            append new_url "$new_url_dir/$new_page"
         }
+        set new_url "[ad_url]$new_url"
         return $new_url
     }
 }
