@@ -45,7 +45,7 @@
 </fullquery>
 
  
-<fullquery name="custom_fields_select">      
+<fullquery name="custom_fields_export">      
       <querytext>
       select field_identifier from ec_custom_product_fields where active_p='t'
       </querytext>

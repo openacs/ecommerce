@@ -451,7 +451,7 @@ Available Date
 "
 
 # also need to export custom field values
-db_foreach custom_fields_select "select field_identifier from ec_custom_product_fields where active_p='t'" {
+db_foreach custom_fields_export "select field_identifier from ec_custom_product_fields where active_p='t'" {
   if { [info exists ec_custom_fields($field_identifier)] } {
     doc_body_append "<input type=hidden name=\"ec_custom_fields.$field_identifier\" value=\"[ad_quotehtml $ec_custom_fields($field_identifier)]\">\n"
   }

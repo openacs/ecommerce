@@ -367,46 +367,25 @@ will look up the category_id to find the category_name.
     }
 }
 
-# returns a link for the user to add him/herself to the mailing list for whatever category/
-# subcategory/subsubcategory a product is in.
-# If the product is multiply categorized, this will just use the first categorization that
-# Oracle finds for this product.
 ad_proc ec_mailing_list_link_for_a_product { product_id } { 
-returns a link for the user to add him/herself to the mailing list for whatever category/subcategory/subsubcategory a product is in.
-If the product is multiply categorized, this will just use the first categorization that Oracle finds for this product.
+
+    Returns a link for the user to add him/herself to the mailing
+    list for whatever category/subcategory/subsubcategory a product
+    is in.  If the product is multiply categorized, this will just
+    use the first categorization that the DB finds for this product.
+
 } {
     set category_id ""
     set subcategory_id ""
     set subsubcategory_id ""
 
-	db_foreach category_id_select {
-	    select category_id from ec_category_product_map where product_id = :product_id
-	}  {
-	
-	    db_foreach subcategory_id_select {
-		select s.subcategory_id
-		  from ec_subcategory_product_map m,
-		       ec_subcategories s
-		 where m.subcategory_id = s.subcategory_id
-		   and s.category_id = :category_id
-		   and m.product_id = :product_id
-	    } {
-	
-	    db_foreach subsubcategory_id_select {
-		select ss.subsubcategory_id
-		  from ec_subsubcategory_product_map m,
-		       ec_subsubcategories ss
-		 where m.subsubcategory_id = ss.subsubcategory_id
-		   and ss.subcategory_id = :subcategory_id
-		   and m.product_id = :product_id
-	    } { }
-	}
-    }
+    set common_sql [db_map mailing_categories_common]
+    db_0or1row mailing_categories {}
 
     if { ![empty_string_p $category_id] || ![empty_string_p $subcategory_id] || ![empty_string_p $subsubcategory_id] } {
-	return "<a href=\"[ec_url]mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]\">Add yourself to the [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] mailing list!</a>"
+        return "<a href=\"[ec_url]mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]\">Add yourself to the [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] mailing list!</a>"
     } else { 
-	return ""
+        return ""
     }
 }
 
@@ -563,7 +542,8 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
 	   $end_of_comment_query
     " {
 
-	append comments_to_print "<b><a href=\"/shared/community-member?[export_url_vars user_id]\">$email</a></b> rated this product [ec_display_rating $rating] on <i>$last_modified_pretty</i> and wrote:<br>
+        array set person [person::get -person_id $user_id]
+	append comments_to_print "<b><a href=\"/shared/community-member?[export_url_vars user_id]\">$person(first_names) $person(last_name)</a></b> rated this product [ec_display_rating $rating] on <i>$last_modified_pretty</i> and wrote:<br>
 	<b>$one_line_summary</b><br>
 	$user_comment 
 	<p>
