@@ -1,12 +1,10 @@
 <master>
-  <property name="title">Completing Your Order</property>
+  <property name="title">Shipping Method</property>
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
   <include src="checkout-progress" step="3">
 
-
-<h2>Select Your Shipping Method</h2>
 
 <form method="post" action="@form_action@">
   <ol>
