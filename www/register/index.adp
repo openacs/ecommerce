@@ -17,7 +17,7 @@ password for signing into the system.  We will direct you to another form to
 complete your registration.</p>
 
 <FORM method=post action=user-login name=login>
-@export_vars@
+@export_vars;noquote@
 <table>
 <tr><td>Your email address:</td><td><INPUT type=text name=email value="@email@"></tr>
 

@@ -1,7 +1,7 @@
 <master>
   <property name=title>Setup of the Ecommerce Module</property>
-  <property name="signatory">@signatory@</property>
-  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@signatory;noquote@</property>
+  <property name="context_bar">@context_bar;noquote@</property>
 
   <p>This is intended to be a guide for the content administrators of
     @package_name@.  Content administrators are not assumed to have any

@@ -1,6 +1,6 @@
 <master>
   <property name="title">Welcome</property>
-  <property name="context_bar">@context_bar@</property>
+  <property name="context_bar">@context_bar;noquote@</property>
 
   <include src="toolbar">
 
@@ -14,7 +14,7 @@
 
       <include src="browse-categories">
 
-      <if @recommendations_if_there_are_any@>
+      <if @recommendations_if_there_are_any;noquote@>
 	<h4>We recommend:</h4>
 	@recommendations_if_there_are_any@
       </if>

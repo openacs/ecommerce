@@ -1,7 +1,7 @@
 <master>
   <property name=title>Operation of the Ecommerce Module</property>
-  <property name="signatory">@signatory@</property>
-  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@signatory;noquote@</property>
+  <property name="context_bar">@context_bar;noquote@</property>
 
   <p>Before reading this, make sure that you have read about <a
    href="ecommerce-setup">setting up your ecommerce module</a>.  This

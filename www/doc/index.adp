@@ -1,7 +1,7 @@
 <master>
-  <property name="title">@title@</property>
-  <property name="signatory">@signatory@</property>
-  <property name="context_bar">@context_bar@</property>
+  <property name="title">@title;noquote@</property>
+  <property name="signatory">@signatory;noquote@</property>
+  <property name="context_bar">@context_bar;noquote@</property>
 
   <p>@package_name@ implements all the IT needs for a standard
     business-to-consumer web service.  Most importantly, it is tightly

@@ -1,7 +1,7 @@
 <master>
-  <property name="title">@page_title@</property>
-  <property name="context_bar">@context_bar@</property>
-  <property name="signatory">@ec_system_owner@</property>
+  <property name="title">@page_title;noquote@</property>
+  <property name="context_bar">@context_bar;noquote@</property>
+  <property name="signatory">@ec_system_owner;noquote@</property>
 
   <include src="toolbar" current_location="shopping-cart">
 

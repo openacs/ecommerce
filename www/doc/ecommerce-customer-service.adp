@@ -1,7 +1,7 @@
 <master>
-  <property name=title>@title@</property>
-  <property name="signatory">@signatory@</property>
-  <property name="context_bar">@context_bar@</property>
+  <property name=title>@title;noquote@</property>
+  <property name="signatory">@signatory;noquote@</property>
+  <property name="context_bar">@context_bar;noquote@</property>
 
   <p>The Customer Service Module can be found at <if @package_url@ not nil><a
    href="@package_url@admin/customer-service/">@package_url@</if>admin/customer-service/<if @package_url@ not nil></a></if>

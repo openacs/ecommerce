@@ -13,7 +13,7 @@ password:
 <p>
 
 <form action="user-login" method=post>
-@export_vars@
+@export_vars;noquote@
 Password:  <input type=password name=password size=20>
 <input type=submit value="Login">
 </form>
