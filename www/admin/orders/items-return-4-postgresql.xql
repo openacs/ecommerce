@@ -222,7 +222,7 @@
       insert into ec_financial_transactions
       (transaction_id, refunded_transaction_id, order_id, refund_id, creditcard_id, transaction_amount, transaction_type, inserted_date, to_be_captured_date)
       values
-      (:refund_transaction_id, :charged_transaction_id, :order_id, :refund_id, :creditcard_id, :refund_amount, 'refund', sysdate, :scheduled_hour)
+      (:refund_transaction_id, :charged_transaction_id, :order_id, :refund_id, :creditcard_id, :refund_amount, 'refund', current_timestamp, :scheduled_hour)
     </querytext>
   </fullquery>
 
@@ -231,7 +231,7 @@
       insert into ec_financial_transactions
       (transaction_id, refunded_transaction_id, order_id, refund_id, creditcard_id, transaction_amount, transaction_type, inserted_date, to_be_captured_date)
       values
-      (:refund_transaction_id, :charged_transaction_id, :order_id, :refund_id, :creditcard_id, :unrefunded_amount, 'refund', sysdate, :scheduled_hour)
+      (:refund_transaction_id, :charged_transaction_id, :order_id, :refund_id, :creditcard_id, :unrefunded_amount, 'refund', current_timestamp, :scheduled_hour)
     </querytext>
   </fullquery>
 
