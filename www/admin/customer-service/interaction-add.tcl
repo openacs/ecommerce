@@ -38,7 +38,7 @@ set insert_id 0
 append doc_body "[ad_admin_header "New Interaction"]
 <h2>New Interaction</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
 
 <hr>
 

@@ -506,7 +506,7 @@ append doc_body "
 
     <h2>$page_title</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One"] "Refund Complete"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One"] "Refund Complete"]
     <hr>
     <blockquote>
       $results_explanation

@@ -23,7 +23,7 @@ doc_body_append "
 [ad_admin_header "[ec_system_name] Audit Trail"]
 <h2>$audit_name</h2>
 
-[ad_admin_context_bar [list index Ecommerce([ec_system_name])] "Audit Trail"]
+[ad_context_bar [list index Ecommerce([ec_system_name])] "Audit Trail"]
 <hr>
 "
 

@@ -19,7 +19,7 @@ doc_body_append "
     [ad_admin_header "Potental Problems"]
     <h2>Potential Problems</h2>
 
-    [ad_admin_context_bar [list "[ec_url_concat [ec_url] /admin]/" Ecommerce([ec_system_name])] "Potential Problems"]
+    [ad_context_bar [list "[ec_url_concat [ec_url] /admin]/" Ecommerce([ec_system_name])] "Potential Problems"]
    <hr>"
 
 set problem_count [db_string problem_count "

@@ -29,7 +29,7 @@ doc_body_append "
 
     <h2>One Order</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "One Order"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "One Order"]
 
     <hr>
 

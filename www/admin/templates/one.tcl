@@ -21,7 +21,7 @@ set page_html "[ad_admin_header "$template_name"]
 
 <h2>$template_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] "One Template"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] "One Template"]
 
 <hr>
 "

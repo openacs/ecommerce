@@ -21,7 +21,7 @@ doc_body_append "[ad_admin_header "$field_name"]
 
 <h2>$field_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] [list "custom-fields" "Custom Fields"] "One Custom Field"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] [list "custom-fields" "Custom Fields"] "One Custom Field"]
 
 <hr>
 

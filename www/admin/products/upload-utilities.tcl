@@ -15,7 +15,7 @@ doc_body_append "[ad_admin_header "Upload Utilities"]
 
 <h2>Upload Utilities</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Upload Utilities"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Upload Utilities"]
 
 <hr>
 

@@ -44,7 +44,7 @@ doc_body_append "[ad_admin_header $title]
 
 <h2>$title</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] $title]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] $title]
 
 <hr>
 

@@ -14,7 +14,7 @@ set page_html "[ad_admin_header "Sales Tax"]
 
 <h2>Sales Tax</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Sales Tax"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Sales Tax"]
 
 <hr>
 

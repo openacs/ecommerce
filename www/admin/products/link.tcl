@@ -22,7 +22,7 @@ doc_body_append "
 
     <h2>Links</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" "One"] "Links"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" "One"] "Links"]
 
     <hr>
 

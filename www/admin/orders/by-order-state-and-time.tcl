@@ -21,7 +21,7 @@ doc_body_append "
 
     <h2>Order History</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "History"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "History"]
     <hr>
 
     <form method=post action=by-order-state-and-time>

@@ -17,7 +17,7 @@ doc_body_append "[ad_admin_header "Financial Reports"]
 
 <h2>Financial Reports</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Financial Reports"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Financial Reports"]
 
 <hr>
 

@@ -14,7 +14,7 @@ doc_return  200 text/html  "[ad_admin_header "Clear Sales Tax Settings"]
 
 <h2>Clear Sales Tax Settings</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Sales Tax"] "Clear Settings"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Sales Tax"] "Clear Settings"]
 
 <hr>
 

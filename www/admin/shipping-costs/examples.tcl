@@ -14,7 +14,7 @@ set page_html "[ad_admin_header "Shipping Cost Examples"]
 
 <h2>Shipping Cost Examples</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Shipping Costs"] "Some Examples"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Shipping Costs"] "Some Examples"]
 
 <hr>
 

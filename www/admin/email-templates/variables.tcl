@@ -14,7 +14,7 @@ append doc_body "[ad_admin_header "Note on Variables"]
 
 <h2>Note on Variables</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Email Templates"] "Note on Variables"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Email Templates"] "Note on Variables"]
 
 <hr>
 

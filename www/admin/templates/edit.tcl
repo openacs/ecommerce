@@ -18,7 +18,7 @@ set page_html "[ad_admin_header "Edit Template"]
 
 <h2>Edit Template</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] [list "one.tcl?template_id=$template_id" "$template_name"] "Edit Template"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] [list "one.tcl?template_id=$template_id" "$template_name"] "Edit Template"]
 
 <hr>
 

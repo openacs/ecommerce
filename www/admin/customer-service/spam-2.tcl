@@ -41,7 +41,7 @@ if {$customer_service_rep == 0} {
 append doc_body "[ad_admin_header "Spam Users, Cont."]
 <h2>Spam Users, Cont.</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Spam Users, Cont."]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Spam Users, Cont."]
 
 <hr>
 "

@@ -71,7 +71,7 @@ append doc_body "
 
     <h2>Specify refund amount</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One"] "Mark Items Returned"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One"] "Mark Items Returned"]
     <hr>"
 
 set shipping_refund_percent [ad_parameter -package_id [ec_id] ShippingRefundPercent ecommerce]

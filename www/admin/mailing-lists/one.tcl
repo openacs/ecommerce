@@ -41,7 +41,7 @@ append doc_body "[ad_admin_header "$mailing_list_name"]
 
 <h2>$mailing_list_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Mailing Lists"] "One Mailing List"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Mailing Lists"] "One Mailing List"]
 
 <hr>
 <h3>Members</h3>

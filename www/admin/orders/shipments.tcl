@@ -19,7 +19,7 @@ doc_body_append "
 
     <h2>Shipment History</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Shipment History"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Shipment History"]
 
     <hr>
 

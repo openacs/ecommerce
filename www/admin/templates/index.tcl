@@ -14,7 +14,7 @@ set page_html "[ad_admin_header "Product Templates"]
 
 <h2>Product Templates</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Product Templates"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Product Templates"]
 
 <hr>
 <ul>

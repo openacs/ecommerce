@@ -18,7 +18,7 @@ set page_html "[ad_admin_header "$user_class_name"]
 
 <h2>$user_class_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "User Classes"] "One Class"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "User Classes"] "One Class"]
 
 <hr>
 

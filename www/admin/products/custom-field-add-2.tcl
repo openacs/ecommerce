@@ -62,7 +62,7 @@ doc_body_append "
 
     <h2>Confirm Custom Field</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "custom-fields.tcl" "Custom Fields"] "Confirm New Custom Field"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "custom-fields.tcl" "Custom Fields"] "Confirm New Custom Field"]
 
     <hr>
 

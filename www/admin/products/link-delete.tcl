@@ -19,7 +19,7 @@ doc_body_append "[ad_admin_header "Confirm Deletion"]
 
 <h2>Confirm Deletion</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Delete Link"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Delete Link"]
 
 <hr>
 Please confirm that you wish to delete this link.

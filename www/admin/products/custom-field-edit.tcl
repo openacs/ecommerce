@@ -26,7 +26,7 @@ doc_body_append "
 
     <h2>Edit $field_name</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] [list "custom-fields" "Custom Fields"] "Edit Custom Field"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] [list "custom-fields" "Custom Fields"] "Edit Custom Field"]
 
     <hr>
 

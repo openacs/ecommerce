@@ -15,7 +15,7 @@ set page_html "[ad_admin_header "Retailer Administration"]
 
 <h2>Retailer Administration</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Retailers"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Retailers"]
 
 <hr>
 <h3>Current Retailers</h3>

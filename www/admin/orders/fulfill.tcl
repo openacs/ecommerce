@@ -26,7 +26,7 @@ doc_body_append "<head>
 
 <h2>Order Fulfillment</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "fulfillment" "Fulfillment"] "One Order"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "fulfillment" "Fulfillment"] "One Order"]
 
 <hr>
 

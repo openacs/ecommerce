@@ -43,7 +43,7 @@ append doc_body "[ad_admin_header "Add an Item"]
 
 <h2>Add an Item</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] [list "picklists.tcl" "Picklist Management"] "Add an Item"]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] [list "picklists.tcl" "Picklist Management"] "Add an Item"]
 
 <hr>
 "

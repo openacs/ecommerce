@@ -14,7 +14,7 @@ set page_html "[ad_admin_header "User Class Administration"]
 
 <h2>User Class Administration</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "User Classes"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "User Classes"]
 
 <hr>
 

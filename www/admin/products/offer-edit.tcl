@@ -20,7 +20,7 @@ doc_body_append "[ad_admin_header "Edit Retailer Offer on $product_name"]
 
 <h2>Edit Retailer Offer on $product_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Edit Retailer Offer"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Edit Retailer Offer"]
 
 <hr>
 "

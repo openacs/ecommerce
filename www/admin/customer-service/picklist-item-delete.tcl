@@ -16,7 +16,7 @@ append doc_body "[ad_admin_header "Please Confirm Deletion"]
 
 <h2>Please Confirm Deletion</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] [list "picklists.tcl" "Picklist Management"] "Delete Item"]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] [list "picklists.tcl" "Picklist Management"] "Delete Item"]
 
 <hr>
 Please confirm that you wish to delete this item.

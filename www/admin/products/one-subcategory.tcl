@@ -23,7 +23,7 @@ doc_body_append "[ad_admin_header "Products in $category_name: $subcategory_name
 
 <h2>Products in $category_name: $subcategory_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Products in $category_name: $subcategory_name"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Products in $category_name: $subcategory_name"]
 
 <hr>
 

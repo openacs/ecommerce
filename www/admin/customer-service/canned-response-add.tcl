@@ -13,7 +13,7 @@ ad_require_permission [ad_conn package_id] admin
 doc_return  200 text/html "[ad_admin_header "New Canned Response"]
 <h2>New Canned Response</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] [list "canned-responses.tcl" "Canned Responses"] "New Canned Response"]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] [list "canned-responses.tcl" "Canned Responses"] "New Canned Response"]
 
 <hr>
 

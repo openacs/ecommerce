@@ -22,7 +22,7 @@ where response_id = :response_id"
 doc_return  200 text/html "[ad_admin_header "Edit Canned Response"]
 <h2>Edit Canned Response</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] [list "canned-responses.tcl" "Canned Responses"] "Edit Canned Response"]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] [list "canned-responses.tcl" "Canned Responses"] "Edit Canned Response"]
 
 <hr>
 

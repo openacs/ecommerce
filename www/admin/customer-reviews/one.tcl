@@ -16,7 +16,7 @@ append doc_body "[ad_admin_header "One Review"]
 
 <h2>One Review</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Reviews"] "One Review"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Reviews"] "One Review"]
 
 <hr>
 <blockquote>

@@ -16,7 +16,7 @@ set page_html "[ad_admin_header "Confirm New User Class"]
 
 <h2>Confirm New User Class</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "User Classes"] "Confirm New User Class"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "User Classes"] "Confirm New User Class"]
 
 <hr>
 

@@ -21,7 +21,7 @@ doc_return  200 text/html "[ad_admin_header "Confirm the Problem is Resolved"]
 
 <h2>Confirm that Problem is Resolved</h2>
 
-[ad_admin_context_bar [list "[ec_url_concat [ec_url] /admin]/" Ecommerce([ec_system_name])] [list "index.tcl" "Potential Problems"] "Confirm Resolve Problem"]
+[ad_context_bar [list "[ec_url_concat [ec_url] /admin]/" Ecommerce([ec_system_name])] [list "index.tcl" "Potential Problems"] "Confirm Resolve Problem"]
 
 <hr>
 

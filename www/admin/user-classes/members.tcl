@@ -17,7 +17,7 @@ set page_html "[ad_admin_header "Members of $user_class_name"]
 
 <h2>Members of $user_class_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "User Classes"] [list "one.tcl?[export_url_vars user_class_id user_class_name]" "One Class"] "Members" ] 
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "User Classes"] [list "one.tcl?[export_url_vars user_class_id user_class_name]" "One Class"] "Members" ] 
 
 <hr>
 

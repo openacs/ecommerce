@@ -56,7 +56,7 @@ append doc_body "[ad_admin_header "Customer Service Issues"]
 
 <h2>Customer Service Issues</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Issues"]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Issues"]
 
 <hr>
 

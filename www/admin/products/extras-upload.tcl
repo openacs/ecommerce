@@ -30,7 +30,7 @@ doc_body_append "[ad_admin_header "Upload Product Extras"]
 
 <h3>Upload Product Extras</h3>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Upload Product Extras"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Upload Product Extras"]
 
 <hr>
 

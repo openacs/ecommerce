@@ -139,7 +139,7 @@ doc_body_append "
 
     <h2>$product_name</h2>
     
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "One Product"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "One Product"]
 
     <hr>
 

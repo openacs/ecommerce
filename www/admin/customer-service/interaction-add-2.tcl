@@ -116,7 +116,7 @@ set action_id [db_nextval ec_action_id_sequence]
 append doc_body "[ad_admin_header "One Issue"]
 <h2>One Issue</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "One Issue (part of New Interaction)"]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "One Issue (part of New Interaction)"]
 
 <hr>
 A customer may discuss several issues during the course of one interaction.  Please

@@ -77,7 +77,7 @@ doc_body_append "[ad_admin_header "Retailer Offers on $product_name"]
 
 <h2>Retailer Offers on $product_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Retailer Offers"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Retailer Offers"]
 
 <hr>
 <h3>Current Offers</h3>

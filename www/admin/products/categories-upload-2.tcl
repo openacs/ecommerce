@@ -24,7 +24,7 @@ set ip [ns_conn peeraddr]
 
 doc_body_append "[ad_admin_header "Uploading Category Mappings"]
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Uploading Categories"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Uploading Categories"]
 
 <hr>
 

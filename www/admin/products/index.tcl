@@ -15,7 +15,7 @@ doc_body_append "[ad_admin_header "Product Administration"]
 
 <h2>Product Administration</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Products"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Products"]
 
 <hr>
 

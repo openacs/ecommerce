@@ -21,7 +21,7 @@ doc_body_append "
 
     <h2>Gift Certificate Purchase History</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Gift Certificate Purchase History"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Gift Certificate Purchase History"]
 
     <hr>
 

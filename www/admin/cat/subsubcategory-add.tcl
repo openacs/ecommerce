@@ -54,7 +54,7 @@ set page_html "[ad_admin_header "Confirm New Subsubcategory"]
 
 <h2>Confirm New Subsubcategory</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] "Confirm New Subsubcategory"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] "Confirm New Subsubcategory"]
 
 <hr>
 

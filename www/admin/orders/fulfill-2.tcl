@@ -87,7 +87,7 @@ append page_html "[ad_admin_header "Confirm that these item(s) have been [ec_dec
 
     <h2>Confirm that these item(s) have been [ec_decode $shippable_p 1 "shipped" "fulfilled"]</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "fulfillment" "Fulfillment"] "One Order"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "fulfillment" "Fulfillment"] "One Order"]
     <hr>"
 
 set shipment_id [db_nextval ec_shipment_id_sequence]

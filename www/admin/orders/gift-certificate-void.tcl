@@ -17,7 +17,7 @@ set page_title "Void Gift Certificate"
 doc_body_append "[ad_admin_header $page_title]
 <h2>$page_title</h2>
 
-[ad_admin_context_bar [list "../index" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "gift-certificates" "Gift Certificates"] "Void One"]
+[ad_context_bar [list "../index" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "gift-certificates" "Gift Certificates"] "Void One"]
 
 <hr>
 Please explain why you are voiding this gift certificate:

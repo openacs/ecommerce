@@ -56,7 +56,7 @@ set page_html "[ad_admin_header "Confirm New Retailer"]
 
 <h2>Confirm New Retailer</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Retailers"] "Add Retailer"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Retailers"] "Add Retailer"]
 
 <hr>
 <h3>Please confirm that the information below is correct:</h3>

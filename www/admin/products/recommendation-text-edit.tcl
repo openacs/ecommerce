@@ -23,7 +23,7 @@ doc_return  200 text/html "[ad_admin_header "Edit Product Recommendation Text"]
 
 <h2>Edit Recommendation Text</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "recommendations.tcl" "Recommendations"] [list "recommendation.tcl?[export_url_vars recommendation_id]" "One"] "Edit Recommendation"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "recommendations.tcl" "Recommendations"] [list "recommendation.tcl?[export_url_vars recommendation_id]" "One"] "Edit Recommendation"]
 
 <hr>
 

@@ -19,7 +19,7 @@ doc_body_append "[ad_admin_header "Professional Review of $product_name"]
 
 <h2>Professional Review of $product_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] [list "reviews.tcl?[export_url_vars product_id]" "Professional Reviews"] "One Review"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] [list "reviews.tcl?[export_url_vars product_id]" "Professional Reviews"] "One Review"]
 
 <hr>
 <h3>The Review</h3>

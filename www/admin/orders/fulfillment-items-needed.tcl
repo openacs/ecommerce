@@ -15,7 +15,7 @@ doc_body_append "[ad_admin_header "Items Needed"]
 
 <h2>Items Needed</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "fulfillment" "Fulfillment"] "Items Needed"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "fulfillment" "Fulfillment"] "Items Needed"]
 
 <hr>
 The following items are needed in order to fulfill all outstanding orders:

@@ -19,7 +19,7 @@ doc_body_append "
 
     <h2>New Shipping Address</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One Order"] "New Shipping Address"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One Order"] "New Shipping Address"]
 
     <hr>
     <p>Please enter a new domestic address or a new international address.  All future shipments for this order will go to this address.</p>

@@ -27,7 +27,7 @@ doc_body_append "[ad_admin_header "Product Search"]
 
 <h2>Product Search</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Product Search"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Product Search"]
 
 <hr>
 

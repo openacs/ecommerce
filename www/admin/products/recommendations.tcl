@@ -15,7 +15,7 @@ doc_body_append "[ad_admin_header "Product Recommendations"]
 
 <h2>Product Recommendations</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Recommendations"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Recommendations"]
 
 <hr>
 

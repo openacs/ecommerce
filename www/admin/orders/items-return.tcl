@@ -31,7 +31,7 @@ doc_body_append "
 
     <h2>Mark Items Returned</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?order_id=$order_id" "One Order"] "Mark Items Returned"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?order_id=$order_id" "One Order"] "Mark Items Returned"]
     <hr>"
 
 # Generate the new refund_id to prevent reusing this form.

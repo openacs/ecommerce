@@ -23,7 +23,7 @@ append doc_body "[ad_admin_header "Confirm Removal"]
 
 <h2>Confirm Removal</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Mailing Lists"] "Confirm Removal"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Mailing Lists"] "Confirm Removal"]
 
 <hr>
 

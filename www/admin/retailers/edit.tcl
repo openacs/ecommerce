@@ -16,7 +16,7 @@ set page_html "[ad_admin_header "Edit Retailer"]
 
 <h2>Edit Retailer</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Retailers"] "Edit Retailer"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Retailers"] "Edit Retailer"]
 
 <hr>
 

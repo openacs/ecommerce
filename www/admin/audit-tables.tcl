@@ -17,7 +17,7 @@ doc_body_append "
 
 <h2>Audit [ec_system_name]</h2>
 
-[ad_admin_context_bar [list "index.tcl" Ecommerce([ec_system_name])] "Audit Tables"]
+[ad_context_bar [list "index.tcl" Ecommerce([ec_system_name])] "Audit Tables"]
 
 <hr>
 

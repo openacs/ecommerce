@@ -32,7 +32,7 @@ proc spam_to_summary { mailing_list_category_id mailing_list_subcategory_id mail
 
 append doc_body "[ad_admin_header "Spam Log"]
 <h2>Spam Log</h2>
-[ad_admin_context_bar [list "../index" "Ecommerce([ec_system_name])"] [list "index" "Customer Service Administration"] [list "spam" "Spam Users"] "Spam Log"]
+[ad_context_bar [list "../index" "Ecommerce([ec_system_name])"] [list "index" "Customer Service Administration"] [list "spam" "Spam Users"] "Spam Log"]
 
 <hr>
 "

@@ -29,7 +29,7 @@ set page_content "
 
 <h2>[ec_system_name] Audit Trail</h2>
 
-[ad_admin_context_bar [list index Ecommerce([ec_system_name])] [list "audit-tables?[export_url_vars table_names_and_id_column]" "Audit $main_table_name"] "[ec_system_name] Audit Trail"]
+[ad_context_bar [list index Ecommerce([ec_system_name])] [list "audit-tables?[export_url_vars table_names_and_id_column]" "Audit $main_table_name"] "[ec_system_name] Audit Trail"]
 <hr>
 
 <h3>$main_table_name</h3>

@@ -19,7 +19,7 @@ doc_body_append "[ad_admin_header "Search Results"]
 
 <h2>Search Results</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Search Results"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Search Results"]
 
 <hr>
 <blockquote>

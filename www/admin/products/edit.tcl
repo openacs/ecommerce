@@ -23,7 +23,7 @@ doc_body_append "[ad_admin_header "Edit $product_name"]
 
 <h2>Edit $product_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] [list "one?[export_url_vars product_id]" "One"] "Edit"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] [list "one?[export_url_vars product_id]" "One"] "Edit"]
 
 <hr>
 

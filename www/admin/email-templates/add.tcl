@@ -12,7 +12,7 @@ ad_require_permission [ad_conn package_id] admin
 
 append doc_body "[ad_admin_header "Add Email Template"]
 <h2>Add Email Template</h2>
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Email Templates"] "New Template"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Email Templates"] "New Template"]
 <hr>
 <p>
 Please note: Email templates are designed be edited by a content writer (e.g. a customer service rep), but a programmer will have to schedule the sending of this email and program in the variable substitution.

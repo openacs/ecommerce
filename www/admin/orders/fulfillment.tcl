@@ -15,7 +15,7 @@ doc_body_append "[ad_admin_header "Order Fulfillment"]
 
 <h2>Order Fulfillment</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Fulfillment"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Fulfillment"]
 
 <hr>
 (these <a href=\"fulfillment-items-needed\">items</a> are needed in order to fulfill all outstanding orders)

@@ -183,7 +183,7 @@ append doc_body "
 
     <h2>Refund Totals</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One"] "Refund Totals"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One"] "Refund Totals"]
 
     <hr>
     <form method=post action=items-return-4>

@@ -56,7 +56,7 @@ doc_body_append "[ad_admin_header "Confirm New Product"]
 
 <h2>Confirm New Product</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] "Add Product"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] "Add Product"]
 
 <hr>
 <h3>Please confirm that the information below is correct:</h3>

@@ -14,7 +14,7 @@ append doc_body "[ad_admin_header "Customer Reviews"]
 
 <h2>Customer Reviews</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Customer Reviews"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Customer Reviews"]
 
 <hr>
 "

@@ -43,7 +43,7 @@ set page_html "[ad_admin_header "Confirm Template"]
 
 <h2>Confirm Template</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] "Confirm Template"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] "Confirm Template"]
 
 <hr>
 "

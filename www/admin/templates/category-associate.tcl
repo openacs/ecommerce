@@ -22,7 +22,7 @@ set page_html "[ad_admin_header "Associate with a Category"]
 
 <h2>Associate with a Category</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] [list "one.tcl?template_id=$template_id" "$template_name"] "Associate with a Category"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] [list "one.tcl?template_id=$template_id" "$template_name"] "Associate with a Category"]
 
 <hr> 
 

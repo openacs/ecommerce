@@ -14,7 +14,7 @@ set table_names_and_id_column [list ec_email_templates ec_email_templates_audit 
 
 append doc_body "[ad_admin_header "Email Templates"]
 <h2>Email Templates</h2>
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Email Templates"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Email Templates"]
 <hr><p>
 <ul>
 <li><A href=\"add\">New Email Template</a>

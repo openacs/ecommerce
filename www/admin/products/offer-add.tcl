@@ -115,7 +115,7 @@ doc_body_append "[ad_admin_header "Confirm Retailer Offer on $product_name"]
 
 <h2>Confirm Retailer Offer on $product_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Confirm Retailer Offer"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Confirm Retailer Offer"]
 
 <hr>
 "

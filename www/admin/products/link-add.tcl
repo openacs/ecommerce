@@ -19,7 +19,7 @@ doc_body_append "[ad_admin_header "Create New Link"]
 
 <h2>Create New Link</h2>
 
-[ad_admin_context_bar [list ../ "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "New Link"]
+[ad_context_bar [list ../ "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "New Link"]
 
 <hr>
 Please select the product you wish to link to or from:

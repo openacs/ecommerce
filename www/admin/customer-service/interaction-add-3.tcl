@@ -151,7 +151,7 @@ if { ![empty_string_p $issue_id] } {
 		
 		append doc_body "[ad_admin_header "User Doesn't Match Issue"]
 		<h2>User Doesn't Match Issue</h2>
-		[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
+		[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
 		
 		<hr>
 		Issue ID $issue_id belongs to the registered user <a href=\"[ec_acs_admin_url]users/one?user_id=$issue_user_id\">[db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:issue_user_id"]</a>.
@@ -183,7 +183,7 @@ if { ![empty_string_p $issue_id] } {
 	    
 	    append doc_body "[ad_admin_header "User Doesn't Match Issue"]
 	    <h2>User Doesn't Match Issue</h2>
-	    [ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
+	    [ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
 	    
 	    <hr>
 	    Issue ID $issue_id belongs to the the non-registered person who has had a previous interaction with us: [ec_user_identification_summary $issue_user_identification_id]
@@ -251,7 +251,7 @@ if { [info exists order_id] && ![empty_string_p $order_id] } {
 		
 		append doc_body "[ad_admin_header "User Doesn't Match Order"]
 		<h2>User Doesn't Match Order</h2>
-		[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
+		[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
 		
 		<hr>
 		Order ID $order_id belongs to the registered user <a href=\"[ec_acs_admin_url]users/one?user_id=$order_user_id\">[db_string get_user_name "select first_names || ' ' || last_name from cc_users where user_id=:order_user_id"]</a>.

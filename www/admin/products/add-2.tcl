@@ -218,7 +218,7 @@ doc_body_append "[ad_admin_header "Add a Product, Continued"]
 
 <h2>Add a Product, Continued</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] "Add Product"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] "Add Product"]
 
 <hr>
 <form method=post action=add-3>

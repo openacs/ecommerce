@@ -55,7 +55,7 @@ set page_html "[ad_admin_header "Confirm Association"]
 
 <h2>Confirm Association</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] [list "one.tcl?template_id=$template_id" "$template_name"] "Confirm Association"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] [list "one.tcl?template_id=$template_id" "$template_name"] "Confirm Association"]
 
 <hr>
 

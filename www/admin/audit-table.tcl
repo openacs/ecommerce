@@ -70,7 +70,7 @@ doc_body_append "
 
 <h2>[ec_system_name] Audit for $main_table_name</h2>
 
-[ad_admin_context_bar [list "index.tcl" Ecommerce([ec_system_name])] [list "audit-tables" "Audit Table"] "Audit $main_table_name"]
+[ad_context_bar [list "index.tcl" Ecommerce([ec_system_name])] [list "audit-tables" "Audit Table"] "Audit $main_table_name"]
 
 <hr>
 

@@ -34,13 +34,13 @@ if { [info exists approved_p] } {
     }
 
     set page_title "$review_status Reviews"
-    set navbar [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Reviews"] "$review_status Reviews"]
+    set navbar [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Reviews"] "$review_status Reviews"]
     set return_url "index-2.tcl?[export_url_vars approved_p]"
 
 } elseif { [info exists product_id] } {
     set product_name [ec_product_name $product_id]
     set page_title $product_name
-    set navbar [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "../products/index.tcl" "Products"] [list "../products/one.tcl?product_id=$product_id" "One"] "Customer Reviews"]
+    set navbar [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "../products/index.tcl" "Products"] [list "../products/one.tcl?product_id=$product_id" "One"] "Customer Reviews"]
     set query_end "and p.product_id=:product_id"
     set return_url "index-2.tcl?[export_url_vars product_id]"
 }

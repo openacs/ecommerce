@@ -34,7 +34,7 @@ set page_html "[ad_admin_header "Confirm Deletion"]
 
 <h2>Confirm Deletion</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] "Delete Template"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] "Delete Template"]
 
 <hr>
 

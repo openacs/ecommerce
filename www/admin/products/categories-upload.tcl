@@ -39,7 +39,7 @@ doc_body_append "[ad_admin_header "Upload Category Mapping Data"]
 
 <h2>Upload Catalog Category Mapping Data</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Upload Category Mapping Data"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Upload Category Mapping Data"]
 
 <hr>
 

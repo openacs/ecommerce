@@ -45,7 +45,7 @@ set page_html "[ad_admin_header "$retailer_name"]
 
 <h2>$retailer_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Retailers"] "One Retailer"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Retailers"] "One Retailer"]
 
 <hr>
 <h3>Current Information</h3>

@@ -61,7 +61,7 @@ if { [db_string get_log_entries_cnt "
     append doc_body "
 	[ad_admin_header "Spam Sent"]
 	<h2>Spam Sent</h2>
-	[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Spam Sent"]
+	[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Spam Sent"]
 	<hr>
 	<p>You are seeing this page because you probably either hit reload or pushed the Submit button twice.</p>
 	<p>If you wonder whether the users got the spam, just check the customer service issues for one of the users (all mail sent to a user is recorded as a customer service issue).</p>
@@ -174,7 +174,7 @@ db_transaction {
 	[ad_admin_header "Spamming Users..."]
 	<h2>Spamming Users...</h2>
 
-	[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Spamming Users..."]
+	[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Spamming Users..."]
 
 	<hr>
 	<ul>"

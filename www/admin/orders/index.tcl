@@ -18,7 +18,7 @@ doc_body_append "
     
     <h2>Orders / Shipments / Refunds</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Orders / Shipments / Refunds"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Orders / Shipments / Refunds"]
 
     <hr>"
 

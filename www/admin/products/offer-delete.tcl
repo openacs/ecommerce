@@ -28,7 +28,7 @@ doc_body_append "[ad_admin_header "Confirm $deletion_or_undeletion of Retailer O
 
 <h2>Confirm $deletion_or_undeletion of Retailer Offer on $product_name</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "$delete_or_undelete Retailer Offer"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "$delete_or_undelete Retailer Offer"]
 
 <hr>
 "

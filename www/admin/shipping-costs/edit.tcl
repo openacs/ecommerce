@@ -122,7 +122,7 @@ set page_html "[ad_admin_header "Confirm Shipping Costs"]
 
 <h2>Confirm Shipping Costs</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Shipping Costs"] "Edit"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Shipping Costs"] "Edit"]
 
 <hr>
 

@@ -20,7 +20,7 @@ doc_body_append "
 
     <h2>Refund History</h2>
     
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Refund History"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Refund History"]
     
     <hr>
 

@@ -15,7 +15,7 @@ doc_body_append "[ad_admin_header "Void Order"]
 
 <h2>Void Order</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One Order"] "Void"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One Order"] "Void"]
 
 <hr>
 "

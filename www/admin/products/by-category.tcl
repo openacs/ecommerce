@@ -16,7 +16,7 @@ doc_body_append "[ad_admin_header "Products by Category"]
 
 <h2>Products by category</h2>
 
-[ad_admin_context_bar [list "[ec_url_concat [ec_url] /admin]/" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "by Category"]
+[ad_context_bar [list "[ec_url_concat [ec_url] /admin]/" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "by Category"]
 
 <hr>
 

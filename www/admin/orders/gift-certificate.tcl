@@ -17,7 +17,7 @@ doc_body_append "[ad_admin_header "One Gift Certificate"]
 
 <h2>One Gift Certificate</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "gift-certificates" "Gift Certificates"] "One"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "gift-certificates" "Gift Certificates"] "One"]
 
 <hr>
 <blockquote>

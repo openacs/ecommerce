@@ -13,7 +13,7 @@ ad_require_permission [ad_conn package_id] admin
 append doc_body "[ad_admin_header "Canned Responses"]
 <h2>Canned Responses</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Canned Responses"]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Canned Responses"]
 
 <hr>
 

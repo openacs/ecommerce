@@ -22,7 +22,7 @@ set page_html "[ad_admin_header "Add Member to this Mailing List"]
 
 <h2>Add Member to this Mailing List</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Mailing Lists"] "Add Member" ] 
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Mailing Lists"] "Add Member" ] 
 
 <hr>
 "

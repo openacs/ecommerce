@@ -26,7 +26,7 @@ ec_report_get_start_date_and_end_date
 append doc_body "[ad_admin_header "Spam Users"]
 <h2>Spam Users</h2>
 
-[ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Spam Users"]
+[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Spam Users"]
 
 <hr>
 <form method=post action=spam-log>

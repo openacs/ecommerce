@@ -10,7 +10,7 @@ set page_html "[ad_admin_header "Mailing Lists"]
 
 <h2>Mailing Lists</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Mailing Lists"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Mailing Lists"]
 
 <hr>
 

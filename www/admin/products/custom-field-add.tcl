@@ -18,7 +18,7 @@ doc_body_append "
 
     <h2>Add a Custom Field</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "custom-fields.tcl" "Custom Fields"] "Add a Custom Field"]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "custom-fields.tcl" "Custom Fields"] "Add a Custom Field"]
 
     <hr>
 

@@ -19,7 +19,7 @@ doc_body_append "
 
     <h2>Add Items, Cont.</h2>
 
-    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?order_id=$order_id" "One Order"] "Add Items, Cont."]
+    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?order_id=$order_id" "One Order"] "Add Items, Cont."]
     
     <hr>"
 

@@ -16,7 +16,7 @@ doc_body_append "[ad_admin_header "Track Shipment"]
 
 <h2>Track Shipment</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One Order"] "Track Shipment"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One Order"] "Track Shipment"]
 
 <hr>
 "

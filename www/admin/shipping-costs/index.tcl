@@ -14,7 +14,7 @@ set page_html "[ad_admin_header "Shipping Costs"]
 
 <h2>Shipping Costs</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] "Shipping Costs"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Shipping Costs"]
 
 <hr>
 

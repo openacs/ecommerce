@@ -40,7 +40,7 @@ set page_html "[ad_admin_header "Confirm New Category"]
 
 <h2>Confirm New Category</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] "Confirm New Category"]
+[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] "Confirm New Category"]
 
 <hr>
 
