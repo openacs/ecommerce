@@ -58,12 +58,11 @@ db_1row get_product_and_user_info "
     where product_id=:product_id"
 
 set hidden_form_variables [export_form_vars product_id rating one_line_summary user_comment comment_id]
-set review_as_it_will_appear "
+
+set review_introduction "
 <b><a href=\"/shared/community-member?[export_url_vars user_id]\">$user_email</a></b> 
 rated this product  
-[ec_display_rating $rating] on <i>$current_date</i> and wrote:<br>
-<b>[ad_quotehtml $one_line_summary]</b><br>
-[ec_display_as_html $user_comment]"
+[ec_display_rating $rating] on <i>$current_date</i> and wrote:<br>"
 
 set system_name [ad_system_name]
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Check Your Review"]]]

@@ -10,7 +10,8 @@
     @hidden_form_variables;noquote@
     <p>Here is your review the way it will appear:</p>
     <hr>
-    <p>@review_as_it_will_appear;noquote@</p>
+    <p>@review_introduction;noquote@ <b>@one_line_summary@</b> <br>@user_comment@</p>
+
     <hr>
     <p>If this isn't the way you want it to look, please back up using
     your browser and edit your review.  Submissions become the
