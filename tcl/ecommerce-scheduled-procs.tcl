@@ -54,10 +54,18 @@ ad_proc ec_calculate_product_purchase_combinations {
 
 } {
 
-    # For each product find other products that are items of orders
-    # with the same user_id.
+    # First prune expired combinations. A combination is deemed
+    # expired when one of the products is inactive.
 
-    db_foreach products_select "select product_id from ec_products" {
+    ec_prune_product_purchase_combinations
+
+    # For each active product find other active products that are
+    # items of orders with the same user_id.
+
+    db_foreach products_select "select product_id from ec_products where active_p = 't'" {
+
+	# Then find current product combinations.
+
 	set correlated_product_counter 0
 	set insert_cols [list]
 	set insert_vals [list]
@@ -65,7 +73,7 @@ ad_proc ec_calculate_product_purchase_combinations {
   
 	db_foreach correlated_products_select "
 	    select i2.product_id as correlated_product_id, count(*) as n_product_occurrences
-	    from ec_items i2
+	    from ec_items i2, ec_products p
 	    where i2.order_id in (select o2.order_id
 		from ec_orders o2
 		where o2.user_id in (select user_id
@@ -74,6 +82,8 @@ ad_proc ec_calculate_product_purchase_combinations {
 			  from ec_items i
 			  where product_id = :product_id)))
 	     and i2.product_id <> :product_id
+	     and i2.product_id = p.product_id
+	     and p.active_p = 't'
 	     group by i2.product_id
 	     order by n_product_occurrences desc" {
 	    if { $correlated_product_counter >= 5 } {

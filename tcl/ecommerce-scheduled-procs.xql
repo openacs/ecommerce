@@ -4,7 +4,7 @@
 
   <fullquery name="ec_calculate_product_purchase_combinations.products_select">      
     <querytext>
-      select product_id from ec_products
+      select product_id from ec_products where active_p = 't'
     </querytext>
   </fullquery>
   
@@ -12,7 +12,7 @@
     <querytext>
       select i2.product_id as correlated_product_id,
       count(*) as n_product_occurrences
-      from ec_items i2
+      from ec_items i2, ec_products p
       where i2.order_id in (select o2.order_id
           from ec_orders o2
           where o2.user_id in (select user_id
@@ -20,7 +20,9 @@
               where o.order_id in (select i.order_id
                   from ec_items i
                   where product_id = :product_id)))
-                  and i2.product_id <> :product_id
+      and i2.product_id = p.product_id
+      and p.active_p = 't'
+      and i2.product_id <> :product_id
       group by i2.product_id
       order by n_product_occurrences desc
     </querytext>

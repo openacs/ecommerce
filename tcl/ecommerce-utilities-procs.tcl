@@ -1027,3 +1027,19 @@ ad_proc ecGetUserAgentHeader {
     set userag [ns_set iget $header "USER-AGENT"]
     return $userag
 }
+
+ad_proc ec_prune_product_purchase_combinations {
+} {
+    Prune expired product purchase combinations. A combination is
+    deemed expired when one of the products is inactive.
+
+} {
+    db_dml prune_expired_combinations {
+	delete from ec_product_purchase_comb
+	where exists (select product_id 
+		      from ec_products p
+		      where p.active_p = 'f'
+		      and p.product_id in (ec_product_purchase_comb.product_id, ec_product_purchase_comb.product_0, 
+					   ec_product_purchase_comb.product_1, ec_product_purchase_comb.product_2, 
+					   ec_product_purchase_comb.product_3, ec_product_purchase_comb.product_4))}
+}
