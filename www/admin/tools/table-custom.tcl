@@ -4,7 +4,7 @@
 #
 # on succes it does an ns_returnredirect to return_url&$item_group=$item
 #
-# davis@arsdigita.com 20000105
+# davis@xarg.net 20000105
 
 ad_page_variables {item item_group return_url {delete_the_view 0} {col -multiple-list} {item_original {}}}
 

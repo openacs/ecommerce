@@ -5,7 +5,7 @@
 #
 # on succes it does an ns_returnredirect to return_url
 #
-# davis@arsdigita.com 20000105
+# davis@xarg.net 20000105
 
 set internals {item item_group return_url item_original delete_the_set}
 ad_page_variables {item item_group return_url {item_original {}} {delete_the_set 0}}
