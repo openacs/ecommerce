@@ -569,6 +569,9 @@ ad_proc ec_formatted_full_date {
     be in the format YYYY-MM-DD HH24:MI:SS-TZ.
 
 } {
+    # temporary cludge to get this to work with postgresql timestamp with microseconds
+    # eventually all ecommerce dates should use lc_time_fmt for i8ln
+    set ugly_date [lc_time_fmt $ugly_date "%F %T"]
 
     # Remove the timezone (-TZ) from ugly_date or clock scan will
     # choke on it.
@@ -591,6 +594,10 @@ ad_proc ec_formatted_date {
     information (-TZ) at the end in the format +99 or -99.
 
 } {
+
+    # temporary cludge to get this to work with postgresql timestamp with microseconds
+    # eventually all ecommerce dates should use lc_time_fmt for i8ln
+    set ugly_date [lc_time_fmt $ugly_date "%F %T"]
 
     # Remove the timezone information (-TZ) that PostgresSQL can
     # return or the Tcl command 'clock scan' will choke on it.
