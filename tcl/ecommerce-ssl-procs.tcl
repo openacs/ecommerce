@@ -185,6 +185,7 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 		set register_url "[ec_secure_location][ad_conn package_url]register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
 		ad_returnredirect $register_url
 		template::adp_abort
+	    }
 	}
     }
 }
