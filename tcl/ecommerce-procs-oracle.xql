@@ -40,6 +40,14 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="ec_mailing_list_link_for_a_product.mailing_categories">      
+    <querytext>
+      select category_id, subcategory_id, subsubcategory_id, product_id 
+      from ($common_sql) as dummy 
+      where rownum < 2
+    </querytext>
+  </fullquery>
+
   <fullquery name="ec_add_to_cart_link.get_product_info_1">      
     <querytext>
       select decode(sign(sysdate-available_date),1,1,null,1,0) as available_p,

@@ -151,15 +151,24 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="ec_mailing_list_link_for_a_product.subsubcategory_id_select">      
+  <partialquery name="ec_mailing_list_link_for_a_product.mailing_categories_common">
     <querytext>
-      select ss.subsubcategory_id
-      from ec_subsubcategory_product_map m, ec_subsubcategories ss
-      where m.subsubcategory_id = ss.subsubcategory_id
-      and ss.subcategory_id = :subcategory_id
-      and m.product_id = :product_id
+      (select cpm.category_id, bla.subcategory_id, cpm.product_id
+               from ec_category_product_map cpm 
+               left join (select sc.category_id, spm.subcategory_id, spm.product_id
+                          from ec_subcategory_product_map spm, ec_subcategories sc 
+                          where sc.subcategory_id = spm.subcategory_id) as bla 
+               using (category_id, product_id)
+      		   where cpm.product_id = :product_id
+               ) as bogus 
+              left join (select sc.category_id, ssc.subcategory_id, sspm.subsubcategory_id, sspm.product_id
+                         from ec_subsubcategory_product_map sspm, ec_subcategories sc, ec_subsubcategories ssc 
+                         where sspm.subsubcategory_id = ssc.subsubcategory_id 
+                         and ssc.subcategory_id = sc.subcategory_id
+                         ) as boring 
+              using (category_id, subcategory_id, product_id)
     </querytext>
-  </fullquery>
+  </partialquery>
 
   <fullquery name="ec_product_links_if_they_exist.product_link_info_select">      
     <querytext>
