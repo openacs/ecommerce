@@ -35,7 +35,8 @@ if { [db_string doubleclick_select "select count(*) from ec_custom_product_field
 set peeraddr [ns_conn peeraddr]
 
 set audit_fields "last_modified, last_modifying_user, modified_ip_address"
-set audit_info "sysdate, :user_id, :peeraddr"
+#set audit_info "sysdate, :user_id, :peeraddr"
+set audit_info [db_map audit_info_sql]
 
 set insert_statement "insert into ec_custom_product_fields
 (field_identifier, field_name, default_value, column_type, $audit_fields)
@@ -50,9 +51,10 @@ if [catch { db_dml custom_product_field_insert $insert_statement } errmsg] {
 # have to alter ec_custom_product_field_values, the corresponding audit
 # table, and the corresponding trigger
 
-set alter_statement "alter table ec_custom_product_field_values add (
-    $field_identifier $column_type$end_of_alter
-)"
+#set alter_statement "alter table ec_custom_product_field_values add (
+#    $field_identifier $column_type$end_of_alter
+##)"
+set alter_statement [db_map alter_statement_sql]
 
 if [catch { db_dml alter_table $alter_statement } errmsg] {
     # this means we were unable to add the column to ec_custom_product_field_values, so undo the insert into ec_custom_product_fields
@@ -64,9 +66,10 @@ if [catch { db_dml alter_table $alter_statement } errmsg] {
 # 1999-08-10: took out $end_of_alter because the constraints don't
 # belong in the audit table
 
-set alter_statement_2 "alter table ec_custom_p_field_values_audit add (
-    $field_identifier $column_type
-)"
+#set alter_statement_2 "alter table ec_custom_p_field_values_audit add (
+#    $field_identifier $column_type
+#)"
+set alter_statement_2 [db_map alter_statement_2_sql]
 
 if [catch {db_dml alter_table_2 $alter_statement_2} errmsg] {
     # this means we were unable to add the column to ec_custom_p_field_values_audit, so undo the insert into ec_custom_product_fields and the alteration to ec_custom_product_field_values
