@@ -127,9 +127,16 @@ if { [empty_string_p $creditcard_id] } {
 	set gift_certificate_covers_cost_p "f"
     } else {
 	set gift_certificate_covers_cost_p "t"
-	 ec_update_state_to_authorized $order_id "authorized_plus_avs"
-	ad_returnredirect thank-you
-	template::adp_abort
+
+ 	### gilbertw: removed the next three lines
+	### the openacs 3.2.5 code does not have the next 2/3 lines
+	### instead it uses ec_update_state_to_confirmed 20 lines later
+ 	### which handles the gift certificate amounts
+	### if ec_update_state_to_authorized is used, the gift certificate 
+	### amounts do not get subtracted
+	# ec_update_state_to_authorized $order_id "authorized_plus_avs"
+	#ad_returnredirect thank-you
+	#template::adp_abort
     }
 }
 
