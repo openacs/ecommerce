@@ -50,11 +50,14 @@ doc_body_append "\[ [join $linked_refund_date_list " | "] \]
 "
 
 if { $view_refund_date == "last_24" } {
-    set refund_date_query_bit "and sysdate-r.refund_date <= 1"
+    #set refund_date_query_bit "and sysdate-r.refund_date <= 1"
+    set refund_date_query_bit [db_map last_24]
 } elseif { $view_refund_date == "last_week" } {
-    set refund_date_query_bit "and sysdate-r.refund_date <= 7"
+    #set refund_date_query_bit "and sysdate-r.refund_date <= 7"
+    set refund_date_query_bit [db_map last_week]
 } elseif { $view_refund_date == "last_month" } {
-    set refund_date_query_bit "and months_between(sysdate,r.refund_date) <= 1"
+    #set refund_date_query_bit "and months_between(sysdate,r.refund_date) <= 1"
+    set refund_date_query_bit [db_map last_month]
 } else {
     set refund_date_query_bit ""
 }
