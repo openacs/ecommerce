@@ -32,7 +32,6 @@ set sql "select user_identification_id from ec_user_identification
 where (lower(email) like :keyword or lower(first_names || ' ' || last_name) like :keyword or lower(postal_code) like :keyword or lower(other_id_info) like :keyword)
 and user_id is null
 "
-]
 
 set user_counter 0
 db_foreach search_for_users_like_kw  $sql {
