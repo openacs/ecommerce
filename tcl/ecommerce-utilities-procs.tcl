@@ -396,12 +396,12 @@ ad_proc ec_country_name_from_country_code { country_code } {
 } {
     if [catch {
 	db_1row country_name {
-	    select default_name from country_names where iso=:country_code
+	    select default_name from countries where iso=:country_code
 	}
     } errmsg] {
 	return "Country not found"
     }
-    return $name
+    return $default_name
 }
 
 ad_proc ec_pretty_mailing_address_from_args { line1 line2 city usps_abbrev zip_code country_code full_state_name attn phone phone_time } { get Pretty Mailing Address } {

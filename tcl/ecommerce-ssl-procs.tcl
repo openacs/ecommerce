@@ -83,8 +83,18 @@ ad_proc ec_secure_location {} {
             set sdriver $drivers(sdriver)
         }
             
-        set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver" Port 443]
+        set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver" Port]
+	### nsopenssl 2.0 has different names for the secure port
+	if [empty_string_p $secure_port] {
+	    set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver" ServerPort 443]
+	}
+
         set secure_location "https://[ns_config ns/server/[ns_info server]/module/$sdriver Hostname]"
+	### nsopenssl 2.0 uses ServerHostname instead of Hostname
+        if [string match $secure_location "https://"] {
+	    set secure_location "https://[ns_config ns/server/[ns_info server]/module/$sdriver ServerHostname]"
+	}
+
         if {![empty_string_p $secure_port] && ($secure_port != 443)}  {
             append secure_location ":$secure_port"
         }

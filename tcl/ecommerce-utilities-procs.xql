@@ -52,7 +52,7 @@
 
 <fullquery name="ec_country_name_from_country_code.country_name">
       <querytext> 
-      select default_name from country_names where iso=:country_code
+      select default_name from countries where iso=:country_code
       </querytext>
 </fullquery>
 

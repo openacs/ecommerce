@@ -47,7 +47,7 @@ doc_body_append "
 </tr>
 <tr>
  <td>City</font></td>
- <td><input type=text name=city size=20> &nbsp;State [ec_multiple_state_widget "" "usps_abbrev" 1]</td>
+ <td><input type=text name=city size=20> &nbsp;State [state_widget]</td>
 </tr>
 <tr>
  <td>Zip</td>
