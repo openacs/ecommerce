@@ -84,7 +84,7 @@
           See <a
 	  href="http://web.archive.org/web/20010807171136/http://www.arsdigita.com/doc/email-handler">http://www.arsdigita.com/doc/email-handler</a>
          (via archive.org) an ACS 3.4.8 email handling perl script. Note that incoming emails may be better
-          handled by a method used in the OpenACS forums package that imports to email. No
+          handled by a method used in the OpenACS forums package that imports email. No
           support is available for incoming email to this package.
           </td>
 
@@ -159,17 +159,16 @@
 
   <h3>Bottom line</h3>
 
-  <p>If a closed-source ecommerce package doesn't do exactly what you
-  want, you're out of business.  If the company behind a closed-source
+  <p>If a closed-source ecommerce package does not do exactly what you
+  want, you are out of business.  If the company behind a closed-source
   ecommerce package goes out of business, so will you.  If the company
   behind a closed-source ecommerce adopts a different "business
-  model", you're screwed.</p>
+  model", you are screwed.</p>
 
-  <p>If you're even tempted to adopt a commercial ecommerce system
+  <p>If you are ever tempted to adopt a commercial ecommerce system
   from a company other than IBM, Oracle or SAP (three enterprise
   software vendors that seem likely to be around for awhile), read the
-  iCat story towards the end of <a
-  href="http://www.arsdigita.com/asj/using-the-acs">Using the
-  ArsDigita Community System</a>
-
+  iCat story; See <a
+  href="http://web.archive.org/web/20001009063120/http://www.arsdigita.com/asj/using-the-acs#icat">http://www.arsdigita.com/asj/using-the-acs</a> (via archive.org) toward the end, a section entitled "ACS versus Commercial Packaged Closed-Source Systems."
+  </p>
 
