@@ -162,7 +162,7 @@
  
 <fullquery name="ec_unsettled_transactions.two_days_since_order_was_marked_p">      
       <querytext>
-      select case when sign(1 - ((current_timestamp-marked_date)/2)) = -1 then 1 else 0 end from ec_financial_transactions where transaction_id=:transaction_id
+      select case when extract(day from (current_timestamp-marked_date)) >= 2 then 1 else 0 end from ec_financial_transactions where transaction_id=:transaction_id
       </querytext>
 </fullquery>
 
@@ -227,7 +227,7 @@
  
 <fullquery name="ec_unrefund_settled_transactions.two_days_since_order_was_refunded_p">      
       <querytext>
-      select case when sign(1 - ((current_timestamp-refunded_date)/2)) = -1 then 1 else 0 end from ec_financial_transactions where transaction_id=:transaction_id
+      select case when extract(day from (current_timestamp-marked_date)) >= 2  then 1 else 0 end from ec_financial_transactions where transaction_id=:transaction_id
       </querytext>
 </fullquery>
 

@@ -8,7 +8,7 @@
       
 	    select ec_order_cost(:order_id) as total_amount,
 	           creditcard_id,
-	           case when sign(current_timestamp - confirmed_date - .95) = -1 then 1 else 0 end as youth
+	           case when extract(day from current_timestamp - confirmed_date) > 1 then 0 when extract(hour from current_timestamp - confirmed_date)/24 < 0.95 then 1 else 0 end as youth
 	      from ec_orders
 	     where order_id = :order_id
 	
@@ -21,7 +21,7 @@
       
 	    select transaction_amount as total_amount,
 	           creditcard_id,
-	           case when sign(current_timestamp-inserted_date-.95) = -1 then 1 else 0 end as youth
+	           case when extract(day from current_timestamp - inserted_date) > 1 then 0 when extract(hour from current_timestamp-inserted_date)/24 < 0.95 then 1 else 0 end as youth
 	    from ec_financial_transactions
 	    where transaction_id = :transaction_id
 	
