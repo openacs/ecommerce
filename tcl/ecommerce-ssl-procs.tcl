@@ -159,7 +159,7 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 	# made this simpler by relying on ad_secure_conn_p
 	if {![ad_secure_conn_p]} {
 	    # see if ssl is installed
-	    # replaced ad_ssl_available_p with ec_ssl_available_p
+	    # replaced security::https_available_p with ec_ssl_available_p
 	    # which detects nsopenssl
 	    if { ![ec_ssl_available_p] } {
 		# there's no ssl
@@ -279,7 +279,7 @@ ad_proc ec_securelink {new_page} {
 
 } {
 
-    if {![ad_ssl_available_p]} {
+    if {![security::https_available_p]} {
         # we don't have ssl installed, so return the original URL
         return $new_page
     }
@@ -313,7 +313,7 @@ ad_proc ec_insecurelink {new_page} {
     insecure page
 
 } {
-    if {![ad_ssl_available_p]} {
+    if {![security::https_available_p]} {
         # we don't have ssl installed, so return the original URL
         return $new_page
     }
