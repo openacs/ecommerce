@@ -86,10 +86,15 @@ if { [info exists address_id] && $address_id != "" } {
 	    update ec_addresses 
              set attn=:attn, line1=:line1, line2=:line2, city=:city, usps_abbrev=:usps_abbrev, zip_code=:zip_code, phone=:phone, phone_time=:phone_time
              where address_id = :address_id"
-	db_dml set_shipping_on_order "
-	    update ec_orders 
-	    set shipping_address = :address_id 
-	    where order_id = :order_id"
+
+	# Update the shipping address of the order
+
+	if {$address_type == "shipping"} {
+	    db_dml set_shipping_on_order "
+	        update ec_orders 
+	        set shipping_address = :address_id 
+	        where order_id = :order_id"
+	}
     }
     db_release_unused_handles
 
@@ -104,10 +109,15 @@ if { [info exists address_id] && $address_id != "" } {
             (address_id, user_id, address_type, attn, line1, line2, city, usps_abbrev, zip_code, country_code, phone, phone_time)
             values
             (:address_id, :user_id, 'shipping', :attn, :line1,:line2,:city,:usps_abbrev,:zip_code,'US',:phone,:phone_time)"
-	db_dml set_shipping_on_order "
-	    update ec_orders 
-	    set shipping_address = :address_id 
-	    where order_id = :order_id"
+
+	# Update the shipping address of the order
+
+	if {$address_type == "shipping"} {
+	    db_dml set_shipping_on_order "
+	        update ec_orders 
+	        set shipping_address = :address_id 
+	        where order_id = :order_id"
+	}
     }
 }
 
