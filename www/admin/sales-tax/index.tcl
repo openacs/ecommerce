@@ -31,8 +31,8 @@ set table_names_and_id_column [list ec_sales_tax_by_state ec_sales_tax_by_state_
 
 
 db_foreach get_sales_taxes "select state_name, tax_rate*100 as tax_rate_in_percent, decode(shipping_p,'t','Yes','No') as shipping_p
-from ec_sales_tax_by_state, states
-where ec_sales_tax_by_state.usps_abbrev = states.usps_abbrev" {
+from ec_sales_tax_by_state, us_states
+where ec_sales_tax_by_state.usps_abbrev = us_states.abbrev" {
 
     append page_html "<li>$state_name:
     <blockquote>

@@ -178,7 +178,7 @@ ad_proc ec_multiple_state_widget { {default_list ""} {select_name "usps_abbrev"}
     set sql "select * from us_states order by state_name"
     db_foreach get_all_states $sql {
         
-        if { [lsearch $default_list $usps_abbrev] != -1 } {
+        if { [lsearch $default_list $abbrev] != -1 } {
             append widget_value "<option value=\"$abbrev\" SELECTED>$state_name</option>\n" 
         } else {            
             append widget_value "<option value=\"$abbrev\">$state_name</option>\n"
