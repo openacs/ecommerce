@@ -14,7 +14,7 @@
   <h2>Enter Your Billing Address</h2>
 </else>
 
-<form method="post" action="address-international-2.tcl">
+<form method="post" action="address-international-2">
   @hidden_form_vars@
   <blockquote>
     <table>
