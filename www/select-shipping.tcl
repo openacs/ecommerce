@@ -251,8 +251,7 @@ if {[info exists no_shipping_avail_p] && [string equal $no_shipping_avail_p "f"]
 	}
     }
 } else {
-    set shipping_options "
-	<p>Your order does not need shipping.</p>"
+    ad_returnredirect "[ec_securelink [ec_url]billing]"
 }
 
 
