@@ -79,10 +79,10 @@ db_foreach get_subcategory_infos "select subsubcategory_id, sort_key, subsubcate
 }
 
 if { $subsubcategory_counter != 0 } {
-    append page_html "<td> &nbsp;&nbsp;<font face=\"MS Sans Serif, arial,helvetica\"  size=1><a href=\"subsubcategory-add-0?[export_url_vars category_id category_name subcategory_id subcategory_name]&prev_sort_key=$old_sort_key&next_sort_key=[expr $old_sort_key + 2]\">insert after</a></font></td></tr>
+    append page_html "<td> &nbsp;&nbsp;<font face=\"MS Sans Serif, arial,helvetica\"  size=1><a href=\"subsubcategory-add-0?[export_url_vars category_id category_name subcategory_id subcategory_name]&prev_sort_key=$old_sort_key&next_sort_key=[expr $old_sort_key + 512]\">insert after</a></font></td></tr>
     "
 } else {
-    append page_html "You haven't set up any subsubcategories.  <a href=\"subsubcategory-add-0?[export_url_vars category_id category_name subcategory_id subcategory_name]&prev_sort_key=1&next_sort_key=2\">Add a subsubcategory.</a>\n"
+    append page_html "You haven't set up any subsubcategories.  <a href=\"subsubcategory-add-0?[export_url_vars category_id category_name subcategory_id subcategory_name]&prev_sort_key=1&next_sort_key=512\">Add a subsubcategory.</a>\n"
 }
 
 append page_html "</table>
