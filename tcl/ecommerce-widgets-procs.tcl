@@ -125,25 +125,37 @@ from ec_templates t"
 
 ad_proc ec_column_type_widget { {default ""} } { column type widget } {
 
+    ### number and date types for oracle and postgresql
+    if [string match [db_type] "oracle"] {
+	set date "date"
+	set number "number"
+	set boolean "char(1)"
+    } elseif [string match [db_type] "postgresql"] {
+	set date "timestamp"
+	set number "numeric"
+	set boolean "boolean"
+    }
+
     # boolean will be the default unless specified otherwise
     # if it's boolean, the check constraint will be added at the end so that it can be named
     set to_return "<select name=column_type>
-    <option value=\"char(1)\">Boolean (Yes or No)
+    <option value=\"$boolean\">Boolean (Yes or No)
     "
+
     if { $default == "integer" } {
 	append to_return "<option value=\"integer\" selected>Integer\n"
     } else {
 	append to_return "<option value=\"integer\">Integer\n"
     }
     if { $default == "number" } {
-	append to_return "<option value=\"number\" selected>Real Number\n"
+	append to_return "<option value=\"$number\" selected>Real Number\n"
     } else {
-	append to_return "<option value=\"number\">Real Number\n"
+	append to_return "<option value=\"$number\">Real Number\n"
     }
     if { $default == "date" } {
-	append to_return "<option value=\"date\" selected>Date\n"
+	append to_return "<option value=\"$date\" selected>Date\n"
     } else {
-	append to_return "<option value=\"date\">Date\n"
+	append to_return "<option value=\"$date\">Date\n"
     }
     if { $default == "varchar(200)" } {
 	append to_return "<option value=\"varchar(200)\" selected>Text - Up to 200 Characters\n"
