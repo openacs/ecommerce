@@ -91,7 +91,7 @@ sales office, or a retail store.
 
 Some sources of data on sales tax rates by zip codes are: 
 <ul>
-<li><a href=\"http://www.salestax.com\">www.salestax.com</a> - their Sales Tax Assistant - All States, Single User was $1,650 as of 3/8/2004.
+<li><a href=\"http://www.salestax.com\">www.salestax.com</a> - their Sales Tax Assistant - All States, Single User was \$1,650 as of 3/8/2004.
 <li><a href=\"http://www.simpova.com\">www.simpova.com</a> - approximately 99.95 for a national, by zip, tax table or online lookup.
 </ul>
 
