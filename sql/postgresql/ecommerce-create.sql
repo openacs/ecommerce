@@ -1658,7 +1658,7 @@ begin
             	ELSE
 		    IF n_shipped_items >= 1 or n_received_back_items >=1 THEN
 			update ec_orders set order_state=''partially_fulfilled''
-			    where order_id=v_order_id;
+			    where order_id=NEW.order_id;
             	    END IF;
         	END IF;
 	    END IF;
