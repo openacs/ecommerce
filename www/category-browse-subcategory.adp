@@ -32,4 +32,4 @@
   @prev_link@ @separator@ @next_link@
 </blockquote>
 
-<p><a href="<%= [ns_urlencode mailing-list-add?category_id=@category_id@&subcategory_id=@subcategory_id@] %>">Add yourself to the @the_category_name@ mailing list!</a></p>
+<p><a href="<%= mailing-list-add?category_id=@category_id@&subcategory_id=@subcategory_id@ %>">Add yourself to the @the_category_name@ mailing list!</a></p>

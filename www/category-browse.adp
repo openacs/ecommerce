@@ -8,7 +8,7 @@
 <if @subcategories@ or @recommendations@>
   <table width="90%">
     <tr valign="top">
-      <if @subcategories@ >
+      <if @subcategories@>
         <td width="50%">
 	  <h4>@category_name@ &gt; subcategories</h4>
 	  

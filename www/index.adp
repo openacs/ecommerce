@@ -21,7 +21,7 @@
 
       <if @products@>
 	<h4>Products:</h4>
-	@products@
+	@products;noquote@
       </if>
 
       @prev_link@ @separator@ @next_link@

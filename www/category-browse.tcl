@@ -251,7 +251,7 @@ if ![at_bottom_level_p] {
 	order by sort_key, sub${sub}category_name" {
 
 	append subcategories "
-	  &gt;  <a href=\"[ns_urlencode category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]]\">[eval "ident \$sub${sub}category_name"]</a><br>"
+	  &gt;  <a href=\"category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]\">[eval "ident \$sub${sub}category_name"]</a><br>"
   }
 }
 
