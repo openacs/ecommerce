@@ -115,7 +115,8 @@ automatically and should not appear in the data file.
 
 </blockquote>
 </blockquote>
-
+<p>About search_keywords: Data from product_name, one_line_description, and detailed_description 
+are automatically included in product searches. No need to repeat that information in search_keywords.</p>
 [ad_admin_footer]
 
 "
