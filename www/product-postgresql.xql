@@ -5,7 +5,6 @@
 
 <fullquery name="find_a_good_category">      
       <querytext>
-      FIX ME ROWNUM
 
     select * from 
         (select category_id,
@@ -18,7 +17,7 @@
           from ec_category_product_map m
          where product_id = :product_id
       order by subcount, subsubcount, category_id)
-    where rownum = 1
+    limit 1
 
       </querytext>
 </fullquery>

@@ -38,12 +38,11 @@
  
 <fullquery name="get_ec_product_info">      
       <querytext>
-      FIX ME OUTER JOIN
 
 select *
-  from ec_products p, ec_custom_product_field_values v
+  from ec_products p
+    LEFT JOIN ec_custom_product_field_values v on (p.product_id = v.product_id)
  where p.product_id = :product_id
-   and p.product_id = v.product_id(+)
 
       </querytext>
 </fullquery>

@@ -76,12 +76,14 @@ where order_id=:order_id
  
 <fullquery name="get_items_in_cart">      
       <querytext>
-      FIX ME OUTER JOIN
+
 select i.item_id, i.product_id, u.offer_code
-from ec_items i,
+from ec_items i
+    LEFT JOIN
 (select * from ec_user_session_offer_codes usoc where usoc.user_session_id=:user_session_id) u
-where i.product_id=u.product_id(+)
-and i.order_id=:order_id
+	on (i.product_id=u.product_id)
+where i.order_id=:order_id
+
       </querytext>
 </fullquery>
 
