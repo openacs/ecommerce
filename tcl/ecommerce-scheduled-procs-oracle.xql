@@ -3,7 +3,7 @@
 <queryset>
    <rdbms><type>oracle</type><version>8.1.6</version></rdbms>
 
-<fullquery name="ec_calculate_product_purchase_combinations.confirmed_orders_select">      
+<fullquery name="ec_sweep_for_cybercash_zombies.confirmed_orders_select">      
       <querytext>
       
       select order_id, ec_order_cost(order_id) as total_order_price
@@ -15,7 +15,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.problems_log_insert">      
+<fullquery name="ec_sweep_for_cybercash_zombies.problems_log_insert">      
       <querytext>
       
 		  insert into ec_problems_log
@@ -27,7 +27,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.gift_certificate_select">      
+<fullquery name="ec_sweep_for_cybercash_zombie_gift_certificates.gift_certificate_select">      
       <querytext>
       
       select g.gift_certificate_id, t.transaction_id
@@ -40,7 +40,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.financial_transactions_update">      
+<fullquery name="ec_sweep_for_cybercash_zombie_gift_certificates.financial_transactions_update">      
       <querytext>
       
 	      update ec_financial_transactions
@@ -52,7 +52,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.gift_certificate_state_update">      
+<fullquery name="ec_sweep_for_cybercash_zombie_gift_certificates.gift_certificate_state_update">      
       <querytext>
       
 	      update ec_gift_certificates
@@ -91,14 +91,14 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.problems_log_insert">      
+<fullquery name="ec_unauthorized_transactions.problems_log_insert">      
       <querytext>
       
-		  insert into ec_problems_log
-		  (problem_id, problem_date, problem_details, order_id)
-		  values
-		  (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-	      
+		 insert into ec_problems_log
+                 (problem_id, problem_date, problem_details, order_id)
+                 values
+                (ec_problem_id_sequence.nextval, sysdate, 'invalid input to ec_creditcard_authorization in ec_unauthorized_transactions', :order_id)
+
       </querytext>
 </fullquery>
 
@@ -122,7 +122,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.problems_log_insert">      
+<fullquery name="ec_unauthorized_transactions.problems_log_insert">      
       <querytext>
       
 		    insert into ec_problems_log
@@ -141,7 +141,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.problems_log_insert">      
+<fullquery name="ec_unauthorized_transactions.problems_log_insert">      
       <querytext>
       
 		  insert into ec_problems_log
@@ -167,7 +167,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.problems_log_insert">      
+<fullquery name="ec_unsettled_transactions.problems_log_insert">      
       <querytext>
       
 		  insert into ec_problems_log
@@ -192,14 +192,14 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.financial_transactions_update">      
+<fullquery name="ec_unrefunded_transactions.financial_transactions_update">      
       <querytext>
       update ec_financial_transactions set refunded_date=sysdate where transaction_id=:transaction_id
       </querytext>
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.problems_log_insert">      
+<fullquery name="ec_unrefunded_transactions.problems_log_insert">      
       <querytext>
       
 		  insert into ec_problems_log

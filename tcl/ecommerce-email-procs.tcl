@@ -10,7 +10,7 @@ ad_library {
   @author ported by Jerry Asher (jerry-ecommerce@hollyjerry.org)
 }
 
-proc_doc ec_sendmail_from_service { email_to reply_to email_subject email_body {additional_headers ""} {bcc ""} } "Use this when you're sending out customer service emails.  It's invoked just like ns_sendmail, except that the email will always be from the customer service email address.  The reply-to field can be used for the perl/qmail service-345-9848@whatever.com email trick (but it doesn't have to be).<p>Note: one major difference from ns_sendmail: with ns_sendmail, putting a Cc header does not actually send an extra copy of the email; it just puts Cc: whomever@wherever into the header (and then you'd have to specify whomever@wherever in the bcc argument).  This procedure does send the email to the Cc'd email addresses." {
+ad_proc ec_sendmail_from_service { email_to reply_to email_subject email_body {additional_headers ""} {bcc ""} } "Use this when you're sending out customer service emails.  It's invoked just like ns_sendmail, except that the email will always be from the customer service email address.  The reply-to field can be used for the perl/qmail service-345-9848@whatever.com email trick (but it doesn't have to be).<p>Note: one major difference from ns_sendmail: with ns_sendmail, putting a Cc header does not actually send an extra copy of the email; it just puts Cc: whomever@wherever into the header (and then you'd have to specify whomever@wherever in the bcc argument).  This procedure does send the email to the Cc'd email addresses." {
 
     set extra_headers [ns_set new]
     ns_set put $extra_headers "Reply-to" $reply_to
@@ -27,7 +27,7 @@ proc_doc ec_sendmail_from_service { email_to reply_to email_subject email_body {
     qmail $email_to $from $email_subject $email_body $extra_headers
 }
 
-proc_doc ec_email_new_order { order_id } "Use this to send out the \"New Order\" email." {
+ad_proc ec_email_new_order { order_id } "Use this to send out the \"New Order\" email." {
     db_1row email_info_select {
 	select u.email,
                to_char(confirmed_date,'MM/DD/YY') as confirmed_date,
@@ -59,7 +59,7 @@ proc_doc ec_email_new_order { order_id } "Use this to send out the \"New Order\"
     regsub -all "&" $system_url {\\&} system_url
     
     # Note: template #1 is defined to be the "New Order" email
-    db_1row template_select {
+    db_1row template_select_1 {
 	select subject as email_subject, message as email_body, issue_type_list
 	from ec_email_templates
 	where email_template_id = 1
@@ -87,7 +87,7 @@ proc_doc ec_email_new_order { order_id } "Use this to send out the \"New Order\"
 	}
 
 	# add a row to the automatic email log
-	db_dml email_log_insert {
+	db_dml email_log_insert_1 {
 	    insert into ec_automatic_email_log
 	    (user_identification_id, email_template_id, order_id, date_sent)
 	    values
@@ -102,7 +102,7 @@ proc_doc ec_email_new_order { order_id } "Use this to send out the \"New Order\"
     
 }
 
-proc_doc ec_email_product_notification { order_id } "This proc sends notifications for any products in the order that require it." {
+ad_proc ec_email_product_notification { order_id } "This proc sends notifications for any products in the order that require it." {
 
     set order_link [ec_securelink "[ec_url]admin/orders/one?[export_url_vars order_id]"]
 #    if { [ad_ssl_available_p] } {
@@ -130,7 +130,7 @@ $order_link
   }
 }
 
-proc_doc ec_email_delayed_credit_denied { order_id } "Use this to send out the \"Delayed Credit Denied\" email." {
+ad_proc ec_email_delayed_credit_denied { order_id } "Use this to send out the \"Delayed Credit Denied\" email." {
     
     db_1row user_select {
 	select u.email, u.user_id
@@ -148,7 +148,7 @@ proc_doc ec_email_delayed_credit_denied { order_id } "Use this to send out the \
     regsub -all "&" $system_url {\\&} system_url
     
     # Note: template #3 is defined to be the "Delayed Credit Denied" email
-    db_1row template_select {
+    db_1row template_select_3 {
 	select subject as email_subject, message as email_body, issue_type_list from ec_email_templates where email_template_id = 3
     }
 
@@ -167,7 +167,7 @@ proc_doc ec_email_delayed_credit_denied { order_id } "Use this to send out the \
       set issue_id [lindex $user_identification_and_issue_id 1]
 
       # add a row to the automatic email log
-      db_dml email_log_insert {
+      db_dml email_log_insert_3 {
 	  insert into ec_automatic_email_log
 	  (user_identification_id, email_template_id, order_id, date_sent)
 	  values
@@ -181,7 +181,7 @@ proc_doc ec_email_delayed_credit_denied { order_id } "Use this to send out the \
 
 }
 
-proc_doc ec_email_order_shipped { shipment_id } "Use this to send out the \"Order Shipped\" email after a shipment is made (full or partial order)." {
+ad_proc ec_email_order_shipped { shipment_id } "Use this to send out the \"Order Shipped\" email after a shipment is made (full or partial order)." {
     
     db_1row shipment_select {
 	select u.email, u.user_id, s.shipment_date, s.address_id, o.order_state, o.order_id
@@ -228,7 +228,7 @@ proc_doc ec_email_order_shipped { shipment_id } "Use this to send out the \"Orde
     regsub -all "&" $system_url {\\&} system_url
     
     # Note: template #2 is defined to be the "Order Shipped" email
-    db_1row template_select {
+    db_1row template_select_2 {
 	select subject as email_subject, message as email_body, issue_type_list from ec_email_templates where email_template_id = 2
     }
 
@@ -251,7 +251,7 @@ proc_doc ec_email_order_shipped { shipment_id } "Use this to send out the \"Orde
       set issue_id [lindex $user_identification_and_issue_id 1]
 
       # add a row to the automatic email log
-      db_dml email_log_insert {
+      db_dml email_log_insert_2 {
 	  insert into ec_automatic_email_log
 	  (user_identification_id, email_template_id, order_id, shipment_id, date_sent)
 	  values
@@ -265,7 +265,7 @@ proc_doc ec_email_order_shipped { shipment_id } "Use this to send out the \"Orde
     
 }
 
-proc_doc ec_email_new_gift_certificate_order { gift_certificate_id } {
+ad_proc ec_email_new_gift_certificate_order { gift_certificate_id } {
 
     Use this to send out the \"New Gift Certificate Order\" email
     after a gift certificate order is authorized.
@@ -288,7 +288,7 @@ proc_doc ec_email_new_gift_certificate_order { gift_certificate_id } {
     regsub -all "&" $customer_service_signature {\\&} customer_service_signature
     
     # Note: template #4 is defined to be the "New Gift Certificate Order" email
-    db_1row template_select {
+    db_1row template_select_4 {
 	select subject as email_subject, message as email_body, issue_type_list from ec_email_templates where email_template_id = 4
     }
 
@@ -309,7 +309,7 @@ proc_doc ec_email_new_gift_certificate_order { gift_certificate_id } {
       set issue_id [lindex $user_identification_and_issue_id 1]
 
       # add a row to the automatic email log
-      db_dml email_log_insert {
+      db_dml email_log_insert_4 {
 	  insert into ec_automatic_email_log
 	  (user_identification_id, email_template_id, gift_certificate_id, date_sent)
 	  values
@@ -323,8 +323,8 @@ proc_doc ec_email_new_gift_certificate_order { gift_certificate_id } {
 
 }
 
-proc_doc ec_email_gift_certificate_order_failure { gift_certificate_id } "Use this to send out the \"Gift Certificate Order Failure\" email after it is determined that a previously inconclusive auth failed." {
-    db_1row gift_certificate_select {
+ad_proc ec_email_gift_certificate_order_failure { gift_certificate_id } "Use this to send out the \"Gift Certificate Order Failure\" email after it is determined that a previously inconclusive auth failed." {
+    db_1row gift_certificate_select_2 {
 	select g.purchased_by as user_id, u.email, g.recipient_email, g.amount, g.certificate_to, g.certificate_from, g.certificate_message
           from ec_gift_certificates g, cc_users u
          where g.purchased_by=u.user_id
@@ -357,7 +357,7 @@ proc_doc ec_email_gift_certificate_order_failure { gift_certificate_id } "Use th
     
 
     # Note: template #6 is defined to be the "Gift Certificate Order Failure" email
-    db_1row template_select {
+    db_1row template_select_6 {
 	select subject as email_subject, message as email_body, issue_type_list
           from ec_email_templates
          where email_template_id = 6
@@ -381,7 +381,7 @@ proc_doc ec_email_gift_certificate_order_failure { gift_certificate_id } "Use th
       set issue_id [lindex $user_identification_and_issue_id 1]
 
       # add a row to the automatic email log
-      db_dml email_log_insert {
+      db_dml email_log_insert_6 {
 	  insert into ec_automatic_email_log
 	  (user_identification_id, email_template_id, gift_certificate_id, date_sent)
 	  values
@@ -398,9 +398,9 @@ proc_doc ec_email_gift_certificate_order_failure { gift_certificate_id } "Use th
 # in this email, the recipient isn't necessarily a user of the system, so the customer service issue
 # creation code is a little different than in the other autoemails
 
-proc_doc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this to send out the \"Gift Certificate Recipient\" email after it a purchased certificate is authorized." {
+ad_proc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this to send out the \"Gift Certificate Recipient\" email after it a purchased certificate is authorized." {
 
-    db_1row gift_certificate_select {
+    db_1row gift_certificate_select_3 {
 	select g.recipient_email as email, g.amount, g.certificate_to, g.certificate_from, g.certificate_message, g.claim_check
           from ec_gift_certificates g
          where g.gift_certificate_id=:gift_certificate_id
@@ -432,7 +432,7 @@ proc_doc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this t
     
 
     # Note: template #5 is defined to be the "Gift Certificate Recipient" email
-    db_1row template_select "select subject as email_subject, message as email_body, issue_type_list from ec_email_templates where email_template_id=5"
+    db_1row template_select_5 "select subject as email_subject, message as email_body, issue_type_list from ec_email_templates where email_template_id=5"
 
     # and get rid of ctrl-M's in the body
     regsub -all "\r" $email_body "" email_body
@@ -461,7 +461,7 @@ proc_doc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this t
 	set user_identification_id [db_string user_identification_id_select "select user_identification_id from ec_user_identification where upper(email)=upper(:email)" -default ""]
 
 	if { [empty_string_p $user_identification_id] } {
-	  set user_identification_id [db_string user_identification_id_select "select ec_user_ident_id_sequence.nextval from dual"]
+	  set user_identification_id [db_string user_identification_id_seq "select ec_user_ident_id_sequence.nextval from dual"]
 	  set trimmed_email [string trim $email]
 
 	    db_dml user_identification_id_insert {
@@ -479,7 +479,7 @@ proc_doc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this t
       set issue_id [lindex $user_identification_and_issue_id 1]
 
       # add a row to the automatic email log
-      db_dml email_log_insert {
+      db_dml email_log_insert_5 {
 	  insert into ec_automatic_email_log
 	  (user_identification_id, email_template_id, gift_certificate_id, date_sent)
 	  values

@@ -345,8 +345,8 @@ ad_proc ec_sweep_for_cybercash_zombie_gift_certificates {} "Looks for confirmed 
 	  # wondering whether they should be concerned that failed_p is
 	  # 't'
 
-	  db_dml financial_transactions_update "update ec_financial_transactions set failed_p='t', to_be_captured_p='f' where transaction_id=:transaction_id"
-	  db_dml gift_certificate_state_update "update ec_gift_certificates set gift_certificate_state='failed_authorization' where gift_certificate_id=:gift_certificate_id"
+	  db_dml financial_transactions_update_1 "update ec_financial_transactions set failed_p='t', to_be_captured_p='f' where transaction_id=:transaction_id"
+	  db_dml gift_certificate_state_update_1 "update ec_gift_certificates set gift_certificate_state='failed_authorization' where gift_certificate_id=:gift_certificate_id"
 
 	  # send gift certificate order failure email
 	  ec_email_gift_certificate_order_failure $gift_certificate_id
@@ -389,7 +389,7 @@ ad_proc ec_send_unsent_new_gift_certificate_order_email {} "Finds authorized_plu
 ad_proc ec_send_unsent_gift_certificate_recipient_email {} "Finds authorized_plus/minus_avs gift certificates for which email has not been sent to the recipient, sends the email, and records that it has been sent." {
     ns_log Notice "ec_send_unsent_gift_certificate_recipient_email starting"
 
-    db_foreach unset_gift_certificate_select {
+    db_foreach unsent_gift_certificate_select {
 	select gift_certificate_id
 	from ec_gift_certificates g
 	where (gift_certificate_state='authorized_plus_avs' or gift_certificate_state='authorized_minus_avs')

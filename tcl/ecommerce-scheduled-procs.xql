@@ -59,7 +59,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.transaction_id_select">      
+<fullquery name="ec_sweep_for_cybercash_zombies.transaction_id_select">      
       <querytext>
       
 	      select max(transaction_id)
@@ -70,7 +70,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.avs_code_select">      
+<fullquery name="ec_sweep_for_cybercash_zombies.avs_code_select">      
       <querytext>
       
 		  select avs_code 
@@ -84,35 +84,35 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.order_state_update">      
+<fullquery name="ec_sweep_for_cybercash_zombies.order_state_update">      
       <querytext>
       update ec_orders set order_state=:new_order_state where order_id=:order_id
       </querytext>
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.transaction_id_select">      
+<fullquery name="ec_sweep_for_cybercash_zombie_gift_certificates.transaction_id_select">      
       <querytext>
       select transaction_id from ec_financial_transactions where gift_certificate_id=:gift_certificate_id
       </querytext>
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.financial_transactions_update">      
+<fullquery name="ec_sweep_for_cybercash_zombie_gift_certificates.financial_transactions_update_1">      
       <querytext>
       update ec_financial_transactions set failed_p='t', to_be_captured_p='f' where transaction_id=:transaction_id
       </querytext>
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.gift_certificate_state_update">      
+<fullquery name="ec_sweep_for_cybercash_zombie_gift_certificates.gift_certificate_state_update_1">      
       <querytext>
       update ec_gift_certificates set gift_certificate_state='failed_authorization' where gift_certificate_id=:gift_certificate_id
       </querytext>
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.unsent_orders_select">      
+<fullquery name="ec_send_unsent_new_order_email.unsent_orders_select">      
       <querytext>
       
 	select order_id
@@ -124,7 +124,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.unsent_gift_certificate_email">      
+<fullquery name="ec_send_unsent_new_gift_certificate_order_email.unsent_gift_certificate_email">      
       <querytext>
       
 	select gift_certificate_id
@@ -136,7 +136,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.unset_gift_certificate_select">      
+<fullquery name="ec_send_unsent_gift_certificate_recipient_email.unsent_gift_certificate_select">      
       <querytext>
       
 	select gift_certificate_id
@@ -155,7 +155,7 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.order_state_update">      
+<fullquery name="ec_delayed_credit_denied.order_state_update">      
       <querytext>
       update ec_orders set order_state='in_basket', saved_p='t' where order_id=:order_id
       </querytext>
@@ -207,9 +207,9 @@
 </fullquery>
 
  
-<fullquery name="ec_calculate_product_purchase_combinations.financial_transactions_update">      
+<fullquery name="ec_unmarked_transactions.financial_transactions_update">      
       <querytext>
-      update ec_financial_transactions set failed_p='t', to_be_captured_p='f' where transaction_id=:transaction_id
+      financial_transactions set marked_date=sysdate where transaction_id=:transaction_id
       </querytext>
 </fullquery>
 
@@ -226,7 +226,7 @@
 </fullquery>
 
  
-<fullquery name="ec_unauthorized_transactions.transaction_failed_update">      
+<fullquery name="ec_unsettled_transactions.transaction_failed_update">      
       <querytext>
       update ec_financial_transactions set failed_p='t' where transaction_id=:transaction_id
       </querytext>

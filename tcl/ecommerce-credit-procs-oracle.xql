@@ -29,7 +29,7 @@
 </fullquery>
 
  
-<fullquery name="ec_creditcard_return.cybercash_log_insert">      
+<fullquery name="ec_talk_to_cybercash.cybercash_log_insert">      
       <querytext>
       
 	insert into ec_cybercash_log ([join [ad_ns_set_keys -exclude "cc_time" $bind_vars] ", "], cc_time, txn_attempted_time)
@@ -39,7 +39,7 @@
 </fullquery>
 
  
-<fullquery name="ec_creditcard_return.cybercash_date_create">      
+<fullquery name="ec_date_to_cybercash_date_for_query.cybercash_date_create">      
       <querytext>
       
 	select to_char(:n_hours_to_add / 24 + to_date(:the_date, 'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS') from dual

@@ -11,7 +11,7 @@
 </fullquery>
 
  
-<fullquery name="ec_shipping_cost_summary.subcategories_select">      
+<fullquery name="ec_category_subcategory_and_subsubcategory_display.subcategories_select">      
       <querytext>
       
 		select subcategory_id from ec_subcategories where category_id = :category_id and subcategory_id in ([join $subcategory_list ", "]) order by subcategory_name
@@ -20,7 +20,7 @@
 </fullquery>
 
  
-<fullquery name="ec_shipping_cost_summary.category_name_select_1">      
+<fullquery name="ec_category_subcategory_and_subsubcategory_display.category_name_select_1">      
       <querytext>
       
                 select category_name from ec_categories where category_id = :category_id
@@ -29,7 +29,7 @@
 </fullquery>
 
  
-<fullquery name="ec_shipping_cost_summary.category_name_select_2">      
+<fullquery name="ec_category_subcategory_and_subsubcategory_display.category_name_select_2">      
       <querytext>
       
                 select category_name from ec_categories where category_id = :category_id
@@ -38,7 +38,7 @@
 </fullquery>
 
  
-<fullquery name="ec_shipping_cost_summary.subcategory_name_select_1">      
+<fullquery name="ec_category_subcategory_and_subsubcategory_display.subcategory_name_select_1">      
       <querytext>
       
                     select subcategory_name from ec_subcategories where subcategory_id = :subcategory_id
@@ -47,7 +47,7 @@
 </fullquery>
 
  
-<fullquery name="ec_shipping_cost_summary.subcategory_name_select_2">      
+<fullquery name="ec_category_subcategory_and_subsubcategory_display.subcategory_name_select_2">      
       <querytext>
       
 			select subsubcategory_name from ec_subsubcategories where subcategory_id = :subcategory_id and subsubcategory_id in ([join $subsubcategory_list ","]) order by subsubcategory_name
@@ -369,7 +369,7 @@
 </fullquery>
 
  
-<fullquery name="ec_admin_present_user.user_class_info_select">      
+<fullquery name="ec_user_class_display.user_class_info_select">      
       <querytext>
       
 	select c.user_class_name, m.user_class_approved_p, c.user_class_id
@@ -393,7 +393,7 @@
 </fullquery>
 
  
-<fullquery name="ec_create_new_session_if_necessary.state_name_from_usps_abbrev">      
+<fullquery name="ec_state_name_from_usps_abbrev.state_name_from_usps_abbrev">      
       <querytext>
       
 	select state_name from states where usps_abbrev =:usps_abbrev
@@ -402,7 +402,7 @@
 </fullquery>
 
  
-<fullquery name="ec_create_new_session_if_necessary.country_name_from_country_code">      
+<fullquery name="ec_country_name_from_country_code.country_name_from_country_code">      
       <querytext>
       
 	select country_name from country_codes where iso=:country_code

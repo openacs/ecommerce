@@ -17,76 +17,85 @@
 </fullquery>
 
  
-<fullquery name="email_log_insert">      
+<fullquery name="email_log_insert_1">
       <querytext>
-      
-	    insert into ec_automatic_email_log
-	    (user_identification_id, email_template_id, order_id, date_sent)
-	    values
-	    (:user_identification_id, 1, :order_id, current_timestamp)
-	
+
+            insert into ec_automatic_email_log
+            (user_identification_id, email_template_id, order_id, date_sent)
+            values
+            (:user_identification_id, 1, :order_id, current_timestamp)
+
       </querytext>
 </fullquery>
 
- 
-<fullquery name="email_log_insert">      
+
+<fullquery name="email_log_insert_2">
       <querytext>
-      
-	  insert into ec_automatic_email_log
-	  (user_identification_id, email_template_id, order_id, date_sent)
-	  values
-	  (:user_identification_id, 3, :order_id, current_timestamp)
-      
+
+          insert into ec_automatic_email_log
+          (user_identification_id, email_template_id, order_id, shipment_id, date_sent)
+          values
+          (:user_identification_id, 2, :order_id, :shipment_id, current_timestamp)
+
       </querytext>
 </fullquery>
 
- 
-<fullquery name="email_log_insert">      
+
+<fullquery name="email_log_insert_3">
       <querytext>
-      
-	  insert into ec_automatic_email_log
-	  (user_identification_id, email_template_id, order_id, date_sent)
-	  values
-	  (:user_identification_id, 3, :order_id, current_timestamp)
-      
+
+          insert into ec_automatic_email_log
+          (user_identification_id, email_template_id, order_id, date_sent)
+          values
+          (:user_identification_id, 3, :order_id, current_timestamp)
+
       </querytext>
 </fullquery>
 
- 
-<fullquery name="email_log_insert">      
+
+<fullquery name="email_log_insert_4">
       <querytext>
-      
-	  insert into ec_automatic_email_log
-	  (user_identification_id, email_template_id, order_id, date_sent)
-	  values
-	  (:user_identification_id, 3, :order_id, current_timestamp)
-      
+
+          insert into ec_automatic_email_log
+          (user_identification_id, email_template_id, gift_certificate_id, date_sent)
+          values
+          (:user_identification_id, 4, :gift_certificate_id, current_timestamp)
+
+
       </querytext>
 </fullquery>
 
- 
-<fullquery name="email_log_insert">      
+
+<fullquery name="email_log_insert_5">
       <querytext>
-      
-	  insert into ec_automatic_email_log
-	  (user_identification_id, email_template_id, order_id, date_sent)
-	  values
-	  (:user_identification_id, 3, :order_id, current_timestamp)
-      
+
+          insert into ec_automatic_email_log
+          (user_identification_id, email_template_id, gift_certificate_id, date_sent)
+          values
+          (:user_identification_id, 5, :gift_certificate_id, current_timestamp)
+
       </querytext>
 </fullquery>
 
- 
-<fullquery name="email_log_insert">      
+
+<fullquery name="email_log_insert_6">
       <querytext>
-      
-	  insert into ec_automatic_email_log
-	  (user_identification_id, email_template_id, order_id, date_sent)
-	  values
-	  (:user_identification_id, 3, :order_id, current_timestamp)
-      
+
+          insert into ec_automatic_email_log
+          (user_identification_id, email_template_id, gift_certificate_id, date_sent)
+          values
+          (:user_identification_id, 6, :gift_certificate_id, current_timestamp)
+
+      </querytext>
+</fullquery>
+ 
+
+<fullquery name="user_identification_id_seq">
+      <querytext>
+
+	select ec_user_ident_id_seq.nextval 
+
       </querytext>
 </fullquery>
 
- 
 </queryset>

@@ -336,7 +336,7 @@ ad_proc ec_audit_process_row { } {
     }
 }
 
-proc_doc ec_audit_delete_row { id_list id_column_list audit_table_name } {
+ad_proc ec_audit_delete_row { id_list id_column_list audit_table_name } {
     Inserts an entry to the audit table to log a delete. Each id is
     inserted into its id_column as well as user_id, IP address, and date.
 } {
@@ -379,7 +379,7 @@ proc_doc ec_audit_delete_row { id_list id_column_list audit_table_name } {
 
 }
 
-proc_doc ec_audit_trail_for_table {
+ad_proc ec_audit_trail_for_table {
     main_table_name
     audit_table_name
     id_column

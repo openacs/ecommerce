@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <queryset>
 
-<fullquery name="template_select">      
+<fullquery name="template_select_1">      
       <querytext>
       
 	select subject as email_subject, message as email_body, issue_type_list
@@ -37,12 +37,12 @@
 </fullquery>
 
  
-<fullquery name="template_select">      
+<fullquery name="template_select_3">      
       <querytext>
       
 	select subject as email_subject, message as email_body, issue_type_list
 	from ec_email_templates
-	where email_template_id = 1
+	where email_template_id = 3
     
       </querytext>
 </fullquery>
@@ -74,12 +74,12 @@
 </fullquery>
 
  
-<fullquery name="template_select">      
+<fullquery name="template_select_2">      
       <querytext>
       
 	select subject as email_subject, message as email_body, issue_type_list
 	from ec_email_templates
-	where email_template_id = 1
+	where email_template_id = 2
     
       </querytext>
 </fullquery>
@@ -97,18 +97,18 @@
 </fullquery>
 
  
-<fullquery name="template_select">      
+<fullquery name="template_select_4">      
       <querytext>
       
 	select subject as email_subject, message as email_body, issue_type_list
 	from ec_email_templates
-	where email_template_id = 1
+	where email_template_id = 4
     
       </querytext>
 </fullquery>
 
  
-<fullquery name="gift_certificate_select">      
+<fullquery name="gift_certificate_select_2">      
       <querytext>
       
 	select g.purchased_by as user_id, u.email, g.recipient_email, g.amount, g.certificate_to, g.certificate_from, g.certificate_message
@@ -120,30 +120,29 @@
 </fullquery>
 
  
-<fullquery name="template_select">      
+<fullquery name="template_select_6">      
       <querytext>
       
 	select subject as email_subject, message as email_body, issue_type_list
 	from ec_email_templates
-	where email_template_id = 1
+	where email_template_id = 6
     
       </querytext>
 </fullquery>
 
  
-<fullquery name="gift_certificate_select">      
+<fullquery name="gift_certificate_select_3">      
       <querytext>
+
+        select g.recipient_email as email, g.amount, g.certificate_to, g.certificate_from, g.certificate_message, g.claim_check
+          from ec_gift_certificates g
+         where g.gift_certificate_id=:gift_certificate_id
       
-	select g.purchased_by as user_id, u.email, g.recipient_email, g.amount, g.certificate_to, g.certificate_from, g.certificate_message
-          from ec_gift_certificates g, cc_users u
-         where g.purchased_by=u.user_id
-           and g.gift_certificate_id=:gift_certificate_id
-    
       </querytext>
 </fullquery>
 
  
-<fullquery name="template_select">      
+<fullquery name="template_select_5">      
       <querytext>
       select subject as email_subject, message as email_body, issue_type_list from ec_email_templates where email_template_id=5
       </querytext>
@@ -157,13 +156,6 @@
       from cc_users
      where upper(email)=upper(:email)
     
-      </querytext>
-</fullquery>
-
- 
-<fullquery name="user_identification_id_select">      
-      <querytext>
-      select user_identification_id from ec_user_identification where upper(email)=upper(:email)
       </querytext>
 </fullquery>
 

@@ -674,7 +674,7 @@ ad_proc ecGetUserAgentHeader {} { gets user agent header } {
     return $userag
 }
 
-proc_doc util_decode args {
+ad_proc util_decode args {
     like decode in sql
     Takes the place of an if (or switch) statement -- convenient because it's
     compact and you don't have to break out of an ns_write if you're in one.

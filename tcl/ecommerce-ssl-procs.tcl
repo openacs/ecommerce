@@ -119,7 +119,7 @@ ad_proc ec_insecure_location {} {
     }
 }
 
-proc_doc ec_ssl_available_p {} {
+ad_proc ec_ssl_available_p {} {
     Returns 1 if this AOLserver has either the nsssl module or nsopenssl module installed.
 } {
     if { [ns_config ns/server/[ns_info server]/modules nsssl] != "" } {
