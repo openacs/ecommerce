@@ -33,7 +33,7 @@ declare
   query_date		alias for $1;
   n_days		alias for $2;
 begin
-  IF (now() - query_date) <= n_days THEN 
+  IF current_timestamp - query_date <= timespan_days(n_days) THEN 
     return 1;
   ELSE
     return 0;
