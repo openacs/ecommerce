@@ -108,7 +108,7 @@ if { $shipping_gateway_in_use} {
             set shipping_address_id $shipping_address_ids
         } else {
             set shipping_address_id 0
-            set shipping_options "<table align=\"center\"><tr><td><p>We need your shipping address before we can quote a shipping price. You will be able to review your order and shipping charge before confirming the order.</p></td></tr></table>"
+            set shipping_options "<table align=\"center\"><tr><td><p>We need your <a href=\"checkout\">shipping address</a> before we can quote a shipping price. You are able to review your order and any shipping charges before confirming an order.</p></td></tr></table>"
         }
         if { $shipping_address_id > 0 } {
             # we have a zipcode and country
