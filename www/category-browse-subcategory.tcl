@@ -70,12 +70,12 @@ if { [string compare $user_session_id "0"] != 0 } {
 set category_name [db_string get_category_name "select category_name from ec_categories where category_id=:category_id"]
 
 set subcategory_name ""
-if [have subcategory_id] {
+if { [have subcategory_id] } {
     set subcategory_name [db_string get_subcat_name "select subcategory_name from ec_subcategories where subcategory_id=:subcategory_id"]
 }
 
 set subsubcategory_name ""
-if [have subsubcategory_id] {
+if { [have subsubcategory_id] } {
     set subsubcategory_name [db_string get_subsubcat_name "select subsubcategory_name from ec_subsubcategories where subsubcategory_id=:subsubcategory_id"]
 }
 
@@ -126,7 +126,7 @@ if {[string equal $recommendations {<table width="100%">}]} {
 # All products in the "category" and not in "subcategories"
 
 set exclude_subproducts ""
-if ![at_bottom_level_p] {
+if { ![at_bottom_level_p] } {
   set exclude_subproducts "
 and not exists (
 select 'x' from $product_map(sub$sub) s, ec_sub${sub}categories c
@@ -202,7 +202,7 @@ if { [empty_string_p $next_link] || [empty_string_p $prev_link] } {
 # subcategories
 
 set subcategories ""
-if ![at_bottom_level_p] {
+if { ![at_bottom_level_p] } {
   db_foreach get_subcategories "
 SELECT * from ec_sub${sub}categories c
  WHERE ${sub}category_id = :${sub}category_id
@@ -221,7 +221,7 @@ SELECT * from ec_sub${sub}categories c
 
 set the_category_id   $category_id
 set the_category_name [eval "ident \$${sub}category_name"]
-set category_url "category-browse?category_id=${$the_category_id"
+set category_url "category-browse?category_id=${the_category_id}"
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list [list "category-browse?category_id=$the_category_id" $category_name] $subcategory_name]]]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
