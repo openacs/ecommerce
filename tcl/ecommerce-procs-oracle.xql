@@ -6,6 +6,14 @@
     <version>8.1.6</version>
   </rdbms>
 
+  <fullquery name="ec_combocategory_widget.get_combocategories">      
+    <querytext>
+      select c.category_id, s.subcategory_id, category_name, subcategory_name 
+      from ec_categories c, ec_subcategories s
+      where c.category_id(+)=s.category_id
+    </querytext>
+  </fullquery>
+
   <fullquery name="ec_url_mem.ec_mountpoint">      
     <querytext>
       select site_node.url(s.node_id)
@@ -72,12 +80,12 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="ec_create_new_session_if_necessary.insert_user_session_sql">      
+  <fullquery name="ec_create_new_session_if_necessary.insert_user_session">      
     <querytext>
       insert into ec_user_sessions
       (user_session_id, ip_address, start_time, http_user_agent)
       values
-      (:user_session_id, :ip_address , sysdate, :http_user_agent)
+      (:user_session_id, :ip_address, sysdate, :http_user_agent)
     </querytext>
   </fullquery>
 
