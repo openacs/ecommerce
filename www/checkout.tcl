@@ -59,14 +59,11 @@ if {[db_0or1row shipping_avail "
 
     # Present all saved addresses
 
-    db_multirow get_user_addresses addresses {
-        select address_id, attn, line1, line2, city, usps_abbrev, 
-	       zip_code, phone, country_code, full_state_name, phone_time, 
-	       address_type
-          from ec_addresses
-         where user_id=:user_id
-           and address_type = 'shipping'
-    } {
+    template::query get_user_addresses addresses multirow "
+     	select address_id, attn, line1, line2, city, usps_abbrev, zip_code, phone, country_code, full_state_name, phone_time, address_type
+     	from ec_addresses
+     	where user_id=:user_id
+     	and address_type = 'shipping'" -eval {
 
 	set row(formatted) [ec_display_as_html [ec_pretty_mailing_address_from_args $row(line1) $row(line2) $row(city) $row(usps_abbrev) $row(zip_code) $row(country_code) \
 						    $row(full_state_name) $row(attn) $row(phone) $row(phone_time)]]
