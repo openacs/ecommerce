@@ -10,13 +10,13 @@
         (select category_id,
                (select count(*)
                   from ec_subcategories s
-                 where s.category_id = m.category_id) subcount,
+                 where s.category_id = m.category_id) as subcount,
                (select count(*)
                   from ec_subsubcategories ss
-                 where ss.subcategory_id = m.category_id) subsubcount
+                 where ss.subcategory_id = m.category_id) as subsubcount
           from ec_category_product_map m
          where product_id = :product_id
-      order by subcount, subsubcount, category_id)
+      order by subcount, subsubcount, category_id) some_name
     limit 1
 
       </querytext>
