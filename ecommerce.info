@@ -20,7 +20,6 @@
         <description format="text/plain">This module implements all that IT needs for a standard business-to-consumer Web service.  You can find a feature summary in the www/doc/ecommerce-features document.  
 </description>
 
-        <requires url="acs-geo-tables" version="4.1a"/>
         <requires url="acs-kernel" version="4.1"/>
 
         <files>
