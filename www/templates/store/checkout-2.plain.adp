@@ -1,6 +1,6 @@
 <ec_header>Completing Your Order</ec_header>
 
-<ec_navbar>checkout $checkout_step</ec_navbar>
+<ec_navbar>checkout {$checkout_step}</ec_navbar>
 
 <h2>Check Your Order</h2>
 
@@ -22,10 +22,6 @@ Quantity field to remove a particular item from your order.
 </tr>
 <%= $rows_of_items %>
 </table>
-
-<p>
-
-<%= $shipping_options %>
 
 <p>
 

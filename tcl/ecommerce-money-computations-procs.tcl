@@ -99,7 +99,7 @@ ad_proc ec_shipping_price_for_one_item {item_id product_id order_id shipping_met
 	set reg_shipping [expr $weight * $weight_shipping_cost]
     } else {
 	set reg_shipping 0
-    }
+    } test [list bart tatyana]
 
     set total_shipping_cost $reg_shipping
     # see if we have to add something for express shipping
@@ -122,7 +122,7 @@ ad_proc ec_shipping_price_for_one_item {item_id product_id order_id shipping_met
 # because they are constant, so I don't want to have to pull them from the database each
 # time (this procedure is called from within a loop)
 # For preconfirmed orders.
-ad_proc ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item { product_id offer_code item_id order_id shipping_method user_class_id_list default_shipping_per_item weight_shipping_cost add_exp_amount_per_item add_exp_amount_by_weight tax_rate shipping_p } { Returns price, price_name, shipping, price_tax, and shipping_tax (all in a list) for one item. } {
+ad_proc ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item { product_id offer_code item_id order_id {user_class_id_list {}} {shipping_method "no shipping"} {default_shipping_per_item 0} {weight_shipping_cost 0} {add_exp_amount_per_item 0} {add_exp_amount_by_weight 0} {tax_rate 0} {shipping_p "f"}} { Returns price, price_name, shipping, price_tax, and shipping_tax (all in a list) for one item. } {
 
     ##
     ## Part 1: Get Price & Price Name
@@ -271,6 +271,3 @@ ad_proc ec_price_shipping_gift_certificate_and_tax_in_an_order { order_id } { re
 
     return [list $total_price $total_shipping $gift_certificate_amount $total_tax]
 }
-
-
-

@@ -30,11 +30,7 @@ if {$user_id == 0} {
 # user session tracking
 set user_session_id [ec_get_user_session_id]
 
-
 ec_create_new_session_if_necessary
-# type1
-
-
 ec_log_user_as_user_id_for_this_session
 
 set success_p [db_0or1row get_order_id_and_order_owner "
@@ -82,16 +78,10 @@ if { [db_string get_ec_item_cart_count "select count(*) from ec_items where orde
     return
 }
 
-
 # everything is ok now; the user has a non-empty in_basket order and an
 # address associated with it, so now get the other necessary information
 
 set form_action [ec_securelink [ec_url]process-payment.tcl]
-#  if { [ad_ssl_available_p] } {
-#      set form_action "[ec_secure_location][ec_url]process-payment.tcl"
-#  } else {
-#      set form_action "[ec_insecure_location][ec_url]process-payment.tcl"
-#  }
 
 # ec_order_cost returns price + shipping + tax - gift_certificate BUT no gift certificates have been applied to
 # in_basket orders, so this just returns price + shipping + tax
@@ -167,6 +157,7 @@ if { $show_creditcard_form_p == "t" } {
     set ec_creditcard_widget [ec_creditcard_widget]
     set ec_expires_widget "[ec_creditcard_expire_1_widget] [ec_creditcard_expire_2_widget]"
     set zip_code [db_string get_zip_code "select zip_code from ec_addresses where address_id=:address_id"]
+
     # if customer_can_use_old_credit_cards is 0, we don't have to worry about what's
     # in old_cards_to_choose_from because it won't get printed in the template
     # anyway.
@@ -176,8 +167,5 @@ if { $show_creditcard_form_p == "t" } {
 }
 
 db_release_unused_handles
-
-
-
 
 ec_return_template

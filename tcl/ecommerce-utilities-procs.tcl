@@ -211,11 +211,17 @@ ad_proc ec_linked_thumbnail_if_it_exists { dirname {border_p "t"} {link_to_produ
                 "
 
 	    } elseif { [file exists "$full_dirname/product.gif"] } {
-		set linked_thumbnail "<a href=\"[ec_url]product-file/$file_path/product.gif\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\"></a>"
+		set linked_thumbnail "
+		<a href=\"[ec_url]product-file/$file_path/product.gif\">
+		<img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\">
+		</a>"
 
 	    }
 	} else {
-	    set linked_thumbnail "<a href=\"product?[export_url_vars product_id]\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\"></a>"
+	    set linked_thumbnail "
+	    <a href=\"product?[export_url_vars product_id]\">
+	    <img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\">
+            </a>"
 
 	}
     }

@@ -8,34 +8,73 @@ ad_library {
     @author ported by Jerry Asher (jerry@theashergroup.com)
 }
 
-ad_proc ec_search_widget { {category_id ""} {search_text ""} } { creates an ecommerce search widget, using the specified category id and search text if necessary } {
+ad_proc ec_search_widget { {combocategory_id ""} {search_text ""} } { creates an ecommerce search widget, using the specified category id and search text if necessary } {
     return "<form method=post action=[ec_insecurelink product-search]>
-<b>Search:</b> [ec_only_category_widget "f" $category_id] 
+<b>Search:</b> [ec_combocategory_widget "f" $combocategory_id]
 <input type=text size=25 name=search_text value=\"$search_text\">
 <input type=submit value=\"Go\"></form>
 "
 }
 
-ad_proc ec_only_category_widget { {multiple_p "f"} {default ""} } { category widget } {
+ad_proc ec_combocategory_widget { {multiple_p "f"} {default ""} } { Category widget combining categories and subcategories } {
     if { $multiple_p == "f" } {
-	set select_tag "<select name=category_id>\n"
+	set select_tag "<select name=combocategory_id><option value=\"\">Entire store</option>\n"
     } else {
-	set select_tag "<select multiple name=category_id size=3>\n"
+	set select_tag "<select multiple name=category_id size=3><option value=\"\">Entire store</option>\n"
     }
-   set to_return ""
+    set to_return ""
     set category_counter 0
-   
-    db_foreach get_ec_categories "select category_id, category_name from ec_categories order by category_name" {
+    set last_category_id ""
 
+    # Get all categories and their subcategories
+    db_foreach get_combocategories "select s.category_id, s.subcategory_id, category_name, subcategory_name from ec_categories c, ec_subcategories s where c.category_id=s.category_id order by s.category_id, s.subcategory_id" {
+
+	# There is at least one category. Open the select widget on the first pass of the foreach loop
 	if { $category_counter == 0} {
 	    append to_return $select_tag
 	}
 	incr category_counter
+	if { $category_id != $last_category_id } {
+	    set last_category_id $category_id
 
-	if { [lsearch -exact $default $category_id] != -1 || [lsearch -exact $default $category_name] != -1 } {
-	    append to_return "<option value=$category_id selected>$category_name"	    
+	    # Check if the category has been selected.
+	    if { [lsearch -exact $default "$category_id|"] != -1 || [lsearch -exact $default $category_name] != -1 } {
+		append to_return "<option value=\"$category_id|\" selected>&nbsp;&nbsp;$category_name</option>"	    
+	    } else {
+		append to_return "<option value=$category_id>&nbsp;&nbsp;$category_name</option>"
+	    }
+	}
+
+	# Check if the subcategory has been selected.
+	if { [lsearch -exact $default "$category_id|$subcategory_id"] != -1 || [lsearch -exact $default $subcategory_name] != -1 } {
+	    append to_return "<option value=\"$category_id|$subcategory_id\" selected>&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name</option>"	    
 	} else {
-	    append to_return "<option value=$category_id>$category_name"
+	    append to_return "<option value=\"$category_id|$subcategory_id\">&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name</option>"
+	}
+    }
+    if { $category_counter != 0 } {
+	append to_return "</select>\n"
+    }
+    return $to_return
+}
+
+ad_proc ec_only_category_widget { {multiple_p "f"} {default ""} } { category widget } {
+    if { $multiple_p == "f" } {
+	set select_tag "<select name=category_id><option value=\"\">Entire store</option>\n"
+    } else {
+	set select_tag "<select multiple name=category_id size=3>\n"
+    }
+    set to_return ""
+    set category_counter 0
+    db_foreach get_ec_categories "select category_id, category_name from ec_categories order by category_name" {
+	if { $category_counter == 0} {
+	    append to_return $select_tag
+	}
+	incr category_counter
+	if { [lsearch -exact $default $category_id] != -1 || [lsearch -exact $default $category_name] != -1 } {
+	    append to_return "<option value=$category_id selected>$category_name</option>"	    
+	} else {
+	    append to_return "<option value=$category_id>$category_name</option>"
 	}
     }
     if { $category_counter != 0 } {
@@ -54,12 +93,9 @@ ad_proc ec_subcategory_widget { category_id {multiple_p "f"} {default ""} } { su
     } else {
 	set to_return "<select multiple name=subcategory_of_$category_id size=3>\n"
     }
-   set subcategory_counter 0
+    set subcategory_counter 0
     db_foreach get_subcats_by_name "select subcategory_id, subcategory_name from ec_subcategories where category_id=:category_id order by subcategory_name" {
- 
- 
 	incr subcategory_counter
-	
 	if { [string compare $default $subcategory_id] == 0 || [string compare $default $subcategory_name] == 0 } {
 	    append to_return "<option value=$subcategory_id selected>$subcategory_name"
 	} else {
@@ -70,7 +106,7 @@ ad_proc ec_subcategory_widget { category_id {multiple_p "f"} {default ""} } { su
 	append to_return "<option value=\"\">There are no subcategories to choose from."
     }
     append to_return "</select>\n"
-return $to_return
+    return $to_return
 }
 
 # gives a drop-down list and, if category_id_list is specified, it will display

@@ -43,7 +43,7 @@ if { ![empty_string_p $dirname] } {
 
     foreach file_name $file_list {
       set file [lindex [file split $file_name] end]
-      doc_body_append "<li><a href=\"/product-file/$subdirectory/$dirname/$file\">$file</a> \[<a href=\"supporting-file-delete?[export_url_vars file product_id]\">delete</a>]\n"
+	doc_body_append "<li><a href=\"[ec_url]product-file/$subdirectory/$dirname/$file\">$file</a> \[<a href=\"supporting-file-delete?[export_url_vars file product_id]\">delete</a>]\n"
     }
 
     if { [string length $file_list] == 0 } {

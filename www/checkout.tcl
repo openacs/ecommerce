@@ -10,19 +10,15 @@ ad_page_contract {
     usca_p:optional
 }
 
-ec_redirect_to_https_if_possible_and_necessary
-
 # rolled login requirement into  ec_redirect_to_https_if_possible_and_necessary
-
-set user_id [ad_verify_and_get_user_id]
+ec_redirect_to_https_if_possible_and_necessary
 
 # make sure they have an in_basket order, otherwise they've probably
 # gotten here by pushing Back, so return them to index.tcl
 
+set user_id [ad_verify_and_get_user_id]
 set user_session_id [ec_get_user_session_id]
-
 ec_create_new_session_if_necessary
-# type1
 
 ec_log_user_as_user_id_for_this_session
 
@@ -37,7 +33,6 @@ if { [empty_string_p $order_id] } {
     db_dml update_ec_order_set_uid "update ec_orders set user_id=:user_id where order_id=:order_id"
 }
 
-
 # check whether or not shipping is available
 set shipping_unavail_p [db_string check_order_shippable "
         select count(*)
@@ -49,12 +44,12 @@ set shipping_unavail_p [db_string check_order_shippable "
                       and no_shipping_avail_p = 't')"]
 
 # see if there are any saved shipping addresses for this user
-
-set saved_addresses "You can select an address listed below or enter a new address.\n
-	<p>
-	<table border=0 cellspacing=0 cellpadding=20>
+set saved_addresses "
+You can select an address listed below or enter a new address.
+<table border=0 cellspacing=0 cellpadding=20>
 "
 
+# Present all saved addresses
 db_foreach get_user_addresses "
 select address_id, attn,
        line1,
@@ -67,28 +62,26 @@ select address_id, attn,
    and address_type='shipping'
 " {
 
-
+    # Present a single saved address
     append saved_addresses "
     <tr>
-    <td>
-    [ec_display_as_html [ec_pretty_mailing_address_from_args $line1 $line2 $city $usps_abbrev $zip_code $country_code $full_state_name $attn $phone $phone_time]]
-    </td>
-    <td>
-    <a href=\"checkout-2?[export_url_vars address_id]\">\[use this address\]</a>
-    </td>
+      <td>[ec_display_as_html [ec_pretty_mailing_address_from_args $line1 $line2 $city $usps_abbrev $zip_code $country_code $full_state_name $attn $phone $phone_time]]</td>
+      <td><p><a href=\"checkout-2?[export_url_vars address_id]\">\[use this address\]</a><br>
+          <a href=\"shipping-address?[export_url_vars address_id]\">\[edit this address\]</a><br>
+          <a href=\"delete-shipping-address?[export_url_vars address_id]\">\[delete this address\]</a></p></td>
     </tr>
     "
-    
-} if_no_rows {
 
+} if_no_rows {
     set saved_addresses ""
 }
 
-db_release_unused_handles
-
+# Add closing table tag if there are saved addresses
 if {![empty_string_p $saved_addresses] } {
-    # We found some addresses
-    append saved_addresses "</table>"
+    append saved_addresses "
+    </table>
+    "
 }
 
+db_release_unused_handles
 ec_return_template

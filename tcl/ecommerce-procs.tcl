@@ -207,10 +207,10 @@ ad_proc -private ec_product_directory_mem {} {
 
 # current_location can be "Shopping Cart", "Your Account", "Home", or
 # any category_id
-ad_proc ec_footer { {current_location ""} {category_id ""} {search_text ""} } { returns the ecommerce footer } {
+ad_proc ec_footer { {current_location ""} {category_id ""} {subcategory_id ""} {search_text ""} } { returns the ecommerce footer } {
     set to_return "<hr>
 <center>
-[ec_search_widget $category_id $search_text] "
+[ec_search_widget "$category_id|subcategory_id"  $search_text]"
     if { [string compare $current_location "Shopping Cart"] == 0 } {
 	append to_return "<b>Shopping Cart</b>"
     } else {
@@ -741,9 +741,14 @@ ad_proc ec_navbar {{current_location ""}} { returns ec nav bar } {
         set linked_category_list ""
         
         set current_location [lindex $current_location 1]
-        foreach step {Welcome Address Verify Shipping Payment Confirm} {
+	set steps {"Select Address" "Verify Order"}
+	if { [ad_parameter -package_id [ec_id] ExpressShippingP ecommerce] } {
+	    lappend steps "Select Shipping"
+	}
+	lappend steps "Payment Info" "Confirm Order"
+        foreach step $steps {
             set category_descriptions Checkout:
-            ns_log debug "ec_navbar $current_location ::: $step"
+
             if {[string equal -nocase $current_location $step]} {
                 lappend linked_category_list "<b>$step</b>"
             } else {
@@ -1407,7 +1412,7 @@ ad_proc ec_log_user_as_user_id_for_this_session {} { logs user as user id for th
 ad_proc ec_get_user_session_id {} { Gets the user session from cookies } {
     set headers [ns_conn headers]
     set cookie [ns_set get $headers Cookie]
-    ns_log notice "cookie : $cookie"
+
     # grab the user_session_id from the cookie
     if { [regexp {user_session_id=([^;]+)} $cookie match user_session_id] } {
 	return $user_session_id

@@ -1,5 +1,5 @@
 <ec_header>Completing Your Order</ec_header>
-<ec_navbar>checkout welcome</ec_navbar>
+<ec_navbar>checkout {Select Address}</ec_navbar>
 <!-- <ec_header_image></ec_header_image><br clear=all> -->
 
 <h2>Completing Your Order</h2>

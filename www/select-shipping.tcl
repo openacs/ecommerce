@@ -1,20 +1,20 @@
 # /www/ecommerce/checkout-2.tcl
 ad_page_contract {
     @param address_id a stored address
+    @param tax_exempt_p a flag to indicate if the customer is tax exempt
     @param usca_p User session started or not
 
     @author
     @creation-date
     @cvs-id checkout-2.tcl,v 3.7.2.13 2000/08/18 21:46:32 stevenp Exp
     @author ported by Jerry Asher (jerry@theashergroup.com)
-    @author Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
 } {
     address_id:optional,naturalnum
+    tax_exempt_p:optional
     usca_p:optional
 }
 
 # ec_redirect_to_https_if_possible_and_necessary
-
 # we need them to be logged in
 set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
@@ -73,7 +73,6 @@ if { [db_string get_ec_item_count "select count(*) from ec_items where order_id=
 # if address_id doesn't exist, make sure there is an address for this order, 
 # otherwise they've probably gotten here via url surgery, so redirect them
 # to checkout.tcl
-
 if { [info exists address_id] && ![empty_string_p $address_id] } {
     set n_this_address_id_for_this_user [db_string get_an_address_id "select count(*) from ec_addresses where address_id=:address_id and user_id=:user_id"]
     if {$n_this_address_id_for_this_user == 0} {
@@ -92,66 +91,37 @@ if { [info exists address_id] && ![empty_string_p $address_id] } {
 
 # everything is ok now; the user has a non-empty in_basket order and an
 # address associated with it, so now get the other necessary information
-if { [ad_parameter -package_id [ec_id] ExpressShippingP ecommerce] } {
-    set form_action [ec_securelink [ec_url]select-shipping]
-} else {
-    set form_action [ec_securelink [ec_url]process-order-quantity-shipping]
-}
-set rows_of_items ""
-set shipping_avail_p 1
 
-db_foreach get_shipping_data "
-    select p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id,
-           count(*) as quantity,
-           u.offer_code,
-           i.color_choice, i.size_choice, i.style_choice
-      from ec_orders o, ec_items i, ec_products p, 
-           (select offer_code, product_id
-              from ec_user_session_offer_codes usoc
-             where usoc.user_session_id=:user_session_id) u
-     where i.product_id=p.product_id
-       and o.order_id=i.order_id
-       and p.product_id= u.product_id(+)
-       and o.user_session_id=:user_session_id and o.order_state='in_basket'
-  group by p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id,
-           u.offer_code,
-           i.color_choice, i.size_choice, i.style_choice" {
-
-    if { [string compare $no_shipping_avail_p "t"] == 0 } {
-        set shipping_avail_p 0
-    }
-
-    set option_list [list]
-    if { ![empty_string_p $color_choice] } {
-	lappend option_list "Color: $color_choice"
-    }
-    if { ![empty_string_p $size_choice] } {
-	lappend option_list "Size: $size_choice"
-    }
-    if { ![empty_string_p $style_choice] } {
-	lappend option_list "Style: $style_choice"
-    }
-    set options [join $option_list ", "]
-
-    # Trying out the fancy new . arrays. It would be much better to rework this
-    # for a 2D array,multiple setup, but I don't have time to think about it now...
-    append rows_of_items "<tr>
-    <td><input type=text name=\"quantity.[list $product_id $color_choice $size_choice $style_choice]\" value=\"$quantity\" size=4 maxlength=4></td>
-    <td><a href=\"product?product_id=$product_id\">$product_name</a>[ec_decode $options "" "" ", $options"]<br>
-    [ec_price_line $product_id $user_id $offer_code]</td>
-    </tr>
-    "
-}
-
+set form_action [ec_securelink [ec_url]process-order-quantity-shipping]
+set shipping_avail_p [expr ![db_0or1row shipping_avail "select distinct p.no_shipping_avail_p from ec_items i, ec_products p where i.product_id = p.product_id and p.no_shipping_avail_p = 't' and i.order_id = :order_id"]]
+set shipping_options ""
 set checkout_step {Verify Order}
-set tax_exempt_options ""
-if { [ad_parameter -package_id [ec_id] OfferTaxExemptStatusP ecommerce 0] } {
-  append tax_exempt_options "<p>
-  <b><li>Is your organization tax exempt? (If so, we will ask you to
-  provide us with an exemption certificate.)</b>
-  <p>
-  <input type=radio name=tax_exempt_p value=\"t\">Yes<br>
-  <input type=radio name=tax_exempt_p value=\"f\" checked>No"
+if { [ad_parameter -package_id [ec_id] ExpressShippingP ecommerce] } {
+    if { $shipping_avail_p } {
+        set checkout_step {Select Shipping}
+        append shipping_options "<p>
+        <b><li>Shipping method:</b>
+        <p>
+        <input type=radio name=shipping_method value=\"standard\" checked>Standard Shipping<br>
+        <input type=radio name=shipping_method value=\"express\">Express<br>
+        <input type=radio name=shipping_method value=\"pickup\">Pickup
+        <p>
+        "
+    } else {
+        set shipping_method "no shipping"
+        append shipping_options "<p>
+        <b><li>No Shipping Available:</b>
+        <p>
+        [export_form_vars shipping_method]
+        One or more items in your order are not shippable.
+        <p>
+        "
+    }
+}
+
+# Export the tax exempt flag if one was passed on from checkout-2
+if {[info exists tax_exempt_p]} {
+    append shipping_options "[export_form_vars tax_exempt_p]"
 }
 
 db_release_unused_handles

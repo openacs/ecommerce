@@ -1,10 +1,14 @@
 <ec_header>Payment Info</ec_header>
 
-<ec_navbar>checkout payment</ec_navbar>
+<ec_navbar>checkout {payment info}</ec_navbar>
 
 <h2>Payment Info</h2>
 
 <blockquote>
+
+<p>Your order will not be complete until you have confirmed the total in the next step.
+<% ns_puts [ad_parameter -package_id [ec_id] SystemName ecommerce] %> will not charge your card 
+without your confirmation of the total.</p>
 
 <form method=post action=<%= "\"$form_action\"" %>>
 
@@ -58,7 +62,7 @@ If you're using a new card, please enter the full credit card number below.
 if { !$gift_certificate_covers_whole_order } {
 
     # ns_puts means "print this"
-    ns_puts "<blockquote>
+    ns_puts "
     <a href=\"gift-certificate-claim.tcl\">Click here to claim a new gift certificate</a>
     <p>
     "

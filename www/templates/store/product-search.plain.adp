@@ -3,7 +3,7 @@
 <ec_navbar></ec_navbar>
 
 <p>
-<b>Your search results:</b>
+<b><%= $category_name %>:</b>
 <p>
 
 <blockquote>

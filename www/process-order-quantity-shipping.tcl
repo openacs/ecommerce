@@ -165,7 +165,7 @@ where i.product_id=u.product_id(+)
 and i.order_id=:order_id" {
 
 
-    set everything [ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item $product_id $offer_code $item_id $order_id $shipping_method $user_class_id_list $default_shipping_per_item $weight_shipping_cost $add_exp_amount_per_item $add_exp_amount_by_weight $tax_rate $shipping_p]
+    set everything [ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item $product_id $offer_code $item_id $order_id $user_class_id_list $shipping_method $default_shipping_per_item $weight_shipping_cost $add_exp_amount_per_item $add_exp_amount_by_weight $tax_rate $shipping_p]
 
     set total_item_shipping_tax [expr $total_item_shipping_tax + [lindex $everything 4]]
     set total_item_price_tax [expr $total_item_price_tax + [lindex $everything 3]]

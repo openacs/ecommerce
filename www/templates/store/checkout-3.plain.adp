@@ -1,6 +1,6 @@
 <ec_header>Please Confirm Your Order</ec_header>
 
-<ec_navbar>checkout confirm</ec_navbar>
+<ec_navbar>checkout {Confirm Order}</ec_navbar>
 
 <h2>Please Confirm Your Order</h2>
 

@@ -7,8 +7,13 @@
       </querytext>
 </fullquery>
 
+  <fullquery name="ec_combocategory_widget.get_combocategories">      
+    <querytext>
+      select s.category_id, s.subcategory_id, category_name, subcategory_name from ec_categories c, ec_subcategories s where c.category_id=s.category_id order by s.category_id, s.subcategory_id
+    </querytext>
+  </fullquery>
  
-<fullquery name="ec_subcategory_widget.get_subcats_by_name">      
+ <fullquery name="ec_subcategory_widget.get_subcats_by_name">      
       <querytext>
       select subcategory_id, subcategory_name from ec_subcategories where category_id=:category_id order by subcategory_name
       </querytext>
