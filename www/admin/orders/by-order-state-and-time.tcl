@@ -93,7 +93,7 @@ if { $view_confirmed == "last_24" } {
 } elseif { $view_confirmed == "last_month" } {
     set confirmed_query_bit [db_map last_month]
 } else {
-    set confirmed_query_bit "where true"
+    set confirmed_query_bit [db_map all]
 }
 
 set link_beginning "by-order-state-and-time?[export_url_vars view_order_state view_confirmed]"
