@@ -56,7 +56,7 @@ doc_body_append "[ad_admin_header "Upload Products"]
 
 <blockquote>
 
-<form enctype=multipart/form-data action=upload-2 method=get>
+<form enctype=multipart/form-data action=upload-2 method=post>
 CSV Filename <input name=csv_file type=file>
 <p>
 <center>
