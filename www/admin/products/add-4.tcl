@@ -73,7 +73,10 @@ db_transaction {
 
   # we have to generate audit information
   set audit_fields "last_modified, last_modifying_user, modified_ip_address"
-  set audit_info "sysdate, :user_id, :peeraddr"
+
+  # db_map this
+  # set audit_info "sysdate, :user_id, :peeraddr"
+  set audit_info [db_map audit_info_sql] 
     db_exec_plsql user_insert {
 	begin
 	:1 := ec_product.new(product_id => :product_id,

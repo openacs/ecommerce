@@ -40,5 +40,13 @@
       </querytext>
 </fullquery>
 
+
+<fullquery name="audit_info_sql">
+      <querytext>
+
+      sysdate, :user_id, :peeraddr
+
+      </querytext>
+</fullquery>
  
 </queryset>
