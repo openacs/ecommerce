@@ -19,43 +19,57 @@ doc_body_append "[ad_admin_header "Upload Utilities"]
 
 <hr>
 
-There are three utilities provided with the ecommerce module that can
-help you load you catalog data into the database:
+These utilities help you load catalog data into the database:
 
 <ul>
-<li><a href=\"upload\">Product Loader</a>
-<li><a href=\"extras-upload\">Product Extras Loader</a>
-<li><a href=\"categories-upload\">Product Category Map Loader</a>
+<li><p><a href=\"upload\">Product Loader</a>
+ uploads a data file that contains one line per product
+ in your catalog.  Each line has fields corresponding to a subset of the
+ columns in the <tt>ec_products</tt> table.  The first line of the data file is a
+ header that defines which fields are being loaded and the order that
+ they appear in the data file.  The remaining lines contain the product
+ data.
+</p></li>
+<li><p><a href=\"extras-upload\">Product Extras Loader</a>
+ is similar to the product loader except it
+ loads data into <tt>ec_custom_product_field_values</tt>, the table which contains
+ the values for each product of the custom fields you have added.
+ The file format resembles the products import data file format.
+</p></li>
+<li><p><a href=\"categories-upload\">Product Category Map Loader By Name-Matching</a>
+ creates the mappings between products in <tt>ec_products</tt> table
+ and categories in <tt>ec_categories</tt>, <tt>ec_subcategories</tt>, and <tt>ec_subsubcategories</tt> tables 
+ by inserting rows into <tt>ec_category_product_map</tt> and <tt>ec_subcategory_product_map</tt>.)  The
+ data file you create for uploading should consist of product sku and
+ category or subcategory names, one per row.  This process attempts to be
+ smart by using the SQL \"LIKE\" function to resolve close matches between
+ categories listed in the data file and those known in the database.
+</p></li>
+<li><p><a href=\"categories-upload-by-id\">Product Category Map Loader By Index Mapping</a>
+ creates the product-categories mappings by finding exact matches to the
+ category tables' indexes <tt>category_id</tt>, <tt>subcategory_id</tt>, <tt>subsubcategory_id</tt>.
+</p></li>
+<!---   This following feature will be added soon, just not ready yet, so let's hide it
+<li><p>
+ This <a href=\"image-upload\">Bulk Product Image Loader</a> operates on a multi stage process.
+ First, place product images in a set of directories accessible by this server. Then use this
+ utility to import a file that maps <tt>product_id</tt> or <tt>sku</tt> to the location of the product images. 
+ Thumbnails can optionally be automatically be generated.
+</p></li>
+-->
 </ul>
 
-<p>The product loader uploads a CSV file that contains one line per product
-in your catalog.  Each line has fields corresponding to a subset of the
-columns in the ec_products table.  The first line of the CSV file is a
-header that defines which fields are being loaded and the order that
-they appear in the CSV file.  The remaining lines contain the product
-data.
-
-<p>The product extras loader is similar to the product loader except it
-loads data into ec_custom_product_field_values, the table which contains
-the values for each product of the custom fields you've added.
-The file format is
-also similar to that of the product data CSV file.
-
-<p><b>Note:</b>You must load the products and define the extra fields
-you wish to use before you can load the product extras.
-
-<p>The product category map loader creates the mappings between products
-and categories and products and subcategories (specifically, it inserts
-rows into ec_category_product_map and ec_subcategory_product_map.)  The
-CSV file you create for uploading should consist of product id and
-category or subcategory names, one per row.  This program attempts to be
-smart by using the SQL like function to resolve close matches between
-categories listed in the CSV file and those known in the database.
-
-<p><b>Note:</b>You must create the categories and subcategories before
-you can use the product category map loader.
-
-<h3>Images and thumbnails</h3>
-<p>Currently, there is no feature for bulk uploading images. However, the code will automatically recognize images that are placed in the product's directory. Use the filename \"product\" and either \".gif\" or \".jpg\" extension for product image. Thumbnails use the filename \"product-thumbnail.jpg\". No facility exists for GIF thumbnails, because they tend to have larger file sizes which signifcantly slow page loads via ssl. Note: PNG extensions are not supported either, as there is no ns_pngsize function (at the time of this writing).</p>
+<p>
+  <b>Note:</b> Products need to be loaded and their extra fields need to be defined before 
+  loading product extras.
+</p>
+<p>
+  <b>Note:</b> Categories and subcategories need to be created before using 
+  a Product Category Map Loader.
+</p>
+<p>
+  <b>Note: </b>There may be a peak load condition on the server for an extended period 
+  when bulk loading of product images create product thumbnails (optional feature).
+</p>
 [ad_admin_footer]
 "
