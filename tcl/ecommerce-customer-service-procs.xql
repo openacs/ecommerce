@@ -33,5 +33,17 @@
       </querytext>
 </fullquery>
 
+
+<fullquery name="ec_customer_service_simple_issue.customer_service_action_insert">
+      <querytext>
+
+      insert into ec_customer_service_actions
+      (action_id, issue_id, interaction_id, action_details)
+      values
+      (:action_id, :issue_id, :interaction_id, :action_details)
+
+      </querytext>
+</fullquery>
+
  
 </queryset>

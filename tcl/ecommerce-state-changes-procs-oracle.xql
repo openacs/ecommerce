@@ -16,6 +16,12 @@
       </querytext>
 </fullquery>
 
+
+<fullquery name="ec_update_state_to_authorized.order_state_update">
+      <querytext>
+      update ec_orders set order_state=:new_state, authorized_date=sysdate where order_id=:order_id                                                                   </querytext>
+</fullquery>
+
  
 <fullquery name="ec_update_state_to_authorized.authorized_date_update">      
       <querytext>

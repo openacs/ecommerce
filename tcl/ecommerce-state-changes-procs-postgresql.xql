@@ -19,6 +19,13 @@ select ec_reinst_gift_cert_on_order (:order_id)
 </fullquery>
 
  
+<fullquery name="ec_update_state_to_authorized.order_state_update">
+      <querytext>
+      update ec_orders set order_state=:new_state, authorized_date=current_timestamp where order_id=:order_id
+      </querytext>
+</fullquery>
+
+
 <fullquery name="ec_update_state_to_authorized.authorized_date_update">      
       <querytext>
       update ec_financial_transactions set authorized_date=current_timestamp where transaction_id=:transaction_id

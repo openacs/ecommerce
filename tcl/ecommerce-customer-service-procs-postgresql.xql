@@ -34,16 +34,4 @@
 </fullquery>
 
  
-<fullquery name="ec_customer_service_simple_issue.customer_service_issue_insert">      
-      <querytext>
-      
-        insert into ec_customer_service_issues
-	(issue_id, user_identification_id, order_id, open_date, close_date, closed_by, gift_certificate_id)
-        values
-	(:issue_id, :user_identification_id, :order_id, current_timestamp, current_timestamp, :customer_service_rep, :gift_certificate_id)
-    
-      </querytext>
-</fullquery>
-
- 
 </queryset>

@@ -93,7 +93,7 @@ ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_orig
     
     set action_id [db_nextval "ec_action_id_sequence"]
 
-    db_dml customer_service_issue_insert {
+    db_dml customer_service_action_insert {
         insert into ec_customer_service_actions
 	(action_id, issue_id, interaction_id, action_details)
         values
