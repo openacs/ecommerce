@@ -561,6 +561,12 @@ ad_proc ec_formatted_full_date {
     be in the format YYYY-MM-DD HH24:MI:SS-TZ.
 
 } {
+
+    # Remove the timezone (-TZ) from ugly_date or clock scan will
+    # choke on it.
+
+    regsub -- {(\+|-)[0-9]{2}$} $ugly_date "" ugly_date
+
     if { [llength [split $ugly_date " "]] == 2 } {
 	return [clock format [clock scan $ugly_date] -format "%B %d, %Y %r" -gmt true]
     } else {
@@ -572,10 +578,17 @@ ad_proc ec_formatted_date {
     ugly_date 
 } { 
 
-    Format Ugly Date ugly_date shoud be in the format YYYY-MM-DD
-    HH24:MI:SS or just YYYY-MM-DD
+    Format Ugly Date. Ugly_date shoud be in the format YYYY-MM-DD
+    HH24:MI:SS or just YYYY-MM-DD and may contain timezone 
+    information (-TZ) at the end in the format +99 or -99.
 
 } {
+
+    # Remove the timezone information (-TZ) that PostgresSQL can
+    # return or the Tcl command 'clock scan' will choke on it.
+
+    regsub -- {(\+|-)[0-9]{2}$} $ugly_date "" ugly_date
+
     set split_date [split $ugly_date " "]
     if { [llength $split_date] == 1 } {
 	return [util_AnsiDatetoPrettyDate $ugly_date]
