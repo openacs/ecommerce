@@ -25,7 +25,7 @@ ad_page_contract {
     @param {follow_up_required "f"}
     @param {info_used_list ""}
     @param submit
-    @param  return_to_issue
+    @param return_to_issue
 
     @author
     @creation-date
@@ -56,15 +56,16 @@ ad_page_contract {
     {follow_up_required "f"}
     {info_used_list ""}
     submit
+    issue_id:optional,naturalnum
 }
 
 ad_require_permission [ad_conn package_id] admin
 
 # doubleclick protection:
 if { [db_string get_service_action_count "select count(*) from ec_customer_service_actions where action_id=:action_id"] > 0 } {
-    if { $submit == "Interaction Complete" } {
-	ad_returnredirect interaction-add.tcl
-    } else {
+ns_log Notice "interaction-add-3.tcl: double click protection, line 65"
+    ad_returnredirect index
+} elseif { $submit != "Interaction complete" } {
 	# I have to use the action_id to figure out user_identification_id
 	# and interaction_id so that I can pass them to interaction-add-2.tcl
 	set row_exists_p [db_0or1row get_user_id_info "select i.user_identification_id as c_user_identification_id, a.interaction_id
@@ -73,8 +74,6 @@ if { [db_string get_service_action_count "select count(*) from ec_customer_servi
 	and a.action_id=:action_id"]
 	set insert_id 1
 	ad_returnredirect "interaction-add-2.tcl?[export_url_vars interaction_id interaction_type postal_code c_user_identification_id insert_id interaction_originator]"
-    }
-    ad_script_abort
 }
 
 # the customer service rep must be logged on
@@ -111,10 +110,8 @@ if { [regexp "\[^0-9\]+" $issue_id] } {
 
 if { [info exists order_id] && [regexp "\[^0-9\]+" $order_id] } {
     incr exception_count
-    append exception_text "<li>The order ID should be numeric.\n"
+    append exception_text "<li>The Order ID should be numeric.\n"
 }
-
-
 
 if { $exception_count > 0 } {
     ad_return_complaint $exception_count $exception_text
@@ -131,14 +128,14 @@ if { $exception_count > 0 } {
 # user with the interaction based on issue_id or order_id.
 # Otherwise, the user_identification_id is set, so they will just be
 # given an error message.
-if { ![empty_string_p $issue_id] } {
+if { [value_if_exists issue_id] > 0 } {
     # see who this issue belongs to
     if { [db_0or1row get_user_issue_id_info "select u.user_id as issue_user_id, u.user_identification_id as issue_user_identification_id
     from ec_user_identification u, ec_customer_service_issues i
     where u.user_identification_id = i.user_identification_id
     and i.issue_id=:issue_id"]==0 } {
 
-	ad_return_complaint 1 "<li>The issue ID that you specified is invalid.  Please go back and check the issue ID you entered.  If this is a new issue, please leave the issue ID blank.\n"
+	ad_return_complaint 1 "<li>The Issue ID that you specified is invalid.  Please go back and check the Issue ID you entered.  If this is a new issue, please leave the issue ID blank.\n"
         ad_script_abort
     }
     
@@ -238,7 +235,7 @@ if { [info exists order_id] && ![empty_string_p $order_id] } {
     # see who the order belongs to
     set row_exists_p [db_0or1row get_order_owner "select user_id as order_user_id from ec_orders where order_id=:order_id"]
     if { $row_exists_p==0 } {
-	ad_return_complaint 1 "<li>The order ID that you specified is invalid.  Please go back and check the order ID you entered.  If this issue is not about a specific order, please leave the order ID blank.\n"
+	ad_return_complaint 1 "<li>The shopping cart Order ID that you specified is invalid.  Please go back and check the order ID you entered.  If this issue is not about a specific online order, please leave the Order ID blank.\n"
         ad_script_abort
     }
     
@@ -447,9 +444,9 @@ foreach info_used $info_used_list {
 
 }
 
-if { $submit == "Interaction Complete" } {
-    if { ![info exists return_to_issue] } {
-	ad_returnredirect interaction-add
+if { $submit == "Interaction complete" } {
+    if {[value_if_exists return_to_issue] < 1 } {
+	ad_returnredirect index
     } else {
 	ad_returnredirect "issue?issue_id=$return_to_issue"
     }
@@ -460,8 +457,4 @@ if { $submit == "Interaction Complete" } {
     set insert_id 1
     ad_returnredirect "interaction-add-2?[export_url_vars interaction_id interaction_type postal_code return_to_issue insert_id interaction_originator]&c_user_identification_id=$uiid_to_insert"
 }
-
-
-
-
 

@@ -87,7 +87,7 @@ if { ![info exists interaction_id] } {
 	append exception_text "<li>You forgot to specify the method of inquiry (phone/email/etc.).\n"
     } elseif { $interaction_type == "other" && (![info exists interaction_type_other] || [empty_string_p $interaction_type_other]) } {
 	incr exception_count
-	append exception_text "<li>You forgot to fill in the text box for Other.\n"
+	append exception_text "<li>You forgot to fill in the text box detail for Other.\n"
     } elseif { $interaction_type != "other" && ([info exists interaction_type_other] && ![empty_string_p $interaction_type_other]) } {
 	incr exception_count
 	append exception_text "<li>You selected \"Inquired via: [string toupper [string index $interaction_type 0]][string range $interaction_type 1 [expr [string length $interaction_type] -1]]\", but you also filled in something in the \"If Other, specify\" field.  This is inconsistent.\n"
@@ -113,102 +113,16 @@ set action_id [db_nextval ec_action_id_sequence]
 
 
 
-append doc_body "[ad_admin_header "One Issue"]
+append doc_body "[ad_admin_header "One Issue"] 
 <h2>One Issue</h2>
-
 [ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "One Issue (part of New Interaction)"]
 
-<hr>
-A customer may discuss several issues during the course of one interaction.  Please
-enter the information about only one issue below:
-
-<form method=post action=interaction-add-3>
-[export_form_vars interaction_id c_user_identification_id action_id open_date_str interaction_type interaction_type_other interaction_originator first_names last_name email postal_code other_id_info return_to_issue insert_id]
-
-<table>
-"
-
-if { [info exists c_user_identification_id] } {
-    append doc_body "<tr>
-    <td>Customer:</td>
-    <td>[ec_user_identification_summary $c_user_identification_id "t"]"
-
-    if { [info exists postal_code] } {
-	append doc_body "<br>
-	[ec_location_based_on_zip_code $postal_code]
-	"
-    }
-
-    append doc_body "</td>
-    </tr>
-    "
-}
-
-if { ![info exists issue_id] } {
-    append doc_body "<tr>
-    <td>Issue ID:</td>
-    <td><input type=text size=4 name=issue_id>
-    If this is a new issue, please leave this blank (a new Issue ID will be generated)</td>
-    </tr>
-    <tr>
-    <td>Order ID:</td>
-    <td><input type=text size=7 name=order_id>
-    Fill this in if this inquiry is about a specific order.
-    </td>
-    </tr>
-    <tr>
-    <td>Issue Type: (leave blank if based on an existing issue):</td>
-    <td>[ec_issue_type_widget]</td>
-    </tr>
-    "
-} else {
-    set order_id [db_string get_order_id "select order_id from ec_customer_service_issues where issue_id=:issue_id"]
-    set issue_type_list [db_list get_issue_type_list "select issue_type from ec_cs_issue_type_map where issue_id=:issue_id"]
-
-    append doc_body "<tr>
-    <td>Issue ID:</td>
-    <td>$issue_id[export_form_vars issue_id]</td>
-    </tr>
-    <tr>
-    <td>Order ID:</td>
-    <td>[ec_decode $order_id "" "none" $order_id]</td>
-    </tr>
-    <tr>
-    <td>Issue Type</td>
-    <td>[join $issue_type_list ", "]</td>
-    </tr>
-    "
-}
-append doc_body "<tr>
-<td>Details:</td>
-<td><textarea wrap name=action_details rows=6 cols=45></textarea></td>
-</tr>
-<tr>
-<td>Information used to respond to inquiry:</td>
-<td>[ec_info_used_widget]</td>
-</tr>
-<tr>
-<td>If follow-up is required, please specify:</td>
-<td><textarea wrap name=follow_up_required rows=2 cols=45></textarea></td>
-</tr>
-<tr>
-<td>Close this issue?</td>
-<td>
-<input type=radio name=close_issue_p value=\"f\" checked>No (Issue requires follow-up)
-<input type=radio name=close_issue_p value=\"t\">Yes (Issue is resolved)
-</td>
-</tr>
-</table>
-"
+<hr noshade>"
 
 if { ![info exists c_user_identification_id] } {
     append doc_body "
+    <p><b>Customer identification:</b></p>
     <p>
-    
-    <b>Customer identification:</b>
-    
-    <p>
-    
     Here's what we could determine about the customer given the information you typed
     into the previous form:
     <ul>
@@ -247,25 +161,24 @@ if { ![info exists c_user_identification_id] } {
 	
 	if { ![empty_string_p $first_names] || ![empty_string_p $last_name] } {
 	    if { ![empty_string_p $first_names] && ![empty_string_p $last_name] } {
-		set sql "select user_id as d_user_id from cc_users where upper(first_names)=upper (:first_names) and upper(last_name)=upper(:last_name)"
+		set sql "select email, user_id as d_user_id from cc_users where upper(first_names)=upper (:first_names) and upper(last_name)=upper(:last_name)"
 		db_foreach get_user_ids $sql {
-		    
-		    append doc_body "<li>This may be the registered user <a target=user_window href=\"[ec_acs_admin_url]users/one?user_id=$d_user_id\">$first_names $last_name</a> (check here <input type=checkbox name=d_user_id value=$d_user_id> if this is correct).\n"
+		    append doc_body "<li>This may be the registered user <a target=user_window href=\"customer-history?customer_type=user_id&customer_id=$d_user_id\">$first_names $last_name</a> $email (check here <input type=checkbox name=d_user_id value=$d_user_id> if this is correct).</li>"
 		}
 	    } elseif { ![empty_string_p $first_names] } {
-		set sql "select user_id as d_user_id, last_name as d_last_name from cc_users where upper(first_names)=upper(:first_names)"
+		set sql "select email, user_id as d_user_id, last_name as d_last_name from cc_users where upper(first_names)=upper(:first_names)"
 		
 		db_foreach get_user_id_and_lname $sql {
 		    
-		    append doc_body "<li>This may be the registered user <a target=user_window href=\"[ec_acs_admin_url]users/one?user_id=$d_user_id\">$first_names $d_last_name</a> (check here <input type=checkbox name=d_user_id value=$d_user_id> if this is correct).\n"
+		    append doc_body "<li>This may be the registered user <a target=user_window href=\"customer-history?customer_type=user_id&customer_id=$d_user_id\">$first_names $d_last_name</a> $email (check here <input type=checkbox name=d_user_id value=$d_user_id> if this is correct).\n</li>"
 		}
 		
 	    } elseif { ![empty_string_p $last_name] } {
-		set sql "select user_id as d_user_id, first_names as d_first_names from cc_users where upper(last_name)=upper(:last_name)"
+		set sql "select email, user_id as d_user_id, first_names as d_first_names from cc_users where upper(last_name)=upper(:last_name)"
 		
 		db_foreach get_user_id_and_names $sql {
 		    
-		    append doc_body "<li>This may be the registered user <a target=user_window href=\"[ec_acs_admin_url]users/one?user_id=$d_user_id\">$d_first_names $last_name</a> (check here <input type=checkbox name=d_user_id value=$d_user_id> if this is correct).\n"
+		    append doc_body "<li>This may be the registered user <a target=user_window href=\"customer-history?customer_type=user_id&customer_id=$d_user_id\">$d_first_names $last_name</a> $email (check here <input type=checkbox name=d_user_id value=$d_user_id> if this is correct).\n</li>"
 		}
 		
 	    }
@@ -280,7 +193,7 @@ if { ![info exists c_user_identification_id] } {
 	    
 	    db_foreach get_user_identification $sql {
 		
-		append doc_body "<li>This may be the non-registered person who has had a previous interaction with us: [ec_user_identification_summary_sub $d_user_identification_id "t"] (check here <input type=checkbox name=d_user_identification_id value=$d_user_identification_id> if this is correct)."
+		append doc_body "<li>This may be the non-registered person who has had a previous interaction with us: [ec_user_identification_summary $d_user_identification_id "t"] (check here <input type=checkbox name=d_user_identification_id value=$d_user_identification_id> if this is correct).</li>"
 		lappend already_selected_user_identification_id_list $d_user_identification_id
 	    }
 	}
@@ -300,8 +213,10 @@ if { ![info exists c_user_identification_id] } {
 	    }
 	    
 	    db_foreach get_user_identification_info $sql {
-		
-		append doc_body "<li>This may be the non-registered person who has had a previous interaction with us: [ec_user_identification_summary_sub $d_user_identification_id "t"] (check here <input type=checkbox name=d_user_identification_id value=$d_user_identification_id> if this is correct)."
+# need to add a db0or1row select ec_customer_service_issues.user_identification where ec_customer_service_issues.issue_id = ec_cs_issue_type_map.issue_id and ec_customer_service_issues.user_identification = $user_identification  *** actually, see if you can add the restriction to the loops query, and check if db_foreach skips if no hits, otherwise have to check for it first.
+# if exists then proceed with this iteration of the loop, otherwise ignore it as a false positive.		
+# the other possibility is to identify when the customer_service.issue_id is created, and why the map is not...
+		append doc_body "<li>This may be the non-registered person who has had a previous interaction with us: [ec_user_identification_summary $d_user_identification_id "t"] (check here <input type=checkbox name=d_user_identification_id value=$d_user_identification_id> if this is correct).</li>"
 		lappend already_selected_user_identification_id_list $d_user_identification_id
 	    }
 	}
@@ -315,7 +230,7 @@ if { ![info exists c_user_identification_id] } {
 	    
 	    db_foreach get_user_identification_info $sql {
 		
-		append doc_body "<li>This may be the non-registered person who has had a previous interaction with us: [ec_user_identification_summary_sub $d_user_identification_id "t"] (check here <input type=checkbox name=d_user_identification_id value=$d_user_identification_id> if this is correct)."
+		append doc_body "<li>This may be the non-registered person who has had a previous interaction with us: [ec_user_identification_summary $d_user_identification_id "t"] (check here <input type=checkbox name=d_user_identification_id value=$d_user_identification_id> if this is correct).</li>"
 		lappend already_selected_user_identification_id_list $d_user_identification_id
 	    }
 	    
@@ -330,24 +245,101 @@ if { ![info exists c_user_identification_id] } {
 	    
 	    db_foreach get_user_ids_by_postal_code $sql {
 		
-		append doc_body "<li>This may be the non-registered person who has had a previous interaction with us: [ec_user_identification_summary_sub $d_user_identification_id "t"] (check here <input type=checkbox name=d_user_identification_id value=$d_user_identification_id> if this is correct)."
+		append doc_body "<li>This may be the non-registered person who has had a previous interaction with us: [ec_user_identification_summary $d_user_identification_id "t"] (check here <input type=checkbox name=d_user_identification_id value=$d_user_identification_id> if this is correct).</li>"
 		lappend already_selected_user_identification_id_list $d_user_identification_id
 	    }
 	}
     }
-    append doc_body "</ul>
-    <p>
-    "
+    append doc_body "</ul>"
 }
 
-append doc_body "<center>
-<input type=submit name=submit value=\"Interaction Complete\">
-<input type=submit name=submit value=\"Enter Another Issue as part of this Interaction\">
+append doc_body "<h3>One issue</h3><p>A customer may discuss several issues during the course of one interaction.  Please
+enter the information about only one issue below:</p>
+
+<form method=post action=interaction-add-3>
+[export_form_vars interaction_id c_user_identification_id action_id open_date_str interaction_type interaction_type_other interaction_originator first_names last_name email postal_code other_id_info return_to_issue insert_id]
+
+<table cellspacing=\"1\" cellpadding=\"2\">"
+
+if { [info exists c_user_identification_id] } {
+    append doc_body "<tr>
+    <td bgcolor=\"\#cccccc\" valign=\"top\" align=\"right\">Customer:</td>
+    <td bgcolor=\"\#cccccc\" valign=\"top\">[ec_user_identification_summary $c_user_identification_id "t"]"
+
+    if { [info exists postal_code] } {
+	append doc_body "<br>
+	[ec_location_based_on_zip_code $postal_code]"
+    }
+
+    append doc_body "</td>
+    </tr>"
+}
+
+if { ![info exists issue_id] } {
+    append doc_body "<tr>
+    <td bgcolor=\"\#cccccc\" valign=\"top\" align=\"right\">Previous Issue ID:</td>
+    <td bgcolor=\"\#cccccc\" valign=\"top\"><input type=text size=4 name=issue_id>
+    If this is a new issue, please leave this blank (a new Issue ID will be generated)</td>
+    </tr>
+    <tr>
+    <td bgcolor=\"\#cccccc\" valign=\"top\" align=\"right\">New Issue Type:</td>
+    <td bgcolor=\"\#cccccc\" valign=\"top\"> (leave blank if based on an existing issue) [ec_issue_type_widget]</td>
+    </tr>
+    <tr>
+    <td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\">Order ID:</td>
+    <td bgcolor=\"\#99ccff\" valign=\"top\"><input type=text size=7 name=order_id>
+    Fill this in if this inquiry is about a specific order.
+    </td>
+    </tr>
+    "
+} else {
+    set order_id [db_string get_order_id "select order_id from ec_customer_service_issues where issue_id=:issue_id"]
+    set issue_type_list [db_list get_is`<sue_type_list "select issue_type from ec_cs_issue_type_map where issue_id=:issue_id"]
+
+    append doc_body "<tr>
+    <td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\">Issue ID:</td>
+    <td bgcolor=\"\#99ccff\" valign=\"top\">$issue_id[export_form_vars issue_id]</td>
+    </tr>
+    <tr>
+    <td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\">Issue Type</td>
+    <td bgcolor=\"\#99ccff\" valign=\"top\">[join $issue_type_list ", "]</td>
+    </tr>
+    <tr>
+    <td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\">Order ID:</td>
+    <td bgcolor=\"\#99ccff\" valign=\"top\">[ec_decode $order_id "" "none" $order_id]</td>
+    </tr>
+"
+}
+append doc_body "<tr>
+<td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\">Issue details:<br>(action_details)</td>
+<td bgcolor=\"\#99ccff\" valign=\"top\"><textarea wrap name=action_details rows=6 cols=45></textarea></td>
+</tr>
+<tr>
+<td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\">Resources used:</td>
+<td bgcolor=\"\#99ccff\" valign=\"top\">Information used to respond to inquiry [ec_info_used_widget]</td>
+</tr>
+<tr>
+<td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\" rowspan=\"2\">Requires follow-up?</td>
+<td bgcolor=\"\#99ccff\" valign=\"top\">
+<input type=radio name=close_issue_p value=\"f\" checked>yes <b>requires follow-up</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Please elaborate:<textarea wrap name=follow_up_required rows=2 cols=45></textarea>
+
+</td>
+</tr>
+<tr>
+
+<td bgcolor=\"\#99ccff\" valign=\"top\"><input type=radio name=close_issue_p value=\"t\">no (resolved)</td>
+</tr>
+</table>
+"
+
+
+append doc_body "<center>Customer 
+<input type=submit name=submit value=\"Interaction complete\">
+<input type=submit name=submit value=\"Add another issue as part of this interaction\">
 </center>
 
 [ad_admin_footer]
 "
-
-
 doc_return  200 text/html $doc_body
 
