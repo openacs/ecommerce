@@ -135,14 +135,16 @@ while { $line_status != -1 && !$errors} {
 	}
 
         # be certain that present_p defaults to 't' if no value given
+	# if it's not false it must be true
 
         if {[string equal $present_p "f"] != 1} {
             set present_p "t"
         }
 
         # be certain that no_shipping_avail_p defaults to 'f' if no value given
+	# if it's not true it must be false
 
-        if {[string equal no_shipping_avail_p "f"] != 1} {
+        if {[string equal no_shipping_avail_p "t"] != 1} {
             set no_shipping_avail_p "f"
         }
 
