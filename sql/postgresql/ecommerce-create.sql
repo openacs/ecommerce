@@ -48,11 +48,12 @@ END;
 
 -- gilbertw
 -- timespan_days taken from OpenACS 3.2.5
-create function timespan_days(integer) returns interval as '
+-- can't cast numeric to varchar/text so I made the input varchar
+create function timespan_days(float) returns interval as '
 DECLARE
         n_days alias for $1;
 BEGIN
-        return (n_days || '' days'')::interval;
+        return (n_days::text || '' days'')::interval;
 END;
 ' language 'plpgsql';
 

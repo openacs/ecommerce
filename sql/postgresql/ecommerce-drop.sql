@@ -259,7 +259,7 @@ drop trigger ec_templates_audit_tr on ec_templates;
 drop function ec_templates_audit_tr();
 drop table ec_templates_audit;
 drop table ec_templates;
-drop function timespan_days(integer);
+drop function timespan_days(float);
 drop function least(numeric,numeric);
 drop view ec_template_id_sequence;
 drop sequence ec_template_id_seq;
