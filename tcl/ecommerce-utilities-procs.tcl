@@ -141,13 +141,18 @@ ad_proc ec_custom_product_field_form_element {
 } { 
     Get Custom Form Element.
 } {
-    if { $column_type == "integer" || $column_type == "number"} {
+    if { [string equal $column_type "integer"] || [string equal $column_type "number"] } {
 	return "<input type=text name=\"ec_custom_fields.$field_identifier\" value=\"$default_value\" size=5>"
-    } elseif { $column_type == "date" } {
-	return [ad_dateentrywidget ec_custom_fields.$field_identifier $default_value]
-    } elseif { $column_type == "varchar(200)" } {
+    } elseif { [string equal $column_type "date"] } {
+	return "[ad_dateentrywidget ec_custom_fields.$field_identifier $default_value]"
+    } elseif { [string equal $column_type "timestamp"] } {
+        # timestamp is in form yyyy-mm-dd hh:mm:ss
+	# so ec_timeentrywidget could be added here for lindex default_values 1
+        set default_values [split $default_value " "]
+	return "[ad_dateentrywidget ec_custom_fields.$field_identifier [lindex $default_values 0]]"
+    } elseif { [string equal $column_type "varchar(200)"] } {
 	return "<input type=text name=\"ec_custom_fields.$field_identifier\" value=\"$default_value\" size=50 maxlength=200>"
-    } elseif { $column_type == "varchar(4000)" } {
+    } elseif { [string equal $column_type "varchar(4000)"] } {
 	return "<textarea wrap name=\"ec_custom_fields.$field_identifier\" rows=4 cols=60>$default_value</textarea>"
     } else {
 

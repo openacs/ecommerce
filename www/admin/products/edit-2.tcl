@@ -126,10 +126,10 @@ foreach categorization $categorization {
 #page_validation {
   #ec_date_widget_validate available_date
 #} {
-  #set date_field_identifiers [db_list custom_date_fields_select "select field_identifier from ec_custom_product_fields where column_type='date' and active_p='t'"]
-  #foreach field_identifier $date_field_identifiers {
-    #array set date {year ec_custom_fields($field_identifier.year) month ec_custom_fields($field_identifier.month) ec_custom_fields($field_identifier.day)}
-   # ec_date_widget_validate date
+#    set date_field_identifiers [db_list custom_date_fields_select "select field_identifier from ec_custom_product_fields where column_type='date' and active_p='t'"]
+ # foreach field_identifier $date_field_identifiers {
+  #  array set date {year ec_custom_fields($field_identifier.year) month ec_custom_fields($field_identifier.month) ec_custom_fields($field_identifier.day)}
+  # ec_date_widget_validate date
   #}
 #}
 
@@ -404,6 +404,24 @@ db_foreach custom_fields_select {
   from ec_custom_product_fields
   where active_p = 't'
 } {
+    if { [string equal $column_type "date"] || [string equal $column_type "timestamp"] } {
+
+	#CM This is a mess but it seems to work. Basically need to put together the date from the pieces
+
+	#set up a date array to work with.
+	array set date "year $ec_custom_fields($field_identifier.year) month $ec_custom_fields($field_identifier.month) day $ec_custom_fields($field_identifier.day)"
+
+	#Validate the date - This really should get caught somewhere or put up in the validate section of page contract.
+
+	ec_date_widget_validate date
+
+	#Run the proc that usually runs as part of page contract
+	ad_page_contract_filter_proc_date name date
+
+	#Now set the custom field to the ansi date that is set by the above.
+	set ec_custom_fields($field_identifier) $date(date)
+
+    }    
     if { [info exists ec_custom_fields($field_identifier)] } {
 	doc_body_append "
 	<tr>
@@ -414,8 +432,8 @@ db_foreach custom_fields_select {
 	"
 	if { $column_type == "char(1)" } {
 	  doc_body_append "[ec_message_if_null [ec_PrettyBoolean "$ec_custom_fields($field_identifier)"]]\n"
-	} elseif { $column_type == "date" } {
-	  doc_body_append "[ec_message_if_null [util_AnsiDatetoPrettyDate "$ec_custom_fields($field_identifier)"]]\n"
+	} elseif { $column_type == "date" || $column_type == "timestamp" } {
+	  doc_body_append "$ec_custom_fields($field_identifier) to [ec_message_if_null [util_AnsiDatetoPrettyDate "$ec_custom_fields($field_identifier)"]]\n"
 	} else {
 	  doc_body_append "[ec_display_as_html [ec_message_if_null "$ec_custom_fields($field_identifier)"]]\n"
 	}
