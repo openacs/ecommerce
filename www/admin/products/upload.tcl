@@ -88,7 +88,7 @@ Legal values for field names are the columns in ec_products:
 "
 
 set undesirable_cols [list "dirname" "creation_date" "available_date" "last_modified" "last_modifying_user" "modified_ip_address"]
-set required_cols [list "product_id" "product_name"]
+set required_cols [list "sku" "product_name"]
 
 
 db_with_handle db {
