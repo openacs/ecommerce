@@ -64,6 +64,47 @@
       <td align="right">@pretty_total_price@</td>
       <td><input type=submit value="update"></td>
     </tr>
+
+  <if @no_shipping_options@ false>
+      <tr>
+      <if @product_counter@ gt 1>
+          <td colspan="3" align="right">
+      </if>
+      <else>
+          <td colspan="2" align="right">
+      </else>
+           @shipping_options@</td>
+      <td>Standard</td><td align="right">@total_reg_shipping_price@</td>
+      </tr>
+
+      <if @offer_express_shipping_p@ true>
+        <tr>
+        <if @product_counter@ gt 1>
+            <td colspan="3">
+        </if>
+        <else>
+            <td colspan="2">
+        </else>
+            &nbsp;</td>
+        <td>Express</td><td align="right">@total_exp_shipping_price@</td>
+        </tr>
+      </if>
+
+      <if @offer_pickup_option_p true>
+        <tr>
+        <if @product_counter@ gt 1>
+            <td colspan="3">
+        </if>
+        <else>
+            <td colspan="2">
+        </else>
+            &nbsp;
+        </td>
+        <td>Pickup</td><td align="right">@shipping_method_pickup@</td>
+        </tr>
+      </if>
+  </if>
+
     <multiple name="tax_entries">
       <tr>
         <td colspan="5">

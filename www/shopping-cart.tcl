@@ -55,14 +55,43 @@ ec_create_new_session_if_necessary
 #    where o.order_id=i.order_id
 #    and o.user_session_id=:user_session_id and o.order_state='in_basket'"]
 
+# calculate shipping charge options when not using shipping-gateway,
+#  and then include the value with each option (for an informed choice)
+
+# mainly from process-order-quantity-shipping.tcl
+set total_reg_shipping_price 0
+set total_exp_shipping_price 0
+set last_product_id 0
+
+# I believe these following can be more quickly called from parameter::get
+# but we'll leave them for now, until we get this to a working draft
+db_1row get_ec_admin_settings "
+    select nvl(base_shipping_cost,0) as base_shipping_cost, 
+    nvl(default_shipping_per_item,0) as default_shipping_per_item, 
+    nvl(weight_shipping_cost,0) as weight_shipping_cost, 
+    nvl(add_exp_base_shipping_cost,0) as add_exp_base_shipping_cost, 
+    nvl(add_exp_amount_per_item,0) as add_exp_amount_per_item, 
+    nvl(add_exp_amount_by_weight,0) as add_exp_amount_by_weight
+    from ec_admin_settings"
+
+# set initial values for itemization loop
 set product_counter 0
 set total_price 0
 set currency [parameter::get -parameter Currency]
-set max_quantity_length [string length [parameter::get -parameter CartMaxToAdd]]
+set max_add_quantity_length [string length [parameter::get -parameter CartMaxToAdd]]
+set offer_express_shipping_p [ad_parameter -package_id [ec_id] ExpressShippingP ecommerce]
+set offer_pickup_option_p [ad_parameter -package_id [ec_id] PickupP ecommerce]
+set total_reg_shipping_price 0
+set total_exp_shipping_price 0
+set no_shipping_options "t"
 
+# adding some fields to handl calculating shipping prices
+# p.no_shipping_avail_p, p.shipping, p.shipping_additional, p.weight
+# for calculating shipping, we need to know if the order requires shipping
+#   basically collect shipping information for any items where ec_products.no_shipping_avail_p = 't'
 
 db_multirow -extend { line_subtotal } in_cart get_products_in_cart "
-      select p.product_name, p.one_line_description, p.product_id, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice, '' as price 
+      select p.product_name, p.one_line_description, p.no_shipping_avail_p, p.shipping, p.shipping_additonal, p.weight, p.product_id, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice, '' as price 
       from ec_orders o
       join ec_items i on (o.order_id=i.order_id)
       join ec_products p on (i.product_id=p.product_id)
@@ -71,7 +100,7 @@ db_multirow -extend { line_subtotal } in_cart get_products_in_cart "
 	  where usoc.user_session_id=:user_session_id) u on (p.product_id=u.product_id)
       where o.user_session_id=:user_session_id 
       and o.order_state='in_basket'
-      group by p.product_name, p.one_line_description, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice" {
+      group by p.product_name, p.one_line_description, p.no_shipping_avail_p, p.shipping, p.shipping_additional, p.weight, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice" {
           set line_subtotal "$quantity"
       }
 
@@ -85,7 +114,9 @@ for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
     set color_choice [multirow get in_cart $i color_choice]
     set size_choice [multirow get in_cart $i size_choice]
     set style_choice [multirow get in_cart $i style_choice]
+    set no_shipping_avail_p [multirow get in_cart $i no_shipping_avail_p]
 
+    set max_quantity_length [max $max_add_quantity_length [string length $quantity]]
     # Deletions are done by product_id, color_choice, size_choice,
     # style_choice, not by item_id because we want to delete the
     # entire quantity of that product.  Also print the price for a
@@ -106,6 +137,22 @@ for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
     set line_subtotal [ec_pretty_price [expr $quantity * $lowest_price] $currency]
     multirow set in_cart $i line_subtotal $line_subtotal
 
+    if { [string equal $no_shipping_avail_p "f"] } {
+        set no_shipping_options "f"
+        # Calculate shipping for line item
+        set first_instance 1
+        set shipping_prices_for_first_line_item [ec_shipping_prices_for_one_item_by_rate $product_id $shipping $shipping_additional $default_shipping_per_item $weight $weight_shipping_cost $first_instance $add_exp_amount_per_item $add_exp_amount_by_weight]
+        set total_reg_shipping_price [expr $total_reg_shipping_price + [lindex $shipping_prices_for_first_line_item 0]]
+        set total_exp_shipping_price [expr $total_exp_shipping_price + [lindex $shipping_prices_for_first_line_item 1]]
+        if { $quantity > 1 } {
+            set first_instance 0
+            set shipping_prices_for_more_line_items [ec_shipping_prices_for_one_item_by_rate $product_id $shipping $shipping_additional $default_shipping_per_item $weight $weight_shipping_cost $first_instance $add_exp_amount_per_item $add_exp_amount_by_weight]
+            set total_reg_shipping_price [expr $total_reg_shipping_price + ( [lindex $shipping_prices_for_more_line_items 0] * ( $quantity - 1 ) ) ]
+            set total_exp_shipping_price [expr $total_exp_shipping_price + ( [lindex $shipping_prices_for_more_line_items 1] * ( $quantity - 1 ) ) ]
+
+        }
+    }
+
     # Add the price of the item to the total price
 
     set total_price [expr $total_price + ($quantity * $lowest_price)]
@@ -121,6 +168,42 @@ for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
 
 # Add adjust quantities line if there are products in the cart.
 set pretty_total_price [ec_pretty_price $total_price $currency]
+
+# 3. Determine base shipping costs that are separate from items
+ 
+# set base shipping charges
+set order_shipping_cost $base_shipping_cost
+set shipping_method_standard $order_shipping_cost
+
+# Add on the extra base cost for express shipping
+set shipping_method_express [expr $order_shipping_cost + $add_exp_base_shipping_cost]
+
+# 4. set total costs for each shipping option
+set total_shipping_price_default $total_reg_shipping_price
+set total_reg_shipping_price [ec_pretty_price [expr $total_reg_shipping_price + $shipping_method_standard] $currency "t"]
+set total_exp_shipping_price [ec_pretty_price [expr $total_exp_shipping_price + $shipping_method_express] $currency "t"]
+set shipping_method_pickup [ec_pretty_price 0 $currency "t"]
+set shipping_method_no_shipping 0
+
+# 5 prepare shipping options to present to user
+if { [string equal $no_shipping_options "f" ] } {
+
+    # standard shipping is total_reg_shipping_price
+    set shipping_options "Shipping is addtional:"
+    if { $offer_express_shipping_p } {
+        # express shipping is total_exp_shipping_price
+        set shipping_options "Shipping is additional, choices are:"
+    }
+    if { $offer_pickup_option_p } {
+        # pickup instead of shipping is shipping_method_pickup
+        set shipping_options "Shipping is additional, choices are:"
+    }
+} else {
+    set shipping_options "No shipping options available."
+}
+
+
+
 
 # List the states that get charged tax. Although not 100% accurate
 # as shipping might be taxed too this is better than nothing.
