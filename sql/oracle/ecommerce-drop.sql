@@ -159,3 +159,6 @@ drop sequence ec_problem_id_sequence;
 @@ pl-sql-utilities-drop.sql
 
 @@ ec-product-package-drop.sql
+
+@@ acs-geo-tables-drop.sql
+
