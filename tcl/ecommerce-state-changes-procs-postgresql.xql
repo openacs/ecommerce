@@ -25,6 +25,13 @@ select ec_reinst_gift_cert_on_order (:order_id)
       </querytext>
 </fullquery>
 
+
+<fullquery name="ec_update_state_to_confirmed.order_state_update">
+      <querytext>
+      update ec_orders set order_state='confirmed', confirmed_date=current_timestamp where order_id=:order_id
+      </querytext>
+</fullquery>
+
  
 <fullquery name="ec_update_state_to_confirmed.total_amount_select">      
       <querytext>
