@@ -13,7 +13,7 @@ ad_library {
 # someone new logs in
 ad_proc ec_user_session_logout {{why ""}} {
     ad_set_cookie -replace t -max_age 0 user_session_id 0
-    ns_log notice "user_session_id cookie expired"
+    ns_log debug "ec_user_session_logout: user_session_id cookie expired"
     return filter_ok
 }
 
