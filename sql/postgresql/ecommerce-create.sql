@@ -3349,7 +3349,7 @@ DECLARE
 BEGIN
         select coalesce(sum(ec_cert_unshipped_one_order(v_gift_certificate_id,order_id)),0) into tied_but_unshipped_amount
         from ec_orders
-        where order_id in (select unique order_id from ec_gift_certificate_usage where gift_certificate_id=v_gift_certificate_id);
+        where order_id in (select distinct order_id from ec_gift_certificate_usage where gift_certificate_id=v_gift_certificate_id);
 
         return tied_but_unshipped_amount;
 END;' language 'plpgsql';
