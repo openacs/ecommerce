@@ -31,33 +31,34 @@ where shipment_id = :shipment_id
 set carrier_info ""
 
 if { $carrier == "FedEx" } {
-    set fedex_url "http://www.fedex.com/cgi-bin/track_it?airbill_list=$tracking_number&kurrent_airbill=$tracking_number&language=english&cntry_code=us&state=0"
+    ### from Bart T.
+    set fedex_url "http://www.fedex.com/cgi-bin/tracking?tracknumbers=$tracking_number&action=track&language=english&cntry_code=us"
     with_catch errmsg {
 	set page_from_fedex [ns_httpget $fedex_url]
-	regexp {<!-- BEGIN TRACKING INFORMATION -->(.*)<!-- END TRACKING INFORMATION -->} $page_from_fedex match carrier_info
+	### from Bart T.
+	regexp {(<TABLE WIDTH="290".*?</TABLE>).*?(<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=1 WIDTH=462>.*?</TABLE>)} $page_from_fedex match detailed_info scan_activity
+	set carrier_info "$detailed_info $scan_activity"
     } {
 	set carrier_info "Unable to retrieve data from FedEx."
     }
 } elseif { [string match "UPS*" $carrier] } {
-    set ups_url "http://wwwapps.ups.com/etracking/tracking.cgi?submit=Track&InquiryNumber1=$tracking_number&TypeOfInquiryNumber=T"
+    ### from Bart T.
+    set ups_url "http://wwwapps.ups.com/etracking/tracking.cgi?submit=Track&InquiryNumber1=$tracking_number&TypeOfInquiryNumber=T&build_detail=yes"
     with_catch errmsg {
-	set first_ups_page [ns_httpget $ups_url]
+	### from Bart T.
+	set ups_page [ns_httpget $ups_url]
 	# UPS needs this magic line1 to get to the more interesting detail page.
-	if { ![regexp {NAME="line1" VALUE="([^\"]+)"} $first_ups_page match line1] } {
-	    set carrier_info "Unable to parse summary information from UPS."
+	### from Bart T.
+	if { ![regexp {(<TR><TD[^>]*>Tracking Number:.*</TABLE>).*Tracking results provided by UPS} $ups_page match ups_info] } {
+	    set carrier_info "Unable to parse detail data from UPS."
 	} else {
-	    set url "http://wwwapps.ups.com/etracking/tracking.cgi"
-	    set formvars "InquiryNumber1=$tracking_number&TypeOfInquiryNumber=T&line1=[ns_urlencode $line1]&tdts1=1"
-	    set second_ups_page [util_httppost $url $formvars]
-	    if { ![regexp {(<TR><TD[^>]*>Tracking Number:.*</TABLE>).*Tracking results provided by UPS} $second_ups_page match ups_info] } {
-		set carrier_info "Unable to parse detail data from UPS."
-	    } else {
-		set carrier_info "<table noborder>$ups_info" 
-	    }
+	    ### from Bart T.
+	    set carrier_info "<table noborder>$ups_info"
 	}
     } {
-	set carrier_info "Unable to retrieve data from UPS.
+	set carrier_info "Unable to retrieve data from UPS."
     } 
+    
 }
 
 doc_body_append "<ul>
