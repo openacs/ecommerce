@@ -82,15 +82,18 @@
       if you are <a
       href="http://web.archive.org/web/20010420125420/http://www.arsdigita.com/doc/security">running your server
       chrooted</a> expired info, dated: April 2001) if you want thumbnails to be automatically
-      created.  For information on the original use of ImageMagick in OpenACS,
+      created.  Set the ecommerce ImageMagickPath parameter to the imagemagick path.
+      For information on the original use of ImageMagick in OpenACS,
       see <a
       href="http://philip.greenspun.com/panda/images">Chapter 6:
       Adding Images to Your Site</a> of Philip and Alex's Guide to Web
       Publishing.
+    </p>
+    <p>
       The shopping basket automatically recognizes images that are placed in product directories
       designated by the ecommerce ProductDataDirectory parameter. 
-      Product images use the filename \"product\" and either \".gif\" or \".jpg\" extension.
-      Thumbnails use the filename \"product-thumbnail.jpg\". No facility exists for displaying
+      Product images use the filename "product" and either ".gif" or ".jpg" extension.
+      Thumbnails use the filename "product-thumbnail.jpg". No facility exists for displaying
       GIF thumbnails using the ecommerce procs, because they tend to have larger file sizes
       that signifcantly delay 
       image loads via ssl. Note: PNG extensions are not supported, because there is no 
