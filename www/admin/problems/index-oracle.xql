@@ -11,11 +11,11 @@
 
   <fullquery name="problems_select">      
     <querytext>
-      select l.*, u.first_names || ' ' || u.last_name as user_name
-      from ec_problems_log l
-      where l.resolved_by = u.user_id(+)
+      select l.*, p.first_names || ' ' || p.last_name as user_name
+      from ec_problems_log l, persons p
+      where l.resolved_by = p.person_id(+)
       $sql_clause
-      order by problem_date asc
+      order by problem_date asc  
     </querytext>
   </fullquery>
   
