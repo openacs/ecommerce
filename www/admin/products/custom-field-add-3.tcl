@@ -154,13 +154,14 @@ switch -exact $database_type {
             end;' language 'plpgsql'"
 
 	db_transaction {
+	    db_dml drop_trigger "drop trigger ec_custom_p_f_values_audit_tr on ec_custom_product_field_values"
 	    db_dml drop_trigger_function "drop function ec_custom_p_f_values_audit_tr ()"
 
 	    # There is no XQL definition for create_trigger_function
 	    # as the DML has been constructed on the fly.
 
 	    db_dml create_trigger_function $new_trigger_function
-	    db_dml drop_trigger "drop trigger ec_custom_p_f_values_audit_tr on ec_custom_product_field_values"
+
 	    db_dml create_trigger "
 		create trigger ec_custom_p_f_values_audit_tr
 		before update or delete on ec_custom_product_field_values
