@@ -17,6 +17,7 @@
 
         <provides url="ecommerce" version="4.6.1"/>
         <requires url="acs-kernel" version="4.1"/>
+        <requires url="acs-datetime" version="4.0"/>
         <requires url="ref-countries" version="0.1d"/>
         <requires url="ref-language" version="0.1d"/>
         <requires url="ref-us-states" version="0.1d"/>
