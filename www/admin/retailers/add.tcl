@@ -72,7 +72,7 @@ set page_html "[ad_admin_header "Add a Retailer"]
 
 
 
-append page_html "State [state_widget]
+append page_html "State [ec_multiple_state_widget "" "usps_abbrev" 1]
 Zip <input type=text name=zip_code size=5>
 </td>
 </tr>

@@ -102,7 +102,7 @@ append page_html "<form method=post action=edit-2>
 <tr>
 <td valign=top>City</td>
 <td valign=top><input type=text name=city size=15 value=\"[ad_quotehtml $city]\">
-State [state_widget $usps_abbrev]
+State [ec_multiple_state_widget $usps_abbrev "" "usps_abbrev" 1]
 Zip <input type=text name=zip_code size=5 value=\"[ad_quotehtml $zip_code]\">
 </td>
 </tr>
