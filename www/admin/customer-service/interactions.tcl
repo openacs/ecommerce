@@ -59,9 +59,9 @@ append doc_body "[ad_admin_header "Customer Service Interactions"]
 "
 
 
-
-set sql "select i.customer_service_rep as rep, u.first_names as rep_first_names, u.last_name as rep_last_name from ec_customer_serv_interactions i, cc_users u where i.customer_service_rep=u.user_id
-group by i.customer_service_rep, u.first_names, u.last_name order by u.last_name, u.first_names"
+set sql [db_map get_rep_info_by_rep_sql]
+#set sql "select i.customer_service_rep as rep, u.first_names as rep_first_names, u.last_name as rep_last_name from ec_customer_serv_interactions i, cc_users u where i.customer_service_rep=u.user_id
+#group by i.customer_service_rep, u.first_names, u.last_name order by u.last_name, u.first_names"
 
 db_foreach get_rep_info_by_rep $sql {
     
@@ -173,18 +173,20 @@ set table_header "<table>
 <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_type"]\">Type</a></b></td>
 </tr>"
 
-set sql "select i.interaction_id, i.customer_service_rep, i.interaction_date,
-to_char(i.interaction_date,'YYYY-MM-DD HH24:MI:SS') as full_interaction_date, i.interaction_originator,
-i.interaction_type, i.user_identification_id, reps.first_names as rep_first_names,
-reps.last_name as rep_last_name, customer_info.user_identification_id,
-customer_info.user_id as customer_user_id, customer_info.first_names as customer_first_names,
-customer_info.last_name as customer_last_name
-from ec_customer_serv_interactions i, cc_users reps, 
-(select id.user_identification_id, id.user_id, u2.first_names, u2.last_name from ec_user_identification id, cc_users u2 where id.user_id=u2.user_id(+)) customer_info
-where i.customer_service_rep=reps.user_id(+)
-and i.user_identification_id=customer_info.user_identification_id
-$rep_query_bit $interaction_originator_query_bit $interaction_type_query_bit $interaction_date_query_bit
-order by $order_by"
+#set sql "select i.interaction_id, i.customer_service_rep, i.interaction_date,
+#to_char(i.interaction_date,'YYYY-MM-DD HH24:MI:SS') as full_interaction_date, i.interaction_originator,
+#i.interaction_type, i.user_identification_id, reps.first_names as rep_first_names,
+#reps.last_name as rep_last_name, customer_info.user_identification_id,
+#customer_info.user_id as customer_user_id, customer_info.first_names as customer_first_names,
+#customer_info.last_name as customer_last_name
+#from ec_customer_serv_interactions i, cc_users reps, 
+#(select id.user_identification_id, id.user_id, u2.first_names, u2.last_name from ec_user_identification id, cc_users u2 where id.user_id=u2.user_id(+)) customer_info
+#where i.customer_service_rep=reps.user_id(+)
+#and i.user_identification_id=customer_info.user_identification_id
+#$rep_query_bit $interaction_originator_query_bit $interaction_type_query_bit $interaction_date_query_bit
+#order by $order_by"
+
+set sql [db_map get_customer_interaction_detail_sql]
 
 set row_counter 0
 
