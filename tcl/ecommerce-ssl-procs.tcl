@@ -179,14 +179,18 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 		# in packages/ecommerce/www/register/user-login.tcl
 		set user_session_id [ec_get_user_session_id]
 
-		# we need the specialized ecommerce register pipeline
-		# based out of the ecommerce instance site-node
-		# so that links from both /ecommerce-instance/ and 
-		# and /ecommerce-instance/admin work
-		set register_url "[ec_secure_location][ad_conn package_url]register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
+		if { $user_session_id == 0 } {
+		    # we need the specialized ecommerce register pipeline
+		    # based out of the ecommerce instance site-node
+		    # so that links from both /ecommerce-instance/ and 
+		    # and /ecommerce-instance/admin work
+		    set register_url "[ec_secure_location][ad_conn package_url]register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
 
-		ad_returnredirect $register_url
-		template::adp_abort
+		    ad_returnredirect $register_url
+		    template::adp_abort
+		} else {
+		    ec_makesecure
+		}
 	    }
 	}
     }
@@ -211,7 +215,7 @@ ad_proc ec_makesecure {} {
         # we don't need to do anything
         return 1
     } else {
-        if {([empty_string_p [ns_config ns/server/[ns_info server]/modules nsssl]]) || 
+        if {([empty_string_p [ns_config ns/server/[ns_info server]/modules nsssl]]) && 
             ([empty_string_p [ns_config ns/server/[ns_info server]/modules nsopenssl]])} {
             # we don't have ssl installed. Give up.
             return 0
