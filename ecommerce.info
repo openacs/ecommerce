@@ -72,6 +72,9 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="WeightUnits"  default="lbs" description="weight units such as pounds, carats, ounces, etc." section_name="units"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="httpModule"  description="The AOLserver module that implements &quot;normal&quot; communications (usually nsunix or nssock) Typical behavior favors nsunix over nssock, if both are present.  You only need to set this parameter if your site supports both nsunix and nssock, but you prefer nssock." section_name="SSL"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="httpsModule"  default="nsopenssl" description="The preferred AOLserver module that implements SSL.  Typical behavior favors nsopenssl over nsssl.  This parameter is only important if your site, for some unusual reason supports both nsopenssl as well as nsssl and you prefer nsssl." section_name="SSL"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="FroogleFtpHostname"  default="hedwig.froogle.com" description="Hostname of the Froogle Ftp server to upload the data feed to" section_name="Froogle"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="FroogleAccountname"  default="7_sisters" description="Froogle account name" section_name="Froogle"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="FrooglePassword"  description="Froogle password" section_name="Froogle"/>
         </parameters>
 
     </version>

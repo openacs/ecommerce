@@ -26,6 +26,7 @@
     <li><a href="ecommerce-customer-service">The @package_name@ Customer Service Module</a></li>
     <li><a href="ecommerce-technical">Technical details</a></li>
     <li><a href="audit">Auditing @package_name@</a></li>
+    <li><a href="froogle">Froogle data feed</a></li>
   </ol>
 
   <p>Notes from the transition from ACS 3.x to 4.x.</p>
