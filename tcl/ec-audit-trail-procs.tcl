@@ -140,17 +140,18 @@ ns_log debug eatp end_date $end_date
 
     # Get the entries in the audit table
 
-    set sql "
-    select $audit_table_name.*,
-           $audit_table_name.rowid,
-           to_char($audit_table_name.last_modified,
-                   'Mon DD, YYYY HH12:MI AM') as last_modified,
-           users.first_names || ' ' || users.last_name
-                   as modifying_user_name
-      from $audit_table_name, cc_users users
-     where users.user_id = $audit_table_name.last_modifying_user $audit_table_id_clause $date_clause
-  order by $audit_table_name.last_modified asc
-    "
+    set sql [db_map get_entries_sql]
+#    set sql "
+#    select $audit_table_name.*,
+#           $audit_table_name.rowid,
+#           to_char($audit_table_name.last_modified,
+#                   'Mon DD, YYYY HH12:MI AM') as last_modified,
+#           users.first_names || ' ' || users.last_name
+#                   as modifying_user_name
+#      from $audit_table_name, cc_users users
+#     where users.user_id = $audit_table_name.last_modifying_user $audit_table_id_clause $date_clause
+#  order by $audit_table_name.last_modified asc
+#    "
 
     # ns_log Notice "AUDIT SQL: $sql"
 
@@ -178,7 +179,11 @@ ns_log debug eatp end_date $end_date
     #  iterates over selection
     set loop 0
     db_with_handle db {
-        set selection [ns_ora select $db -bind $audit_bind_vars $sql]
+	if [string match [db_type] "oracle"] {
+            set selection [ns_ora select $db -bind $audit_bind_vars $sql]
+	} elseif [string match [db_type] "postgresql"] {
+            set selection [ns_pg_bind select $db -bind $audit_bind_vars $sql]
+	}
         while { [ns_db getrow $db $selection] } {
             ec_audit_process_row
             append return_string $audit_entry
@@ -205,7 +210,11 @@ ns_log debug eatp end_date $end_date
     #  what is in the rows we're getting back. ec_audit_process_row
     #  iterates over selection
     db_with_handle db {
-        set selection [ns_ora select $db -bind $main_bind_vars $sql]
+	if [string match [db_type] "oracle"] {
+	    set selection [ns_ora select $db -bind $main_bind_vars $sql]
+	} elseif [string match [db_type] "postgresql"] {
+	    set selection [ns_pg_bind select $db -bind $main_bind_vars $sql]
+	}
         while { [ns_db getrow $db $selection] } {
             ec_audit_process_row
             append return_string $audit_entry

@@ -15,5 +15,22 @@
       </querytext>
 </fullquery>
 
+<fullquery name="ec_audit_trail.get_entries_sql">
+      <querytext>
+
+      select $audit_table_name.*,
+           $audit_table_name.oid as rowid,
+           to_char($audit_table_name.last_modified,
+                   'Mon DD, YYYY HH12:MI AM') as last_modified,
+           users.first_names || ' ' || users.last_name
+                   as modifying_user_name
+      from $audit_table_name, cc_users users
+     where users.user_id = $audit_table_name.last_modifying_user $audit_table_id_clause $date_clause
+  order by $audit_table_name.last_modified asc
+
+      </querytext>
+</fullquery>
+
+
  
 </queryset>
