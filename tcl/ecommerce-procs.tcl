@@ -212,7 +212,7 @@ ad_proc -private ec_product_directory_mem {} {
 
 # current_location can be "Shopping Cart", "Your Account", "Home", or
 # any category_id
-proc ec_footer { {current_location ""} {category_id ""} {search_text ""} } {
+ad_proc ec_footer { {current_location ""} {category_id ""} {search_text ""} } { returns the ecommerce footer } {
     set to_return "<hr>
 <center>
 [ec_search_widget $category_id $search_text] "
@@ -250,7 +250,7 @@ proc ec_footer { {current_location ""} {category_id ""} {search_text ""} } {
 }
 
 # For administrators
-proc ec_shipping_cost_summary { base_shipping_cost default_shipping_per_item weight_shipping_cost add_exp_base_shipping_cost add_exp_amount_per_item add_exp_amount_by_weight } {
+ad_proc ec_shipping_cost_summary { base_shipping_cost default_shipping_per_item weight_shipping_cost add_exp_base_shipping_cost add_exp_amount_per_item add_exp_amount_by_weight } { returns cost summary } {
 
     set currency [util_memoize {ad_parameter -package_id [ec_id] Currency ecommerce} [ec_cache_refresh]]
 
@@ -301,7 +301,7 @@ $express_part_of_shipping_summary
 }
 
 # for one product, displays the sub/sub/category info in a table.
-proc_doc ec_category_subcategory_and_subsubcategory_display { category_list subcategory_list subsubcategory_list } "Returns an HTML table of category, subcategory, and subsubcategory information" {
+ad_proc ec_category_subcategory_and_subsubcategory_display { category_list subcategory_list subsubcategory_list } "Returns an HTML table of category, subcategory, and subsubcategory information" {
 
     if { [empty_string_p $category_list] } {
 	return "None Defined"
@@ -364,13 +364,13 @@ proc_doc ec_category_subcategory_and_subsubcategory_display { category_list subc
     return $to_return
 }
 
-proc ec_product_name_internal {product_id} {
+ad_proc ec_product_name_internal {product_id} { returns product name } {
     return [db_string product_name_select {
 	select product_name from ec_products where product_id = :product_id
     } -default ""]
 }
 
-proc_doc ec_product_name {product_id {value_if_not_found ""}} "Returns product name from product_id, memoized for efficiency" {
+ad_proc ec_product_name {product_id {value_if_not_found ""}} "Returns product name from product_id, memoized for efficiency" {
     # throw an error if this isn't an integer (don't want security risk of user-entered
     # data being eval'd)
     validate_integer "product_id" $product_id
@@ -382,12 +382,13 @@ proc_doc ec_product_name {product_id {value_if_not_found ""}} "Returns product n
     }
 }
 
-# given a category_id, subcategory_id, and subsubcategory_id
-# (can be null), displays the full categorization, e.g.
-# category_name: subcategory_name: subsubcategory_name.
-# If you have a subcategory_id but not a category_id, this
-# will look up the category_id to find the category_name.
-proc ec_full_categorization_display { {category_id ""} {subcategory_id ""} {subsubcategory_id ""} } {
+ad_proc ec_full_categorization_display { {category_id ""} {subcategory_id ""} {subsubcategory_id ""} } { 
+given a category_id, subcategory_id, and subsubcategory_id
+(can be null), displays the full categorization, e.g.
+category_name: subcategory_name: subsubcategory_name.
+If you have a subcategory_id but not a category_id, this
+will look up the category_id to find the category_name.
+} {
     if { [empty_string_p $category_id] && [empty_string_p $subcategory_id] && [empty_string_p $subsubcategory_id] } {
 	return ""
     } elseif { ![empty_string_p $subsubcategory_id] } {
@@ -427,7 +428,10 @@ proc ec_full_categorization_display { {category_id ""} {subcategory_id ""} {subs
 # subcategory/subsubcategory a product is in.
 # If the product is multiply categorized, this will just use the first categorization that
 # Oracle finds for this product.
-proc ec_mailing_list_link_for_a_product { product_id } { 
+ad_proc ec_mailing_list_link_for_a_product { product_id } { 
+returns a link for the user to add him/herself to the mailing list for whatever category/subcategory/subsubcategory a product is in.
+If the product is multiply categorized, this will just use the first categorization that Oracle finds for this product.
+} {
     set category_id ""
     set subcategory_id ""
     set subsubcategory_id ""
@@ -463,18 +467,19 @@ proc ec_mailing_list_link_for_a_product { product_id } {
     }
 }
 
-proc ec_space_to_nbsp { the_string } {
+ad_proc ec_space_to_nbsp { the_string } { converts space to html nbsp } {
     regsub -all " " $the_string "\\&nbsp;" new_string
     return $new_string
 }
 
-# Given a product's rating, if the star gifs exist, it will
-# print out the appropriate # (to the nearest half); otherwise
-# it will just say what the rating is (to the nearest half).
-# The stars should be in the subdirectory /graphics of the ecommerce
-# user pages and they should be named star-full.gif, star-empty.gif,
-# star-half.gif
-proc ec_display_rating { rating } {
+ad_proc ec_display_rating { rating } { 
+Given a product's rating, if the star gifs exist, it will
+print out the appropriate # (to the nearest half); otherwise
+it will just say what the rating is (to the nearest half).
+The stars should be in the subdirectory /graphics of the ecommerce
+user pages and they should be named star-full.gif, star-empty.gif,
+star-half.gif
+} {
     set double_ave_rating [expr $rating * 2]
     set double_rounded_rating [expr round($double_ave_rating)]
     set rating_to_nearest_half [expr double($double_rounded_rating)/2]
@@ -527,7 +532,7 @@ proc ec_display_rating { rating } {
     return $rating_to_print
 }
 
-proc ec_product_links_if_they_exist { product_id } {
+ad_proc ec_product_links_if_they_exist { product_id } { return product links } {
     set to_return "<p>
     <b>We think you may also be interested in:</b>
     <ul>
@@ -549,7 +554,7 @@ proc ec_product_links_if_they_exist { product_id } {
     }
 }
 
-proc ec_professional_reviews_if_they_exist { product_id } {
+ad_proc ec_professional_reviews_if_they_exist { product_id } { returns professional reviews } {
 
     set product_reviews ""
 
@@ -572,7 +577,7 @@ proc ec_professional_reviews_if_they_exist { product_id } {
 }
 
 # this won't show anything if ProductCommentsAllowP=0
-proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url ""} {prev_args_list ""} } {
+ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url ""} {prev_args_list ""} } { returns customer comments } {
 
     if { [util_memoize {ad_parameter -package_id [ec_id] ProductCommentsAllowP ecommerce} [ec_cache_refresh]] == 0 } {
 	return ""
@@ -645,13 +650,13 @@ proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url ""} 
     return $to_return
 }
 
-proc ec_add_to_cart_link {
+ad_proc ec_add_to_cart_link {
     product_id
     {add_to_cart_button_text "Add to Cart"}
     {preorder_button_text "Pre-order This Now!"}
     {form_action "shopping-cart-add"}
     {order_id ""}
-} {
+} { returns cart link } {
 
     db_1row get_product_info_1 {
 	select decode(sign(sysdate-available_date),1,1,null,1,0) as available_p,
@@ -734,7 +739,7 @@ proc ec_add_to_cart_link {
 
 # current_location can be "Shopping Cart", "Your Account", "Home", or
 # any category_id
-proc ec_navbar {{current_location ""}} {
+ad_proc ec_navbar {{current_location ""}} { returns ec nav bar } {
 
     if { [string equal [lindex $current_location 0] checkout] } {
         set top_links ""
@@ -813,7 +818,7 @@ proc ec_navbar {{current_location ""}} {
 
 # for_customer, as opposed to one for the admins
 # if show_item_detail_p is "t", then the user will see the tracking number, etc.
-proc ec_order_summary_for_customer { order_id user_id {show_item_detail_p "f"} } {
+ad_proc ec_order_summary_for_customer { order_id user_id {show_item_detail_p "f"} } { shows item details } {
     # display : 
     # email address
     # shipping address (w/phone #)
@@ -929,7 +934,7 @@ return $to_return
 # (a) it's only used once, and
 # (b) it's extremely simple
 
-proc ec_item_summary_in_confirmed_order { order_id {ul_p "f"}} {
+ad_proc ec_item_summary_in_confirmed_order { order_id {ul_p "f"}} { item summary in confirmed order } {
 
     set item_list [list]
 
@@ -971,7 +976,7 @@ proc ec_item_summary_in_confirmed_order { order_id {ul_p "f"}} {
     }
 }
 
-proc ec_item_summary_for_admins { order_id } {
+ad_proc ec_item_summary_for_admins { order_id } { item summary for admins } {
 
     set item_list [list]
 
@@ -1013,8 +1018,7 @@ proc ec_item_summary_for_admins { order_id } {
     }
 }
 
-# produced a HTML form fragment for administrators to check off items that are fulfilled or received back
-proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } {
+ad_proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } { produced a HTML form fragment for administrators to check off items that are fulfilled or received back } {
 
     if { $for_fulfillment_p == "t" } {
 	set item_view "ec_items_shippable"
@@ -1070,7 +1074,7 @@ proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } {
     }
 }
 
-proc ec_price_line { product_id user_id {offer_code "" } {order_confirmed_p "f"} } {
+ad_proc ec_price_line { product_id user_id {offer_code "" } {order_confirmed_p "f"} } { returns the price line } {
     set lowest_price_and_price_name [ec_lowest_price_and_price_name_for_an_item $product_id $user_id $offer_code]
 
     set lowest_price_description [lindex $lowest_price_and_price_name 1]
@@ -1081,7 +1085,7 @@ proc ec_price_line { product_id user_id {offer_code "" } {order_confirmed_p "f"}
     return "$lowest_price_description [ec_pretty_price [lindex $lowest_price_and_price_name 0] $currency]"
 }
 
-proc_doc ec_product_review_summary {author_name publication review_date} "Returns a one-line user-readable summary of a product review" {
+ad_proc ec_product_review_summary {author_name publication review_date} "Returns a one-line user-readable summary of a product review" {
     set result_list [list]
     if ![empty_string_p $author_name] {
 	lappend result_list $author_name
@@ -1095,7 +1099,7 @@ proc_doc ec_product_review_summary {author_name publication review_date} "Return
     return [join $result_list ", "]
 }
 
-proc ec_order_summary_for_admin { order_id first_names last_name confirmed_date order_state user_id} {
+ad_proc ec_order_summary_for_admin { order_id first_names last_name confirmed_date order_state user_id} { returns order summary for admins } {
     set to_return "<a href=\"[ec_url_concat [ec_url] /admin]/orders/one?order_id=$order_id\">$order_id</a> : <a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$first_names $last_name</a>\n"
     if { [exists_and_not_null confirmed_date] } {
 	append to_return " on [ec_IllustraDatetoPrettyDate $confirmed_date] "
@@ -1109,7 +1113,7 @@ proc ec_order_summary_for_admin { order_id first_names last_name confirmed_date 
     }
 }
 
-proc ec_all_orders_by_one_user { user_id } {
+ad_proc ec_all_orders_by_one_user { user_id } { returns all order for this user } {
 
     set to_return "<ul>\n"
 
@@ -1137,7 +1141,7 @@ proc ec_all_orders_by_one_user { user_id } {
     return $to_return
 }
 
-proc ec_display_product_purchase_combinations { product_id } {
+ad_proc ec_display_product_purchase_combinations { product_id } { display product purchase combinations } {
     # we don't want to return anything if either no purchase combinations
     # have been calculated or if no other products have been bought by
     # people who bought this product
@@ -1173,7 +1177,7 @@ proc ec_display_product_purchase_combinations { product_id } {
     return $to_return
 }
 
-proc ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order {order_id} {
+ad_proc ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order {order_id} { returns formatted price } {
 
     set price_shipping_gift_certificate_and_tax [ec_price_shipping_gift_certificate_and_tax_in_an_order $order_id]
 
@@ -1219,7 +1223,10 @@ proc ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order {order_id}
 # says how the items with a given product_id, color, size, style, price_charged,
 # and price_name in a given order shipped; the reason we put in all these parameters
 # is that item summaries group items in this manner
-proc ec_shipment_summary_sub { product_id color_choice size_choice style_choice price_charged price_name order_id } {
+ad_proc ec_shipment_summary_sub { product_id color_choice size_choice style_choice price_charged price_name order_id } { 
+says how the items with a given product_id, color, size, style, price_charged,
+and price_name in a given order shipped; the reason we put in all these parameters is that item summaries group items in this manner
+} {
 
     set shipment_list [list]
 
@@ -1259,7 +1266,7 @@ proc ec_shipment_summary_sub { product_id color_choice size_choice style_choice 
 ####
 #### obsoleted and subsited by www/product-file/index.vuh
 ####
-### proc_doc ec_return_product_file { } "Returns a file for the product in the calling url." {
+### ad_proc ec_return_product_file { } "Returns a file for the product in the calling url." {
 ### 
 ###     # Get file_path from url
 ###     set is_url  [ad_conn url]
@@ -1284,7 +1291,7 @@ proc ec_shipment_summary_sub { product_id color_choice size_choice style_choice 
 # Takes a database handle, the name associated with a form,
 # and the name of the textarea to insert into.
 
-proc ec_canned_response_selector { form_name textarea_name } {
+ad_proc ec_canned_response_selector { form_name textarea_name } { returns a canned response selector } {
 
     set selector_text "<select name=ec_canned_response_selector>
 <option value=\"\">Select a response</option>\n"
@@ -1312,11 +1319,11 @@ append javascript_text "\}\n</script>\n"
     return "$javascript_text$selector_text"
 }
 
-proc ec_admin_present_user {user_id name} {
+ad_proc ec_admin_present_user {user_id name} { link for admin to view user information } {
     return "<a href=\"/acs-admin/users/one?user_id=$user_id\">$name</a>"
 }
 
-proc_doc ec_user_class_display { user_id { link_p "f" } } {
+ad_proc ec_user_class_display { user_id { link_p "f" } } {
 
     Displays a comma seperated list of the users user classes with a
     comment on its approval status if approval is required. If link_p is
@@ -1350,11 +1357,11 @@ proc_doc ec_user_class_display { user_id { link_p "f" } } {
     return [join $to_return ", "]
 }
 
-proc ec_export_entire_form_as_url_vars_maybe {} {
+ad_proc ec_export_entire_form_as_url_vars_maybe {} { exports form as url variables } {
     if {![empty_string_p [ns_conn form]]} {export_entire_form_as_url_vars} else {concat ""}
 }
 
-proc_doc ec_use_cybercash_p {} {Should we use cybercash? Use ad_parameter UseCyberCashP and default value 1 to find out.} {
+ad_proc ec_use_cybercash_p {} {Should we use cybercash? Use ad_parameter UseCyberCashP and default value 1 to find out.} {
     return [util_memoize {ad_parameter -package_id [ec_id] UseCyberCashP ecommerce 1} [ec_cache_refresh]]
 }
 
@@ -1388,7 +1395,7 @@ ad_proc -private ec_url_concat {a b} {
 # These need to be rationalized and combined.
 #
 
-proc ec_log_user_as_user_id_for_this_session {} {
+ad_proc ec_log_user_as_user_id_for_this_session {} { logs user as user id for this session } {
     uplevel {
 	# Log the user as the user_id for this session
 	if { [string compare $user_session_id "0"] != -1 } {
@@ -1504,13 +1511,13 @@ Internet Options -> Advanced -> Security. </i>
 ### ec geo interfaces
 ##################################################
 
-proc_doc ec_state_name_from_usps_abbrev {usps_abbrev} "Takes a USPS abbrevation and returns the full state name, e.g., MA in yields Massachusetts out" {
+ad_proc ec_state_name_from_usps_abbrev {usps_abbrev} "Takes a USPS abbrevation and returns the full state name, e.g., MA in yields Massachusetts out" {
     return [db_string state_name_from_usps_abbrev {
 	select state_name from states where usps_abbrev =:usps_abbrev
     } -default ""]
 }
 
-proc_doc ec_country_name_from_country_code {country_code} {Returns "United States" from an argument of $db and "us"} {
+ad_proc ec_country_name_from_country_code {country_code} {Returns "United States" from an argument of $db and "us"} {
     return [db_string country_name_from_country_code {
 	select country_name from country_codes where iso=:country_code
     } -default ""]    
@@ -1521,7 +1528,7 @@ proc_doc ec_country_name_from_country_code {country_code} {Returns "United State
 ##################################################
 # Checks for any function execution in an adp page
 
-proc ec_adp_function_p {adp_page} {
+ad_proc ec_adp_function_p {adp_page} { Checks for any function execution in an adp page } {
     if {[ad_parameter -package_id [ec_id] ECTemplatesMayContainTclFunctionsP]} {
 	return 0
     }
@@ -1542,7 +1549,7 @@ proc ec_adp_function_p {adp_page} {
 ### illustra routines from acs-3.4.8/packages/acs-core/utilities-procs
 ##################################################
 
-proc ec_IllustraDatetoPrettyDate {sql_date} {
+ad_proc ec_IllustraDatetoPrettyDate {sql_date} { date to pretty date } {
 
     regexp {(.*)-(.*)-(.*)$} $sql_date match year month day
 

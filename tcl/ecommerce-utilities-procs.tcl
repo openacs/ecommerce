@@ -602,8 +602,7 @@ ad_proc ec_gift_certificate_status { gift_certificate_id } {
     return "Unknown"
 }
 
-# returns a if a>=b or b if b>a
-proc ec_max { a b } {
+ad_proc ec_max { a b } { returns a if a>=b or b if b>a } {
     if { $a >= $b } {
 	return $a
     } else {
@@ -611,7 +610,7 @@ proc ec_max { a b } {
     }
 }
 
-proc ec_min { a b } {
+ad_proc ec_min { a b } { returns b if a>=b or b if b>a } {
     if { $a >= $b } {
 	return $b
     } else {
@@ -665,7 +664,7 @@ ad_proc ec_leading_nbsp {the_integer n_desired_digits} "Adds leading nbsps to an
 }
 
 
-proc ecGetUserAgentHeader {} {
+ad_proc ecGetUserAgentHeader {} { gets user agent header } {
     set header [ns_conn headers]
 
     # note that this MUST be case-insensitive search (iget)

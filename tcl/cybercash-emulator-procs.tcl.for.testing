@@ -25,7 +25,7 @@
 # it is not meant to be a reflection of CyberCash's reliability.
 # <End Disclaimer>
 
-proc cc_send_to_server_21 { txn_type args cc_output } {
+ad_proc cc_send_to_server_21 { txn_type args cc_output } { cybercash emulator proc } {
 ## txn_type is mauthonly, postauth, retry, void, return, capture
 
     # level_of_success is used for just about all transaction types

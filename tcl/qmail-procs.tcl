@@ -2,7 +2,7 @@
 # procedure for sending mail by directly injecting it into the qmail system.
 # -jsc 1999-01-15
 
-proc qmail {to from subject body {extraheaders {}}} {
+ad_proc qmail {to from subject body {extraheaders {}}} { sends message using qmail by direct injection } {
     set msg "To: $to\nFrom: $from\nSubject: $subject\nDate: [ns_httptime [ns_time]]"
     ## Insert extra headers, if any
     if ![string match "" $extraheaders] {
@@ -27,7 +27,7 @@ proc qmail {to from subject body {extraheaders {}}} {
 }
 
 # Inject a fully formed message into qmail.
-proc qmail_send_complete_message {from msg} {
+ad_proc qmail_send_complete_message {from msg} { sends message using qmail } {
     set qmail_pipe [open "| /var/qmail/bin/qmail-inject -h -f$from" "w"]
     puts -nonewline $qmail_pipe $msg
     close $qmail_pipe

@@ -7,28 +7,30 @@ ad_library {
   @author ported by Jerry Asher (jerry@theashergroup.com)
 }
 
-# If a credit card failure occurs, the following actions
-# need to be taken:
-# 1. ec_orders.order_state becomes in_basket
-# 2. ec_creditcards.failed_p becomes t
-# 3. any gift certificates used should be reinstated
-# 4. confirmed_date is set to null (because we use existence of
-#    confirmed_date to see if order is confirmed yet)
-# Call this procedure from within a transaction
-proc ec_update_state_to_in_basket { order_id } {
+ad_proc ec_update_state_to_in_basket { order_id } { 
+If a credit card failure occurs, the following actions
+ need to be taken:
+ 1. ec_orders.order_state becomes in_basket
+ 2. ec_creditcards.failed_p becomes t
+ 3. any gift certificates used should be reinstated
+ 4. confirmed_date is set to null (because we use existence of
+    confirmed_date to see if order is confirmed yet)
+ Call this procedure from within a transaction
+} {
   db_1row credit_user_select "select creditcard_id, user_id from ec_orders where order_id=:order_id"
   db_dml order_state_update "update ec_orders set order_state='in_basket', confirmed_date=null where order_id=:order_id"
   db_dml creditcard_update "update ec_creditcards set failed_p='t' where creditcard_id=:creditcard_id"
   db_exec_plsql reinst_gift_cert_on_order "declare begin ec_reinst_gift_cert_on_order (:order_id); end;"
 }
 
-# If a credit card authorization occurs, the following actions
-# need to be taken:
-# 1. ec_orders.order_state becomes authorized_plus/minus_avs
-# 2. ec_orders.authorized_date is filled in
-# 3. all items in ec_items in that order need to have their state
-#    updated to to_be_shipped
-proc ec_update_state_to_authorized {order_id plus_avs_p} {
+ad_proc ec_update_state_to_authorized {order_id plus_avs_p} {
+ If a credit card authorization occurs, the following actions
+ need to be taken:
+ 1. ec_orders.order_state becomes authorized_plus/minus_avs
+ 2. ec_orders.authorized_date is filled in
+ 3. all items in ec_items in that order need to have their state
+    updated to to_be_shipped
+} {
   if {$plus_avs_p == "t"} {
     set new_state "authorized_plus_avs"
   } else {
@@ -45,13 +47,14 @@ proc ec_update_state_to_authorized {order_id plus_avs_p} {
   db_dml set_to_be_shipped "update ec_items set item_state='to_be_shipped' where order_id=:order_id"
 }
 
-# If an order is confirmed, the following actions need to be taken:
-# 1. ec_orders.order_state becomes confirmed
-# 2. ec_orders.confirmed_date is filled in
-# 3. gift_certificate needs to be applied
-# 4. if the total order cost is greater than 0, a row needs to be added to ec_financial_transactions
-# Note: call this from within a transaction
-proc ec_update_state_to_confirmed {order_id} {
+ad_proc ec_update_state_to_confirmed {order_id} {
+ If an order is confirmed, the following actions need to be taken:
+ 1. ec_orders.order_state becomes confirmed
+ 2. ec_orders.confirmed_date is filled in
+ 3. gift_certificate needs to be applied
+ 4. if the total order cost is greater than 0, a row needs to be added to ec_financial_transactions
+ Note: call this from within a transaction
+} {
   set user_id [db_string user_id_select "select user_id from ec_orders where order_id=:order_id"]
 
   ns_log Notice "before ec_apply_gift_cert_balance($order_id,$user_id)"
@@ -72,8 +75,7 @@ proc ec_update_state_to_confirmed {order_id} {
   }
 }
 
-# this takes the place of the pl/sql procedure ec_apply_gift_cert_balance
-proc ec_apply_gift_certificate_balance { order_id user_id } {
+ad_proc ec_apply_gift_certificate_balance { order_id user_id } { this takes the place of the pl/sql procedure ec_apply_gift_cert_balance } {
   set certificates_to_use [db_list certificates_to_use_select "
   select gift_certificate_id
   from ec_gift_certificates_approved

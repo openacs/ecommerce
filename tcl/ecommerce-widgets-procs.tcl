@@ -8,9 +8,7 @@ ad_library {
     @author ported by Jerry Asher (jerry@theashergroup.com)
 }
 
-# creates an ecommerce search widget, using the specified category id
-# and search text if necessary
-proc ec_search_widget { {category_id ""} {search_text ""} } {
+ad_proc ec_search_widget { {category_id ""} {search_text ""} } { creates an ecommerce search widget, using the specified category id and search text if necessary } {
     return "<form method=post action=[ec_insecurelink product-search]>
 <b>Search:</b> [ec_only_category_widget "f" $category_id] 
 <input type=text size=25 name=search_text value=\"$search_text\">
@@ -18,8 +16,7 @@ proc ec_search_widget { {category_id ""} {search_text ""} } {
 "
 }
 
-# default is a list of all the items you want selected
-proc ec_only_category_widget { {multiple_p "f"} {default ""} } {
+ad_proc ec_only_category_widget { {multiple_p "f"} {default ""} } { category widget } {
     if { $multiple_p == "f" } {
 	set select_tag "<select name=category_id>\n"
     } else {
@@ -51,7 +48,7 @@ proc ec_only_category_widget { {multiple_p "f"} {default ""} } {
 # the select name will be subcategory_of_$category_id (because there will be
 # cases when a product has multiple categories and there will therefore be
 # more than one subcategory select list in one form)
-proc ec_subcategory_widget { category_id {multiple_p "f"} {default ""} } {
+ad_proc ec_subcategory_widget { category_id {multiple_p "f"} {default ""} } { subcategory widget } {
     if { $multiple_p == "f" } {
 	set to_return "<select name=subcategory_of_$category_id>\n"
     } else {
@@ -78,7 +75,7 @@ return $to_return
 
 # gives a drop-down list and, if category_id_list is specified, it will display
 # the templates associated with those categories (if any) first
-proc ec_template_widget { {category_id_list ""} {default ""} } {
+ad_proc ec_template_widget { {category_id_list ""} {default ""} } { gives a drop-down list and, if category_id_list is specified, it will display the templates associated with those categories (if any) first } {
     set to_return "<select name=template_id>
     <option value=\"\">NONE\n"
 
@@ -126,7 +123,7 @@ from ec_templates t"
   return $to_return
 }
 
-proc ec_column_type_widget { {default ""} } {
+ad_proc ec_column_type_widget { {default ""} } { column type widget } {
 
     # boolean will be the default unless specified otherwise
     # if it's boolean, the check constraint will be added at the end so that it can be named
@@ -163,7 +160,7 @@ proc ec_column_type_widget { {default ""} } {
     return $to_return
 }
 
-proc_doc ec_multiple_state_widget { {default_list ""} {select_name "usps_abbrev"}} "Returns a state multiple selection box of size 5" {
+ad_proc ec_multiple_state_widget { {default_list ""} {select_name "usps_abbrev"}} "Returns a state multiple selection box of size 5" {
 
     set widget_value "<select multiple name=\"$select_name\" size=5>\n"
     set sql "select * from states order by state_name"
@@ -179,7 +176,7 @@ proc_doc ec_multiple_state_widget { {default_list ""} {select_name "usps_abbrev"
     return $widget_value
 }
 
-proc ec_reach_widget { {default ""} } {
+ad_proc ec_reach_widget { {default ""} } { reach widget } {
     set to_return "<select name=reach>\n"
     foreach reach [list local national international regional web] {
 	if { $reach == $default } {
@@ -192,7 +189,7 @@ proc ec_reach_widget { {default ""} } {
     return $to_return
 }
 
-proc ec_stock_status_widget { {default ""} } {
+ad_proc ec_stock_status_widget { {default ""} } { returns stock status } {
     set to_return "<select name=stock_status>\n<option value=\"\">select one\n"
     foreach stock_status [list o q m s i] {
         set opt [util_memoize [list ad_parameter -package_id [ec_id] "StockMessage[string toupper $stock_status]" ecommerce] [ec_cache_refresh]]
@@ -208,7 +205,7 @@ proc ec_stock_status_widget { {default ""} } {
 
 # it's ok to name all instances of this select list the same since 
 # I'll be using ns_conn form anyway and I can get all of them
-proc ec_subcategory_with_subsubcategories_widget { category_id {multiple_p "f"} {default ""} } {
+ad_proc ec_subcategory_with_subsubcategories_widget { category_id {multiple_p "f"} {default ""} } { returns subcategories with subcategories } {
     if { $multiple_p == "f" } {
 	set to_return "<select name=subcategory_and_subsubcategory>\n"
     } else {
@@ -239,7 +236,7 @@ proc ec_subcategory_with_subsubcategories_widget { category_id {multiple_p "f"} 
 
 # displays all categories, subcategories, and subsubcategories
 # default is a list of all the items you want selected
-proc_doc ec_category_widget { {multiple_p "f"} {default ""} {allow_null_categorization "f"}} { displays all categories, subcategories, and subsubcategories, default is a list of all the items you want selected } {
+ad_proc ec_category_widget { {multiple_p "f"} {default ""} {allow_null_categorization "f"}} { displays all categories, subcategories, and subsubcategories, default is a list of all the items you want selected } {
     if { $multiple_p == "f" } {
 	set to_return "<select name=categorization>\n"
     } else {
@@ -309,7 +306,7 @@ proc_doc ec_category_widget { {multiple_p "f"} {default ""} {allow_null_categori
 # because there might not be anyone in the mailing list for that category
 # so that category won't show up above it
 # default is a list of all the items you want selected
-proc ec_mailing_list_widget { {drop_down_p "t"} {multiple_p "f"} {default ""} {allow_null_categorization "f"}} {
+ad_proc ec_mailing_list_widget { {drop_down_p "t"} {multiple_p "f"} {default ""} {allow_null_categorization "f"}} { shows mailing lists for categories, subcategories, subsub } {
     if { $drop_down_p == "t" } {
 	if { $multiple_p == "f" } {
 	    set to_return "<select name=mailing_list>\n"
@@ -404,7 +401,7 @@ proc ec_mailing_list_widget { {drop_down_p "t"} {multiple_p "f"} {default ""} {a
     return $to_return
 }
 
-proc ec_rating_widget { } {
+ad_proc ec_rating_widget { } { ratings widget } {
     return "<p><ul><input type=radio name=rating value=5> [ec_display_rating 5] &nbsp; 5 Stars
 <br><input type=radio name=rating value=4 default> [ec_display_rating 4] &nbsp; 4 Stars
 <br><input type=radio name=rating value=3> [ec_display_rating 3] &nbsp; 3 Stars
@@ -417,7 +414,7 @@ proc ec_rating_widget { } {
 # given category_list, subcategory_list, and subsubcategory_list, this determines
 # which options of the categorization widget should be selected by default (when
 # editing a product)
-proc ec_determine_categorization_widget_defaults { category_list subcategory_list subsubcategory_list } {
+ad_proc ec_determine_categorization_widget_defaults { category_list subcategory_list subsubcategory_list } { given category_list, subcategory_list, and subsubcategory_list, this determines which options of the categorization widget should be selected by default (when editing a product) } {
 
   
 
@@ -463,7 +460,7 @@ proc ec_determine_categorization_widget_defaults { category_list subcategory_lis
   return $to_return
 }
 
-proc ec_continue_shopping_options { } {
+ad_proc ec_continue_shopping_options { } { returns continue shopping options } {
     return "<form method=post action=\"category-browse\">
 Continue Shopping for [ec_only_category_widget] 
 <input type=submit value=\"Go\">
@@ -471,7 +468,7 @@ Continue Shopping for [ec_only_category_widget]
 "
 }
 
-proc_doc ec_country_widget { {default ""} {select_name "country_code"} {size_subtag "size=4"}} "Just like country_widget, except it's not United States centric." {
+ad_proc ec_country_widget { {default ""} {select_name "country_code"} {size_subtag "size=4"}} "Just like country_widget, except it's not United States centric." {
 
     set widget_value "<select name=\"$select_name\" $size_subtag>\n"
     if { $default == "" } {
@@ -490,7 +487,7 @@ proc_doc ec_country_widget { {default ""} {select_name "country_code"} {size_sub
     return $widget_value
 }
 
-proc_doc ec_creditcard_expire_1_widget {{default ""}} "Gives the HTML for the Expiration Date Month select list." {
+ad_proc ec_creditcard_expire_1_widget {{default ""}} "Gives the HTML for the Expiration Date Month select list." {
     set header "<select name=creditcard_expire_1>\n"
     set footer "</select>\n"
     set defaulted_flag 0
@@ -509,7 +506,7 @@ proc_doc ec_creditcard_expire_1_widget {{default ""}} "Gives the HTML for the Ex
     }
 }
 
-proc_doc ec_creditcard_expire_2_widget {{default ""}} "Gives the HTML for the Expiration Date Year select list." {
+ad_proc ec_creditcard_expire_2_widget {{default ""}} "Gives the HTML for the Expiration Date Year select list." {
     set header "<select name=creditcard_expire_2>\n"
     set footer "</select>\n"
     set defaulted_flag 0
@@ -530,7 +527,7 @@ proc_doc ec_creditcard_expire_2_widget {{default ""}} "Gives the HTML for the Ex
     }
 }
 
-proc ec_creditcard_widget { {default ""} } {
+ad_proc ec_creditcard_widget { {default ""} } { credit card selector } {
     set to_return "<SELECT NAME=creditcard_type>
 <option value=\"\">Please select one
 <OPTION VALUE=\"a\""
@@ -553,7 +550,7 @@ append to_return ">Visa
 return $to_return
 }
 
-proc_doc ec_date_widget {column {date ""}} {Generates a date widget.} {
+ad_proc ec_date_widget {column {date ""}} {Generates a date widget.} {
   switch $date {
     now {
       set date [db_string date_widget_select "select to_char(sysdate, 'YYYY-MM-DD') from dual"]
@@ -603,7 +600,7 @@ proc_doc ec_date_widget {column {date ""}} {Generates a date widget.} {
   return $result
 }
 
-proc_doc ec_date_text {column} {Returns a textual representation of the date.} {
+ad_proc ec_date_text {column} {Returns a textual representation of the date.} {
   upvar $column date
   if {[empty_string_p $date(year)] && [empty_string_p $date(day)]} {
     return ""
@@ -612,7 +609,7 @@ proc_doc ec_date_text {column} {Returns a textual representation of the date.} {
   }
 }
 
-proc_doc ec_date_widget_validate {column} {Validates a date widget.} {
+ad_proc ec_date_widget_validate {column} {Validates a date widget.} {
   upvar $column date
 
   set errmsgs [list]
@@ -637,7 +634,7 @@ proc_doc ec_date_widget_validate {column} {Validates a date widget.} {
   }
 }
 
-proc_doc ec_time_widget {column {time ""}} {Generates a time widget.} {
+ad_proc ec_time_widget {column {time ""}} {Generates a time widget.} {
   switch $time {
     now {
       set time [db_string time_widget_select "select to_char(sysdate, 'HH24:MI:SS') from dual"]
@@ -671,7 +668,7 @@ proc_doc ec_time_widget {column {time ""}} {Generates a time widget.} {
   return "<input type=text name=\"$column.hour\" size=3 maxlength=2 value=\"$hour\"> : <input type=text name=\"$column.minute\" size=3 maxlength=2 value=\"$minute\"> : <input type=text name=\"$column.second\" size=3 maxlength=2 value=\"$second\"> <select name=\"$column.ampm\"><option [util_decode $ampm "AM" selected ""]>AM</option><option [util_decode $ampm "PM" selected ""]>PM</option></select>"
 }
 
-proc_doc ec_time_text {column} {Returns a textual representation of the time.} {
+ad_proc ec_time_text {column} {Returns a textual representation of the time.} {
   upvar $column time
   set hour $time(hour)
   if {[empty_string_p $hour]} {
@@ -692,7 +689,7 @@ proc_doc ec_time_text {column} {Returns a textual representation of the time.} {
   return "$hour:$time(minute):$time(second)"
 }
 
-proc_doc ec_time_widget_validate {column} {Validates time widget input.} {
+ad_proc ec_time_widget_validate {column} {Validates time widget input.} {
   upvar $column time
   set errmsgs [list]
 
@@ -737,7 +734,7 @@ proc_doc ec_time_widget_validate {column} {Validates time widget input.} {
   }
 }
 
-proc_doc ec_datetime_text {column} {Generates a textual representation of the date and time.} {
+ad_proc ec_datetime_text {column} {Generates a textual representation of the date and time.} {
   upvar $column dt
   set date_text [ec_date_text dt]
   set time_text [ec_time_text dt]
@@ -750,7 +747,7 @@ proc_doc ec_datetime_text {column} {Generates a textual representation of the da
   }
 }
 
-proc_doc ec_datetime_sql {column} {Generates a sql datetime expression from a date widget or a date widget and a time widget.} {
+ad_proc ec_datetime_sql {column} {Generates a sql datetime expression from a date widget or a date widget and a time widget.} {
   upvar $column dt
     # wtem@olywa.net, 2001-03-28
     # needs to be able to handle a null value
@@ -765,7 +762,7 @@ proc_doc ec_datetime_sql {column} {Generates a sql datetime expression from a da
     }
 }
 
-proc_doc ec_timeentrywidget {column {timestamp 0}} "Gives a HTML form input for a time. If timestamp is not supplied, time defaults to current time. For a blank time, set timestamp to the empty string. " {
+ad_proc ec_timeentrywidget {column {timestamp 0}} "Gives a HTML form input for a time. If timestamp is not supplied, time defaults to current time. For a blank time, set timestamp to the empty string. " {
     
     if { $timestamp == 0 } {
 	# no default, so use current time
@@ -812,7 +809,7 @@ proc_doc ec_timeentrywidget {column {timestamp 0}} "Gives a HTML form input for 
 
 }
 
-proc ec_user_class_widget { {default ""} } {
+ad_proc ec_user_class_widget { {default ""} } { user class select } {
   
     set to_return "<select name=user_class_id>
     <option value=\"\">All Users
@@ -832,7 +829,7 @@ proc ec_user_class_widget { {default ""} } {
   return $to_return
 }
 
-proc_doc ec_user_class_select_widget { {default ""} {multiple t}} "Returns a HTML multiple select list for user_class_id with an option for each user class. Each id in the list default is selected." {
+ad_proc ec_user_class_select_widget { {default ""} {multiple t}} "Returns a HTML multiple select list for user_class_id with an option for each user class. Each id in the list default is selected." {
     set to_return "<select [ec_decode $multiple "t" "multiple" ""] name=user_class_id>
     <option value=\"\">none selected
     "
@@ -850,7 +847,7 @@ proc_doc ec_user_class_select_widget { {default ""} {multiple t}} "Returns a HTM
     return $to_return
 }
 
-proc ec_issue_type_widget { {default ""} } {
+ad_proc ec_issue_type_widget { {default ""} } { issue type widget } {
     set to_return "<table><tr><td valign=top>Pick as many as you like:</td><td>
     "
     set issue_type_list [db_list get_picklist_items "select picklist_item from ec_picklist_items where picklist_name='issue_type' order by sort_key"]
@@ -875,7 +872,7 @@ proc ec_issue_type_widget { {default ""} } {
     return $to_return
 }
 
-proc ec_info_used_widget { {default ""} } {
+ad_proc ec_info_used_widget { {default ""} } { info used widget } {
     set to_return "<table><tr><td valign=top>Pick as many as you like:</td><td>
     "
     set info_used_list [db_list get_info_used_list "select picklist_item from ec_picklist_items where picklist_name='info_used' order by sort_key"]
@@ -894,7 +891,7 @@ proc ec_info_used_widget { {default ""} } {
     return $to_return
 }
 
-proc ec_interaction_type_widget { {default ""} } {
+ad_proc ec_interaction_type_widget { {default ""} } { interaction type widget } {
     set to_return "<select name=interaction_type>
     "
     set interaction_type_list [db_list get_interaction_type_list "
@@ -915,7 +912,7 @@ proc ec_interaction_type_widget { {default ""} } {
     return $to_return
 }
 
-proc ec_report_date_range_widget { start_date end_date } {
+ad_proc ec_report_date_range_widget { start_date end_date } { report date range widget } {
     return "from [ad_dateentrywidget start_date $start_date]
 <INPUT NAME=start%5fdate.time TYPE=hidden value=\"12:00:00\">
 <INPUT NAME=start%5fdate.ampm TYPE=hidden value=\"AM\">
@@ -926,7 +923,7 @@ through  [ad_dateentrywidget end_date $end_date]
 "
 }
 
-proc_doc ec_generic_html_form_select_widget {name_of_select option_spec_list {default ""}} "This is a generalization of all the other widgets we have that create HTML select lists.  You can use this directly in your HTML code, but I have tended to use it inside of other procs to just more quickly create the widget." {
+ad_proc ec_generic_html_form_select_widget {name_of_select option_spec_list {default ""}} "This is a generalization of all the other widgets we have that create HTML select lists.  You can use this directly in your HTML code, but I have tended to use it inside of other procs to just more quickly create the widget." {
     set header "<select name=$name_of_select>\n"
     set footer "</select>\n"
     set defaulted_flag 0
@@ -947,7 +944,7 @@ proc_doc ec_generic_html_form_select_widget {name_of_select option_spec_list {de
     }
 }
 
-proc_doc ec_gift_certificate_expires_widget { {default "none"} } "Gives the HTML code for the select list from which customer service can change when a consumer's gift_certificate expires." {
+ad_proc ec_gift_certificate_expires_widget { {default "none"} } "Gives the HTML code for the select list from which customer service can change when a consumer's gift_certificate expires." {
     set option_spec_list [list [list "sysdate + 1" "in 1 day"] [list "sysdate + 2" "in 2 days"] [list "sysdate + 3" "in 3 days"] [list "sysdate + 4" "in 4 days"] [list "sysdate + 5" "in 5 days"] [list "sysdate + 6" "in 6 days"] [list "sysdate + 7" "in 1 week"] [list "sysdate + 14" "in 2 weeks"] [list "sysdate + 21" "in 3 weeks"] [list "add_months(sysdate,1)" "in 1 month"] [list "add_months(sysdate,2)" "in 2 months"] [list "add_months(sysdate,3)" "in 3 months"] [list "add_months(sysdate,4)" "in 4 months"] [list "add_months(sysdate,5)" "in 5 months"] [list "add_months(sysdate,6)" "in 6 months"] [list "add_months(sysdate,7)" "in 7 months"] [list "add_months(sysdate,8)" "in 8 months"] [list "add_months(sysdate,9)" "in 9 months"] [list "add_months(sysdate,10)" "in 10 months"] [list "add_months(sysdate,11)" "in 11 months"] [list "add_months(sysdate,12)" "in 1 year"] [list "add_months(sysdate,24)" "in 2 years"] ]
 
     set name_of_select "expires"

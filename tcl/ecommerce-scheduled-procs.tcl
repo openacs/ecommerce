@@ -36,7 +36,7 @@ ad_library {
   @author ported by Jerry Asher (jerry@theashergroup.com)
 }
 
-proc ec_calculate_product_purchase_combinations {} {
+ad_proc ec_calculate_product_purchase_combinations {} { finds product purchase combinations } {
     # for each product, I want to find other products that are items of
     # orders with the same user id
 
@@ -92,7 +92,7 @@ proc ec_calculate_product_purchase_combinations {} {
     }
 }
 
-proc_doc ec_sweep_for_cybercash_zombies {} "Looks for confirmed orders that aren't either failed or authorized, i.e., where we didn't hear back from CyberCash" {
+ad_proc ec_sweep_for_cybercash_zombies {} "Looks for confirmed orders that aren't either failed or authorized, i.e., where we didn't hear back from CyberCash" {
   # cron job to dig up confirmed but not failed or authorized orders
   # over 15 minutes old ("zombies")
   # These only happen when we go off to CyberCash to authorize an order
@@ -233,7 +233,7 @@ proc_doc ec_sweep_for_cybercash_zombies {} "Looks for confirmed orders that aren
   ns_log Notice "ec_sweep_for_cybercash_zombies finishing"
 }
 
-proc_doc ec_sweep_for_cybercash_zombie_gift_certificates {} "Looks for confirmed gift certificates that aren't either failed or authorized, i.e., where we didn't hear back from CyberCash" {
+ad_proc ec_sweep_for_cybercash_zombie_gift_certificates {} "Looks for confirmed gift certificates that aren't either failed or authorized, i.e., where we didn't hear back from CyberCash" {
   # cron job to dig up confirmed but not failed or authorized gift certificates
   # over 15 minutes old ("zombies")
   # These only happen when we go off to CyberCash to authorize a transaction
@@ -361,7 +361,7 @@ proc_doc ec_sweep_for_cybercash_zombie_gift_certificates {} "Looks for confirmed
 # not on the web site or execution of the thread on the site may
 # terminate after the order is authorized but before the email is sent
 
-proc_doc ec_send_unsent_new_order_email {} "Finds authorized orders for which confirmation email has not been sent, sends the email, and records that it has been sent." {
+ad_proc ec_send_unsent_new_order_email {} "Finds authorized orders for which confirmation email has not been sent, sends the email, and records that it has been sent." {
     db_foreach unsent_orders_select {
 	select order_id
 	from ec_orders o
@@ -373,7 +373,7 @@ proc_doc ec_send_unsent_new_order_email {} "Finds authorized orders for which co
 }
 
 # ec_send_unsent_new_gift_certificate_order_email
-proc_doc ec_send_unsent_new_gift_certificate_order_email {} "Finds authorized_plus/minus_avs gift certificates for which confirmation email has not been sent, sends the email, and records that it has been sent." {
+ad_proc ec_send_unsent_new_gift_certificate_order_email {} "Finds authorized_plus/minus_avs gift certificates for which confirmation email has not been sent, sends the email, and records that it has been sent." {
 
     db_foreach unsent_gift_certificate_email {
 	select gift_certificate_id
@@ -386,7 +386,7 @@ proc_doc ec_send_unsent_new_gift_certificate_order_email {} "Finds authorized_pl
 }
 
 # ec_send_unsent_gift_certificate_recipient_email
-proc_doc ec_send_unsent_gift_certificate_recipient_email {} "Finds authorized_plus/minus_avs gift certificates for which email has not been sent to the recipient, sends the email, and records that it has been sent." {
+ad_proc ec_send_unsent_gift_certificate_recipient_email {} "Finds authorized_plus/minus_avs gift certificates for which email has not been sent to the recipient, sends the email, and records that it has been sent." {
     ns_log Notice "ec_send_unsent_gift_certificate_recipient_email starting"
 
     db_foreach unset_gift_certificate_select {
@@ -401,9 +401,8 @@ proc_doc ec_send_unsent_gift_certificate_recipient_email {} "Finds authorized_pl
     ns_log Notice "ec_send_unsent_gift_certificate_recipient_email ending"
 }
 
-# Sends "Credit Denied" email to consumers whose authorization was initially inconclusive and then failed, and then
-# saves the order for them (so that consumer can go back to site and retry the authorization).
-proc ec_delayed_credit_denied {}  {
+ad_proc ec_delayed_credit_denied {}  { Sends "Credit Denied" email to consumers whose authorization was initially inconclusive and then failed, and then saves the order for them (so that consumer can go back to site and retry the authorization).
+} {
     ns_log Notice "ec_delayed_credit_denied starting"
     set order_id_list [db_list denied_orders_select "select order_id from ec_orders where order_state='failed_authorization'"]
 
@@ -419,14 +418,14 @@ proc ec_delayed_credit_denied {}  {
     ns_log Notice "ec_delayed_credit_denied ending"
 }
 
-proc ec_expire_old_carts {} {
+ad_proc ec_expire_old_carts {} { expires old carts } {
     db_transaction {
       db_dml expired_carts_update "update ec_orders set order_state='expired', expired_date=sysdate where order_state='in_basket' and sysdate-in_basket_date > [util_memoize {ad_parameter -package_id [ec_id] CartDuration ecommerce} [ec_cache_refresh]]"
       db_dml item_state_update "update ec_items set item_state='expired', expired_date=sysdate where item_state='in_basket' and order_id in (select order_id from ec_orders where order_state='expired')"
     }
 }
 
-proc ec_remove_creditcard_data {} {
+ad_proc ec_remove_creditcard_data {} { remove credit card data } {
     # if SaveCreditCardDataP=0 we should remove the creditcard_number for the cards whose numbers are
     # no longer needed (i.e. all their orders are fulfilled, returned, void, or expired)
     if { [util_memoize {ad_parameter -package_id [ec_id] SaveCreditCardDataP ecommerce} [ec_cache_refresh]] == 0 } {
@@ -448,7 +447,7 @@ proc ec_remove_creditcard_data {} {
 # to_be_captured_date is over 1/2 hr old and authorized_date is null
 # this is similar to ec_sweep_for_cybercash_zombies except that in this
 # case these are shipments that are unauthorized
-proc ec_unauthorized_transactions {} {
+ad_proc ec_unauthorized_transactions {} { searches for unauthorized transactions } {
     db_foreach unauthorized_transactions_select {
 	select transaction_id, order_id from ec_financial_transactions
 	where to_be_captured_p='t'
@@ -542,7 +541,7 @@ proc ec_unauthorized_transactions {} {
 }
 
 #  to_be_captured_p is 't' and authorized_date is not null and marked_date is null
-proc ec_unmarked_transactions {} {
+ad_proc ec_unmarked_transactions {} { unmarked transactions } {
     ns_log Notice "ec_unmarked_transactions starting"
 
     db_foreach unmarked_transactions_select {
@@ -590,7 +589,7 @@ proc ec_unmarked_transactions {} {
 # marked_date is non-null and settled_date is null
 # this should be run late at night because CyberCash settled marked transactions in the early night (before midnight)
 # if it isn't settled 2 days after it's marked, failed_p is set to 't' and a row is added to the problems_log
-proc ec_unsettled_transactions {} {
+ad_proc ec_unsettled_transactions {} { unsettled transactions } {
     ns_log Notice "ec_unsettled_transactions starting"
  
     db_foreach unsettled_transactions_select {
@@ -638,7 +637,7 @@ proc ec_unsettled_transactions {} {
 }
 
 #   transaction_type is 'refund' and inserted_date is over 1/2 hr old and refunded_date is null
-proc ec_unrefunded_transactions {} {
+ad_proc ec_unrefunded_transactions {} { unrefunded transactions } {
     ns_log Notice "ec_unrefunded_transactions starting"
 
     db_foreach unrefunded_transactions_select {
@@ -685,7 +684,7 @@ proc ec_unrefunded_transactions {} {
 
 # refunded_date is non-null and refund_settled_date is null
 # yes, I know the name of this proc is gramatically iffy, but I want to be consistent
-proc ec_unrefund_settled_transactions {} {
+ad_proc ec_unrefund_settled_transactions {} { unrefunded settled transactions } {
   ns_log Notice "ec_unrefund_settled_transactions starting"
 
   db_foreach unrefund_settled_transactions_select "select transaction_id, order_id from ec_financial_transactions

@@ -10,7 +10,7 @@ ad_library {
 
 }
 
-proc ec_customer_service_email_address { {user_identification_id ""} {issue_id ""}} {
+ad_proc ec_customer_service_email_address { {user_identification_id ""} {issue_id ""}} { returns the customer server email address } {
     return [util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce} [ec_cache_refresh]]
 }
 
@@ -28,17 +28,17 @@ ad_proc ec_customer_service_signature {-html:boolean} {
 }
 }
 
-# Creates an issue, interaction, and action and closes the issue.
-# Either user_id or user_identification_id should be non-null.
-# Often ec_customer_service_simple_issue is called from another
-# procedure within a transaction, so you will not want to begin/end
-# a transaction within ec_customer_service_simple_issue.  In these
-# cases, leave begin_new_transaction_p as "f".
+ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_originator interaction_type interaction_headers order_id issue_type_list action_details {user_id ""} {user_identification_id ""} {begin_new_transaction_p "f"} {gift_certificate_id ""} } { 
+ Creates an issue, interaction, and action and closes the issue.
+ Either user_id or user_identification_id should be non-null.
+ Often ec_customer_service_simple_issue is called from another
+ procedure within a transaction, so you will not want to begin/end
+ a transaction within ec_customer_service_simple_issue.  In these
+ cases, leave begin_new_transaction_p as "f".
 
-# (Seb 20000817) Since Oracle driver now supports nested transactions
-# we will, for the time being, simply ignore begin_new_transaction_p.
-
-proc ec_customer_service_simple_issue { customer_service_rep interaction_originator interaction_type interaction_headers order_id issue_type_list action_details {user_id ""} {user_identification_id ""} {begin_new_transaction_p "f"} {gift_certificate_id ""} } {
+ (Seb 20000817) Since Oracle driver now supports nested transactions
+ we will, for the time being, simply ignore begin_new_transaction_p.
+} {
     set issue_id [db_string get_ec_issue_seq "select ec_issue_id_sequence.NEXTVAL from dual"]
 
     if { ![empty_string_p $user_id] } {
@@ -108,8 +108,7 @@ proc ec_customer_service_simple_issue { customer_service_rep interaction_origina
     return [list $user_identification_id $issue_id]
 }
 
-# either user_id or user_identification_id should be non-empty
-proc ec_all_cs_issues_by_one_user { {user_id ""} {user_identification_id ""} } {
+ad_proc ec_all_cs_issues_by_one_user { {user_id ""} {user_identification_id ""} } { lists all issues by user_id or user_identification } {
     set to_return "<ul>"
 
     if { ![empty_string_p $user_id] } {

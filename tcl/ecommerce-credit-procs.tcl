@@ -10,28 +10,30 @@ ad_library {
 
 }
 
-# If transaction_id is null, it tries to do an auth for the entire
-# order; otherwise it tries to do an auth for the tranaction_amount.
-# You can leave order_id blank if you're using a transaction_id
-# (useful for gift certificates).
-proc ec_creditcard_authorization { order_id {transaction_id ""} } {
+ad_proc ec_creditcard_authorization { order_id {transaction_id ""} } { 
+     does a credit card auth
+} {
+     # Gets info it needs from database.
+     # Calls ec_talk_to_cybercash to authorize card (which in turn writes a line
+     # to the ec_cybercash_log table).
+     # Outputs one of the following strings, corresponding to the level of 
+     # authorization:
+     # (a) failed_authorization
+     # (b) authorized_plus_avs
+     # (c) authorized_minus_avs
+     # (d) no_recommendation
+     # (e) invalid_input
+     # Case (d) occurs when CyberCash gives an error that is unrelated to 
+     # the credit card used, such as timeout or failure-q-or-cancel.
+     # Case (e) occurs when there are no orders with the given order_id
+     # or with no billing_zip_code.  This case shouldn't
+     # happen, since this proc is called from a tcl script with known
+     # order_id, and billing_zip_code shouldn't be null.
 
-    # Gets info it needs from database.
-    # Calls ec_talk_to_cybercash to authorize card (which in turn writes a line
-    # to the ec_cybercash_log table).
-    # Outputs one of the following strings, corresponding to the level of 
-    # authorization:
-    # (a) failed_authorization
-    # (b) authorized_plus_avs
-    # (c) authorized_minus_avs
-    # (d) no_recommendation
-    # (e) invalid_input
-    # Case (d) occurs when CyberCash gives an error that is unrelated to 
-    # the credit card used, such as timeout or failure-q-or-cancel.
-    # Case (e) occurs when there are no orders with the given order_id
-    # or with no billing_zip_code.  This case shouldn't
-    # happen, since this proc is called from a tcl script with known
-    # order_id, and billing_zip_code shouldn't be null.
+ # If transaction_id is null, it tries to do an auth for the entire
+ # order; otherwise it tries to do an auth for the tranaction_amount.
+ # You can leave order_id blank if you're using a transaction_id
+ # (useful for gift certificates).
 
     if { [empty_string_p $transaction_id] } {
 
@@ -183,35 +185,35 @@ proc ec_creditcard_authorization { order_id {transaction_id ""} } {
     return $level
 }
 
-proc ec_creditcard_marking { transaction_id } {
+ad_proc ec_creditcard_marking { transaction_id } { performs credit card marking
+} {
+     # Gets info it needs from database.
+     # Calls ec_talk_to_cybercash to mark transaction for batching (which in turn 
+     # writes a line to the ec_cybercash_log table).
+     # Outputs one of the following strings corresponding to whether or
+     # not the marking was successful:
+     # (a) success
+     # (b) failure
+     # (c) invalid_input
+     # (d) unknown
+     # In most instances, case (a) will occur because there are few
+     # chances for failure; CyberCash is not contacting the processor,
+     # and the card number has already been determined to be valid.
+     # Case (b) may occur, for instance, if there is a communications 
+     # failure with CyberCash.  Also, CyberCash will fail a postauth
+     # if the transaction has already been marked or if the postauth amount
+     # is higher than the original authorized amount.  Of course, the 
+     # .tcl script that calls this proc shouldn't be trying to mark an 
+     # transaction that's already been marked and, because the transaction
+     # amount is stored in the database , there should be no
+     # discrepancy in the auth amount and the postauth amount.
+     # Case (c) occurs if there is no transaction with the given transaction_id.
+     # If case (c) occurs, then there is probably an error in 
+     # the .tcl script that called this proc.
+     # Case (d) is not expected to occur.  This proc outputs "unknown"
+     # if cases (a), (b) and (c) do not apply.
 
     ns_log Notice "begin ec_creditcard_marking on transaction $transaction_id"
-
-    # Gets info it needs from database.
-    # Calls ec_talk_to_cybercash to mark transaction for batching (which in turn 
-    # writes a line to the ec_cybercash_log table).
-    # Outputs one of the following strings corresponding to whether or
-    # not the marking was successful:
-    # (a) success
-    # (b) failure
-    # (c) invalid_input
-    # (d) unknown
-    # In most instances, case (a) will occur because there are few
-    # chances for failure; CyberCash is not contacting the processor,
-    # and the card number has already been determined to be valid.
-    # Case (b) may occur, for instance, if there is a communications 
-    # failure with CyberCash.  Also, CyberCash will fail a postauth
-    # if the transaction has already been marked or if the postauth amount
-    # is higher than the original authorized amount.  Of course, the 
-    # .tcl script that calls this proc shouldn't be trying to mark an 
-    # transaction that's already been marked and, because the transaction
-    # amount is stored in the database , there should be no
-    # discrepancy in the auth amount and the postauth amount.
-    # Case (c) occurs if there is no transaction with the given transaction_id.
-    # If case (c) occurs, then there is probably an error in 
-    # the .tcl script that called this proc.
-    # Case (d) is not expected to occur.  This proc outputs "unknown"
-    # if cases (a), (b) and (c) do not apply.
 
     set transaction_amount [db_string transaction_amount_select {
 	select transaction_amount from ec_financial_transactions where transaction_id = :transaction_id
@@ -255,31 +257,31 @@ proc ec_creditcard_marking { transaction_id } {
     return $mark_status
 }
 
-proc ec_creditcard_return { transaction_id } {
-    # Calls ec_talk_to_cybercash to mark order for return (which in turn 
-    # writes a line to the ec_cybercash_log table).
-    # Outputs one of the following strings corresponding to whether or
-    # not the marking was successful:
-    # (a) success
-    # (b) failure
-    # (c) invalid_input
-    # (d) unknown
-    # In most instances, case (a) will occur because there are few
-    # chances for failure; CyberCash is not contacting the processor,
-    # and the card number has already been determined to be valid.
-    # Case (b) may occur, for instance, if there is a communications 
-    # failure with CyberCash.  Also, CyberCash will fail a return
-    # if the order has already been marked for return, if the return
-    # has been settled, or if the return 
-    # amount is higher than the settled amount.  Of course, the 
-    # .tcl script that calls this proc shouldn't be trying to mark an 
-    # transaction for return that's has already had a return marked or settled.
-    # Case (c) occurs if there is no transaction with the given transaction_id, or
-    # if the transaction_amount column is empty for that transaction
-    # If case (c) occurs, then there is probably an error in 
-    # the .tcl script that called this proc.
-    # Case (d) is not expected to occur.  This proc outputs "unknown"
-    # if cases (a), (b) and (c) do not apply.
+ad_proc ec_creditcard_return { transaction_id } { marks order for return } {
+     # Calls ec_talk_to_cybercash to mark order for return (which in turn 
+     # writes a line to the ec_cybercash_log table).
+     # Outputs one of the following strings corresponding to whether or
+     # not the marking was successful:
+     # (a) success
+     # (b) failure
+     # (c) invalid_input
+     # (d) unknown
+     # In most instances, case (a) will occur because there are few
+     # chances for failure; CyberCash is not contacting the processor,
+     # and the card number has already been determined to be valid.
+     # Case (b) may occur, for instance, if there is a communications 
+     # failure with CyberCash.  Also, CyberCash will fail a return
+     # if the order has already been marked for return, if the return
+     # has been settled, or if the return 
+     # amount is higher than the settled amount.  Of course, the 
+     # .tcl script that calls this proc shouldn't be trying to mark an 
+     # transaction for return that's has already had a return marked or settled.
+     # Case (c) occurs if there is no transaction with the given transaction_id, or
+     # if the transaction_amount column is empty for that transaction
+     # If case (c) occurs, then there is probably an error in 
+     # the .tcl script that called this proc.
+     # Case (d) is not expected to occur.  This proc outputs "unknown"
+     # if cases (a), (b) and (c) do not apply.
 
     if {
 	![db_0or1row transaction_info_select {
@@ -332,7 +334,7 @@ proc ec_creditcard_return { transaction_id } {
     }
 }
 
-proc_doc ec_get_from_quasi_form {quasi_form key} "CyberCash sometimes gives us a value back that is itself key/value pairs but in standard HTTP request form (e.g., \"foo=5&bar=7\").  We couldn't find an AOLserver API call that pulls this apart (though obviously the code is there somewhere, presumably in C)." {
+ad_proc ec_get_from_quasi_form {quasi_form key} "CyberCash sometimes gives us a value back that is itself key/value pairs but in standard HTTP request form (e.g., \"foo=5&bar=7\").  We couldn't find an AOLserver API call that pulls this apart (though obviously the code is there somewhere, presumably in C)." {
     if [regexp "$key=(\[^&\]*)" $quasi_form match the_value] {
 	return $the_value
     } else {
@@ -340,7 +342,7 @@ proc_doc ec_get_from_quasi_form {quasi_form key} "CyberCash sometimes gives us a
     }
 }
 
-proc_doc ec_talk_to_cybercash { txn_attempted_type cc_args } "This procedure talks to CyberCash to do whatever transaction is specified, adds a row to the ec_cybercash_log table, and returns all of CyberCash's output in an ns_set" {
+ad_proc ec_talk_to_cybercash { txn_attempted_type cc_args } "This procedure talks to CyberCash to do whatever transaction is specified, adds a row to the ec_cybercash_log table, and returns all of CyberCash's output in an ns_set" {
 
     # Possible values of txn_attempted_type are listed below and
     # in the data model (in the ec_cybercash_log table).
@@ -581,7 +583,7 @@ proc_doc ec_talk_to_cybercash { txn_attempted_type cc_args } "This procedure tal
     return $ttcc_output
 }
 
-proc_doc ec_avs_acceptable_p {avs_code_from_cybercash} "Returns 1 if the AVS code is acceptable (implying that the consumer address sufficiently matches the creditor's records), or 0 otherwise" {
+ad_proc ec_avs_acceptable_p {avs_code_from_cybercash} "Returns 1 if the AVS code is acceptable (implying that the consumer address sufficiently matches the creditor's records), or 0 otherwise" {
     set acceptable_codes [list A W X Y Z]
     if { [lsearch $acceptable_codes $avs_code_from_cybercash] != -1 } {
 	# code was valid
@@ -591,7 +593,7 @@ proc_doc ec_avs_acceptable_p {avs_code_from_cybercash} "Returns 1 if the AVS cod
     }
 }
 
-proc_doc ec_date_to_cybercash_date_for_query { the_date n_hours_to_add } "turns date in the format YYYY-MM-DD HH24:MI:SS into CyberCash's format yyyymmddhhmmss with n_hours_to_add hours added because CyberCash uses GMT" {
+ad_proc ec_date_to_cybercash_date_for_query { the_date n_hours_to_add } "turns date in the format YYYY-MM-DD HH24:MI:SS into CyberCash's format yyyymmddhhmmss with n_hours_to_add hours added because CyberCash uses GMT" {
     return [db_string cybercash_date_create {
 	select to_char(:n_hours_to_add / 24 + to_date(:the_date, 'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS') from dual
     }]
@@ -610,7 +612,7 @@ proc_doc ec_date_to_cybercash_date_for_query { the_date n_hours_to_add } "turns 
 # m=mastercard, v=visa, a=american express
 
 # ec_check_creditcard_type_number_match
-proc ec_creditcard_precheck { creditcard_number creditcard_type } {
+ad_proc ec_creditcard_precheck { creditcard_number creditcard_type } { prechecks credit card numbers } {
 
     set exception_count 0
     set exception_text ""
@@ -716,7 +718,7 @@ proc ec_creditcard_precheck { creditcard_number creditcard_type } {
 #
 
 # Original name: valCC
-proc ec_creditcard_validation {numIn} {
+ad_proc ec_creditcard_validation {numIn} { validates credit card number } {
     regsub -all { } $numIn {} entered_number
     set num [split $entered_number {}]	; # a list form of the number
     set numLen [llength $num]		; # the number of digits in the entered number

@@ -18,7 +18,7 @@ ad_library {
   @author ported by Jerry Asher (jerry@theashergroup.com)
 }
 
-proc ec_lowest_price_and_price_name_for_an_item { product_id user_id {offer_code ""} } {
+ad_proc ec_lowest_price_and_price_name_for_an_item { product_id user_id {offer_code ""} } { returns the lowest price and price name for an item } {
     set lowest_price 0
     set lowest_price_name ""
     set reg_price [db_string get_price "select price from ec_products where product_id=:product_id"]
@@ -73,7 +73,7 @@ proc ec_lowest_price_and_price_name_for_an_item { product_id user_id {offer_code
 # I've included the product_id, order_id, and shipping_method in the arguments because they're
 # always already known in any environment where I intend to call this procedure, so I might as
 # well save two database hits.
-proc ec_shipping_price_for_one_item {item_id product_id order_id shipping_method} {
+ad_proc ec_shipping_price_for_one_item {item_id product_id order_id shipping_method} { returns the shipping price for one item } {
     # get shipping, shipping_additional, default_shipping_per_item, weight, weight_shipping_cost
     # to determine regular shipping price
 
@@ -122,7 +122,7 @@ proc ec_shipping_price_for_one_item {item_id product_id order_id shipping_method
 # because they are constant, so I don't want to have to pull them from the database each
 # time (this procedure is called from within a loop)
 # For preconfirmed orders.
-proc ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item { product_id offer_code item_id order_id shipping_method user_class_id_list default_shipping_per_item weight_shipping_cost add_exp_amount_per_item add_exp_amount_by_weight tax_rate shipping_p } {
+ad_proc ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item { product_id offer_code item_id order_id shipping_method user_class_id_list default_shipping_per_item weight_shipping_cost add_exp_amount_per_item add_exp_amount_by_weight tax_rate shipping_p } { Returns price, price_name, shipping, price_tax, and shipping_tax (all in a list) for one item. } {
 
     ##
     ## Part 1: Get Price & Price Name
@@ -247,7 +247,7 @@ proc ec_price_price_name_shipping_price_tax_shipping_tax_for_one_item { product_
 #                             for not yet confirmed orders
 # Note: the price it shows is really price charged minus price refunded, similarly
 # for shipping and tax.
-proc ec_price_shipping_gift_certificate_and_tax_in_an_order { order_id } {
+ad_proc ec_price_shipping_gift_certificate_and_tax_in_an_order { order_id } { returns a list containing the total price, total shipping, gift_certificate amount and total tax for an order } {
 
     db_1row get_confirmed_info {
 	select confirmed_date, user_id,

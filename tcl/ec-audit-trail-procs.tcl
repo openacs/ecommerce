@@ -215,12 +215,13 @@ ns_log debug eatp end_date $end_date
     return $return_string
 }
 
-proc ec_audit_process_row {} {
-    # internal proc for ec_audit_trail
-    # Sets audit_entry to the HTML fragement representing one line
-    # from the audit table or main table.
-    # First it identifies whether the row was a delete, update, or insert
-    # Second, it builds a table of values that changed from the last row
+ad_proc ec_audit_process_row { } {
+     internal proc for ec_audit_trail
+     Sets audit_entry to the HTML fragement representing one line
+     from the audit table or main table.
+     First it identifies whether the row was a delete, update, or insert
+     Second, it builds a table of values that changed from the last row
+} {
 
     uplevel {
 
