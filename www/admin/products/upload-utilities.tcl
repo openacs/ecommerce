@@ -49,14 +49,15 @@ These utilities help you load catalog data into the database:
  creates the product-categories mappings by finding exact matches to the
  category tables' indexes <tt>category_id</tt>, <tt>subcategory_id</tt>, <tt>subsubcategory_id</tt>.
 </p></li>
-<!---   This following feature will be added soon, just not ready yet, so let's hide it
+
 <li><p>
- This <a href=\"image-upload\">Bulk Product Image Loader</a> operates on a multi stage process.
- First, place product images in a set of directories accessible by this server. Then use this
- utility to import a file that maps <tt>product_id</tt> or <tt>sku</tt> to the location of the product images. 
- Thumbnails can optionally be automatically be generated.
+ <a href=\"import-images\">Bulk Product Image Loader</a> imports product images for existing
+ products, and creates thumbnails for them.  
+ Place product images in a set of directories accessible by this server. Then use this utility
+ to upload a file that maps product <tt>sku</tt> to the location of the product images
+ <tt>full_imagepathname</tt>. <b>This option is untested and therefore buggy, but will be tested over the next day or so</b>
 </p></li>
--->
+
 </ul>
 
 <p>
