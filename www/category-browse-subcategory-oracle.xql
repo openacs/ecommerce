@@ -25,7 +25,7 @@
 
   <fullquery name="get_regular_product_list">      
     <querytext>
-      select p.product_id, p.product_name, p.one_line_description, o.offer_code
+      select p.product_id, p.dirname, p.product_name, p.one_line_description, o.offer_code
       from $product_map($sub) m, ec_products_searchable p, ec_user_session_offer_codes o
       where (p.product_id=o.product_id(+) and (user_session_id=:user_session_id or user_session_id is null))
       and p.product_id = m.product_id
