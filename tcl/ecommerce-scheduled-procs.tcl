@@ -255,7 +255,7 @@ ad_proc ec_sweep_for_cybercash_zombie_gift_certificates {} "Looks for confirmed 
   #     (a) if successful, update gift_certificate_state to authorized_*_avs
   #     (c) if inconclusive or failure, change gift_certificate_state failed_authorization
 
-  ns_log Notice "ec_sweep_for_cybercash_zombie_gift_certficates starting"
+  ns_log Notice "ec_sweep_for_cybercash_zombie_gift_certificates starting"
     
   db_foreach gift_certificate_select {
       select g.gift_certificate_id, t.transaction_id
