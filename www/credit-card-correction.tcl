@@ -35,6 +35,9 @@ ad_page_contract {
 set user_id [ad_verify_and_get_user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]"
+    # this page gets referred from numerous locations where user should already be logged in.
+    # if this happens, there is likely a problem. 
+    ns_log Notice "credit-card-correction.tcl ref(38): user_id is 0, redirecting to register."
     ad_returnredirect "/register?[export_url_vars return_url]"
     ad_script_abort
 }
@@ -51,6 +54,7 @@ set order_id [db_string  get_order_id "
     where user_session_id = :user_session_id
     and order_state = 'in_basket'" -default ""]
 if { [empty_string_p $order_id] } {
+    ns_log Notice "credit-card-correction.tcl ref(57): order_id is 0, redirecting to index."
     rp_internal_redirect index
     ad_script_abort
 }
@@ -65,6 +69,7 @@ if { [db_string get_ec_item_count_inbasket "
     select count(*) 
     from ec_items
     where order_id = :order_id"] == 0 } {
+    ns_log Notice "credit-card-correction.tcl ref(72): no items in order, redirecting to empty shopping-cart."
     rp_internal_redirect shopping-cart
     ad_script_abort
 }
@@ -78,6 +83,7 @@ set order_owner [db_string get_order_owner "
     from ec_orders
     where order_id = :order_id"]
 if { $order_owner != $user_id } {
+    ns_log Notice "credit-card-correction.tcl ref(84): user_id: $user_id not matching order_id: $order_id. Redirecting to checkout."
     rp_internal_redirect checkout
     ad_script_abort
 }
@@ -93,6 +99,7 @@ if { [db_0or1row get_cc_info "
     where c.creditcard_id = o.creditcard_id
     and order_id = :order_id
     and c.billing_address = a.address_id"] == 0 } {
+    ns_log Notice "credit-card-correction.tcl ref(102): creditcard info not present, redirecting to checkout-2"
     rp_internal_redirect checkout-2
     ad_script_abort
 }
