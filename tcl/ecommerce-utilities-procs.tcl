@@ -608,9 +608,12 @@ ad_proc ec_location_based_on_zip_code {
 
 } {
     set sql "
-    	select state_code, city_name, county_name
-      	from zip_codes
-     	where zip_code=:zip_code"
+        select s.abbrev as state_code, z.name as city_name, c.name as county_name
+        from us_zipcodes z, us_states s, us_counties c
+        where  z.fips_state_code = s.fips_state_code and
+            z.fips_county_code = c.fips_county_code and
+            z.fips_state_code = c.fips_state_code and
+            z.zipcode=:zip_code"    
     
     set city_list [list]
     if { [catch {
