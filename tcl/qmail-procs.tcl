@@ -1,8 +1,17 @@
-# qmail.tcl,v 3.2 2000/07/07 23:31:29 ron Exp
-# procedure for sending mail by directly injecting it into the qmail system.
-# -jsc 1999-01-15
+ad_library {
+    qmail support procs.
 
-ad_proc qmail {to from subject body {extraheaders {}}} { sends message using qmail by direct injection } {
+    @author Jin Choi
+    @creation-date 1999-01-15
+    @cvs-id $Id$
+}
+
+ad_proc qmail {to from subject body {extraheaders {}}} {
+    procedure for sending mail by directly injecting it into the qmail system.
+
+    @author jsc 
+    @creation-date 1999-01-15
+} {
     set msg "To: $to\nFrom: $from\nSubject: $subject\nDate: [ns_httptime [ns_time]]"
     ## Insert extra headers, if any
     if ![string match "" $extraheaders] {
@@ -27,7 +36,9 @@ ad_proc qmail {to from subject body {extraheaders {}}} { sends message using qma
 }
 
 # Inject a fully formed message into qmail.
-ad_proc qmail_send_complete_message {from msg} { sends message using qmail } {
+ad_proc qmail_send_complete_message {from msg} {
+    sends message using qmail
+ } {
     set qmail_pipe [open "| /var/qmail/bin/qmail-inject -h -f$from" "w"]
     puts -nonewline $qmail_pipe $msg
     close $qmail_pipe
