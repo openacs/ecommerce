@@ -1513,13 +1513,13 @@ Internet Options -> Advanced -> Security. </i>
 
 ad_proc ec_state_name_from_usps_abbrev {usps_abbrev} "Takes a USPS abbrevation and returns the full state name, e.g., MA in yields Massachusetts out" {
     return [db_string state_name_from_usps_abbrev {
-	select state_name from states where usps_abbrev =:usps_abbrev
+	select state_name from us_states where abbrev =:usps_abbrev
     } -default ""]
 }
 
 ad_proc ec_country_name_from_country_code {country_code} {Returns "United States" from an argument of $db and "us"} {
     return [db_string country_name_from_country_code {
-	select country_name from country_codes where iso=:country_code
+	select name from country_names where iso=:country_code
     } -default ""]    
 }
 

@@ -175,13 +175,13 @@ ad_proc ec_column_type_widget { {default ""} } { column type widget } {
 ad_proc ec_multiple_state_widget { {default_list ""} {select_name "usps_abbrev"}} "Returns a state multiple selection box of size 5" {
 
     set widget_value "<select multiple name=\"$select_name\" size=5>\n"
-    set sql "select * from states order by state_name"
+    set sql "select * from us_states order by state_name"
     db_foreach get_all_states $sql {
         
         if { [lsearch $default_list $usps_abbrev] != -1 } {
-            append widget_value "<option value=\"$usps_abbrev\" SELECTED>$state_name</option>\n" 
+            append widget_value "<option value=\"$abbrev\" SELECTED>$state_name</option>\n" 
         } else {            
-            append widget_value "<option value=\"$usps_abbrev\">$state_name</option>\n"
+            append widget_value "<option value=\"$abbrev\">$state_name</option>\n"
         }
     }
     append widget_value "</select>\n"
@@ -486,13 +486,13 @@ ad_proc ec_country_widget { {default ""} {select_name "country_code"} {size_subt
     if { $default == "" } {
         append widget_value "<option value=\"\" SELECTED>Choose a Country</option>\n"
     }
-    set sql "select country_name, iso from country_codes order by country_name"
+    set sql "select name, iso from country_names order by name"
      db_foreach get_countries $sql {
         
         if { $default == $iso } {
-            append widget_value "<option value=\"$iso\" SELECTED>$country_name</option>\n" 
+            append widget_value "<option value=\"$iso\" SELECTED>$name</option>\n" 
         } else {            
-            append widget_value "<option value=\"$iso\">$country_name</option>\n"
+            append widget_value "<option value=\"$iso\">$name</option>\n"
         }
     }
     append widget_value "</select>\n"

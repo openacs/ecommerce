@@ -396,7 +396,7 @@
 <fullquery name="ec_state_name_from_usps_abbrev.state_name_from_usps_abbrev">      
       <querytext>
       
-	select state_name from states where usps_abbrev =:usps_abbrev
+	select state_name from us_states where abbrev =:usps_abbrev
     
       </querytext>
 </fullquery>
@@ -405,7 +405,7 @@
 <fullquery name="ec_country_name_from_country_code.country_name_from_country_code">      
       <querytext>
       
-	select country_name from country_codes where iso=:country_code
+	select name from country_names where iso=:country_code
     
       </querytext>
 </fullquery>
