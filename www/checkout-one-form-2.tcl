@@ -101,7 +101,17 @@ ad_page_contract {
 
 }
 
-# eventual evolve this so checks come first, then ad_return_complaints 
+# We need them to be logged in
+
+set user_id [ad_conn user_id]
+if {$user_id == 0} {
+    ns_log Notice "checkout-one-form-2.tcl,ref(137): user_id is 0 which should never happen, redirecting user."
+    rp_form_put return_url "[ad_conn url]?[export_entire_form_as_url_vars]" 
+    rp_internal_redirect "/register"
+    ad_script_abort
+}
+
+# eventually evolve this so checks come first, then ad_return_complaints 
 # ie show complaints after all input has been checked, to provide thorough feedback to user
 
 
@@ -129,15 +139,6 @@ if { $exception_count > 0 } {
     ad_script_abort
 }
 
-# We need them to be logged in
-
-set user_id [ad_conn user_id]
-if {$user_id == 0} {
-    set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
-    ns_log Notice "checkout-one-form-2.tcl,ref(137): user_id is 0 which should never happen, redirecting user."
-    rp_internal_redirect "/register?[export_url_vars return_url]"
-    ad_script_abort
-}
 
 # Make sure they have an in_basket order unless they are ordering a
 # gift certificate, otherwise they've probably gotten here by pushing
@@ -172,7 +173,7 @@ regsub -all { +} $bill_to_first_names " " bill_to_first_names
 regsub -all { +} $bill_to_last_name " " bill_to_last_name
 set bill_to_attn "[string trim $bill_to_first_names]   [string trim $bill_to_last_name]"
 
-if { [info exists billing_address_id] && ![empty_string_p $billing_address_id] } {
+if { [value_if_exists billing_address_id] > 0} {
 
     # This is an existing address that might have been edited
 
@@ -778,7 +779,7 @@ db_transaction {
 	    where order_id=:order_id"
     }
 }
-set referer "checkout-one-form-2"
-set hidden_vars [export_vars -url {referer}]
+
 db_release_unused_handles
-rp_internal_redirect "checkout-3.tcl?$hidden_vars"
+rp_form_put url checkout-one-form-2
+rp_internal_redirect checkout-3.tcl
