@@ -71,6 +71,7 @@
       from ec_financial_transactions
       where order_id = :order_id
       and to_be_captured_p is null
+      and authorized_date is not null
       and transaction_type = 'charge'
     </querytext>
   </fullquery>

@@ -196,6 +196,7 @@ if { $shipment_cost >= 0 } {
 	    from ec_financial_transactions
 	    where order_id = :order_id
 	    and to_be_captured_p is null
+            and authorized_date is not null
 	    and transaction_type = 'charge'" -default ""]]} {
 
 	    set transaction_id [db_string transaction_id_select "
