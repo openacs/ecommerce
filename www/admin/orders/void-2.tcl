@@ -33,7 +33,7 @@ db_transaction {
   "
 
   # Reinstate gift certificates.
-  db_dml gift_certificates_reinst "declare begin ec_reinst_gift_cert_on_order(:order_id); end;"
+  db_exec_plsql gift_certificates_reinst "declare begin ec_reinst_gift_cert_on_order(:order_id); end;"
 }
 
 ad_returnredirect "one?[export_url_vars order_id]"

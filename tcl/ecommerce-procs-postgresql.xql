@@ -48,9 +48,8 @@
  
 <fullquery name="ec_add_to_cart_link.get_product_info_1">      
       <querytext>
-      FIX ME DECODE
 
-	select decode(sign(current_timestamp-available_date),1,1,null,1,0) as available_p,
+	select case when current_timestamp-available_date > 0 then 1 when current_timestamp-available_date is NULL then 1 else 0 end as available_p,
                color_list, size_list, style_list, no_shipping_avail_p
           from ec_products
          where product_id = :product_id

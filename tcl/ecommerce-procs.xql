@@ -227,18 +227,15 @@
  
 <fullquery name="ec_order_summary_for_customer.order_info_select">      
       <querytext>
-      FIX ME OUTER JOIN
 
 	select eco.confirmed_date, eco.creditcard_id, eco.shipping_method,
 	       u.email,
 	       eca.line1, eca.line2, eca.city, eca.usps_abbrev, eca.zip_code, eca.country_code,
 	       eca.full_state_name, eca.attn, eca.phone, eca.phone_time
-	  from ec_orders eco,
-	       cc_users u,
-	       ec_addresses eca
+	  from ec_orders eco
+	       LEFT JOIN cc_users u on (eco.user_id = u.user_id)
+	       LEFT JOIN ec_addresses eca on (eco.shipping_address = eca.address_id)
 	 where eco.order_id = :order_id
-	       and eco.user_id = u.user_id(+)
-	       and eco.shipping_address = eca.address_id(+)
     
       </querytext>
 </fullquery>

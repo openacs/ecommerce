@@ -19,7 +19,7 @@
  
 <fullquery name="gift_certificates_reinst">      
       <querytext>
-	select  ec_reinst_gift_cert_on_order(:order_id); 
+	select  ec_reinst_gift_cert_on_order(:order_id)
       </querytext>
 </fullquery>
 

@@ -5,8 +5,9 @@
 
 <fullquery name="ec_update_state_to_in_basket.reinst_gift_cert_on_order">      
       <querytext>
-      FIX ME PLSQL
-declare begin ec_reinst_gift_cert_on_order (:order_id); end;
+
+select ec_reinst_gift_cert_on_order (:order_id)
+
       </querytext>
 </fullquery>
 

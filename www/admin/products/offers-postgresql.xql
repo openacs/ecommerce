@@ -26,8 +26,8 @@ order by o.last_modified desc
 select o.offer_id, o.retailer_id, retailer_name, price, shipping,
        stock_status, special_offer_p, special_offer_html,
        shipping_unavailable_p, offer_begins, offer_ends, o.deleted_p,
-       case when sign(current_timestamp-offer_begins) = 1 then 1 else 0 end as offer_begun_p,
-       case when sign(current_timestamp-offer_ends) = 1 then 1 else 0 end as offer_expired_p
+       case when current_timestamp-offer_begins > 0 then 1 else 0 end as offer_begun_p,
+       case when current_timestamp-offer_ends > 0 then 1 else 0 end as offer_expired_p
 from ec_offers o, ec_retailers r
 where o.retailer_id=r.retailer_id
     and o.product_id=:product_id

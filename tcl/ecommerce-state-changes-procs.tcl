@@ -19,7 +19,7 @@ proc ec_update_state_to_in_basket { order_id } {
   db_1row credit_user_select "select creditcard_id, user_id from ec_orders where order_id=:order_id"
   db_dml order_state_update "update ec_orders set order_state='in_basket', confirmed_date=null where order_id=:order_id"
   db_dml creditcard_update "update ec_creditcards set failed_p='t' where creditcard_id=:creditcard_id"
-  db_dml reinst_gift_cert_on_order "declare begin ec_reinst_gift_cert_on_order (:order_id); end;"
+  db_exec_plsql reinst_gift_cert_on_order "declare begin ec_reinst_gift_cert_on_order (:order_id); end;"
 }
 
 # If a credit card authorization occurs, the following actions
