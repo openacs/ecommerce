@@ -69,7 +69,7 @@ create table ec_templates (
         template_id             integer not null primary key,
         template_name           varchar(200),
         template                varchar(4000),
-        last_modified           timestamp not null,
+        last_modified           timestamp(0) not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -78,7 +78,7 @@ create table ec_templates_audit (
         template_id             integer,
         template_name           varchar(200),
         template                varchar(4000),
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -118,7 +118,7 @@ create table ec_categories (
         -- pretty, human-readable
         category_name           varchar(100),
         sort_key                numeric,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -129,7 +129,7 @@ create table ec_categories_audit (
         category_id             integer,
         category_name           varchar(100),
         sort_key                numeric,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -164,7 +164,7 @@ create table ec_subcategories (
         -- pretty, human-readable
         subcategory_name        varchar(100),
         sort_key                numeric,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -177,7 +177,7 @@ create table ec_subcategories_audit (
         category_id             integer,
         subcategory_name        varchar(100),
         sort_key                numeric,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -221,7 +221,7 @@ create table ec_subsubcategories (
         -- pretty, human-readable
         subsubcategory_name     varchar(100),
         sort_key                numeric,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -235,7 +235,7 @@ create table ec_subsubcategories_audit (
         subcategory_id          integer,
         subsubcategory_name     varchar(100),
         sort_key                numeric,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -339,7 +339,7 @@ create table ec_products (
 	                        -- integer not null primary key,
         sku                     varchar(100),
         product_name            varchar(200),
-        creation_date           timestamp default now() not null,
+        creation_date           timestamp(0)default now() not null,
         one_line_description    varchar(400),
         detailed_description    varchar(4000),
         search_keywords         varchar(4000),
@@ -370,9 +370,9 @@ create table ec_products (
         active_p                boolean default 't',
         -- the date the product becomes available for sale (it can be listed
         -- before then, it's just not buyable)
-	available_date          timestamp default now() not null,
+	available_date          timestamp(0)default now() not null,
         announcements           varchar(4000),
-        announcements_expire    timestamp,
+        announcements_expire    timestamp(0),
         -- if there's a web site with more info about the product
         url                     varchar(300),
         template_id             integer references ec_templates,
@@ -389,7 +389,7 @@ create table ec_products (
         -- email this list on purchase
         email_on_purchase_list  varchar(4000),
         -- the user ID and IP address of the creator of the product
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null    
 );
@@ -407,7 +407,7 @@ where active_p='t' and present_p='t';
 create table ec_products_audit (
         product_id              integer,
         product_name            varchar(200),
-        creation_date           timestamp,
+        creation_date           timestamp(0),
         one_line_description    varchar(400),
         detailed_description    varchar(4000),
         search_keywords         varchar(4000),
@@ -418,13 +418,13 @@ create table ec_products_audit (
         dirname                 varchar(200),
         present_p               boolean default 't',
         active_p                boolean default 't',
-        available_date          timestamp,
+        available_date          timestamp(0),
         announcements           varchar(4000),
-        announcements_expire    timestamp,
+        announcements_expire    timestamp(0),
         url                     varchar(300),
         template_id             integer,
         stock_status            char(1) check (stock_status in ('o','q','m','s','i')),
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -491,13 +491,13 @@ create table ec_sale_prices (
         sale_price_id           integer not null primary key,
         product_id              integer not null references ec_products,
         sale_price              numeric,
-        sale_begins             timestamp not null,
-        sale_ends               timestamp not null,
+        sale_begins             timestamp(0)not null,
+        sale_ends               timestamp(0)not null,
         -- like Introductory Price or Sale Price or Special Offer
         sale_name               varchar(30),
         -- if non-null, the user has to know this code to get the sale price
         offer_code              varchar(20),
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -515,11 +515,11 @@ create table ec_sale_prices_audit (
         sale_price_id           integer,
         product_id              integer,
         sale_price              numeric,
-        sale_begins             timestamp,
-        sale_ends               timestamp,
+        sale_begins             timestamp(0),
+        sale_ends               timestamp(0),
         sale_name               varchar(30),
         offer_code              varchar(20),
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -556,7 +556,7 @@ create table ec_product_series_map (
         -- components of the above series
         component_id            integer not null references ec_products,
         primary key (series_id, component_id),
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -566,7 +566,7 @@ create index ec_product_series_map_idx2 on ec_product_series_map(component_id);
 create table ec_product_series_map_audit (
         series_id               integer,
         component_id            integer,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -652,7 +652,7 @@ create table ec_user_classes (
         user_class_id           integer not null primary key,
         -- human-readable
         user_class_name         varchar(200), -- e.g., student
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -660,7 +660,7 @@ create table ec_user_classes (
 create table ec_user_classes_audit (
         user_class_id           integer,
         user_class_name         varchar(200), -- e.g., student
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -690,7 +690,7 @@ create table ec_product_user_class_prices (
         product_id              integer not null references ec_products,
         user_class_id           integer not null references ec_user_classes,
         price                   numeric,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null,
         primary key (product_id, user_class_id)
@@ -704,7 +704,7 @@ create table ec_product_u_c_prices_audit (
         product_id              integer,
         user_class_id           integer,
         price                   numeric,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -747,7 +747,7 @@ create table ec_product_recommendations (
         category_id             integer references ec_categories,
         subcategory_id          integer references ec_subcategories,
         subsubcategory_id       integer references ec_subsubcategories,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -767,7 +767,7 @@ create table ec_product_recommend_audit (
         category_id             integer,
         subcategory_id          integer,
         subsubcategory_id       integer,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -834,7 +834,7 @@ create table ec_user_class_user_map (
         user_class_id           integer not null references ec_user_classes,
                                     primary key (user_id, user_class_id),
         user_class_approved_p   boolean,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -846,7 +846,7 @@ create table ec_user_class_user_map_audit (
         user_id                 integer,
         user_class_id           integer,
         user_class_approved_p   boolean,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -877,7 +877,7 @@ for each row execute procedure ec_user_class_user_audit_tr ();
 create table ec_product_links (
         product_a               integer not null references ec_products,
         product_b               integer not null references ec_products,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null,
         primary key (product_a, product_b)
@@ -888,7 +888,7 @@ create index ec_product_links_idx on ec_product_links (product_b);
 create table ec_product_links_audit (
         product_a               integer,
         product_b               integer,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -926,8 +926,8 @@ create table ec_product_comments (
         rating                  numeric,
         -- in some systems, the administrator will have to approve comments first
         approved_p              boolean,
-        comment_date            timestamp,
-        last_modified           timestamp not null,
+        comment_date            timestamp(0),
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -944,7 +944,7 @@ create table ec_product_comments_audit (
         one_line_summary        varchar(300),
         rating                  numeric,
         approved_p              boolean,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -981,11 +981,11 @@ create table ec_product_reviews (
         product_id              integer not null references ec_products,
         author_name             varchar(100),
         publication             varchar(100),
-        review_date             timestamp,
+        review_date             timestamp(0),
         -- in HTML format
         review                  text,
         display_p               boolean,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -998,11 +998,11 @@ create table ec_product_reviews_audit (
         product_id              integer,
         author_name             varchar(100),
         publication             varchar(100),
-        review_date             timestamp,
+        review_date             timestamp(0),
         -- in HTML format
         review                  text,
         display_p               boolean,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -1039,7 +1039,7 @@ create table ec_category_product_map (
         product_id              integer not null references ec_products,
         category_id             integer not null references ec_categories,
         publisher_favorite_p    boolean,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null,
         primary key (product_id, category_id)
@@ -1052,7 +1052,7 @@ create table ec_category_product_map_audit (
         product_id              integer,
         category_id             integer,
         publisher_favorite_p    boolean,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -1086,7 +1086,7 @@ create table ec_subcategory_product_map (
         product_id              integer not null references ec_products,
         subcategory_id          integer not null references ec_subcategories,
         publisher_favorite_p    boolean,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null,
         primary key (product_id, subcategory_id)
@@ -1100,7 +1100,7 @@ create table ec_subcat_prod_map_audit (
         product_id              integer,
         subcategory_id          integer,
         publisher_favorite_p    boolean,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -1133,7 +1133,7 @@ create table ec_subsubcategory_product_map (
         product_id              integer not null references ec_products,
         subsubcategory_id       integer not null references ec_subsubcategories,
         publisher_favorite_p    boolean,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null,
         primary key (product_id, subsubcategory_id)
@@ -1146,7 +1146,7 @@ create table ec_subsubcat_prod_map_audit (
         product_id              integer,
         subsubcategory_id       integer,
         publisher_favorite_p    boolean,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -1200,9 +1200,9 @@ create table ec_custom_product_fields (
         default_value           varchar(100),
         -- column type for oracle (i.e. text, varchar(50), integer, ...)
         column_type             varchar(100),
-        creation_date           timestamp,
+        creation_date           timestamp(0),
         active_p                boolean default 't',
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -1212,9 +1212,9 @@ create table ec_custom_product_fields_audit (
         field_name              varchar(100),
         default_value           varchar(100),
         column_type             varchar(100),
-        creation_date           timestamp,
+        creation_date           timestamp(0),
         active_p                boolean default 't',
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -1250,14 +1250,14 @@ for each row execute procedure ec_custom_prod_fields_audit_tr ();
 -- this table stores the values
 create table ec_custom_product_field_values (
         product_id              integer not null primary key references ec_products,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
 
 create table ec_custom_p_field_values_audit (
         product_id              integer,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -1291,7 +1291,7 @@ create table ec_user_sessions (
         -- often will not be known
         user_id                 integer references users,
         ip_address              varchar(20) not null,
-        start_time              timestamp,
+        start_time              timestamp(0),
         http_user_agent         varchar(4000)
 );
 
@@ -1343,11 +1343,11 @@ create table ec_orders (
         -- information recorded upon FSM state changes
         -- we need this to figure out if order is stale
         -- and should be offered up for removal
-        in_basket_date          timestamp,
-        confirmed_date          timestamp,
-        authorized_date         timestamp,
-        voided_date             timestamp,
-        expired_date            timestamp,
+        in_basket_date          timestamp(0),
+        confirmed_date          timestamp(0),
+        authorized_date         timestamp(0),
+        voided_date             timestamp(0),
+        expired_date            timestamp(0),
         -- base shipping, which is added to the amount charged for each item
         shipping_charged        numeric,
         shipping_refunded       numeric,
@@ -1399,18 +1399,18 @@ create table ec_shipments (
         -- shipments.
         -- a trigger fills address_id in automatically if it's null
         address_id              integer references ec_addresses,
-        shipment_date           timestamp not null,
-        expected_arrival_date   timestamp,
+        shipment_date           timestamp(0)not null,
+        expected_arrival_date   timestamp(0),
         carrier                 varchar(50),    -- e.g., 'fedex'
         tracking_number         varchar(24),
         -- only if we get confirmation from carrier that the goods
         -- arrived on a specific date
-        actual_arrival_date     timestamp,
+        actual_arrival_date     timestamp(0),
         -- arbitrary info from carrier, e.g., 'Joe Smith signed for it'
         actual_arrival_detail   varchar(4000),
         -- for things that aren't really shipped like services
         shippable_p             boolean default 't',
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20)
 );
@@ -1441,13 +1441,13 @@ create table ec_shipments_audit (
         shipment_id             integer,
         order_id                integer,
         address_id              integer,
-        shipment_date           timestamp,
-        expected_arrival_date   timestamp,
+        shipment_date           timestamp(0),
+        expected_arrival_date   timestamp(0),
         carrier                 varchar(50),
         tracking_number         varchar(24),
-        actual_arrival_date     timestamp,
+        actual_arrival_date     timestamp(0),
         actual_arrival_detail   varchar(4000),
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -1488,7 +1488,7 @@ create table ec_refunds (
         order_id        integer not null references ec_orders,
         -- not really necessary because it's in ec_financial_transactions
         refund_amount   numeric not null,
-        refund_date     timestamp not null,
+        refund_date     timestamp(0)not null,
         refunded_by     integer not null references users,
         refund_reasons  varchar(4000)
 );
@@ -1508,13 +1508,13 @@ create table ec_items (
         style_choice    varchar(4000),
         shipment_id     integer references ec_shipments,
         -- this is the date that user put this item into their shopping basket
-        in_cart_date    timestamp,
-        voided_date     timestamp,
+        in_cart_date    timestamp(0),
+        voided_date     timestamp(0),
         voided_by       integer references users,
-        expired_date    timestamp,
+        expired_date    timestamp(0),
         item_state      varchar(50) default 'in_basket',
         -- NULL if not received back
-        received_back_date      timestamp,
+        received_back_date      timestamp(0),
         -- columns for reporting (e.g., what was done, what was made)
         price_charged           numeric,
         price_refunded          numeric,
@@ -1693,7 +1693,7 @@ create table ec_admin_settings (
         -- the preloaded template)
         default_template        	integer default 1 not null 
 					    references ec_templates,
-        last_modified           	timestamp not null,
+        last_modified           	timestamp(0)not null,
         last_modifying_user     	integer not null references users,
         modified_ip_address     	varchar(20) not null
 );
@@ -1707,7 +1707,7 @@ create table ec_admin_settings_audit (
         add_exp_amount_per_item         numeric,
         add_exp_amount_by_weight        numeric,
         default_template        	integer,
-        last_modified           	timestamp,
+        last_modified           	timestamp(0),
         last_modifying_user     	integer,
         modified_ip_address     	varchar(20),
         delete_p                	boolean default 'f'
@@ -1749,7 +1749,7 @@ create table ec_sales_tax_by_state (
         tax_rate                numeric not null,
         -- charge tax on shipping?
         shipping_p              boolean not null,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -1758,7 +1758,7 @@ create table ec_sales_tax_by_state_audit (
         usps_abbrev             char(2),
         tax_rate                numeric,
         shipping_p              boolean,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -1823,7 +1823,7 @@ create table ec_retailers (
         price_guarantee_policy  varchar(4000),
         delivery_policy         varchar(4000),
         installation_policy     varchar(4000),
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -1851,7 +1851,7 @@ create table ec_retailers_audit (
         price_guarantee_policy  varchar(4000),
         delivery_policy         varchar(4000),
         installation_policy     varchar(4000),
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -1929,7 +1929,7 @@ create table ec_retailer_locations (
         price_guarantee_policy  varchar(4000),
         delivery_policy         varchar(4000),
         installation_policy     varchar(4000),
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -1956,7 +1956,7 @@ create table ec_retailer_locations_audit (
         price_guarantee_policy  varchar(4000),
         delivery_policy         varchar(4000),
         installation_policy     varchar(4000),
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -2022,10 +2022,10 @@ create table ec_offers (
         stock_status            char(1) check (stock_status in ('o','q','m','s','i')),
         special_offer_p         boolean,
         special_offer_html      varchar(500),
-        offer_begins            timestamp not null,
-        offer_ends              timestamp not null,
+        offer_begins            timestamp(0)not null,
+        offer_ends              timestamp(0)not null,
         deleted_p               boolean default 'f',
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -2050,10 +2050,10 @@ create table ec_offers_audit (
         stock_status            char(1) check (stock_status in ('o','q','m','s','i')),
         special_offer_p         boolean,
         special_offer_html      varchar(500),
-        offer_begins            timestamp,
-        offer_ends              timestamp,
+        offer_begins            timestamp(0),
+        offer_ends              timestamp(0),
         deleted_p               boolean default 'f',
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         -- This differs from the deleted_p column!
@@ -2110,14 +2110,14 @@ create table ec_gift_certificates (
         -- entire amount is used up (to speed up
         -- queries)
         amount_remaining_p      boolean default 't',
-        issue_date              timestamp,
-        authorized_date         timestamp,
-        claimed_date            timestamp,
+        issue_date              timestamp(0),
+        authorized_date         timestamp(0),
+        claimed_date            timestamp(0),
         -- customer service rep who issued it
         issued_by               integer references users,
         -- customer who purchased it
         purchased_by            integer references users,
-        expires                 timestamp,
+        expires                 timestamp(0),
         user_id                 integer references users,
         -- if it's unclaimed, claim_check will be filled in,
         -- and user_id won't be filled in
@@ -2128,10 +2128,10 @@ create table ec_gift_certificates (
         certificate_to          varchar(100),
         certificate_from        varchar(100),
         recipient_email         varchar(100),
-        voided_date             timestamp,
+        voided_date             timestamp(0),
         voided_by               integer references users,
         reason_for_void         varchar(4000),
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null,
         check (user_id is not null or claim_check is not null)
@@ -2173,21 +2173,21 @@ create table ec_gift_certificates_audit (
         gift_certificate_id     integer,
         gift_certificate_state  varchar(50),
         amount                  numeric,
-        issue_date              timestamp,
-        authorized_date         timestamp,
+        issue_date              timestamp(0),
+        authorized_date         timestamp(0),
         issued_by               integer,
         purchased_by            integer,
-        expires                 timestamp,
+        expires                 timestamp(0),
         user_id                 integer,
         claim_check             varchar(50),
         certificate_message     varchar(200),
         certificate_to          varchar(100),
         certificate_from        varchar(100),
         recipient_email         varchar(100),
-        voided_date             timestamp,
+        voided_date             timestamp(0),
         voided_by               integer,
         reason_for_void         varchar(4000),
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f' 
@@ -2226,7 +2226,7 @@ create table ec_gift_certificate_usage (
         gift_certificate_id     integer not null references ec_gift_certificates,
         order_id                integer references ec_orders,
         amount_used             numeric,
-        used_date               timestamp,
+        used_date               timestamp(0),
         amount_reinstated       numeric,
         reinstated_date         timestamp
 );
@@ -2251,7 +2251,7 @@ create view ec_user_ident_id_sequence as select nextval('ec_user_ident_id_seq') 
 -- will have to get other info in order to identify the user
 create table ec_user_identification (
         user_identification_id  integer not null primary key,
-        date_added      	timestamp,
+        date_added      	timestamp(0),
         user_id         	integer references users,
         email           	varchar(100),
         first_names     	varchar(100),
@@ -2290,7 +2290,7 @@ create table ec_customer_serv_interactions (
         customer_service_rep    integer references users,
         user_identification_id  integer not null 
 				    references ec_user_identification,
-        interaction_date        timestamp,
+        interaction_date        timestamp(0),
         interaction_originator  varchar(20) not null, -- e.g. customer, customer-service-rep, automatic
         interaction_type        varchar(30) not null, -- e.g. email, phone_call
         -- will be filled in if the customer-originated interaction is
@@ -2328,8 +2328,8 @@ create table ec_customer_service_issues (
         order_id        integer references ec_orders,
         -- may be null if this issue isn't associated with a gift certificate
         gift_certificate_id     integer references ec_gift_certificates,
-        open_date       timestamp not null,
-        close_date      timestamp,
+        open_date       timestamp(0)not null,
+        close_date      timestamp(0),
         -- customer service reps who closed the issue
         closed_by       integer references users,
         -- we never really delete issues
@@ -2394,7 +2394,7 @@ create table ec_picklist_items (
         -- which picklist this item is in
         picklist_name           varchar(100),
         sort_key                numeric,
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -2404,7 +2404,7 @@ create table ec_picklist_items_audit (
         picklist_item           varchar(100),
         picklist_name           varchar(100),
         sort_key                numeric,
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f'
@@ -2465,7 +2465,7 @@ create table ec_email_templates (
         -- ec_cs_issue_type_map for the issue that will be created
         -- when the message is sent
         issue_type_list         varchar(100),
-        last_modified           timestamp not null,
+        last_modified           timestamp(0)not null,
         last_modifying_user     integer not null references users,
         modified_ip_address     varchar(20) not null
 );
@@ -2478,7 +2478,7 @@ create table ec_email_templates_audit (
         variables               varchar(1000),
         when_sent               varchar(1000),
         issue_type_list         varchar(100),
-        last_modified           timestamp,
+        last_modified           timestamp(0),
         last_modifying_user     integer,
         modified_ip_address     varchar(20),
         delete_p                boolean default 'f' 
@@ -2550,7 +2550,7 @@ create view ec_spam_id_sequence as select nextval('ec_spam_id_seq') as nextval;
 
 create table ec_spam_log (
         spam_id                 integer not null primary key,
-        spam_date               timestamp,
+        spam_date               timestamp(0),
         spam_text               varchar(4000),
         -- the following are all criteria used in choosing the users to be spammed
         mailing_list_category_id        integer references ec_categories,
@@ -2558,7 +2558,7 @@ create table ec_spam_log (
         mailing_list_subsubcategory_id  integer references ec_subsubcategories,
         user_class_id                   integer references ec_user_classes,
         product_id                      integer references ec_products,
-        last_visit_start_date           timestamp,
+        last_visit_start_date           timestamp(0),
         last_visit_end_date             timestamp
 );
 
@@ -2606,12 +2606,12 @@ create table ec_financial_transactions (
         -- the f is mainly just for reassurance; we only capture ones with t)
         -- There's no need to set this for refunds.  Refunds are always to be captured.
         to_be_captured_p        boolean, 
-        inserted_date           timestamp not null,
-        authorized_date         timestamp,
+        inserted_date           timestamp(0)not null,
+        authorized_date         timestamp(0),
         -- set when to_be_captured_p becomes 't'; used in cron jobs
-        to_be_captured_date     timestamp,
-        marked_date             timestamp,
-        refunded_date           timestamp,
+        to_be_captured_date     timestamp(0),
+        marked_date             timestamp(0),
+        refunded_date           timestamp(0),
         -- if the transaction failed, this will keep the cron jobs from continuing
         -- to retry it
         failed_p                boolean default 'f',
@@ -2663,13 +2663,13 @@ create view ec_problem_id_sequence as select nextval('ec_problem_id_seq') as nex
 
 create table ec_problems_log (
         problem_id      integer not null primary key,
-        problem_date    timestamp,
+        problem_date    timestamp(0),
         problem_details varchar(4000),
         -- if it's related to an order
         order_id        integer references ec_orders,
         -- if it's related to a gift certificate
         gift_certificate_id     integer references ec_gift_certificates,
-        resolved_date   timestamp,
+        resolved_date   timestamp(0),
         resolved_by     integer references users
 );
 

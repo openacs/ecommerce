@@ -48,15 +48,7 @@
       where item_id in ([join $item_id_list ", "])
     </querytext>
   </fullquery>
-  
-  <fullquery name="total_shipping_of_items_select">      
-    <querytext>
-      select ${shipping_of_items}::numeric + shipping_charged
-      from ec_orders
-      where order_id=:order_id
-    </querytext>
-  </fullquery>
-  
+    
   <fullquery name="item_state_update">      
     <querytext>
       update ec_items

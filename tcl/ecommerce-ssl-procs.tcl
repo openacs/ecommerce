@@ -151,7 +151,6 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 	    # replaced ad_ssl_available_p with ec_ssl_available_p
 	    # which detects nsopenssl
 	    if { ![ec_ssl_available_p] } {
-		ns_log notice "debug 3: ec_ssl_available_p thinks ssl isn't installed"
 		# there's no ssl
 		# if ssl is required return an error message; otherwise, do nothing
 		ad_return_error "No SSL available" "
@@ -184,7 +183,6 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 		# so that links from both /ecommerce-instance/ and 
 		# and /ecommerce-instance/admin work
 		set register_url "[ec_secure_location][ad_conn package_url]register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
-
 		ad_returnredirect $register_url
 		template::adp_abort
 	    }
@@ -211,7 +209,7 @@ ad_proc ec_makesecure {} {
         # we don't need to do anything
         return 1
     } else {
-        if {([empty_string_p [ns_config ns/server/[ns_info server]/modules nsssl]]) || 
+        if {([empty_string_p [ns_config ns/server/[ns_info server]/modules nsssl]]) && 
             ([empty_string_p [ns_config ns/server/[ns_info server]/modules nsopenssl]])} {
             # we don't have ssl installed. Give up.
             return 0

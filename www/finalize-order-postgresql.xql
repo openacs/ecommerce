@@ -18,9 +18,10 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="get_soft_goods_cost">      
+  <fullquery name="get_soft_goods_costs">      
     <querytext>
-      select coalesce(sum(i.price_charged),0) - coalesce(sum(i.price_refunded),0) as soft_goods_cost
+      select coalesce(sum(i.price_charged),0) - coalesce(sum(i.price_refunded),0) as soft_goods_cost,
+      coalesce(sum(i.price_tax_charged),0) - coalesce(sum(i.price_tax_refunded),0) as soft_goods_tax
       from ec_items i, ec_products p
       where i.order_id = :order_id
       and i.item_state <> 'void'
@@ -29,9 +30,12 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="get_hard_goods_cost">      
+  <fullquery name="get_hard_goods_costs">      
     <querytext>
-      select coalesce(sum(i.price_charged),0) - coalesce(sum(i.price_refunded),0) as hard_goods_cost
+      select coalesce(sum(i.price_charged),0) - coalesce(sum(i.price_refunded),0) as hard_goods_cost,
+      coalesce(sum(i.price_tax_charged),0) - coalesce(sum(i.shipping_refunded),0) as hard_goods_tax,
+      coalesce(sum(i.shipping_charged),0) - coalesce(sum(i.shipping_refunded),0) as hard_goods_shipping,
+      coalesce(sum(i.shipping_tax_charged),0) - coalesce(sum(i.shipping_tax_refunded),0) as hard_goods_shipping_tax
       from ec_items i, ec_products p
       where i.order_id = :order_id
       and i.item_state <> 'void'
@@ -87,6 +91,18 @@
       update ec_financial_transactions 
       set marked_date = current_timestamp
       where transaction_id = :pgw_transaction_id
+    </querytext>
+  </fullquery>
+
+  <fullquery name="get_order_shipping">      
+    <querytext>
+      select coalesce(shipping_charged, 0) from ec_orders where order_id = :order_id
+    </querytext>
+  </fullquery>
+
+  <fullquery name="get_order_shipping_tax">      
+    <querytext>
+      select ec_tax(0, :order_shipping, :order_id)
     </querytext>
   </fullquery>
 

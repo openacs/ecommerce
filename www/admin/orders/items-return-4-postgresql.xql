@@ -171,4 +171,68 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="select_matching_charge_transaction">      
+    <querytext>
+      select transaction_id as charged_transaction_id, marked_date 
+      from ec_financial_transactions 
+      where order_id = :order_id
+      and transaction_type = 'charge' 
+      and (transaction_amount - :refund_amount) < 0.01::numeric 
+      and (transaction_amount - :refund_amount) > 0::numeric
+      and refunded_amount is null
+      and marked_date is not null
+      and failed_p = 'f'
+      order by transaction_id
+      limit 1
+    </querytext>
+  </fullquery>
+
+  <fullquery name="select_unrefunded_charge_transaction">      
+    <querytext>
+      select transaction_id as charged_transaction_id, (transaction_amount - coalesce(refunded_amount, 0)) as unrefunded_amount, marked_date
+      from ec_financial_transactions
+      where order_id = :order_id
+      and transaction_type = 'charge' 
+      and (transaction_amount - coalesce(refunded_amount, 0)) > 0.01::numeric
+      and marked_date is not null
+      and failed_p = 'f'
+      order by (transaction_amount - coalesce(refunded_amount, 0)) desc
+      limit 1
+    </querytext>
+  </fullquery>
+
+  <fullquery name="record_refunded_amount">      
+    <querytext>
+      update ec_financial_transactions
+      set refunded_amount = coalesce(refunded_amount, 0) + :refund_amount
+      where transaction_id = :charged_transaction_id
+    </querytext>
+  </fullquery>
+
+  <fullquery name="record_unrefunded_amount">      
+    <querytext>
+      update ec_financial_transactions
+      set refunded_amount = coalesce(refunded_amount, 0) + :unrefunded_amount
+      where transaction_id = :charged_transaction_id
+    </querytext>
+  </fullquery>
+
+  <fullquery name="insert_refund_transaction">      
+    <querytext>
+      insert into ec_financial_transactions
+      (transaction_id, refunded_transaction_id, order_id, refund_id, creditcard_id, transaction_amount, transaction_type, inserted_date, to_be_captured_date)
+      values
+      (:refund_transaction_id, :charged_transaction_id, :order_id, :refund_id, :creditcard_id, :refund_amount, 'refund', sysdate, :scheduled_hour)
+    </querytext>
+  </fullquery>
+
+  <fullquery name="insert_unrefund_transaction">      
+    <querytext>
+      insert into ec_financial_transactions
+      (transaction_id, refunded_transaction_id, order_id, refund_id, creditcard_id, transaction_amount, transaction_type, inserted_date, to_be_captured_date)
+      values
+      (:refund_transaction_id, :charged_transaction_id, :order_id, :refund_id, :creditcard_id, :unrefunded_amount, 'refund', sysdate, :scheduled_hour)
+    </querytext>
+  </fullquery>
+
 </queryset>

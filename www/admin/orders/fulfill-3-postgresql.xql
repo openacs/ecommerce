@@ -106,4 +106,18 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="get_order_shipping">      
+    <querytext>
+      select coalesce(shipping_charged, 0)
+      from ec_orders
+      where order_id = :order_id
+    </querytext>
+  </fullquery>
+
+  <fullquery name="get_order_shipping_tax">      
+    <querytext>
+      select ec_tax(0, :order_shipping, :order_id)
+    </querytext>
+  </fullquery>
+
 </queryset>

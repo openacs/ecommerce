@@ -47,7 +47,7 @@
   <p>@package_name@ is part of the <a href="/doc">Open
   Architecture Community System (OpenACS)</a> originally developed
   by <a href="http://eve.arsdigita.com/">Eve Andersson</a> then ported
-  from the Arsdigita Community System to OpenACS by <a
+  from the ArsDigita Community System to OpenACS by <a
   href=mailto:jerry-ecommerce@hollyjerry.org>Jerry Asher</a>, <a
   href=mailto:wtem@olywa.net>Walter McGinnis</a>, and <a
   href="http://furfly.net">furfly.net</a> followed by a major overhaul

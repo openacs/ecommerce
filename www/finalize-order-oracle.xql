@@ -8,21 +8,20 @@
 
   <fullquery name="get_gc_balance">      
     <querytext>
-      select ec_gift_certificate_balance(:user_id) 
-      from dual
+      select ec_gift_certificate_balance(:user_id) from dual
     </querytext>
   </fullquery>
 
   <fullquery name="get_applied_certificate_amount">
     <querytext>
-      select ec_order_gift_cert_amount(:order_id)
-      from dual
+      select ec_order_gift_cert_amount(:order_id) from dual
     </querytext>
   </fullquery>
 
-  <fullquery name="get_soft_goods_cost">      
+  <fullquery name="get_soft_goods_costs">      
     <querytext>
-      select nvl(sum(i.price_charged),0) - nvl(sum(i.price_refunded),0) as soft_goods_cost
+      select nvl(sum(i.price_charged),0) - nvl(sum(i.price_refunded),0) as soft_goods_cost,
+      nvl(sum(i.price_tax_charged),0) - nvl(sum(i.price_tax_refunded),0) as soft_goods_tax
       from ec_items i, ec_products p
       where i.order_id = :order_id
       and i.item_state <> 'void'
@@ -31,9 +30,12 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="get_hard_goods_cost">      
+  <fullquery name="get_hard_goods_costs">      
     <querytext>
-      select nvl(sum(i.price_charged),0) - nvl(sum(i.price_refunded),0) as hard_goods_cost
+      select nvl(sum(i.price_charged),0) - nvl(sum(i.price_refunded),0) as hard_goods_cost,
+      nvl(sum(i.price_tax_charged),0) - nvl(sum(i.shipping_refunded),0) as hard_goods_tax,
+      nvl(sum(i.shipping_charged),0) - nvl(sum(i.shipping_refunded),0) as hard_goods_shipping,
+      nvl(sum(i.shipping_tax_charged),0) - nvl(sum(i.shipping_tax_refunded),0) as hard_goods_shipping_tax
       from ec_items i, ec_products p
       where i.order_id = :order_id
       and i.item_state <> 'void'
@@ -89,6 +91,18 @@
       update ec_financial_transactions 
       set marked_date = sysdate
       where transaction_id = :pgw_transaction_id
+    </querytext>
+  </fullquery>
+
+  <fullquery name="get_order_shipping">      
+    <querytext>
+      select nvl(shipping_charged, 0) from ec_orders where order_id = :order_id
+    </querytext>
+  </fullquery>
+
+  <fullquery name="get_order_shipping_tax">      
+    <querytext>
+      select ec_tax(0, :order_shipping, :order_id) from dual
     </querytext>
   </fullquery>
 

@@ -16,7 +16,7 @@
       and pseudo_contains(p.product_name || p.one_line_description ||  p.detailed_description || p.search_keywords, :search_text) > 0
       order by score desc
     </querytext>
-  </fullquery>
+  </partialquery>
 
   <partialquery name="search_subcategory">      
     <querytext>
@@ -28,7 +28,7 @@
       and pseudo_contains(p.product_name || p.one_line_description ||  p.detailed_description || p.search_keywords, :search_text) > 0
       order by score desc
     </querytext>
-  </fullquery>
+  </partialquery>
 
   <partialquery name="search_all">      
     <querytext>
@@ -38,6 +38,6 @@
       where pseudo_contains(p.product_name || p.one_line_description ||  p.detailed_description || p.search_keywords, :search_text) > 0
       order by score desc
     </querytext>
-  </fullquery>
+  </partialquery>
 
 </queryset>

@@ -16,7 +16,7 @@
       and pseudo_contains(coalesce(p.product_name, '') || coalesce(p.one_line_description, '') ||  coalesce(p.detailed_description, '') || coalesce(p.search_keywords,''), :search_text) > 0
       order by score desc
     </querytext>
-  </fullquery>
+  </partialquery>
 
   <partialquery name="search_subcategory">      
     <querytext>
@@ -28,7 +28,7 @@
       and pseudo_contains(coalesce(p.product_name, '') || coalesce(p.one_line_description, '') ||  coalesce(p.detailed_description, '') || coalesce(p.search_keywords,''), :search_text) > 0
       order by score desc
     </querytext>
-  </fullquery>
+  </partialquery>
 
   <partialquery name="search_all">      
     <querytext>
@@ -38,6 +38,6 @@
       where pseudo_contains(coalesce(p.product_name, '') || coalesce(p.one_line_description, '') ||  coalesce(p.detailed_description, '') || coalesce(p.search_keywords,''), :search_text) > 0
       order by score desc
     </querytext>
-  </fullquery>
+  </partialquery>
 
 </queryset>
