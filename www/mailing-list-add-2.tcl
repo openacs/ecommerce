@@ -56,7 +56,7 @@ if { [db_string get_check_string $check_string] == 0 } {
     db_dml add_to_mailing_list $insert_string
 }
 
-set remove_link "<a href=\"mailing-list-remove?[export_url_vars category_id subcategory_id subsubcategory_id]\">[ec_insecure_location][ec_url]mailing-list-remove?[export_url_vars category_id subcategory_id subsubcategory_id]</a>"
+set remove_link "<a href=\"mailing-list-remove?[export_url_vars category_id subcategory_id subsubcategory_id]\">unsubscribe from $mailing_list_name</a>"
 
 set title "You subscribed to the $mailing_list_name mailing list"
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $title]]]
