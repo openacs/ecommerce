@@ -131,7 +131,7 @@ if {[info exists address_type] && [string equal $address_type "shipping"]} {
 
 # Now get the other necessary information
 
-set form_action [ec_securelink [ec_url]process-payment
+set form_action [ec_securelink [ec_url]process-payment]
 
 # ec_order_cost returns price + shipping + tax - gift_certificate BUT
 # no gift certificates have been applied to in_basket orders, so this

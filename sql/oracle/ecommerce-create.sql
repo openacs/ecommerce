@@ -556,6 +556,7 @@ create table ec_creditcards (
         creditcard_last_four    char(4),
         -- ##/## 
         creditcard_expire       char(5),
+	billing_address 	number references ec_addresses(address_id),
         -- if it ever failed (conclusively), set this to 't' so we
         -- won't give them the option of using it again
         failed_p                char(1) default 'f' check (failed_p in ('t','f'))
