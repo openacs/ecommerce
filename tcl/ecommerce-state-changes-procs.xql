@@ -41,28 +41,6 @@
       where order_id=:order_id
     </querytext>
   </fullquery>
-  
-  <fullquery name="ec_update_state_to_authorized.set_soft_goods_shipped">
-    <querytext>
-      update ec_items
-      set item_state = 'shipped', shipment_id = :shipment_id
-      from ec_products p
-      where ec_items.order_id = :order_id
-      and ec_items.product_id = p.product_id
-      and p.no_shipping_avail_p = 't'
-    </querytext>
-  </fullquery>
-
-  <fullquery name="ec_update_state_to_authorized.set_hard_goods_to_be_shipped">      
-    <querytext>
-      update ec_items 
-      set item_state = 'to_be_shipped' 
-      from ec_products p
-      where ec_items.order_id = :order_id
-      and ec_items.product_id = p.product_id
-      and p.no_shipping_avail_p = 'f'
-    </querytext>
-  </fullquery>
 
   <fullquery name="ec_update_state_to_confirmed.user_id_select">      
     <querytext>
