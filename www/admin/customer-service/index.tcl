@@ -92,7 +92,7 @@ if { $num_open_issues > 0 } {
 append doc_body "</table><p>add <a href=\"interaction-add\">New Interaction</a></p>"
 
 if { [llength $issue_type_list] == 0 } {
-    append doc_body "<p>If you want to see issues separated out by commonly used issue types, then add those issue types to the issue type in Picklist Management.</p>" 
+    append doc_body "<p>If you want to see issues separated out by commonly used issue types, then add those issue types to the issue type in <a href=\"picklists\">Picklist Management</a>.</p>" 
 }
 
 append doc_body "<h3>Search for customer</h3>
