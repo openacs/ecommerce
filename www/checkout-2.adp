@@ -1,14 +1,12 @@
 <master>
-  <property name="title">Completing Your Order</property>
+  <property name="title">Completing Your Order: Verify shopping cart contents</property>
   <property name="context_bar">@context_bar;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
   <include src="checkout-progress" step="2">
 
-<h2>Check Your Order</h2>
-
 <blockquote>
-  <b>Verify the items you desire</b>
+
   <p>Please verify that the items and quantities shown below are correct. Put a 0 (zero) in the
     Quantity field to remove a particular item from your order. </p>
 
