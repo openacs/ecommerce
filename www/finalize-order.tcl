@@ -81,6 +81,7 @@ if { [empty_string_p $order_id] } {
 
     if { [empty_string_p $most_recently_confirmed_order] } {
 	rp_internal_redirect index
+        ns_log Warning "finalize-order.tcl,line84: no confirmed order for user $user_id. Redirecting user."
     } else {
 	rp_internal_redirect thank-you
     }
