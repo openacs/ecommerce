@@ -28,7 +28,7 @@ Add the following new user class?
 "
 
 
-set user_class_id [db_string get_uc_id_seq "select ec_user_class_id_sequence.nextval from dual"]
+set user_class_id [db_nextval ec_user_class_id_sequence]
 
 append page_html "<form method=post action=add-2>
 [export_form_vars user_class_name user_class_id]

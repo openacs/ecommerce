@@ -65,7 +65,7 @@ Add the following new subsubcategory to $subcategory_name?
 </blockquote>
 "
 
-set subsubcategory_id [db_string get_new_subsub_id "select ec_subsubcategory_id_sequence.nextval from dual"]
+set subsubcategory_id [db_nextval ec_subsubcategory_id_sequence]
 
 append page_html "<form method=post action=subsubcategory-add-2>
 [export_form_vars category_name category_id subcategory_name subcategory_id subsubcategory_name subsubcategory_id prev_sort_key next_sort_key]

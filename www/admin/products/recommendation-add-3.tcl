@@ -34,7 +34,7 @@ for { set counter 0 } { $counter < [llength $categorization] } {incr counter} {
 }
 
 
-set recommendation_id [db_string recommendation_id_select "select ec_recommendation_id_sequence.nextval from dual"]    
+set recommendation_id [db_nextval ec_recommendation_id_sequence]
 
 doc_body_append "[ad_admin_header "Confirm Product Recommendation"]
 

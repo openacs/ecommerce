@@ -1,23 +1,23 @@
 #  www/ecommerce/gift-certificate-finalize-order.tcl
 ad_page_contract {
 
- this script will:
- (1) put this order into the 'confirmed' state
- (2) try to authorize the user's credit card info and either
-     (a) redirect them to a thank you page, or
-     (b) redirect them to a "please fix your credit card info" page
- If they reload, we don't have to worry about the credit card
- authorization code being executed twice because the order has
- already been moved to the 'confirmed' state, which means that
- they will be redirected out of this page.
- We will redirect them to the thank you page which displays the
- order with the most recent confirmation date.
- The only potential problem is that maybe the first time the
- order got to this page it was confirmed but then execution of
- the page stopped before authorization of the order could occur.
- This problem is solved by the scheduled procedure,
- ec_query_for_cybercash_zombies, which will try to authorize
- any 'confirmed' orders over half an hour old.
+    this script will:
+    (1) put this order into the 'confirmed' state
+    (2) try to authorize the user's credit card info and either
+    (a) redirect them to a thank you page, or
+    (b) redirect them to a "please fix your credit card info" page
+    If they reload, we don't have to worry about the credit card
+    authorization code being executed twice because the order has
+    already been moved to the 'confirmed' state, which means that
+    they will be redirected out of this page.
+    We will redirect them to the thank you page which displays the
+    order with the most recent confirmation date.
+    The only potential problem is that maybe the first time the
+    order got to this page it was confirmed but then execution of
+    the page stopped before authorization of the order could occur.
+    This problem is solved by the scheduled procedure,
+    ec_query_for_cybercash_zombies, which will try to authorize
+    any 'confirmed' orders over half an hour old.
 
     @param gift_certificate_id
     @param certificate_to
@@ -167,56 +167,55 @@ if { [db_string get_gift_c_id "select count(*) from ec_gift_certificates where g
     # try to auth transaction
     
     db_transaction {
-    
-    set creditcard_id [db_string get_cc_id "select ec_creditcard_id_sequence.nextval from dual"]
+	
+	set creditcard_id [db_nextval ec_creditcard_id_sequence]
 
+	set ccstuff_1 "[string range $creditcard_number [expr [string length $creditcard_number] -4] [expr [string length $creditcard_number] -1]]"
+	set expiry "$creditcard_expire_1/$creditcard_expire_2"
 
-    set ccstuff_1 "[string range $creditcard_number [expr [string length $creditcard_number] -4] [expr [string length $creditcard_number] -1]]"
-    set expiry "$creditcard_expire_1/$creditcard_expire_2"
-
-db_dml get_ec_credit_card "insert into ec_creditcards
+	db_dml get_ec_credit_card "insert into ec_creditcards
     (creditcard_id, user_id, creditcard_number, creditcard_last_four, creditcard_type, creditcard_expire, billing_zip_code)
     values
     (:creditcard_id, :user_id, :creditcard_number, :ccstuff_1, :creditcard_type,:expiry,:billing_zip_code)
     "
-    
-    # claim check is generated as follows:
-    # 1. username of recipient (part of email address up to the @ symbol) up to 10 characters
-    # 2. 10 character random string
-    # 3. gift_certificate_id
-    # all separated by dashes
-    
-    # The username is added as protection in case someone cracks the random number algorithm.
-    # The gift_certificate_id is added as a guarantee of uniqueness.
+	
+	# claim check is generated as follows:
+	# 1. username of recipient (part of email address up to the @ symbol) up to 10 characters
+	# 2. 10 character random string
+	# 3. gift_certificate_id
+	# all separated by dashes
+	
+	# The username is added as protection in case someone cracks the random number algorithm.
+	# The gift_certificate_id is added as a guarantee of uniqueness.
 
-    # philg_email_valid_p ensures that there will be an @ sign, thus a username will be set
-    regexp {(.+)@} $recipient_email match username
+	# philg_email_valid_p ensures that there will be an @ sign, thus a username will be set
+	regexp {(.+)@} $recipient_email match username
 
-    if { [string length $username] > 10 } {
-	set username [string range $username 0 9]
-    }
+	if { [string length $username] > 10 } {
+	    set username [string range $username 0 9]
+	}
 
-    set random_string [ec_generate_random_string 10]
+	set random_string [ec_generate_random_string 10]
 
-    set claim_check "$username-$random_string-$gift_certificate_id"
+	set claim_check "$username-$random_string-$gift_certificate_id"
 
 
-    set peeraddr [ns_conn peeraddr]
-    set gc_months [util_memoize {ad_parameter -package_id [ec_id] GiftCertificateMonths ecommerce} [ec_cache_refresh]]
-    db_dml insert_new_gc_into_db  "insert into ec_gift_certificates
+	set peeraddr [ns_conn peeraddr]
+	set gc_months [util_memoize {ad_parameter -package_id [ec_id] GiftCertificateMonths ecommerce} [ec_cache_refresh]]
+	db_dml insert_new_gc_into_db  "insert into ec_gift_certificates
     (gift_certificate_id, gift_certificate_state, amount, issue_date, purchased_by, expires, claim_check, certificate_message, certificate_to, certificate_from, recipient_email, last_modified, last_modifying_user, modified_ip_address)
     values
     (:gift_certificate_id, 'confirmed', :amount, sysdate, :user_id, add_months(sysdate,:gc_months),:claim_check, :certificate_message, :certificate_to, :certificate_from, :recipient_email, sysdate, :user_id, :peeraddr)
     "
-    
-    set transaction_id [db_string get_transaction_id "select ec_transaction_id_sequence.nextval from dual"]
-    
-    db_dml insert_ec_financial_trans "insert into ec_financial_transactions
+	
+	set transaction_id [db_nextval ec_transaction_id_sequence]
+	
+	db_dml insert_ec_financial_trans "insert into ec_financial_transactions
     (transaction_id, gift_certificate_id, creditcard_id, transaction_amount, transaction_type, inserted_date)
     values
     (:transaction_id, :gift_certificate_id, :creditcard_id, :amount, 'charge', sysdate)
     "
-    
+	
     }
     
     # try to authorize the transaction
@@ -311,8 +310,8 @@ if { $cybercash_status == "success" || $cybercash_status == "success-reload" } {
     }
 
     # give them a gift_certificate_id and a new form
-    set gift_certificate_id [db_string get_cert_id_seq "select ec_gift_cert_id_sequence.nextval from dual"]
-   
+    set gift_certificate_id [db_nextval ec_gift_cert_id_sequence]
+    
     set page_html "[ad_header "Credit Card Correction Needed"]
     [ec_header_image]<br clear=all>
     <blockquote>
@@ -364,7 +363,7 @@ if { $cybercash_status == "success" || $cybercash_status == "success-reload" } {
     "
 } elseif { $cybercash_status == "unknown-reload" } {
     set n_seconds [db_string get_n_seconds "select round((sysdate-issue_date)*86400) as n_seconds from ec_gift_certificates where gift_certificate_id = :gift_certificate_id"]
-   
+    
     set page_html "[ad_header "Gift Certificate Order Already Processed"]
     You've probably hit submit twice from the same form.  We are already
 in possession of a gift certificate order with id # $gift_certificate_id (placed $n_seconds
@@ -372,8 +371,8 @@ seconds ago) and it is being processed.  You can <a
 href=\"gift-certificate?[export_url_vars gift_certificate_id]\">check on the status of
 this gift certificate order</a> if you like.
 
-    [ec_footer]
-    "
+[ec_footer]
+"
 }
 
 

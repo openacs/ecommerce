@@ -3,13 +3,6 @@
 <queryset>
    <rdbms><type>postgresql</type><version>7.1</version></rdbms>
 
-<fullquery name="get_new_creditcard_id">      
-      <querytext>
-      select creditcard_id_sequence.nextval 
-      </querytext>
-</fullquery>
-
- 
 <fullquery name="insert_new_ec_refund">      
       <querytext>
       insert into ec_refunds
@@ -38,13 +31,6 @@
 <fullquery name="get_base_tax_to_refund">      
       <querytext>
       select ec_tax(0,:base_shipping_to_refund,:order_id) 
-      </querytext>
-</fullquery>
-
- 
-<fullquery name="get_new_trans_id">      
-      <querytext>
-      select ec_transaction_id_sequence.nextval 
       </querytext>
 </fullquery>
 

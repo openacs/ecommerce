@@ -26,7 +26,7 @@ doc_body_append "[ad_admin_header "Add Items, Cont."]
 <hr>
 "
 
-set item_id [db_string item_id_select "select ec_item_id_sequence.nextval from dual"]
+set item_id [db_nextval ec_item_id_sequence]
 set user_id [db_string user_id_select "select user_id from ec_orders where order_id=:order_id"]
 set lowest_price_and_price_name [ec_lowest_price_and_price_name_for_an_item $product_id $user_id ""]
 

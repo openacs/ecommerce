@@ -8,6 +8,7 @@ ad_page_contract {
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   order_id_query_string:integer,optional
+  product_sku_query_string:optional
   product_name_query_string:optional
   customer_last_name_query_string:optional
 }
@@ -44,6 +45,10 @@ if { [info exists order_id_query_string] } {
 #           ec_total_price(o.order_id), o.user_id,
 #           u.first_names, u.last_name
 #  order by order_id
+} elseif { [info exists product_sku_query_string] } {
+    set product_header "<td><b>Product</b></td>"
+    set product_sku_query_string "%$product_sku_query_string%"
+    set query [db_map product_sku_query_string_sql]
 } elseif { [info exists product_name_query_string] } {
     set product_header "<td><b>Product</b></td>"
     # append product_name_query_string "%"

@@ -496,33 +496,33 @@ ad_proc ec_report_get_start_date_and_end_date { } { Report Get Start and End Dat
 
 	# it there's no time connected to the date, just the date argument to ns_dbformvalue,
 	# otherwise use the datetime argument
-	if [catch  { ns_dbformvalue [ns_conn form] start_date date start_date} errmsg ] {
+	if [catch { ns_dbformvalue [ns_conn form] start_date date start_date} errmsg ] {
 	    if { ![info exists return_date_error_p] || $return_date_error_p == "f" } {
-		set start_date "$current_year-$current_month-01"
+		set start_date(date) "$current_year-$current_month-01"
 	    } else {
-		set start_date "0"
+		set start_date(date) "0"
 	    }    
 	}
 	if [catch  { ns_dbformvalue [ns_conn form] end_date date end_date} errmsg ] {
 	    if { ![info exists return_date_error_p] || $return_date_error_p == "f" } {
-		set end_date "$current_year-$current_month-$current_date"
+		set end_date(date) "$current_year-$current_month-$current_date"
 	    } else {
-		set end_date "0"
+		set end_date(date) "0"
 	    }
 	}
 	
-	if { [string compare $start_date ""] == 0 } {
+	if { [string compare $start_date(date) ""] == 0 } {
 	    if { ![info exists return_date_error_p] || $return_date_error_p == "f" } {
-		set start_date "$current_year-$current_month-01"
+		set start_date(date) "$current_year-$current_month-01"
 	    } else {
-		set start_date "0"
+		set start_date(date) "0"
 	    }
 	}
-	if { [string compare $end_date ""] == 0 } {
+	if { [string compare $end_date(date) ""] == 0 } {
 	    if { ![info exists return_date_error_p] || $return_date_error_p == "f" } {
-		set end_date "$current_year-$current_month-$current_date"
+		set end_date(date) "$current_year-$current_month-$current_date"
 	    } else {
-		set end_date "0"
+		set end_date(date) "0"
 	    }
 	}
     }

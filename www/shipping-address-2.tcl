@@ -68,7 +68,7 @@ if { [empty_string_p $order_id] } {
     return
 }
 
-set address_id [db_string get_new_address_id_from_seq "select ec_address_id_sequence.nextval from dual"]
+set address_id [db_nextval ec_address_id_sequence]
 
 db_transaction {
 

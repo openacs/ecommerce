@@ -51,7 +51,7 @@ Add the following new category?
 </blockquote>
 "
 
-set category_id [db_string get_new_category_id "select ec_category_id_sequence.nextval from dual"]
+set category_id [db_nextval ec_category_id_sequence]
 
 append page_html "<form method=post action=category-add-2>
 [export_form_vars category_name category_id prev_sort_key next_sort_key]

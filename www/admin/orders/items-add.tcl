@@ -35,7 +35,7 @@ Search for a product to add:
 
 <form method=post action=items-add-2>
 [export_form_vars order_id]
-<li>By ID: <input type=text name=product_id size=3>
+<li>By SKU: <input type=text name=sku size=3>
 <input type=submit value=\"Search\">
 </form>
 

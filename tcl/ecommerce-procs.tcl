@@ -1517,11 +1517,12 @@ ad_proc ec_state_name_from_usps_abbrev {usps_abbrev} "Takes a USPS abbrevation a
     } -default ""]
 }
 
-ad_proc ec_country_name_from_country_code {country_code} {Returns "United States" from an argument of $db and "us"} {
-    return [db_string country_name_from_country_code {
-	select default_name from countries where iso=:country_code
-    } -default ""]    
-}
+# Duplicate of ecommerce-utilities-procs.tcl
+# ad_proc ec_country_name_from_country_code {country_code} {Returns "United States" from an argument of $db and "us"} {
+#     return [db_string country_name_from_country_code {
+# 	select default_name from countries where iso=:country_code
+#     } -default ""]    
+# }
 
 ##################################################
 ### file manager functions from acs-3.48

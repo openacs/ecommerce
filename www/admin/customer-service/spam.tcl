@@ -19,7 +19,9 @@ if {$customer_service_rep == 0} {
     return
 }
 
-
+# this proc uses uplevel and assumes the existence of
+# it sets the variables start_date and end_date
+ec_report_get_start_date_and_end_date
 
 append doc_body "[ad_admin_header "Spam Users"]
 <h2>Spam Users</h2>
@@ -27,9 +29,12 @@ append doc_body "[ad_admin_header "Spam Users"]
 [ad_admin_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Spam Users"]
 
 <hr>
-<p align=right>
-<a href=\"spam-log\">View spam log</a>
+<form method=post action=spam-log>
+<p>
+<input type=\"submit\" value=\"View spam log\">
+[ec_report_date_range_widget $start_date(date) $end_date(date)]
 </p>
+</form>
 "
 
 set mailing_list_widget  [ec_mailing_list_widget]
@@ -71,7 +76,7 @@ $uc_body
 <b><li>Spam all users who bought this product:</b>
 
 <form method=post action=spam-2>
-Product ID: <input type=text name=product_id size=5><br>
+Product SKU: <input type=text name=product_sku size=5><br>
 <input type=checkbox name=show_users_p value=\"t\" checked>Show me the users who will be spammed.<br>
 <p>
 <center>
@@ -84,7 +89,7 @@ Product ID: <input type=text name=product_id size=5><br>
 <b><li>Spam all users who viewed this product:</b>
 
 <form method=post action=spam-2>
-Product ID: <input type=text name=viewed_product_id size=5><br>
+Product SKU: <input type=text name=viewed_product_sku size=5><br>
 <input type=checkbox name=show_users_p value=\"t\" checked>Show me the users who will be spammed.<br>
 <p>
 <center>
@@ -105,12 +110,8 @@ $c_body
 <form method=post action=spam-2>
 "
 
-# this proc uses uplevel and assumes the existence of
-# it sets the variables start_date and end_date
-ec_report_get_start_date_and_end_date
-
 append doc_body "
-[ec_report_date_range_widget $start_date $end_date]<br>
+[ec_report_date_range_widget $start_date(date) $end_date(date)]<br>
 <input type=checkbox name=show_users_p value=\"t\" checked>Show me the users who will be spammed.<br>
 <p>
 <center>

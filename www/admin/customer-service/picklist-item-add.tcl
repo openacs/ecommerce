@@ -48,7 +48,7 @@ append doc_body "[ad_admin_header "Add an Item"]
 <hr>
 "
 
-set picklist_item_id [db_string get_item_id_from_seq "select ec_picklist_item_id_sequence.nextval from dual"]
+set picklist_item_id [db_nextval ec_picklist_item_id_sequence]
 
 append doc_body "<ul>
 

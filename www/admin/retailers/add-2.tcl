@@ -183,7 +183,6 @@ Installation
 <form method=post action=add-3>
 "
 
-#set retailer_id [db_string get_retailer_id_seq "select ec_retailer_sequence.nextval from dual"]
 set retailer_id [db_nextval ec_retailer_sequence]
 
 append page_html "[export_form_vars retailer_id retailer_name primary_contact_name secondary_contact_name primary_contact_info secondary_contact_info line1 line2 city usps_abbrev zip_code phone fax url country_code reach nexus_states financing_policy return_policy price_guarantee_policy delivery_policy installation_policy]

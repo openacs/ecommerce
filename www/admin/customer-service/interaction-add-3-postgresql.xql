@@ -10,27 +10,6 @@
 </fullquery>
 
  
-<fullquery name="get_new_interaction_id">      
-      <querytext>
-      select ec_interaction_id_sequence.nextval 
-      </querytext>
-</fullquery>
-
- 
-<fullquery name="get_new_interaction_id">      
-      <querytext>
-      select ec_interaction_id_sequence.nextval 
-      </querytext>
-</fullquery>
-
- 
-<fullquery name="get_uiid_to_insert_from_seq">      
-      <querytext>
-      select ec_user_ident_id_sequence.nextval 
-      </querytext>
-</fullquery>
-
-
 <partialquery name="date_string_sql">
       <querytext>
 

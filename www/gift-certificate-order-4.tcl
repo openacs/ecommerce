@@ -106,7 +106,7 @@ if { $exception_count > 0 } {
 
 
 
-set gift_certificate_id [db_string get_gc_id "select ec_gift_cert_id_sequence.nextval from dual"]
+set gift_certificate_id [db_nextval ec_gift_cert_id_sequence]
 set user_email [db_string get_email_for_user "select email from cc_users where user_id=:user_id"]
 
 set hidden_form_variables [export_form_vars certificate_to certificate_from certificate_message amount recipient_email creditcard_number creditcard_type creditcard_expire_1 creditcard_expire_2 billing_zip_code gift_certificate_id]

@@ -49,7 +49,7 @@ set page_html "[ad_admin_header "Confirm Template"]
 "
 
 
-set template_id [db_string get_template_nextval "select ec_template_id_sequence.nextval from dual"]
+set template_id [db_nextval ec_template_id_sequence]
 
 append page_html "<form method=post action=add-3>
 [export_form_vars template_id template_name template]

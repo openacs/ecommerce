@@ -7,7 +7,7 @@ ad_page_contract {
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
   order_id:integer,notnull
-  product_id:integer,optional
+  sku:optional
   product_name:optional
 }
 
@@ -22,8 +22,8 @@ doc_body_append "[ad_admin_header "Add Items, Cont."]
 <hr>
 "
 
-if { [exists_and_not_null product_id] } {
-    set additional_query_part "product_id=:product_id"
+if { [exists_and_not_null sku] } {
+    set additional_query_part "sku=:sku"
 } else {
     set additional_query_part "upper(product_name) like '%' || upper(:product_name) || '%'"
 }
@@ -38,7 +38,6 @@ db_foreach products_select "select product_id, product_name from ec_products whe
 	"
     }
     incr product_counter
-#    doc_body_append "<li><a href=\"items-add-3?[export_url_vars order_id product_id]\">$product_name</a>\n"
     doc_body_append "<li><a href=\"[ec_url_concat [ec_url] /admin]/products/one?[export_url_vars product_id]\">$product_name</a>
     <br>
     [ec_add_to_cart_link $product_id "Add to Order" "Add to Order" "items-add-3" $order_id]

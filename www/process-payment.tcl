@@ -210,7 +210,7 @@ if { $gift_certificate_covers_cost_p == "f" } {
 	db_dml use_existing_cc_for_order "update ec_orders set creditcard_id=:creditcard_id where order_id=:order_id"
     } else {
 	# using new credit card
-	set creditcard_id [db_string get_id_for_new_cc "select ec_creditcard_id_sequence.nextval from dual"]
+	set creditcard_id [db_nextval ec_creditcard_id_sequence]
  set cc_no [string range $creditcard_number [expr [string length $creditcard_number] -4] [expr [string length $creditcard_number] -1]]
 set expiry "$creditcard_expire_1/$creditcard_expire_2"
 	db_dml insert_new_cc "insert into ec_creditcards

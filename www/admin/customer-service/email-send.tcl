@@ -64,7 +64,7 @@ if { [empty_string_p $email_to_use] } {
 
 
 # generate action_id here for double-click protection
-set action_id [db_string get_new_action_id "select ec_action_id_sequence.nextval from dual"]
+set action_id [db_nextval ec_action_id_sequence]
 
 append doc_body "If you are not [db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:customer_service_rep"], please <a href=\"/register?[export_url_vars return_url]\">log in</a>
 

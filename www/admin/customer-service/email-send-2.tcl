@@ -65,9 +65,9 @@ $message
 
 db_transaction {
 
-set interaction_id [db_string get_new_csa_seq_id "select ec_interaction_id_sequence.nextval from dual"]
+    set interaction_id [db_nextval ec_interaction_id_sequence]
 
-db_dml insert_new_cs_interaction "insert into ec_customer_serv_interactions
+    db_dml insert_new_cs_interaction "insert into ec_customer_serv_interactions
 (interaction_id, customer_service_rep, user_identification_id, interaction_date, interaction_originator, interaction_type)
 values
 (:interaction_id, :customer_service_rep, :user_identification_id, sysdate, 'rep', 'email')

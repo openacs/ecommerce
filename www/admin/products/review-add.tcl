@@ -48,7 +48,7 @@ doc_body_append "[ad_admin_header "Confirm Review of $product_name"]
 "
 
 
-set review_id [db_string review_id_select "select ec_product_review_id_sequence.nextval from dual"]
+set review_id [db_nextval ec_product_review_id_sequence]
 
 doc_body_append "<form method=post action=review-add-2>
 [export_form_vars product_id publication display_p review review_id author_name]

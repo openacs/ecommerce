@@ -44,13 +44,6 @@
 </fullquery>
 
  
-<fullquery name="ec_update_state_to_confirmed.transaction_id_select">      
-      <querytext>
-      select ec_transaction_id_sequence.nextval from dual
-      </querytext>
-</fullquery>
-
- 
 <fullquery name="ec_update_state_to_confirmed.financial_transaction_insert">      
       <querytext>
       insert into ec_financial_transactions

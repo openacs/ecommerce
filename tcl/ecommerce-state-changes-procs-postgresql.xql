@@ -47,13 +47,6 @@ select ec_reinst_gift_cert_on_order (:order_id)
 </fullquery>
 
  
-<fullquery name="ec_update_state_to_confirmed.transaction_id_select">      
-      <querytext>
-      select ec_transaction_id_sequence.nextval 
-      </querytext>
-</fullquery>
-
- 
 <fullquery name="ec_update_state_to_confirmed.financial_transaction_insert">      
       <querytext>
       insert into ec_financial_transactions

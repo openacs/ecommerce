@@ -102,7 +102,7 @@ append page_html "[ad_admin_header "Confirm that these item(s) have been [ec_dec
 <hr>
 "
 
-set shipment_id [db_string get_new_ship_seq "select ec_shipment_id_sequence.nextval from dual"]
+set shipment_id [db_nextval ec_shipment_id_sequence]
 
 if { [info exists item_id] && ![empty_string_p item_id] } {
     set sql  "select i.item_id, p.product_name, p.one_line_description, p.product_id, i.price_charged, i.price_name, i.color_choice, i.size_choice, i.style_choice

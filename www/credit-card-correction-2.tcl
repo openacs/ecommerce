@@ -119,7 +119,7 @@ if { $order_owner != $user_id } {
 # done with all the checks!
 
 # do some inserts
-set creditcard_id [db_string set_creditcard_id_from_seq "select ec_creditcard_id_sequence.nextval from dual"]
+set creditcard_id [db_nextval ec_creditcard_id_sequence]
 
 db_transaction {
 set cc_fmt "[string range $creditcard_number [expr [string length $creditcard_number] -4] [expr [string length $creditcard_number] -1]]"

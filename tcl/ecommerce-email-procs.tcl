@@ -23,7 +23,7 @@ ad_proc ec_sendmail_from_service { email_to reply_to email_subject email_body {a
 	ns_set merge $extra_headers $additional_headers
     }
 
-    set from "\"[ec_system_name] Customer Service\" <$reply_to>"
+    set from "\"[util_memoize {ad_parameter -package_id [ec_id] CustomerServiceEmailDescription ecommerce} [ec_cache_refresh]]\" <$reply_to>"
     qmail $email_to $from $email_subject $email_body $extra_headers
 }
 
@@ -461,7 +461,7 @@ ad_proc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this to
 	set user_identification_id [db_string user_identification_id_select "select user_identification_id from ec_user_identification where upper(email)=upper(:email)" -default ""]
 
 	if { [empty_string_p $user_identification_id] } {
-	  set user_identification_id [db_string user_identification_id_seq "select ec_user_ident_id_sequence.nextval from dual"]
+	  set user_identification_id [db_nextval ec_user_ident_id_sequence]
 	  set trimmed_email [string trim $email]
 
 	    db_dml user_identification_id_insert {

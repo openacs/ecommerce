@@ -21,7 +21,7 @@ doc_body_append "[ad_admin_header "Items Needed"]
 The following items are needed in order to fulfill all outstanding orders:
 <blockquote>
 <table>
-<tr bgcolor=\"ececec\"><td><b>Quantity</b></td><td><b>Product</b></td></tr>
+<tr bgcolor=\"ececec\"><td><b>Quantity</b></td><td><b>SKU</b></td><td><b>Product</b></td></tr>
 "
 
 db_foreach items_needed_select "
@@ -46,7 +46,7 @@ db_foreach items_needed_select "
     }
     set options [join $option_list ", "]
 
-    doc_body_append "<tr><td align=right>$quantity</td><td><a href=\"[ec_url_concat [ec_url] /admin]/products/one?[export_url_vars product_id]\">$product_name</a>[ec_decode $options "" "" "; $options"]</td></tr>\n"
+    doc_body_append "<tr><td align=right>$quantity</td><td><a href=\"[ec_url_concat [ec_url] /admin]/products/one?[export_url_vars product_id]\">$sku</a></td><td><a href=\"[ec_url_concat [ec_url] /admin]/products/one?[export_url_vars product_id]\">$product_name</a>[ec_decode $options "" "" "; $options"]</td></tr>\n"
 }
 
 doc_body_append "</table>

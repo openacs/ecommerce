@@ -213,7 +213,7 @@ db_transaction {
 
     if {$case_b_p} {
 	# insert a new credit card into ec_creditcards
-	set creditcard_id [db_string get_new_creditcard_id "select creditcard_id_sequence.nextval from dual"]
+	set creditcard_id [db_nextval creditcard_id_sequence]
 	
 	set cc_thing "[string range $creditcard_number [expr [string length $creditcard_number] -4] [expr [string length $creditcard_number] -1]]"
 	
@@ -268,7 +268,7 @@ db_transaction {
     if { [expr $cash_amount_to_refund] > 0 } {
 	
 	# 1999-08-11: added refund_id to the insert
-	set transaction_id [db_string get_new_trans_id "select ec_transaction_id_sequence.nextval from dual"]
+	set transaction_id [db_nextval ec_transaction_id_sequence]
 	db_dml insert_new_financial_trans "insert into ec_financial_transactions
 	(transaction_id, order_id, refund_id, creditcard_id, transaction_amount, transaction_type, inserted_date)
 	values

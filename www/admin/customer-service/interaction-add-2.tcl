@@ -109,7 +109,7 @@ if { ![info exists interaction_id] } {
 # exist) so that I can use the fact of its existence or lack of existence
 # to create this page's UI
 
-set action_id [db_string get_interaction_id "select ec_action_id_sequence.nextval from dual"]
+set action_id [db_nextval ec_action_id_sequence]
 
 
 

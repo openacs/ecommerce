@@ -2,13 +2,6 @@
 
 <queryset>
    <rdbms><type>oracle</type><version>8.1.6</version></rdbms>
-
-<fullquery name="get_new_csa_seq_id">      
-      <querytext>
-      select ec_interaction_id_sequence.nextval from dual
-      </querytext>
-</fullquery>
-
  
 <fullquery name="insert_new_cs_interaction">      
       <querytext>

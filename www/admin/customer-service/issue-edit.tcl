@@ -22,8 +22,6 @@ if {$customer_service_rep == 0} {
     return
 }
 
-
-
 set page_title "Edit Issue #$issue_id"
 append doc_body "[ad_admin_header $page_title]
 <h2>$page_title</h2>
@@ -32,7 +30,6 @@ append doc_body "[ad_admin_header $page_title]
 
 <hr>
 "
-
 
 set issue_type_list [db_list get_issue_types "select issue_type from ec_cs_issue_type_map where issue_id=:issue_id"]
 
@@ -59,6 +56,5 @@ Modify Issue Type:
 
 [ad_admin_footer]
 "
-
 
 doc_return  200 text/html  $doc_body

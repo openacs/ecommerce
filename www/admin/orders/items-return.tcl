@@ -29,7 +29,7 @@ doc_body_append "[ad_admin_header "Mark Items Returned"]
 "
 
 # generate the new refund_id here (we don't want them reusing this form)
-set refund_id [db_string refund_id_select "select refund_id_sequence.nextval from dual"]
+set refund_id [db_nextval refund_id_sequence]
 
 doc_body_append "<form method=post action=items-return-2>
 [export_form_vars order_id refund_id]

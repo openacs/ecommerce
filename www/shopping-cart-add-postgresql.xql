@@ -2,13 +2,6 @@
 
 <queryset>
    <rdbms><type>postgresql</type><version>7.1</version></rdbms>
-
-<fullquery name="get_new_ec_order_id">      
-      <querytext>
-      select ec_order_id_sequence.nextval 
-      </querytext>
-</fullquery>
-
  
 <fullquery name="insert_new_ec_order">      
       <querytext>

@@ -60,8 +60,8 @@ select
 from ec_refunds
 "
 
-set n_standard_to_ship [db_string unused "select count(*) from ec_orders_shippable where shipping_method='standard'"]
-set n_express_to_ship [db_string unused "select count(*) from ec_orders_shippable where shipping_method='express'"]
+set n_standard_to_ship [db_string standard_shipping "select count(*) from ec_orders_shippable where shipping_method='standard'"]
+set n_express_to_ship [db_string express_shipping "select count(*) from ec_orders_shippable where shipping_method='express'"]
 
 doc_body_append "
 <li><a href=\"by-order-state-and-time\">Orders</a> <font size=-1>($n_o_in_last_24_hours in last 24 hours; $n_o_in_last_7_days in last 7 days)</font>
@@ -83,6 +83,10 @@ doc_body_append "
 
 <form method=post action=search>
 By Order ID: <input type=text name=order_id_query_string size=10>
+</form>
+
+<form method=post action=search>
+By Product SKU: <input type=text name=product_sku_query_string size=10>
 </form>
 
 <form method=post action=search>

@@ -26,14 +26,6 @@
 </fullquery>
 
 
- 
-<fullquery name="get_cc_id">      
-      <querytext>
-      select ec_creditcard_id_sequence.nextval 
-      </querytext>
-</fullquery>
-
- 
 <fullquery name="insert_new_gc_into_db">      
       <querytext>
       insert into ec_gift_certificates
@@ -41,13 +33,6 @@
       values
       (:gift_certificate_id, 'confirmed', :amount, current_timestamp, :user_id, current_timestamp + '$gc_months months'::interval,:claim_check, :certificate_message, :certificate_to, :certificate_from, :recipient_email, current_timestamp, :user_id, :peeraddr)
     
-      </querytext>
-</fullquery>
-
- 
-<fullquery name="get_transaction_id">      
-      <querytext>
-      select ec_transaction_id_sequence.nextval 
       </querytext>
 </fullquery>
 
@@ -73,13 +58,6 @@
 <fullquery name="upate_ec_gc_status">      
       <querytext>
       update ec_gift_certificates set authorized_date=current_timestamp, gift_certificate_state=:cc_result where gift_certificate_id=:gift_certificate_id
-      </querytext>
-</fullquery>
-
- 
-<fullquery name="get_cert_id_seq">      
-      <querytext>
-      select ec_gift_cert_id_sequence.nextval 
       </querytext>
 </fullquery>
 

@@ -67,7 +67,7 @@ ad_proc ec_update_state_to_confirmed {order_id} {
   set total_amount [db_string total_amount_select "select ec_order_cost(:order_id) from dual"]
   if { $total_amount > 0 } {
     # create a new financial transaction
-    set transaction_id [db_string transaction_id_select "select ec_transaction_id_sequence.nextval from dual"]
+    set transaction_id [db_nextval ec_transaction_id_sequence]
     db_dml financial_transaction_insert "insert into ec_financial_transactions
     (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
     values

@@ -3,13 +3,6 @@
 <queryset>
    <rdbms><type>oracle</type><version>8.1.6</version></rdbms>
 
-<fullquery name="get_new_creditcard_id">      
-      <querytext>
-      select creditcard_id_sequence.nextval from dual
-      </querytext>
-</fullquery>
-
- 
 <fullquery name="insert_new_ec_refund">      
       <querytext>
       insert into ec_refunds
@@ -55,14 +48,7 @@
       </querytext>
 </fullquery>
 
- 
-<fullquery name="get_new_trans_id">      
-      <querytext>
-      select ec_transaction_id_sequence.nextval from dual
-      </querytext>
-</fullquery>
 
- 
 <fullquery name="insert_new_financial_trans">      
       <querytext>
       insert into ec_financial_transactions

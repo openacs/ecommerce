@@ -328,12 +328,12 @@ db_transaction {
 
 # interaction_id will either be a number or it will not exist
 if { ![info exists interaction_id] } {
-    set interaction_id [db_string get_new_interaction_id "select ec_interaction_id_sequence.nextval from dual"]
+    set interaction_id [db_nextval ec_interaction_id_sequence]
 }
 
 # issue_id will either be a number or it will be the empty string
 if { [empty_string_p $issue_id] } {
-    set issue_id [db_string get_new_interaction_id "select ec_issue_id_sequence.nextval from dual"]
+    set issue_id [db_nextval ec_issue_id_sequence]
     set create_new_issue_p "t"
 } else {
     set create_new_issue_p "f"
@@ -357,7 +357,7 @@ if { $create_new_interaction_p == "t" && ![info exists c_user_identification_id]
 		set user_id_to_insert $d_user_id
 	    }
 	    
-	    set uiid_to_insert [db_string get_uiid_to_insert_from_seq "select ec_user_ident_id_sequence.nextval from dual"]
+	    set uiid_to_insert [db_nextval ec_user_ident_id_sequence]
 	    db_dml insert_new_uiid "insert into ec_user_identification
 	    (user_identification_id, user_id, email, first_names, last_name, postal_code, other_id_info)
 	    values

@@ -169,7 +169,7 @@ if { $special_offer_p == "t" } {
 doc_body_append "</table>
 "
 
-set offer_id [db_string offer_id_select "select ec_offer_sequence.nextval from dual"]
+set offer_id [db_nextval ec_offer_sequence]
 
 doc_body_append "<form method=post action=offer-add-2>
 [export_form_vars offer_id product_id retailer_id price shipping stock_status shipping_unavailable_p offer_begins offer_ends special_offer_p special_offer_html]

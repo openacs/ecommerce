@@ -72,7 +72,7 @@ set order_id [db_string get_order_id "select order_id from ec_orders where user_
 # string (if it is, log the error and redirect them to product.tcl).
 
 if { [empty_string_p $order_id] } {
-     set order_id [db_string get_new_ec_order_id "select ec_order_id_sequence.nextval from dual"]
+    set order_id [db_nextval ec_order_id_sequence]
     # create the order (iff an in_basket order *still* doesn't exist)
     db_dml insert_new_ec_order "insert into ec_orders
     (order_id, user_session_id, order_state, in_basket_date)
