@@ -1,0 +1,170 @@
+# This is a CyberCash emulator which gives weighted random results similar to
+# results we've gotten in the past by talking to CyberCash.
+
+# To use, rename this file cybercash-emulator.tcl and put it into your private
+# tcl directory.  Then you can call the function cc_send_to_server_21 the same
+# as you would if you had installed our cybercash.so module.
+
+# The README file for cybercash.so can be found at:
+#   http://www.arsdigita.com/free-tools/cybercash/README.txt
+# The only useful command mentioned in the README file is cc_send_to_server_21,
+# so that is the only function we've emulated.
+# Documentation of CyberCash's API can be found in Appendix B of the CyberCash
+# CashRegister Service Development Guide at:
+#   http://www.cybercash.com/cybercash/merchants/docs/dev.pdf
+# The Dev Guide will help you determine which arguments to put into the input
+# ns_set sent to cc_send_to_server_21. If this isn't enough, look at the source
+# code for ArsDigita Shoppe:
+#   http://www.arsdigita.com/free-tools/shoppe.tar.gz
+
+# <Begin Disclaimer>
+# No statistical analysis of CyberCash results has been done, therefore the
+# likelihood of getting any one of these results may differ significantly from
+# the likelihood of getting the same result when actually talking to CyberCash.
+# This is meant to be a tool to assist programmers who develop with CyberCash;
+# it is not meant to be a reflection of CyberCash's reliability.
+# <End Disclaimer>
+
+proc cc_send_to_server_21 { txn_type args cc_output } {
+## txn_type is mauthonly, postauth, retry, void, return, capture
+
+    # level_of_success is used for just about all transaction types
+    set level_of_success [random]
+
+    if { $txn_type == "mauthonly" || $txn_type == "retry"} {
+	# retry is treated the same as mauthonly because we happen to only use retry
+	# after a failed mauthonly (not after a failed anything else) in Shoppe
+	if { $level_of_success < 0.8 } {
+	    # successful authorization
+	    ns_set put $cc_output "MStatus" "success"
+	    ns_set put $cc_output "aux-msg" "Financial Institute Response: authorization approved"
+	    ns_set put $cc_output "auth-code" [expr round([random] * 100000)]
+	    ns_set put $cc_output "action-code" "000"
+	    ns_set put $cc_output "merch-txn" [expr round([random] * 10000000)]
+	    
+	    # generate an avs code
+	    set avs_random_number [random]
+	    if { $avs_random_number < 0.1 } {
+		set avs_code "A"
+	    } elseif { $avs_random_number >= 0.1 && $avs_random_number < 0.3 } {
+		set avs_code "N"
+	    } elseif { $avs_random_number >= 0.3 && $avs_random_number < 0.4 } {
+		set avs_code "U"
+	    } elseif { $avs_random_number >= 0.4 && $avs_random_number < 0.5 } {
+		set avs_code "Y"
+	    } else {
+		set avs_code "Z"
+	    }
+	    
+	    ns_set put $cc_output "avs-code" $avs_code
+	} elseif { $level_of_success >= 0.8 && $level_of_success < 0.9 } {
+	    # failure hard, fails LUHN-10 check
+	    ns_set put $cc_output "MStatus" "failure-hard"
+	    ns_set put $cc_output "MErrLoc" "smps"
+	    ns_set put $cc_output "MErrMsg" "Credit card number '[ns_set get $args "card-number"]' fails LUHN-10 check"
+	    
+	} elseif { $level_of_success >= 0.9 && $level_of_success < 0.92 } {
+	    # failure-bad-money
+	    ns_set put $cc_output "MStatus" "failure-bad-money"
+	    ns_set put $cc_output "MErrLoc" "smps"
+	    ns_set put $cc_output "MErrMsg" "Financial Institution Response: Declined, bad card.  Call card issuer."
+	    ns_set put $cc_output "merch-txn" [expr round([random] * 1000000)]
+	} elseif { $level_of_success >= 0.92 && $level_of_success < 0.94 } {
+	    # failure-q-or-cancel
+	    ns_set put $cc_output "MStatus" "failure-q-or-cancel"
+	    ns_set put $cc_output "MErrLoc" "smps"
+	    ns_set put $cc_output "MErrMsg" "Error while reading message from the Cybercash gateway: parse_http: Premature EOF read from socket.  HTTP body is missing.  A likely reason: server did not respond or dropped a connection"
+	} elseif { $level_of_success >= 0.94 && $level_of_success < 0.96 } {
+	    # couldn't connect to MPS
+	    ns_set put $cc_output "MStatus" "failure-hard"
+	    ns_set put $cc_output "MErrLoc" "SYSTEM"
+	    ns_set put $cc_output "MErrMsg" "Could not connect to Merchant Payment Server, possibly it is not running or your configuration is incorrect"
+	} elseif { $level_of_success >= 0.96 && $level_of_success < 0.98 } {
+	    # timeout
+	    ns_set put $cc_output "MStatus" "failure-hard"
+	    ns_set put $cc_output "MErrLoc" "INTERNAL"
+	    ns_set put $cc_output "MErrMsg" "Payment Server failed to respond in a timely manner."
+	} else {
+	    # generic failure
+	    ns_set put $cc_output "MStatus" "failure-hard"
+	    ns_set put $cc_output "MErrLoc" "ccsp"
+	    ns_set put $cc_output "MErrMsg" "Invalid credit card number."
+	    ns_set put $cc_output "merch-txn" [expr round([random] * 1000000)]
+	}
+	# end of mauthonly section
+    } elseif { $txn_type == "postauth" } {
+	if { $level_of_success < 0.97 } {
+	    ns_set put $cc_output "MStatus" "success"
+	    ns_set put $cc_output "aux-msg" "Order [ns_set get $args "order-id"] is successfully marked for batching."
+	} else {
+	    ns_set put $cc_output "MStatus" "failure-hard"
+	    ns_set put $cc_output "MErrLoc" "SYSTEM"
+	    ns_set put $cc_output "MErrMsg" "Could not connect to Merchant Payment Server, possibly it is not running or your configuration is incorrect"
+	}
+	# end of postauth section
+    } elseif { $txn_type == "return" } {
+        if { $level_of_success < 0.97 } {
+	    ns_set put $cc_output "MStatus" "success"
+	    ns_set put $cc_output "aux-msg" "Order [ns_set get $args "order-id"] is successfully marked for batching as a return."
+	} else {
+	    ns_set put $cc_output "MStatus" "failure-hard"
+	    ns_set put $cc_output "MErrLoc" "SYSTEM"
+	    ns_set put $cc_output "MErrMsg" "Could not connect to Merchant Payment Server, possibly it is not running or your configuration is incorrect"
+	}
+	# end of return section
+    } elseif { $txn_type == "void" } {
+	# it doesn't matter if the txn-type is "marked" or "markret" -- the message from CyberCash
+	# is the same
+	if { $level_of_success < 0.97 } {
+	    ns_set put $cc_output "MStatus" "success"
+	    ns_set put $cc_output "aux-msg" "Order [ns_set get $args "order-id"] is successfully voided."
+	} else {
+	    ns_set put $cc_output "MStatus" "failure-hard"
+	    ns_set put $cc_output "MErrLoc" "SYSTEM"
+	    ns_set put $cc_output "MErrMsg" "Could not connect to Merchant Payment Server, possibly it is not running or your configuration is incorrect"
+	}
+	# end of void section
+    } elseif { $txn_type == "query" } {
+	# this is going to be tedious to code...
+
+	set db [ns_db gethandle subquery]
+
+	set selection [ns_db 0or1row $db "select to_char(authorized_date,'YYYYMMDDHH24MISS') as authorized_date, cc_auth_status, cc_auth_txn_id, cc_auth_auth_code, cc_auth_action_code, cc_auth_avs_code, to_char(postauth_date, 'YYYYMMDDHH24MISS') as postauth_date, cc_post_status, cc_post_txn_id, cc_post_auth_code, to_char(cc_sett_date,'YYYYMMDDHH24MISS') as cc_sett_date, cc_sett_status, cc_sett_txn_id, cc_sett_auth_code, cc_sett_batch_id, to_char(return_date,'YYYYMMDDHH24MISS') as return_date, refunded_amount, cc_retn_status, cc_retn_txn_id, cc_retn_auth_code, to_char(cc_sret_date,'YYYYMMDDHH24MISS') as cc_sret_date, cc_sret_status, cc_sret_txn_id, cc_sret_auth_code, cc_sret_batch_id, to_char(void_marked_date,'YYYYMMDDHH24MISS') as void_marked_date, cc_vdmk_status, cc_vdmk_txn_id, cc_vdmk_auth_code, to_char(void_markret_date,'YYYYMMDDHH24MISS') as void_markret_date, cc_vdrn_status, cc_vdrn_txn_id, cc_vdrn_auth_code, currency, price_charged
+	from sh_orders 
+	where order_id=[ns_set get $args "order-id"]"]
+	if { $selection != "" } {
+	    set_variables_after_query
+
+	    ns_set put $cc_output "MStatus" "success"
+
+	    if { [string compare $authorized_date ""] != 0 } {
+		ns_set put $cc_output "a1" "order-id=[ns_set get $args "order-id"]&merch-txn=$cc_auth_txn_id&cust-txn=$cc_auth_txn_id&origin=m&txn-type=auth&txn-status=$cc_auth_status&cust-id=xxxxxx&card-type=xx&card-number=(first 2 and last 4 digits only)&card-exp=xx/xx&amount=$currency $price_charged&time=$authorized_date.000&auth_code=$cc_auth_auth_code&ref-code=&action-code=$cc_auth_action_code&batch-id=&avs-code=$cc_auth_avs_code"
+	    }
+	    if { [string compare $postauth_date "" ] != 0 } {
+		ns_set put $cc_output "a2" "order-id=[ns_set get $args "order-id"]&merch-txn=$cc_post_txn_id&cust-txn=$cc_auth_txn_id&origin=m&txn-type=marked&txn-status=$cc_post_status&cust-id=xxxxxx&card-type=xx&card-number=(first 2 and last 4 digits only)&card-exp=xx/xx&amount=$currency $price_charged&time=$postauth_date.000&auth_code=$cc_auth_auth_code&ref-code=&action-code=$cc_auth_action_code&batch-id=&avs-code=$cc_auth_avs_code"
+	    }
+	    if { [string compare $cc_sett_date "" ] != 0 } {
+		ns_set put $cc_output "a3" "order-id=[ns_set get $args "order-id"]&merch-txn=$cc_sett_txn_id&cust-txn=&origin=m&txn-type=settled&txn-status=$cc_sett_status&cust-id=xxxxxx&card-type=xx&card-number=(first 2 and last 4 digits only)&card-exp=xx/xx&amount=$currency $price_charged&time=$cc_sett_date.000&auth_code=$cc_auth_auth_code&ref-code=&action-code=$cc_auth_action_code&batch-id=$cc_sett_batch_id&avs-code=$cc_auth_avs_code"
+	    }
+	    if { [string compare $return_date "" ] != 0 } {
+		ns_set put $cc_output "a4" "order-id=[ns_set get $args "order-id"]&merch-txn=$cc_retn_txn_id&cust-txn=&origin=m&txn-type=markret&txn-status=$cc_retn_status&cust-id=xxxxxx&card-type=xx&card-number=(first 2 and last 4 digits only)&card-exp=xx/xx&amount=$currency $refunded_amount&time=$return_date.000&auth_code=$cc_auth_auth_code&ref-code=&action-code=&batch-id=&avs-code=$cc_auth_avs_code"
+	    }
+	    if { [string compare $cc_sret_date "" ] != 0 } {
+		ns_set put $cc_output "a5" "order-id=[ns_set get $args "order-id"]&merch-txn=$cc_sret_txn_id&cust-txn=&origin=m&txn-type=setlret&txn-status=$cc_sret_status&cust-id=xxxxxx&card-type=xx&card-number=(first 2 and last 4 digits only)&card-exp=xx/xx&amount=$currency $refunded_amount&time=$cc_sret_date.000&auth_code=$cc_auth_auth_code&ref-code=&action-code=&batch-id=$cc_sret_batch_id&avs-code=$cc_auth_avs_code"
+	    }
+	    if { [string compare $void_marked_date "" ] != 0 } {
+		ns_set put $cc_output "a6" "order-id=[ns_set get $args "order-id"]&merch-txn=$cc_vdmk_txn_id&cust-txn=$cc_auth_txn_id&origin=m&txn-type=voidmark&txn-status=$cc_vdmk_status&cust-id=xxxxxx&card-type=xx&card-number=(first 2 and last 4 digits only)&card-exp=xx/xx&amount=$currency $price_charged&time=$void_marked_date.000&auth_code=$cc_auth_auth_code&ref-code=&action-code=000&batch-id=&avs-code=$cc_auth_avs_code"
+	    }
+	    if { [string compare $void_markret_date "" ] != 0 } {
+		ns_set put $cc_output "a7" "order-id=[ns_set get $args "order-id"]&merch-txn=$cc_vdrn_txn_id&cust-txn=$cc_auth_txn_id&origin=m&txn-type=voidreturn&txn-status=$cc_vdrn_status&cust-id=xxxxxx&card-type=xx&card-number=(first 2 and last 4 digits only)&card-exp=xx/xx&amount=$currency $refunded_amount&time=$void_markret_date.000&auth_code=$cc_auth_auth_code&ref-code=&action-code=000&batch-id=&avs-code=$cc_auth_avs_code"
+	    }
+
+
+	# end of selection not empty
+	}
+
+    # end of query
+    }
+
+# end of proc
+}

@@ -1,0 +1,17 @@
+# ecommmerce/www/product-file.vuh
+ad_page_contract {
+    
+    Return a product image
+    @author jerry@hollyjerry.org
+    @creation-date winter 2001
+    @cvs-id
+} {
+} 
+
+#  set is_url  [ad_conn url]
+#  set e_url   [ad_conn extra_url]
+#  set f       [ad_conn file]
+set path_info  [ad_conn path_info]
+set full_path  [ec_data_directory][ec_product_directory]$path_info
+
+ns_returnfile 200 [ns_guesstype $full_path] $full_path
