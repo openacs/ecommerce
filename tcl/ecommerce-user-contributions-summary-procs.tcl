@@ -12,9 +12,6 @@ ad_library {
 
 }
 
-
-ns_share ad_user_contributions_summary_proc_list
-
 if { ![info exists ad_user_contributions_summary_proc_list] || [util_search_list_of_lists $ad_user_contributions_summary_proc_list "Ecommerce" 0] == -1 } {
     lappend ad_user_contributions_summary_proc_list [list "Ecommerce" ecommerce_user_contributions 0]
 }

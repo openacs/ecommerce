@@ -731,9 +731,7 @@ ad_proc ec_unrefund_settled_transactions {} { unrefunded settled transactions } 
 
 ## Schedule these procedures
 
-
-ns_share -init {set ec_procs_scheduled_p 0} ec_procs_scheduled_p
-
+set ec_procs_scheduled_p 0
 set ep [util_memoize {ad_parameter -package_id [ec_id] EnabledP ecommerce 0} [ec_cache_refresh]]
 
 if { !$ec_procs_scheduled_p  && $ep} {

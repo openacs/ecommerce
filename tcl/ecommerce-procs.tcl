@@ -18,14 +18,9 @@ ad_proc ec_user_session_logout {{why ""}} {
     return filter_ok
 }
 
-ns_share -init {set ec_user_session_logout_installed 0} ec_user_session_logout_installed
-
-if {!$ec_user_session_logout_installed} {
-    set ec_user_session_logout_installed 1
-    ns_register_filter postauth GET /register/logout* ec_user_session_logout
-    ns_register_filter postauth POST /register/user-login* ec_user_session_logout
-    ns_register_filter postauth GET /register/user-login* ec_user_session_logout
-}
+ns_register_filter postauth GET /register/logout* ec_user_session_logout
+ns_register_filter postauth POST /register/user-login* ec_user_session_logout
+ns_register_filter postauth GET /register/user-login* ec_user_session_logout
 
 ad_proc ec_system_name {} {
     @return ec_system_name

@@ -220,6 +220,7 @@ drop function ec_products_audit_tr();
 drop table ec_products_audit;
 drop view ec_products_searchable;
 drop view ec_products_displayable;
+\i ec-product-sc-drop.sql
 drop table ec_products;
 
 -- nuke all created objects
@@ -234,6 +235,7 @@ end;' language 'plpgsql';
 
 select inline_0 ();
 drop function inline_0 ();
+\i ec-product-package-drop.sql
 
 drop view ec_subsubcategories_augmented;
 drop trigger ec_subsubcategories_audit_tr on ec_subsubcategories;
@@ -265,6 +267,4 @@ drop view ec_template_id_sequence;
 drop sequence ec_template_id_seq;
 
 \i pl-sql-utilities-drop.sql
-\i ec-product-package-drop.sql
-\i acs-geo-tables-drop.sql
-\i ec-product-sc-drop.sql
+

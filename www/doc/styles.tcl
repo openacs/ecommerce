@@ -12,10 +12,6 @@ ad_page_contract {
     sort_by:optional
 }
 
-
-ns_share ad_styletag
-ns_share ad_styletag_source_file
-
 # we assume that we get a list of lists, each one containing
 # {proc_name filename} (i.e., a Tcl list in its own right)
 
@@ -48,7 +44,7 @@ in this installation of the ArsDigita Community System
 <hr>
 
 This page lists those styles that the programmers have defined
-using <code>ec_register_styletag</code> (defined in /tcl/ad-style.tcl).
+using <code>ec_register_styletag</code> (defined in ecommerce/tcl/ec-style-procs.tcl).
 
 <p>
 
@@ -56,8 +52,8 @@ using <code>ec_register_styletag</code> (defined in /tcl/ad-style.tcl).
 
 set list_of_lists [list]
 
-foreach style_name [array names ad_styletag] {
-    lappend list_of_lists [list $style_name $ad_styletag_source_file($style_name)]
+foreach style_name [nsv_array names ec_styletag] {
+    lappend list_of_lists [list $style_name [nsv_get ec_styletag_source_file $style_name]]
 }
 
 if { [info exists sort_by] && $sort_by == "name" } {

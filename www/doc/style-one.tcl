@@ -11,15 +11,10 @@ ad_page_contract {
     style_name:notnull
 }
 
-
-ns_share ad_styletag
-ns_share ad_styletag_source_file
-
-
 doc_return  200 text/html "[ad_admin_header "One Style"]
 <h2>One Style</h2>
 
-defined in $ad_styletag_source_file($style_name), part of the
+defined in [nsv_get ec_styletag_source_file $style_name], part of the
 <a href=\"styles\">style module</a> of the ArsDigita Community System
 
 <hr>
@@ -30,13 +25,13 @@ This page shows the available information on one style defined using <code>ec_re
 
 <blockquote>
 
-$ad_styletag($style_name)
+[nsv_get ec_styletag $style_name]
 
 </blockquote>
 
 Source code:
 <pre>
-[ad_quotehtml [info body ad_style_$style_name]]
+[ad_quotehtml [info body ec_style_$style_name]]
 </pre>
 
 [ad_admin_footer]
