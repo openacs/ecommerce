@@ -7,18 +7,17 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>f</singleton-p>
 
-    <version name="4.5b" url="http://www.arsdigita.com/acs-repository/download/apm/ecommerce-4.5b.apm">
+    <version name="4.6" url="http://www.arsdigita.com/acs-repository/download/apm/ecommerce-4.6.apm">
     <database-support>
         <database>oracle</database>
         <database>postgresql</database>
     </database-support>
-        <owner url="mailto:janine@furfly.net">Janine Sisk</owner>
         <owner url="mailto:bart.teeuwisse@7-sisters.com">Bart Teeuwisse</owner>
-        <summary>ACS 3.x based e-commerce solution. This version represents a major overhaul of the prior version (4.2a). See the documentation for more information.</summary>
-        <release-date>2002-05-13</release-date>
+        <owner url="mailto:janine@furfly.net">Janine Sisk</owner>
+        <summary>ACS 3.x based e-commerce solution.See the documentation for more information.	</summary>
+        <release-date>2002-09-18</release-date>
         <vendor url="http://www.furfly.net">furfly.net, LLC</vendor>
-        <description format="text/plain">This module implements all that IT needs for a standard business-to-consumer Web service.  You can find a feature summary in the documentaion.
-</description>
+        <description format="text/plain">This module implements all that IT needs for a standard business-to-consumer Web service.  You can find a feature summary in the documentaion.</description>
 
         <requires url="acs-kernel" version="4.1"/>
         <requires url="ref-countries" version="0.1d"/>
@@ -749,6 +748,8 @@
             <file type="query_file" path="www/delete-address.xql"/>
             <file type="documentation" path="www/doc/audit.adp"/>
             <file type="documentation" path="www/doc/audit.tcl"/>
+            <file type="documentation" path="www/doc/contextbar.adp"/>
+            <file type="documentation" path="www/doc/contextbar.tcl"/>
             <file type="documentation" path="www/doc/ecommerce-customer-service.adp"/>
             <file type="documentation" path="www/doc/ecommerce-customer-service.tcl"/>
             <file type="documentation" path="www/doc/ecommerce-features.adp"/>
