@@ -15,7 +15,7 @@
 </fullquery>
 
  
-<fullquery name="ec_url_mem.ec_mountpoint">      
+<fullquery name="ec_url_lookup_mem.ec_mountpoint">      
       <querytext>
       
             select site_node__url(s.node_id)
@@ -75,7 +75,7 @@
                     insert into ec_user_sessions
                     (user_session_id, ip_address, start_time, http_user_agent)
                     values
-                    (:user_session_id, :ip_address , current_timestamp, :http_user_agent)
+                    (:user_session_id, :ip_address, current_timestamp, :http_user_agent)
                 
       </querytext>
 </fullquery>
