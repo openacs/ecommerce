@@ -187,11 +187,15 @@ if { [exists_and_not_null upload_file] } {
         }
     }
 
+    set system_url [parameter::get -package_id [ad_acs_kernel_id] -parameter SystemURL]
+    set system_name [parameter::get -package_id [ad_acs_kernel_id] -parameter SystemName]
+    set image_comment "from $system_url $system_name"
+
     set perm_thumbnail_filename "$full_dirname/product-thumbnail.jpg"
 
     set convert [ec_convert_path]
     if {![string equal "" $convert] && [file exists $convert]} {
-        if [catch {exec $convert -geometry $convert_dimensions $perm_filename $perm_thumbnail_filename} errmsg ] {
+        if [catch {exec $convert -geometry $convert_dimensions -comment \"$image_comment\" $perm_filename $perm_thumbnail_filename} errmsg ] {
             ad_return_complaint 1 "
                 I am sorry, an error occurred converting the picture.  $errmsg
             "
