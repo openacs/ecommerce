@@ -47,7 +47,7 @@ set user_id [ad_verify_and_get_user_id]
 # 4. Log this product_id into the user session
 
 set user_session_id [ec_get_user_session_id]
-ec_create_new_session_if_necessary [export_url_vars product_id offer_code] cookies_are_not_required
+ec_create_new_session_if_necessary [export_url_vars  product_id offer_code] cookies_are_not_required
 
 # Valid offer codes must be <= 20 characters, so if it's more than 20
 # characters, pretend it isn't there
