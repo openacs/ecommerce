@@ -124,18 +124,18 @@ foreach possible_exception $possible_exception_list {
 }
 
 if { $exception_count > 0 } {
-    ns_log Notice "checkout-one-form-2.tcl,line127: $exception_count form input exception(s). $exception_text"
+    ns_log Notice "checkout-one-form-2.tcl,ref(127): $exception_count form input exception(s) for user $user_id"
     ad_return_complaint $exception_count $exception_text
     ad_script_abort
 }
 
 # We need them to be logged in
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 if {$user_id == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
-ns_log Warning "checkout-one-form-2.tcl,line137: user_id is 0, redirecting user."
-    ad_returnredirect "/register?[export_url_vars return_url]"
+    ns_log Notice "checkout-one-form-2.tcl,ref(137): user_id is 0 which should never happen, redirecting user."
+    rp_internal_redirect "/register?[export_url_vars return_url]"
     ad_script_abort
 }
 
@@ -152,13 +152,13 @@ set order_id [db_string get_order_id "
 
 if { [empty_string_p $order_id] } {
 
-# They probably got here by pushing "Back", so just redirect
-# them to index.tcl
-ns_log Warning "checkout-one-form-2.tcl,line156: order_id is empty, redirecting user."
-	ad_returnredirect index.tcl
-        ad_script_abort
+    # They probably got here by pushing "Back", so just redirect
+    # them to index.tcl
+    ns_log Notice "checkout-one-form-2.tcl,ref(157): order_id is empty, redirecting user $user_id."
+    rp_internal_redirect index
+    ad_script_abort
 }
-ns_log Notice "checkout-one-form-2.tcl,line161: user_id: $user_id, order_id: $order_id"
+ns_log Notice "checkout-one-form-2.tcl,ref(161): processing user_id: $user_id, order_id: $order_id"
 
 # start processing the info from checkout-one-form
 
@@ -190,8 +190,9 @@ if { [info exists billing_address_id] && ![empty_string_p $billing_address_id] }
 	# have them login again, to make sure they should even have access to current session
 
         ec_user_session_logout      
-ns_log Warning "checkout-one-form-2.tcl,line193: billing_address_id mismatch. logged out user."   
+        ns_log Notice "checkout-one-form-2.tcl,ref(193): billing_address_id mismatch. logging out user $user_id."   
     }
+
     # compare billing address with address from db
 
     set combined_billing_address "${bill_to_attn}${bill_to_line1}${bill_to_line2}${bill_to_city}${bill_to_usps_abbrev}${bill_to_zip_code}${bill_to_phone}${bill_to_country_code}${bill_to_full_state_name}${bill_to_phone_time}"
@@ -200,19 +201,16 @@ ns_log Warning "checkout-one-form-2.tcl,line193: billing_address_id mismatch. lo
     regsub -all { } $combined_address "" combined_address
     if { [string equal $combined_billing_address $combined_address] != 1 } {
         set new_address "t"
-ns_log Notice "checkout-one-form-2.tcl,line203: billing addresses exit and not equal. combined_billing: $combined_billing_address combined: $combined_address "
     } else {
+        # billing addresses same
         set new_address "f"
-ns_log Notice "checkout-one-form-2.tcl,line206: billing addresses same"
     }
 } else {
     # no billing address id exists
     set new_address "t"
-ns_log Notice "checkout-one-form-2.tcl,line210: no billing_address_id exists"
 }
 
 if { [string equal $new_address "t"] } {
-
     # This is a new address which requires a new address_id.
     set address_type "billing"
     set attn $bill_to_attn
@@ -221,10 +219,9 @@ if { [string equal $new_address "t"] } {
     set city $bill_to_city 
     if {[info exists bill_to_usps_abbrev]} {
         set usps_abbrev $bill_to_usps_abbrev
-ns_log Notice "checkout-one-form-2.tcl,line219: bill_to_usps_abbrev:$bill_to_usps_abbrev"
     } else {
+        # billing address, bill_to_usps_abbrev does not exist
         set usps_abbrev ""
-ns_log Notice "checkout-one-form-2.tcl,line222: bill_to_usps_abbrev does not exist"
     }
     if {[info exists bill_to_zip_code]} {
         set zip_code [string range $bill_to_zip_code 0 9]
@@ -244,7 +241,6 @@ ns_log Notice "checkout-one-form-2.tcl,line222: bill_to_usps_abbrev does not exi
         (:address_id, :user_id, :address_type, :attn,:line1,:line2,:city,:usps_abbrev,:full_state_name,:zip_code,:country_code,:phone,:phone_time)"
     }
     # ec_orders does not track billing address directly, so won't insert an address_id to it.
-ns_log Notice "checkout-one-form-2.tcl.line242: usps_abbrev: $usps_abbrev inserted into ec_addresses billing id: $address_id"
 }
 
 set billing_address_id $address_id
@@ -264,7 +260,7 @@ if {[db_0or1row shipping_avail "
 }  else {
     set shipping_required "f"
 }
-ns_log Notice "checkout-one-form-2.tcl,line261 shipping_required:$shipping_required"
+
 set combined_shipping_address ""
 
 if { [string equal $shipping_required "t"] } {
@@ -288,12 +284,12 @@ if { [string equal $shipping_required "t"] } {
     set combined_shipping_address "${ship_to_attn}${ship_to_line1}${ship_to_line2}${ship_to_city}${ship_to_usps_abbrev}${ship_to_zip_code}${ship_to_phone}${ship_to_country_code}${ship_to_full_state_name}${ship_to_phone_time}"
     regsub -all { } $combined_shipping_address "" combined_shipping_address
 
-# check addresses against existing addresses, if any (bill_to_address_id_exists_p, ship_to_address_id_exists_p
-# if there's any difference, then assume it's a new address, otherwise, use existing address_id
-    if { $shipping_address_id > 0 } {
-ns_log Notice "checkout-one-form-2.tcl,line275 shipping_address_id:$shipping_address_id"
-        # Shipping address was presented to user, the existing address info might have been edited
+    # check addresses against existing addresses, if any (bill_to_address_id_exists_p, ship_to_address_id_exists_p
+    # if there's any difference, then assume it's a new address, otherwise, use existing address_id
 
+    if { $shipping_address_id > 0 } {
+
+        # Shipping address was presented to user, the existing address info might have been edited
         set address_id $shipping_address_id
 
         # retrieve a saved address 
@@ -306,11 +302,11 @@ ns_log Notice "checkout-one-form-2.tcl,line275 shipping_address_id:$shipping_add
         if { $shipping_address_exists == 0 } {
 	    # They probably got here by playing with the shipping_address_id number
 	    # have them login again, to make sure they should even have access to current session
-            ns_log Warning "checkout-one-form-2.tcl,line304. shipping_address_id is 0, logging out user"
+            ns_log Notice "checkout-one-form-2.tcl,ref(305). shipping_address_id is 0 which should never happen. logging out user $user_id"
             ec_user_session_logout         
         }
-        # compare shipping address with address from db
 
+        # compare shipping address with address from db
 
         set combined_address "${attn}${line1}${line2}${city}${usps_abbrev}${zip_code}${phone}${country_code}${full_state_name}${phone_time}"
         regsub -all { } $combined_address "" combined_address
@@ -318,9 +314,10 @@ ns_log Notice "checkout-one-form-2.tcl,line275 shipping_address_id:$shipping_add
         if { [string equal $combined_shipping_address $combined_address] != 1 } {
             set new_address "t"
         } else {
+           # addresses are the same
            set new_address "f"
         }
-ns_log Notice "checkout-one-form-2.tcl,line305 new_address:$new_address combined_address:$combined_address combined_shipping_address $combined_shipping_address"
+
     } else {
         # no previous shipping address, so address must be new
         set new_address "t"
@@ -330,9 +327,8 @@ ns_log Notice "checkout-one-form-2.tcl,line305 new_address:$new_address combined
     if { [string equal $new_address "t"] } {
 
         if { [string length $combined_shipping_address] < 15 } {
-ns_log Notice "checkout-one-form-2.tcl,line312: shipping address must be blank."
-	    ns_log Notice "checkout-one-form-2.tcl,line313: combined_shipping_address:$combined_shipping_address shipping_address:[info exists combined_address]"
             # shipping address must be blank, replace with billing address
+
             set ship_to_attn $bill_to_attn
             set ship_to_line1 $bill_to_line1
             set ship_to_line2 $bill_to_line2
@@ -352,6 +348,7 @@ ns_log Notice "checkout-one-form-2.tcl,line312: shipping address must be blank."
             set ship_to_full_state_name $bill_to_full_state_name
             set ship_to_phone_time $bill_to_phone_time
         }
+
         # This is a new address which requires an address_id.
         set address_type "shipping"
         set attn $ship_to_attn
@@ -373,14 +370,13 @@ ns_log Notice "checkout-one-form-2.tcl,line312: shipping address must be blank."
             (:address_id, :user_id, :address_type, :attn,:line1,:line2,:city,:usps_abbrev,:full_state_name,:zip_code,:country_code,:phone,:phone_time)"
         }
     }
+
     # Update the shipping address of the order
 
     db_dml set_shipping_on_order "
 	update ec_orders 
 	set shipping_address = :address_id 
 	where order_id = :order_id"
-ns_log Notice "checkout-one-form-2.tcl.line337: usps_abbrev: $usps_abbrev, updated ec_addresses.shipping_id: $address_id"
-
 }
 
 # See if there's a gift certificate with a claim check
@@ -473,7 +469,7 @@ if {[empty_string_p $tax_exempt_p]} {
 }
 
 if {![info exists shipping_method]} {
-ns_log Warning "checkout-one-form-2.tcl,line474:shipping_method does not exist."
+    # shipping method does not exist
     set shipping_method ""
 }
 
@@ -508,7 +504,7 @@ if {[info exists shipping_gateway] && [string equal $shipping_gateway "true"]} {
     set add_exp_amount_by_weight 0
 } else {
     if {![info exists shipping_method]} {
-ns_log Warning "checkout-one-form-2.tcl,line509:shipping_method does not exist."
+        # shipping method does not exist
         set shipping_method ""
     }
 
@@ -578,7 +574,7 @@ db_foreach get_items_in_cart "
 if {![info exists shipping_gateway]} {
 
     if {![info exists shipping_method]} {
-ns_log Warning "checkout-one-form-2.tcl,line579:shipping_method does not exist."
+        # shipping_method does not exist
         set shipping_method ""
     }
 
@@ -684,7 +680,7 @@ if { [string equal $gift_certificate_covers_cost_p "f"] } {
 	    }
 	    
 	    if { $exception_count > 0 } {
-                ns_log Notice "checkout-one-form-2.tcl,line667: $exception_count form input exception(s). $exception_text"
+                ns_log Notice "checkout-one-form-2.tcl,ref(683): $exception_count form input exception(s) for user $user_id"
 		ad_return_complaint $exception_count $exception_text
                 ad_script_abort
 	    }
@@ -707,7 +703,7 @@ if { [string equal $gift_certificate_covers_cost_p "f"] } {
 
 	    # Probably form surgery
 
-	    ad_returnredirect checkout-2.tcl
+	    rp_internal_redirect checkout-2
             ad_script_abort
 	}
 
@@ -719,7 +715,7 @@ if { [string equal $gift_certificate_covers_cost_p "f"] } {
 
 	    # Probably form surgery
 
-	    ad_returnredirect checkout-2.tcl
+	    rp_internal_redirect checkout-2
             ad_script_abort
 	}
 
@@ -785,4 +781,4 @@ db_transaction {
 set referer "checkout-one-form-2"
 set hidden_vars [export_vars -url {referer}]
 db_release_unused_handles
-ad_returnredirect "checkout-3.tcl?$hidden_vars"
+rp_internal_redirect "checkout-3.tcl?$hidden_vars"
