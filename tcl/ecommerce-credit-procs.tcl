@@ -561,7 +561,7 @@ ad_proc -public ec_creditcard_precheck {
     m = mastercard,
     v = visa,
     a = american express
-
+    n = discover / novus
 } {
 
     set exception_count 0
