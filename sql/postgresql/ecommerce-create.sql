@@ -2752,6 +2752,8 @@ BEGIN
             WHERE order_id=v_order_id
             and item_state <> ''void'';
 
+	return price;
+
 END;' language 'plpgsql';
 
 
