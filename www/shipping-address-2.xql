@@ -13,7 +13,7 @@
       insert into ec_addresses
     (address_id, user_id, address_type, attn, line1, line2, city, usps_abbrev, zip_code, country_code, phone, phone_time)
     values
-    (:address_id, :user_id, 'shipping', :attn, :line1,:line2,:city,:usps_abbrev,:zip_code,'us',:phone,:phone_time)
+    (:address_id, :user_id, 'shipping', :attn, :line1,:line2,:city,:usps_abbrev,:zip_code,'US',:phone,:phone_time)
     
       </querytext>
 </fullquery>

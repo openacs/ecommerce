@@ -172,9 +172,13 @@ ad_proc ec_column_type_widget { {default ""} } { column type widget } {
     return $to_return
 }
 
-ad_proc ec_multiple_state_widget { {default_list ""} {select_name "usps_abbrev"}} "Returns a state multiple selection box of size 5" {
+ad_proc ec_multiple_state_widget { {default_list ""} {select_name "usps_abbrev"} {multiple_size "5"} } "Returns a state multiple selection box of size n" {
 
-    set widget_value "<select multiple name=\"$select_name\" size=5>\n"
+    if { $multiple_size > 1 } {
+	set widget_value "<select multiple name=\"$select_name\" size=$multiple_size>\n"
+    } else {
+	set widget_value "<select name=\"$select_name\">\n"
+    }
     set sql "select * from us_states order by state_name"
     db_foreach get_all_states $sql {
         
