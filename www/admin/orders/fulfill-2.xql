@@ -15,7 +15,7 @@
       from ec_items i, ec_products p
       where i.product_id=p.product_id
       and i.order_id=:order_id
-      and i.item_id in (:selected_items)
+      and i.item_id in ($selected_items)
     </querytext>
   </fullquery>
 
