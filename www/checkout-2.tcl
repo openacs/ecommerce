@@ -171,8 +171,8 @@ db_foreach get_shipping_data "
 
     append rows_of_items "
 	<tr>
-	  <td><input type=text name=\"quantity.[list $product_id $color_choice $size_choice $style_choice]\" value=\"$quantity\" size=4 maxlength=4></td>
-	  <td><a href=\"product?product_id=$product_id\">$product_name</a>[ec_decode $options "" "" ", $options"]<br>
+	  <td valign=\"top\"><input type=text name=\"quantity.[list $product_id $color_choice $size_choice $style_choice]\" value=\"$quantity\" size=4 maxlength=4></td>
+	  <td valign=\"top\"><a href=\"product?product_id=$product_id\">$product_name</a>[ec_decode $options "" "" ", $options"]<br>
 	    [ec_price_line $product_id $user_id $offer_code]</td>
 	</tr>"
 }

@@ -13,8 +13,8 @@
 
     <table>
       <tr>
-	<td>Quantity</td>
-	<td> </td>
+	<th align="left">Quantity</th>
+	<th align="left">Item</th>
       </tr>
       @rows_of_items@
     </table>
