@@ -213,12 +213,14 @@ SELECT * from ec_sub${sub}categories c
  ORDER BY sort_key, sub${sub}category_name
 " {
 
-  
+    ns_log notice "loop"
       append subcategories "<li><a href=category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]>[eval "ident \$sub${sub}category_name"]</a>"
   }
 }
 
 set the_category_id   $category_id
 set the_category_name [eval "ident \$${sub}category_name"]
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list [list "category-browse?category_id=$the_category_id" $category_name] $subcategory_name]]]
+set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template

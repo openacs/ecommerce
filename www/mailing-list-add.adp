@@ -1,7 +1,7 @@
-<master src="default-ec-master">
-<property name="title">Add yourself to the @mailing_list_name@ mailing list!</property>
-
-<h2>Add yourself to the @mailing_list_name@ mailing list!</h2>
+<master>
+  <property name="title">@title@</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
 <blockquote>
   We think that you are @user_name@.  If not, please <a href="@register_link@">log in</a>.  Otherwise,

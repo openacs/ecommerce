@@ -1,9 +1,11 @@
-<master src="default-ec-master">
-<property name="title">@the_category_name@</property>
-<property name="navbar">@the_category_id@</property>
+<master>
+  <property name="title">@subcategory_name@</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
+
+  <include src="toolbar">
 
 <blockquote>
-  <p align="center"><b>@the_category_name@</b></p>
   <table width="90%">
     <tr valign="top">
       <if @subcategories@ >

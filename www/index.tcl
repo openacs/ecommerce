@@ -92,11 +92,6 @@ if {[string equal $recommendations_if_there_are_any "<table width=100%>"]} {
     append recommendations_if_there_are_any "</table>"
 }
 
-if { [ad_parameter -package_id [ec_id] SellGiftCertificatesP ecommerce] == 1 } {
-    set gift_certificates_are_allowed 1
-} else {
-    set gift_certificates_are_allowed 0
-}
 set products "<table width=100%>"
 
 set have_how_many_more_p f
@@ -162,5 +157,6 @@ if { [empty_string_p $next_link] || [empty_string_p $prev_link] } {
     set separator "|"
 }
 
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar ""]
 db_release_unused_handles
 ad_return_template

@@ -1,12 +1,13 @@
-<master src="default-ec-master">
-<property name="title">You've been removed from the @mailing_list_name@ mailing list</property>
+<master>
+  <property name="title">$title</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>You've been removed from the @mailing_list_name@ mailing list</h2>
+  <include src="toolbar">
 
 <blockquote>
   <p>To re-add yourself anytime, go to @re_add_link@</p>
   <p>To see your other subscriptions (if any), return to @back_to_account_link@.</p>
-  @continue_shopping_options@
 </blockquote>
 
 

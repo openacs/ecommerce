@@ -58,5 +58,8 @@ db_foreach get_basket_info "
     append saved_carts "No shopping carts were found.\n"
 }
 
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Select Shopping Cart"]]]
+set ec_system_owner [ec_system_owner]
+
 db_release_unused_handles
 ad_return_template

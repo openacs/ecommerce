@@ -109,5 +109,8 @@ if { $search_count == 0 } {
 } else {
     set search_results " $search_count item[ec_decode $search_count "1" "" "s"] found.<p>$search_string"
 }
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "$category_name"]]]
+set ec_system_owner [ec_system_owner]
+
 db_release_unused_handles
 ad_return_template

@@ -1,7 +1,9 @@
-<master src="default-ec-master"></master>
-<property name="title">Retrieve Shopping Cart</property>
+<master>
+  <property name="title">Retrieve Shopping Cart</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Retrieve Your Shopping Cart</h2>
+  <include src="toolbar" current_location="shopping-cart">
 
 <blockquote>
   <p>We think that you are @user_name@.  If not, please <a

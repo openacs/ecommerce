@@ -34,5 +34,7 @@ if {$user_id == 0} {
 set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
 set minimum_amount [ec_pretty_price [ad_parameter -package_id [ec_id] MinGiftCertificateAmount ecommerce]]
 set maximum_amount [ec_pretty_price [ad_parameter -package_id [ec_id] MaxGiftCertificateAmount ecommerce]]
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Your Gift Certificate Order"]]]
+set ec_system_owner [ec_system_owner]
 
 ad_return_template

@@ -1,11 +1,13 @@
-<master src="default-ec-master">
-<property name="title">@category_name@</property>
+<master>
+  <property name="title">@category_name@</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<p><b>@category_name@:</b></p>
+  <include src="toolbar">
 
-<blockquote>
-  @search_results@
-</blockquote>
+  <blockquote>
+    @search_results@
+  </blockquote>
 
 
 

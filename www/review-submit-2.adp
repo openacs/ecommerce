@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Check Your Review</property>
+<master>
+  <property name="title">Check Your Review of @product_name@</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Check your review of @product_name@</h2>
+  <include src="toolbar">
 
 <blockquote>
   <form method="post" action="review-submit-3">

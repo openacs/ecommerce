@@ -103,4 +103,6 @@ set ec_creditcard_widget [ec_creditcard_widget $creditcard_type]
 set ec_expires_widget "[ec_creditcard_expire_1_widget [string range $creditcard_expire 0 1]] [ec_creditcard_expire_2_widget [string range $creditcard_expire 3 4]]"
 set formatted_address [ec_display_as_html [ec_pretty_mailing_address_from_args $line1 $line2 $city $usps_abbrev $zip_code $country_code $full_state_name $attn $phone $phone_time]]
 set international_address [string equal $country_code 'US']
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set ec_system_owner [ec_system_owner]
 db_release_unused_handles

@@ -49,6 +49,8 @@ db_dml update_ec_orders "
 # fine
 
 set cart_duration [ad_parameter CartDuration default [ad_parameter -package_id [ec_id] CartDuration]]
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Your Shopping Cart Has Been Saved"]]]
+set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles
 ad_return_template

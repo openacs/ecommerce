@@ -134,6 +134,8 @@ if { $submit == "View" } {
 	incr product_counter
     }
 
+    set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
+    set ec_system_owner [ec_system_owner]
     db_release_unused_handles
     ad_return_template
     return
@@ -217,6 +219,8 @@ if { $submit == "View" } {
 	set page_title "Merge or Replace Your Current Shopping Cart?"
 	set page_function "retrieve"
 	set hidden_form_variables [export_form_vars order_id]
+	set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
+	set ec_system_owner [ec_system_owner]
 
 	ad_return_template
 	return
@@ -378,6 +382,8 @@ if { $submit == "View" } {
     set page_function "discard"
     set hidden_form_variables "[export_form_vars order_id]
     [ec_hidden_input discard_confirmed_p "t"]"
+    set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
+    set ec_system_owner [ec_system_owner]
 
     ad_return_template
     return

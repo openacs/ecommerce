@@ -61,8 +61,9 @@ if { !$comment_found_p } {
 }
 
 set comments_need_approval [ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP]
-set system_owner_email [ec_system_owner]
 set product_link "product?[export_url_vars product_id]"
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Thank You For Your Review"]]]
+set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles
 ad_return_template

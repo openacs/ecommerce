@@ -1,6 +1,10 @@
-<master src="default-ec-master">
-<property name="title">Completing Your Order</property>
-<property name="navbar">checkout {Select Shipping Method}</property>
+<master>
+  <property name="title">Completing Your Order</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
+
+  <include src="checkout-progress" step="3">
+
 
 <h2>Select Your Shipping Method</h2>
 

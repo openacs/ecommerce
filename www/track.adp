@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Your Shipment</property>
+<master>
+  <property name="title">Your Shipment</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Your Shipment</h2>
+  <include src="toolbar" current_location="shopping-cart">
 
 <ul>
   <li>Shipping Date: @pretty_ship_date@</li>

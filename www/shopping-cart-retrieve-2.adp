@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Select Shopping Cart</property>
+<master>
+  <property name="title">Select Shopping Cart</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Select Shopping Cart</h2>
+  <include src="toolbar" current_location="shopping-cart">
 
 <blockquote>
   <p>Your saved shopping cart(s):</p>

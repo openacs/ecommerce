@@ -1,5 +1,8 @@
-<master src="default-ec-master">
-<property name="title">@product_name@</property>
-<property name="navbar">@category_id@</property>
+<master>
+  <property name="title">@product_name@</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-@formatted_product@
+  <include src="toolbar">
+
+  @formatted_product@

@@ -1,14 +1,18 @@
-<master src="default-ec-master">
+<master>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
 <if @address_type@ eq "shipping">
   <property name="title">Enter Your Shipping Address</property>
-  <property name="navbar">checkout {Select Shipping Address}</property>
+
+  <include src="checkout-progress" step="1">
+
   <h2>Enter Your Shipping Address</h2>
 </if>
 <else>
   <property name="title">Enter Your Billing Address</property>
   <if @referer@ ne "gift-certificate-billing">
-    <property name="navbar">checkout {Select Billing Address}</property>
+    <include src="checkout-progress" step="4">
   </if>
   <h2>Enter Your Billing Address</h2>
 </else>

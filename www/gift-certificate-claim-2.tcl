@@ -67,6 +67,9 @@ if { [empty_string_p $gift_certificate_id] } {
 # now check whether it's already been claimed
 # and, if so, whether it was claimed by this user
 
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set ec_system_owner [ec_system_owner]
+
 db_1row get_gc_user_id "
     select user_id as gift_certificate_user_id, amount 
     from ec_gift_certificates 
@@ -80,15 +83,8 @@ if { [empty_string_p $gift_certificate_user_id ] } {
 	update ec_gift_certificates 
 	set user_id=:user_id, claimed_date = sysdate 
 	where gift_certificate_id = :gift_certificate_id"
-    doc_return 200 text/html "
-	[ad_header "Gift Certificate Claimed"]
-    	[ec_header_image]<br clear=all>
-    	<blockquote>
-    	  <p>[ec_pretty_price $amount] has been added to your gift certificate account!</p>
-    	  <p><a href=\"payment?address_id=$address_id\">Continue with your order</a></p>
-    	</blockquote>
-    	[ec_footer]"
-
+    set title "Gift Certificate Claimed"
+    set certificate_added_p "true"
 } else {
 
     # It's already been claimed. See if it was claimed by a different
@@ -106,15 +102,7 @@ if { [empty_string_p $gift_certificate_user_id ] } {
 	    (ec_problem_id_sequence.nextval, sysdate, :gift_certificate_id, :prob_details)"
     }
 
+    set title "Gift Certificate Already Claimed"
+    set certificate_added_p "false"
     db_release_unused_handles
-    doc_return 200 text/html "
-	[ad_header "Gift Certificate Already Claimed"]
-    	[ec_header_image]<br clear=all>
-    	<blockquote>
-    	  <p>Your gift certificate has already been claimed.  Either you hit submit twice on the form, or it
-    	   was claimed previously.  Once you claim it, it goes into your gift certificate balance and you don't have to claim it again.</p>
-    	  <p><a href=\"payment?address_id=$address_id\">Continue with your order</a></p>
-    	</blockquote>
-    	[ec_footer]"
-
 }

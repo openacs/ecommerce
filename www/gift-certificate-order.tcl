@@ -19,5 +19,7 @@ set maximum_amount [ec_pretty_price [ad_parameter -package_id [ec_id] MaxGiftCer
 # ec_redirect_to_https_if_possible_and_necessary handles secure connections
 # from linked to pages
 set order_url "gift-certificate-order-2"
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Gift Certificates"]]]
+set ec_system_owner [ec_system_owner]
 
 ad_return_template

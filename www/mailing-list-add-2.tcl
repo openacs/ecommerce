@@ -58,7 +58,9 @@ if { [db_string get_check_string $check_string] == 0 } {
 
 set remove_link "<a href=\"mailing-list-remove?[export_url_vars category_id subcategory_id subsubcategory_id]\">[ec_insecure_location][ec_url]mailing-list-remove?[export_url_vars category_id subcategory_id subsubcategory_id]</a>"
 
-set continue_shopping_options [ec_continue_shopping_options]
+set title "You subscribed to the $mailing_list_name mailing list"
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $title]]]
+set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 
 ad_return_template

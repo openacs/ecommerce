@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">@page_title@</property>
+<master>
+  <property name="title">@page_title@</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2><@page_title@</h2>
+  <include src="toolbar" current_location="shopping-cart">
 
 <blockquote>
   <if @page_function@ eq "view">

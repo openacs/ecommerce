@@ -184,7 +184,7 @@ if { [db_string get_gift_c_id "
 		  credit card. Please check the number and the expiration date and
 		  try again or use a different credit card.</p>
 		  <form method=post action=gift-certificate-finalize-order>
-		    [export_form_vars gift_certificate_id certificate_to certificate_from certificate_message amount recipient_email]
+		    [export_form_vars gift_certificate_id certificate_to certificate_from certificate_message amount recipient_email address_id]
 		    <table>
 		      <tr>
 		       <td>Credit card number:</td>
@@ -420,7 +420,7 @@ if { [db_string get_gift_c_id "
     			  credit card. Please check the number and the expiration date and
     			  try again or use a different credit card.</p>
     			  <form method=post action=gift-certificate-finalize-order>
-    			    [export_form_vars gift_certificate_id certificate_to certificate_from certificate_message amount recipient_email]
+    			    [export_form_vars gift_certificate_id certificate_to certificate_from certificate_message amount recipient_email address_id]
     			    <table>
         		      <tr>
         		       <td>Credit card number:</td>
@@ -521,3 +521,5 @@ if { [db_string get_gift_c_id "
 	}
     }
 }
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition $title]]
+set ec_system_owner [ec_system_owner]

@@ -82,7 +82,9 @@ db_dml remove_user_from_mailing_list $delete_string
 set re_add_link "<a href=\"mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]\">
    [ec_insecure_location][ec_url]mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]</a>"
 set back_to_account_link "<a href=\"[ec_insecure_location][ec_url]account\">Your Account</a>"
-set continue_shopping_options [ec_continue_shopping_options]
+set title "You unsubscribed from the $mailing_list_name mailing list"
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $title]]]
+set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles
 ad_return_template

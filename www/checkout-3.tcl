@@ -146,4 +146,6 @@ if { [empty_string_p $shipping_method] || ([empty_string_p $creditcard_id] && (!
 # them a summary before they submit their order
 
 set order_summary [ec_order_summary_for_customer $order_id $user_id]
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set ec_system_owner [ec_system_owner]
 db_release_unused_handles

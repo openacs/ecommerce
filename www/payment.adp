@@ -1,6 +1,9 @@
-<master src="default-ec-master"></master>
-<property name="title">Payment Info</property>
-<property name="navbar">checkout {Enter Payment Info}</property>
+<master>
+  <property name="title">Completing Your Order</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
+
+  <include src="checkout-progress" step="5">
 
 <h2>Payment Info</h2>
 

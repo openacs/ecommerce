@@ -1,7 +1,9 @@
-<master src="default-ec-master"></master>
-<property name="title">Completing Your Order</property>
+<master>
+  <property name="title">Completing Your Order</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Select Your Billing Address</h2>
+  <include src="toolbar" current_location="gift-certificate">
 
 <blockquote>
 

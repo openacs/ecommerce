@@ -1,6 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Please Confirm Your Order</property>
-<property name="navbar">checkout {Confirm Order}</property>
+<master>
+  <property name="title">Completing Your Order</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
+
+  <include src="checkout-progress" step="6">
 
 <h2>Please Confirm Your Order</h2>
 

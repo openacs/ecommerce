@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Gift Certificates</property>
+<master>
+  <property name="title">Gift Certificates</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Gift Certificates</h2>
+  <include src="toolbar" current_location="gift-certificate">
 
 <blockquote>
   <p>The perfect gift for anyone, gift certificates can be used to to

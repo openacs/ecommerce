@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Thank You For Your Order</property>
+<master>
+  <property name="title">Thank You For Your Order</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Thank You For Your Order</h2>
+  <include src="checkout-progress" step="6">
 
 <blockquote>
   <p><b>Please print this page for your records</b></p>

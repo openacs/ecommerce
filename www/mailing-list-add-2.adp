@@ -1,9 +1,10 @@
-<master src="default-ec-master">
-<property name="title">You've been added to the @mailing_list_name@ mailing list!</property>
+<master>
+  <property name="title">@title@</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>You've been added to the @mailing_list_name@ mailing list!</h2>
+  <include src="toolbar">
 
 <blockquote>
   To remove yourself anytime, go to @remove_link@
-  @continue_shopping_options@
 </blockquote>

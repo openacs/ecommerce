@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Thank you for your review of @product_name@</property>
+<master>
+  <property name="title">Thank You For Your Review of @product_name@</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Thank you for your review of @product_name@</h2>
+  <include src="toolbar">
 
 <blockquote>
   <if @comments_need_approval@ true>
@@ -9,7 +11,7 @@
       thoughts with us! It can take a few days for your review to
       appear on our web site.  If your review has not appeared on our
       site and you would like to know why, please send an email to <a
-      href="@system_owner_email@">@system_owner_email@</a>.</p>
+      href="@ec_system_owner@">@ec_system_owner@</a>.</p>
   </if>
   <else>
     <p>Your review has been received. Thanks for sharing your

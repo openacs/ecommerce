@@ -51,7 +51,7 @@ if { ! $success_p } {
     # No rows came back, so they probably got here by pushing "Back",
     # so just redirect them to index.tcl
 
-    ad_returnredirect index.tcl
+    ad_returnredirect index
     return
 } 
 
@@ -70,7 +70,7 @@ if { $order_owner != $user_id } {
     # otherwise they've probably gotten here via url surgery, so
     # redirect them to checkout.tcl
     
-    ad_returnredirect checkout.tcl
+    ad_returnredirect checkout
     return
 }
 
@@ -99,7 +99,7 @@ if { [db_string get_ec_item_cart_count "
     select count(*) 
     from ec_items 
     where order_id=:order_id"] == 0 } {
-    ad_returnredirect shopping-cart.tcl
+    ad_returnredirect shopping-cart
     return
 }
 
@@ -131,7 +131,7 @@ if {[info exists address_type] && [string equal $address_type "shipping"]} {
 
 # Now get the other necessary information
 
-set form_action [ec_securelink [ec_url]process-payment.tcl]
+set form_action [ec_securelink [ec_url]process-payment
 
 # ec_order_cost returns price + shipping + tax - gift_certificate BUT
 # no gift certificates have been applied to in_basket orders, so this
@@ -227,5 +227,7 @@ if { $show_creditcard_form_p == "t" } {
     append old_cards_to_choose_from "</table>"
 }
 
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template

@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Your Gift Certificate Order</property>
+<master>
+  <property name="title">Your Gift Certificate Order</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Your Gift Certificate Order</h2>
+  <include src="toolbar" current_location="gift-certificate">
 
 <form method="post" action="gift-certificate-billing">
   <ol>

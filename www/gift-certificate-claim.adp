@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Claim a Gift Certificate</property>
+<master>
+  <property name="title">Claim a Gift Certificate</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Claim a Gift Certificate</h2>
+  <include src="checkout-progress" step="5">
 
 <form method="post" action="gift-certificate-claim-2">
 

@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Write your own review of $product_name</property>
+<master>
+  <property name="title">Write Your Own Review of @product_name@</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Write your own review of @product_name@</h2>
+  <include src="toolbar">
 
 <form method="post" action="review-submit-2">
   <input type="hidden" name="product_id" value="@product_id@">

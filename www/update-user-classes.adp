@@ -1,6 +1,10 @@
-<master src="default-ec-master">
-<property name="title">Your Account</property>
-<property name="navbar">Your Account</property>
+<master>
+  <property name="title">Your Account</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
+
+  <include src="toolbar" current_location="your-account">
+
 
 <blockquote>
   <form method="post" action="update-user-classes-2">

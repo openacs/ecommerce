@@ -1,7 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Save Shopping Cart</property>
+<master>
+  <property name="title">Save Shopping Cart</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
 
-<h2>Save Your Shopping Cart</h2>
+  <include src="toolbar" current_location="your-account">
 
 <blockquote>
   <p>We think that you are @user_name@.  If not, please <a

@@ -1,6 +1,9 @@
-<master src="default-ec-master">
-<property name="title">Your Shopping Cart</property>
-<property name="navbar">Your Shopping Cart</property>
+<master>
+  <property name="title">Your Shopping Cart</property>
+  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@ec_system_owner@</property>
+
+  <include src="toolbar" current_location="shopping-cart">
 
 <h3>Shopping Cart</h3> 
 <if @user_id@ ne 0>
@@ -87,7 +90,7 @@
       <li> <a href="index">Continue Shopping</a> </li>
     </else>
     <if @user_id@ eq 0>
-      <li> <a href="/register/index?return_url=@return_url@>Log In</a> </li>
+      <li> <a href="/register/index?return_url=@return_url@">Log In</a> </li>
     </if>
     <else>
       <if @saved_carts_p@ not nil>

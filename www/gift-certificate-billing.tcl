@@ -108,3 +108,6 @@ template::query get_user_addresses addresses multirow "
 }
 
 set hidden_form_vars [export_form_vars address_type certificate_to certificate_from certificate_message amount recipient_email referer]
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set ec_system_owner [ec_system_owner]
+

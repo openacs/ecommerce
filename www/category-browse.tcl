@@ -256,5 +256,7 @@ if ![at_bottom_level_p] {
 
 set the_category_id   [eval "ident \$${sub}category_id"]
 set the_category_name [eval "ident \$${sub}category_name"]
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $the_category_name]]]
+set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template
