@@ -10,7 +10,7 @@
 
 <form method="post" action="@form_action@">
   <ol>
-    @shipping_options@
+    @shipping_options;noquote@
   </ol>
 
   <center>

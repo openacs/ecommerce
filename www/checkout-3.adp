@@ -13,7 +13,7 @@
     <p><b>Push Submit to send us your order!</b>
     <input type="submit" value="Submit"></p>
 
-    @order_summary@
+    @order_summary;noquote@
 
     <p><b>Push Submit to send us your order!</b>
     <input type="submit" value="Submit"></p>

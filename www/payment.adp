@@ -37,7 +37,7 @@
 	<p>Since we already have a credit card on file for you, you
           can just click on the button next to it to use it for this
           order.</p>
-	<p>@old_cards_to_choose_from@</p>
+	<p>@old_cards_to_choose_from;noquote@</p>
 	<p><b>Or enter a new credit card for billing:</b></p>
 	<p>If you're using a new card, please enter the full credit card number below.</p>
       </if>
@@ -48,11 +48,11 @@
 	</tr>
 	<tr>
 	  <td>Type:</td>
-	  <td>@ec_creditcard_widget@</td>
+	  <td>@ec_creditcard_widget;noquote@</td>
 	</tr>
 	<tr>
 	  <td>Expires:</td>
-	  <td>@ec_expires_widget@</td>
+	  <td>@ec_expires_widget;noquote@</td>
 	</tr>
       </table>
     </if>
