@@ -11,7 +11,7 @@ ad_page_contract {
     ...
     sku_n, category_description_n
 
-  Where each line contains a product id, category name pair. There may
+  Where each line contains a sku, category name pair. There may
   be multiple lines for a single product id which will cause the
   product to get placed in multiple categories (or subcategories)
 
@@ -23,7 +23,7 @@ ad_page_contract {
   If a subcategory match is found, the product is placed into the
   matching subcategory as well as the parent category of the matching
   subcategory. If no match is found for a product, no mapping entry is
-  made. A product id may appear on multiple lines to place a product
+  made. A sku may appear on multiple lines to place a product
   in multiple categories.
 
   @author Eve Andersson (eveander@arsdigita.com)
@@ -72,7 +72,7 @@ sku_2, category_description_2<br>
 sku_n, category_description_n</code>
 </blockquote>
 <p>
-Where each line contains a product id, category name pair.  There may be multiple lines for a single product id
+Where each line contains a sku, category name pair.  There may be multiple lines for a single sku
 which will cause the product to get placed in multiple categories (or subcategories)
 <p>
 This program attempts to match the category name to an existing category using looses matching (SQL: like)
