@@ -6,8 +6,8 @@
   <include src="toolbar" current_location="gift-certificate">
 
 <blockquote>
-  <p>The perfect gift for anyone, gift certificates can be used to to
-    buy anything at @system_name@!</p>
+  <p>The perfect gift for anyone, gift certificates can be used to buy
+    anything at @system_name@!</p>
   <p><a href="@order_url@">Order a Gift Certificate!</a></p>
   <p><b>About Gift Certificates</b></p>
   <ul>
