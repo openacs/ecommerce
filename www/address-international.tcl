@@ -2,6 +2,7 @@ ad_page_contract {
     @param address_type
     @param usca_p:optional
     @param address_id:optional
+    @param referer
 
     @author
     @creation-date
@@ -13,6 +14,7 @@ ad_page_contract {
     address_type
     usca_p:optional
     address_id:optional
+    referer
 }
 
 # we need them to be logged in
@@ -46,18 +48,10 @@ if { [info exists address_id] } {
 	where user_id=:user_id"]]
 }
 
-# Get the location from which delete-address was called.
-
-set header_set [ns_conn headers]
-set action [ns_set get [ns_conn headers] Referer]
-# This will set "action" to be "foo" out of "http://bar.com/baz/foo"
-set action [string range $action [expr [string last "/" $action] +1] end]
-
 # Get the form vars that were passed on delete-address so that they
 # can be passed back to the calling url. gift-certificate-billing has
 # a bunch of form vars that should not be lost.
 
-set hidden_form_vars "[export_form_vars action]"
 set form_set [ns_getform]
 for {set i 0} {$i < [ns_set size $form_set]} {incr i} {
     set [ns_set key $form_set $i] [ns_set value $form_set $i]

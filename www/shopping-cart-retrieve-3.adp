@@ -5,7 +5,7 @@
 
 <blockquote>
   <if @page_function@ eq "view">
-    <form method=post action="shopping-cart-retrieve-3.tcl">
+    <form method=post action="shopping-cart-retrieve-3">
       @hidden_form_variables@
       <input type=submit name=submit value="Retrieve">
       <input type=submit name=submit value="Discard">
@@ -22,7 +22,7 @@
   </if>
 
   <if @page_function@ eq "retrieve">
-    <form method=post action="shopping-cart-retrieve-3.tcl">
+    <form method=post action="shopping-cart-retrieve-3">
       <%= [export_form_vars order_id] %>
       <p>You currently already have a shopping cart. Would you like to
       merge your current shopping cart with the shopping cart you are
@@ -36,7 +36,7 @@
   </if>
 
   <if @page_function@ eq "discard">
-    <form method=post action="shopping-cart-retrieve-3.tcl">
+    <form method=post action="shopping-cart-retrieve-3">
     @hidden_form_variables@
     <p>If you discard this shopping cart, it will never be
     retrievable.  Are you sure you want to discard it?</p>

@@ -7,13 +7,13 @@
 </if>
 <else>
   <property name="title">Enter Your Billing Address</property>
-  <if @action@ ne "gift-certificate-billing">
+  <if @referer@ ne "gift-certificate-billing">
     <property name="navbar">checkout {Select Billing Address}</property>
   </if>
   <h2>Enter Your Billing Address</h2>
 </else>
 
-<form method="post" action="address-2.tcl">
+<form method="post" action="address-2">
     @hidden_form_vars@
     <blockquote>
       <table>

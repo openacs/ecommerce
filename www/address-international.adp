@@ -6,7 +6,7 @@
   <h2>Enter Your Shipping Address</h2>
 </if>
 <else>
-  <if @action@ ne "gift-certificate-billing">
+  <if @referer@ ne "gift-certificate-billing">
     <property name="navbar">checkout {Select Billing Address}</property>
   </if>
   <h2>Enter Your Billing Address</h2>

@@ -3,7 +3,7 @@
 
 <h2>Write your own review of @product_name@</h2>
 
-<form method="post" action="review-submit-2.tcl">
+<form method="post" action="review-submit-2">
   <input type="hidden" name="product_id" value="@product_id@">
   <ol>
     <li>

@@ -18,7 +18,7 @@ page</a> and use @system_name@.
 </if>
 <else>
 
-<form method=POST action="email-password-3.tcl">
+<form method=POST action="email-password-3">
 <input type=hidden name=first_names value="@first_names@">
 <input type=hidden name=last_name value="@last_name@">
 <input type=hidden name=user_id value="@user_id@">

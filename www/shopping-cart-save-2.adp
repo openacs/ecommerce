@@ -9,4 +9,4 @@
   @cart_duration@ days.</p>
 </blockquote>
 
-<p><a href="index.tcl">Continue Shopping</a></p>
+<p><a href="index">Continue Shopping</a></p>

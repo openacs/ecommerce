@@ -57,6 +57,11 @@ if {[db_0or1row shipping_avail "
 
     set shipping_required true
 
+    # Set the referer to the name of this page so that the user
+    # returns to this page when the changes to the address have been
+    # checked.
+
+    set referer checkout
     # Present all saved addresses
 
     template::query get_user_addresses addresses multirow "
@@ -68,11 +73,11 @@ if {[db_0or1row shipping_avail "
 	set row(formatted) [ec_display_as_html [ec_pretty_mailing_address_from_args $row(line1) $row(line2) $row(city) $row(usps_abbrev) $row(zip_code) $row(country_code) \
 						    $row(full_state_name) $row(attn) $row(phone) $row(phone_time)]]
 	set address_id $row(address_id)
-	set row(delete) "[export_form_vars address_id]"
-	set row(edit) "[export_form_vars address_id address_type]"
+	set row(delete) "[export_form_vars address_id referer]"
+	set row(edit) "[export_form_vars address_id address_type referer]"
 	set row(use) "[export_form_vars address_id]"
     }
-    set hidden_form_vars [export_form_vars address_type]
+    set hidden_form_vars [export_form_vars address_type referer]
 
 } else {
     set shipping_required false

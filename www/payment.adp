@@ -25,7 +25,7 @@
     </else>
 
     <if @gift_certificate_covers_whole_order@ false>
-      <p><a href="gift-certificate-claim.tcl?address_id=@billing_address_id@">Click here to claim a
+      <p><a href="gift-certificate-claim?address_id=@billing_address_id@">Click here to claim a
       new gift certificate</a></p>
 
       <if @customer_can_use_old_credit_cards@ true>

@@ -4,7 +4,7 @@
 <h2>Check your review of @product_name@</h2>
 
 <blockquote>
-  <form method="post" action="review-submit-3.tcl">
+  <form method="post" action="review-submit-3">
     @hidden_form_variables@
     <p>Here is your review the way it will appear:</p>
     <hr>

@@ -2,6 +2,7 @@ ad_page_contract {
     @param address_type
     @param usca_p:optional
     @param address_id:optional
+    @param referer
 
     @author
     @creation-date
@@ -13,6 +14,7 @@ ad_page_contract {
     address_type
     usca_p:optional
     address_id:optional
+    referer
 }
 
 ec_redirect_to_https_if_possible_and_necessary
@@ -64,18 +66,17 @@ set user_session_id [ec_get_user_session_id]
 ec_create_new_session_if_necessary
 ec_log_user_as_user_id_for_this_session
 
-# Get the location from which delete-address was called.
+# Get the location from which address was called.
 
-set header_set [ns_conn headers]
-set action [ns_set get [ns_conn headers] Referer]
-# This will set "action" to be "foo" out of "http://bar.com/baz/foo"
-set action [string range $action [expr [string last "/" $action] + 1] end]
+# set header_set [ns_conn headers]
+# set referer [ns_set get [ns_conn headers] Referer]
+# # This will set "referer" to be "foo" out of "http://bar.com/baz/foo"
+# set referer [string range $referer [expr [string last "/" $referer] + 1] end]
 
 # Get the form vars that were passed on delete-address so that they
 # can be passed back to the calling url. gift-certificate-billing has
 # a bunch of form vars that should not be lost.
 
-set hidden_form_vars "[export_form_vars action]"
 set form_set [ns_getform]
 for {set i 0} {$i < [ns_set size $form_set]} {incr i} {
     set [ns_set key $form_set $i] [ns_set value $form_set $i]

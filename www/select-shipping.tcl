@@ -50,7 +50,7 @@ if { ! $success_p } {
     # No rows came back, so they probably got here by pushing "Back",
     # so just redirect them to index.tcl
 
-    ad_returnredirect [ec_url]index.tcl
+    ad_returnredirect [ec_url]index
     return
 } 
 
@@ -65,7 +65,7 @@ if { $order_owner != $user_id } {
     # If they get here, either they managed to skip past checkout.tcl,
     # or they messed w/their user_session_id cookie;
 
-    ad_returnredirect [ec_securelink [ec_url]checkout.tcl]
+    ad_returnredirect [ec_securelink [ec_url]checkout]
     return
 }
 

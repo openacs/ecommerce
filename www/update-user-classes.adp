@@ -3,7 +3,7 @@
 <property name="navbar">Your Account</property>
 
 <blockquote>
-  <form method="post" action="update-user-classes-2.tcl">
+  <form method="post" action="update-user-classes-2">
     <if @user_classes_need_approval@ true>
       <p>Submit a request to be in the following user classes:</p>
     </if>

@@ -105,7 +105,7 @@
 	or
       </td>
       <td>
-	<form method="post" action="address">
+	<form method="post" action="address-international">
 	  @hidden_form_vars@
 	  <input type="submit" value="Enter a new INTERNATIONAL address">
 	</form>

@@ -8,7 +8,7 @@ ad_page_contract {
     @param country_code
     @param phone
     @param phone_time:optional
-    @param action
+    @param referer
 
     @author
     @creation-date
@@ -27,8 +27,8 @@ ad_page_contract {
     zip_code:optional
     country_code:notnull
     phone
-    phone_time:optional
-    action
+    {phone_time ""}
+    referer
 }
 
 set possible_exception_list [list [list attn name] [list line1 address] [list city city] [list country_code country] [list phone "telephone number"]]
@@ -106,11 +106,7 @@ if { [info exists address_id] && $address_id != "" } {
     db_release_unused_handles
 }
 
-set formatted_address [ec_display_as_html [ec_pretty_mailing_address_from_args $line1 $line2 $city "" $zip_code $country_code \
-						$full_state_name $attn $phone $phone_time]]
-set hidden_form_vars ""
-set form_set [ns_getform]
-for {set i 0} {$i < [ns_set size $form_set]} {incr i} {
-    set [ns_set key $form_set $i] [ns_set value $form_set $i]
-    append hidden_form_vars "[export_form_vars [ns_set key $form_set $i]]"
-}
+# Return to the calling page (E.g. checkout, billing,
+# giftcertificate-billing).
+
+rp_internal_redirect $referer

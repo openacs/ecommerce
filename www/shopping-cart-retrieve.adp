@@ -7,7 +7,7 @@
   <p>We think that you are @user_name@.  If not, please <a
   href="@register_link@">log in</a>.</p>
   <p>Otherwise,</p>
-  <form method=post action="shopping-cart-retrieve-2.tcl">
+  <form method=post action="shopping-cart-retrieve-2">
     <center>
       <input type=submit value="Continue">
     </center>

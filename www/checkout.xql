@@ -2,6 +2,17 @@
 
 <queryset>
 
+  <fullquery name="shipping_avail">      
+    <querytext>
+      select p.no_shipping_avail_p
+      from ec_items i, ec_products p
+      where i.product_id = p.product_id
+      and p.no_shipping_avail_p = 'f' 
+      and i.order_id = :order_id
+      group by no_shipping_avail_p
+    </querytext>
+  </fullquery>
+
   <fullquery name="get_order_id">      
     <querytext>
       select order_id 

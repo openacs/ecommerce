@@ -106,6 +106,7 @@ if { [empty_string_p $address_id] } {
 # information
 
 set address_type "billing"
+set referer "billing"
 
 # Present all saved addresses
 
@@ -117,8 +118,8 @@ template::query get_billing_addresses billing_addresses multirow "
 
     set row(formatted) [ec_display_as_html [ec_pretty_mailing_address_from_ec_addresses $row(address_id)]]
     set address_id $row(address_id)
-    set row(delete) "[export_form_vars address_id]"
-    set row(edit) "[export_form_vars address_id address_type]"
+    set row(delete) "[export_form_vars address_id referer]"
+    set row(edit) "[export_form_vars address_id address_type referer]"
     set row(use) "[export_form_vars address_id]"
 }
 
@@ -135,6 +136,6 @@ if {[template::multirow size billing_addresses] == 0} {
 	set row(use) "[export_form_vars address_id]"
     }
 }
-set hidden_form_vars [export_form_vars address_type]
+set hidden_form_vars [export_form_vars address_type referer]
 
 db_release_unused_handles

@@ -9,7 +9,7 @@ ad_page_contract {
     @param zip_code
     @param phone
     @param phone_time:optional
-    @param action
+    @param referer
 
     @author
     @creation-date
@@ -28,7 +28,7 @@ ad_page_contract {
     zip_code
     phone
     phone_time:optional
-    action
+    referer
 }
 
 set possible_exception_list [list [list attn name] [list line1 address] [list city city] [list usps_abbrev state] [list zip_code "zip code"] [list phone "telephone number"]]
@@ -66,7 +66,7 @@ set order_id [db_string get_order_id "
     from ec_orders 
     where user_session_id = :user_session_id 
     and order_state = 'in_basket'" -default ""]
-if { $action != "https://www.7-sisters.com:8443/store/gift-certificate-billing" } {
+if { $referer != "gift-certificate-billing" } {
     if { [empty_string_p $order_id] } {
 
 	# They probably got here by pushing "Back", so just redirect
@@ -111,11 +111,7 @@ if { [info exists address_id] && $address_id != "" } {
     }
 }
 
-set formatted_address [ec_display_as_html [ec_pretty_mailing_address_from_args $line1 $line2 $city $usps_abbrev $zip_code "US" \
-						"" $attn $phone $phone_time]]
-set hidden_form_vars ""
-set form_set [ns_getform]
-for {set i 0} {$i < [ns_set size $form_set]} {incr i} {
-    set [ns_set key $form_set $i] [ns_set value $form_set $i]
-    append hidden_form_vars "[export_form_vars [ns_set key $form_set $i]]"
-}
+# Return to the calling page (E.g. checkout, billing,
+# giftcertificate-billing).
+
+rp_internal_redirect $referer

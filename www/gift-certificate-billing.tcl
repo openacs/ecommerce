@@ -91,6 +91,7 @@ set saved_addresses "
 # Present all saved addresses
 
 set address_type "billing"
+set referer "gift-certificate-billing"
 
 template::query get_user_addresses addresses multirow "
     select address_id, attn, line1, line2, city, usps_abbrev, zip_code, phone, country_code, full_state_name, phone_time, address_type
@@ -101,9 +102,9 @@ template::query get_user_addresses addresses multirow "
     set row(formatted) [ec_display_as_html [ec_pretty_mailing_address_from_args $row(line1) $row(line2) $row(city) $row(usps_abbrev) $row(zip_code) $row(country_code) \
 						$row(full_state_name) $row(attn) $row(phone) $row(phone_time)]]
     set address_id $row(address_id)
-    set row(delete) "[export_form_vars address_id certificate_to certificate_from certificate_message amount recipient_email]"
-    set row(edit) "[export_form_vars address_id address_type certificate_to certificate_from certificate_message amount recipient_email]"
+    set row(delete) "[export_form_vars address_id certificate_to certificate_from certificate_message amount recipient_email referer]"
+    set row(edit) "[export_form_vars address_id address_type certificate_to certificate_from certificate_message amount recipient_email referer]"
     set row(use) "[export_form_vars address_id certificate_to certificate_from certificate_message amount recipient_email]"
 }
 
-set hidden_form_vars [export_form_vars address_type certificate_to certificate_from certificate_message amount recipient_email]
+set hidden_form_vars [export_form_vars address_type certificate_to certificate_from certificate_message amount recipient_email referer]
