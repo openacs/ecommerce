@@ -81,7 +81,7 @@ db_foreach get_items_for_return "
 
 	set tax_price_to_refund $price_to_refund($item_id)
 	set iteration_price_tax_to_refund [ec_min $price_tax_charged [db_string get_ec_tax "
-	    select ec_tax(:tax_price_to_refund,0,:order_id) 
+	    select coalesce(ec_tax(:tax_price_to_refund,0,:order_id),0) 
 	    from dual"]]
 	set total_price_tax_to_refund [expr $total_price_tax_to_refund + $iteration_price_tax_to_refund]
     }
@@ -99,7 +99,7 @@ db_foreach get_items_for_return "
 	set total_shipping_to_refund [expr $total_shipping_to_refund + $shipping_to_refund($item_id)]
 
 	set iteration_shipping_tax_to_refund [ec_min $shipping_tax_charged [db_string get_it_shipping_tax_refund "
-	    select ec_tax(0,$shipping_to_refund($item_id), $order_id) 
+	    select coalesce(ec_tax(0,$shipping_to_refund($item_id), $order_id),0) 
 	    from dual"]]
 	set total_shipping_tax_to_refund [expr $total_shipping_tax_to_refund + $iteration_shipping_tax_to_refund]
     }
@@ -123,7 +123,7 @@ if { [empty_string_p $base_shipping_to_refund] } {
 } else {
     set total_shipping_to_refund [expr $total_shipping_to_refund + $base_shipping_to_refund]
     set iteration_shipping_tax_to_refund [ec_min $base_shipping_tax [db_string get_base_shipping_it_refund "
-	select ec_tax(0,:base_shipping,:order_id) 
+	select coalesce(ec_tax(0,:base_shipping,:order_id),0) 
 	from dual"]]
     set total_shipping_tax_to_refund [expr $total_shipping_tax_to_refund + $iteration_shipping_tax_to_refund]
 }
@@ -139,7 +139,7 @@ set total_amount_to_refund [expr $total_price_to_refund + $total_shipping_to_ref
 # Determine how much of this will be refunded in cash
 
 set cash_amount_to_refund [db_string get_cash_refunded "
-    select ec_cash_amount_to_refund(:total_amount_to_refund,:order_id) 
+    select nvl(ec_cash_amount_to_refund(:total_amount_to_refund,:order_id),0) 
     from dual"]
 
 # Calculate gift certificate amount and tax to refund
