@@ -43,7 +43,6 @@ if { 0 == [db_string get_order_exists_p "
     ad_script_abort
 }
 
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
 set ec_system_owner [ec_system_owner]
 
 # Make sure this order is theirs
@@ -58,7 +57,7 @@ if { !$order_theirs_p } {
     set page_function "invalid_order"
     set page_title "Invalid Order"
     ad_return_template
-    ad_script_abort
+    return
 }
 
 # Make sure the order is still a "saved shopping basket", otherwise
@@ -132,9 +131,11 @@ if { $submit == "View" } {
 	incr product_counter
     }
 
+    set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
+
     db_release_unused_handles
     ad_return_template
-    ad_script_abort
+    return
 } elseif { $submit == "Retrieve" } {
 
     # First see if they already have a non-empty shopping basket, in
@@ -219,7 +220,7 @@ if { $submit == "View" } {
 	set ec_system_owner [ec_system_owner]
 
 	ad_return_template
-        ad_script_abort
+        return
     }
 } elseif { $submit == "Merge" } {
 
@@ -382,7 +383,7 @@ if { $submit == "View" } {
     set ec_system_owner [ec_system_owner]
 
     ad_return_template
-    ad_script_abort
+    return
 } elseif { $submit == "Save it for Later" } {
     ad_returnredirect "shopping-cart-retrieve-2"
     ad_script_abort
