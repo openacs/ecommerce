@@ -46,9 +46,4 @@
     </querytext>
   </fullquery>
   
-  <fullquery name="standard_shipping">      
-    <querytext>
-    </querytext>
-  </fullquery>
-
 </queryset>
