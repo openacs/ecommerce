@@ -19,6 +19,10 @@ ad_page_contract {
     offer_code:optional
     comments_sort_by:optional
     usca_p:optional
+    search_text:optional
+    combocategory_id:optional
+    category_id:optional
+    subcategory_id:optional
 }
 
 
@@ -27,6 +31,10 @@ ad_page_contract {
 if { ![info exists comments_sort_by] } {
     set comments_sort_by ""
 }
+if [template::util::is_nil category_id] { set category_id "" }
+if [template::util::is_nil subcategory_id] { set subcategory_id "" }
+if [template::util::is_nil search_text] { set search_text "" }
+if [template::util::is_nil combocategory_id] { set combocategory_id "" }
 
 # Users don't need to be logged in but if they are the could get a
 # lower price
@@ -77,6 +85,7 @@ if { [db_0or1row get_ec_product_info "
 	[ad_header "Product Not Found"]
 	<p>The product you have requested was not found in the database.</p>
 	<p>Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
+    ns_log Warning "product.tcl,line88: product_id $product_id_temp requested, not found."
     return
 }
 

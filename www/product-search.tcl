@@ -22,6 +22,11 @@ ad_page_contract {
 
 set user_id [ad_verify_and_get_user_id]
 
+# Is search request originating from a page from this site? 
+# if not, cookies are created for each image, so consider skiping presenting images
+# when referrer is not this site. A better solution would be 
+# to move the product images to a /resources dir
+
 # user session tracking
 set user_session_id [ec_get_user_session_id]
 
@@ -43,6 +48,9 @@ if { ![empty_string_p $combocategory_id] } {
     set category_id ""
     set subcategory_id ""
 }
+
+# filter overflow attempts from really long search strings
+set search_text "[string range $search_text 0 100 ]"
 
 ec_create_new_session_if_necessary [export_url_vars category_id search_text] cookies_are_not_required
 if { [string compare $user_session_id "0"] != 0 } {
@@ -107,9 +115,9 @@ db_foreach get_product_listing_from_search $query_string {
 if { $search_count == 0 } {
     set search_results "No products found."
 } else {
-    set search_results " $search_count item[ec_decode $search_count "1" "" "s"] found.<p>$search_string"
+    set search_results "<p> $search_count [ec_decode $search_count "1" "item found." "items found, most relevant first."]</p>$search_string"
 }
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "$category_name"]]]
+set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "[ec_system_name] search results"]]]
 set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles
