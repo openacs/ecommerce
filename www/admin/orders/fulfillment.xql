@@ -4,7 +4,7 @@
 <fullquery name="orders_select">      
       <querytext>
       
-    select o.order_id, o.confirmed_date, o.order_state, o.shipping_method,
+    select o.order_id, to_char(o.confirmed_date, 'YYYY-MM-DD') as confirmed_date, o.order_state, o.shipping_method,
            u.first_names, u.last_name, u.user_id
       from ec_orders_shippable o, cc_users u
      where o.user_id=u.user_id
