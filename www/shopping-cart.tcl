@@ -111,7 +111,7 @@ db_multirow -extend { pretty_tax } tax_entries tax_states "
 if { $user_id == 0 } {
 
     # Case 2) the user is not logged in.
-    set return_url=[ns_urlencode "[ec_url]"]
+    set return_url [ns_urlencode "[ec_url]"]
 
 } else {
     # Case 3) Retrieve saved carts
