@@ -27,7 +27,7 @@
 	</tr>
 	<tr>
 	  <td>2nd line (optional)</td>
-	  <td><input type="text" name="line2" size="40" <if @line2@ not nil>value="@line2@"></if>></td>
+	  <td><input type="text" name="line2" size="40" <if @line2@ not nil>value="@line2@"></if></td>
 	</tr>
 	<tr>
 	  <td>City</font></td>
