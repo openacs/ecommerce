@@ -198,7 +198,7 @@ for {set i 1} {$i <= [template::multirow size in_cart]} {incr i} {
             set total_exp_shipping_price [expr $total_exp_shipping_price + ( [lindex $shipping_prices_for_more_line_items 1] * ( $quantity - 1 ) ) ]
 
         }
-    } elseif { $shipping_gateway_in_use && $shipping_address_id > 0} {
+    } elseif { $shipping_gateway_in_use && $shipping_address_id > 0 && [string equal $no_shipping_avail_p "f"] } {
         set shipment_value [expr $shipment_value + [lindex [ec_lowest_price_and_price_name_for_an_item $product_id $user_id $offer_code] 0]]
     }
 
