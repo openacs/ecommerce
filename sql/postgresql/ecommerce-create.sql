@@ -1431,7 +1431,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger ec_shipment_address_update_tr
-after insert on ec_shipments
+before insert on ec_shipments
 for each row execute procedure ec_shipment_address_update_tr ();
 
 create table ec_shipments_audit (
