@@ -17,6 +17,14 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="creditcard_id_select">      
+    <querytext>
+      select creditcard_id
+      from ec_orders
+      where order_id=:order_id
+    </querytext>
+  </fullquery>
+
   <fullquery name="shippable_p_select">      
     <querytext>
       select shipping_method 
