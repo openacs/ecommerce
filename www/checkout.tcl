@@ -10,12 +10,21 @@ ad_page_contract {
     usca_p:optional
 }
 
-# ec_redirect_to_https_if_possible_and_necessary
+ ec_redirect_to_https_if_possible_and_necessary
 
 # Make sure they have an in_basket order, otherwise they've probably
 # gotten here by pushing Back, so return them to index.tcl
 
-set user_id [ad_verify_and_get_user_id]
+# We need them to be logged in
+set user_id [ad_conn user_id]
+
+if {$user_id == 0} {
+    set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
+    ad_returnredirect "/register?[export_url_vars return_url]"
+    ad_script_abort
+}
+
+
 set user_session_id [ec_get_user_session_id]
 ec_create_new_session_if_necessary
 
