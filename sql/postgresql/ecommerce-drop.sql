@@ -26,7 +26,6 @@ drop table ec_automatic_email_log;
 drop table ec_problems_log;
 drop view ec_problem_id_sequence;
 drop sequence ec_problem_id_seq;
-drop table ec_cybercash_log;
 drop trigger fin_trans_ccard_update_tr on ec_financial_transactions;
 drop function fin_trans_ccard_update_tr();
 drop view ec_fin_transactions_reportable;
@@ -221,11 +220,12 @@ drop table ec_products_audit;
 drop view ec_products_searchable;
 drop view ec_products_displayable;
 \i ec-product-sc-drop.sql
+\i ec-product-package-drop.sql
 drop table ec_products;
 
 -- nuke all created objects
 -- need to do this before nuking the type
--- delete from acs_objects where object_type = 'ec_product';
+delete from acs_objects where object_type = 'ec_product';
 create function inline_0 ()
 returns integer as '
 begin  
@@ -235,7 +235,6 @@ end;' language 'plpgsql';
 
 select inline_0 ();
 drop function inline_0 ();
-\i ec-product-package-drop.sql
 
 drop view ec_subsubcategories_augmented;
 drop trigger ec_subsubcategories_audit_tr on ec_subsubcategories;

@@ -8,15 +8,36 @@ ad_library {
     @author ported by Jerry Asher (jerry@theashergroup.com)
 }
 
-ad_proc ec_search_widget { {combocategory_id ""} {search_text ""} } { creates an ecommerce search widget, using the specified category id and search text if necessary } {
-    return "<form method=post action=[ec_insecurelink product-search]>
-<b>Search:</b> [ec_combocategory_widget "f" $combocategory_id]
-<input type=text size=25 name=search_text value=\"$search_text\">
-<input type=submit value=\"Go\"></form>
-"
+ad_proc ec_search_widget { 
+    {combocategory_id ""} 
+    {search_text ""} 
+} { 
+    Creates an ecommerce search widget, using the specified category id and search text if necessary 
+} {
+    return "
+	<form method=post action=[ec_insecurelink product-search]>
+      	  <table>
+	    <tbody>
+	      <tr>
+	        <td valign=\"middle\">
+	       	  <b>Search:</b> 
+	       	  [ec_combocategory_widget "f" $combocategory_id]
+	          for
+	          <input type=text size=25 name=search_text value=\"$search_text\">
+	          <input type=submit value=\"Go\">
+	        </td>
+	      </tr>
+	    </tbody>
+      	  </table>
+	</form>"
 }
 
-ad_proc ec_combocategory_widget { {multiple_p "f"} {default ""} } { Category widget combining categories and subcategories } {
+ad_proc ec_combocategory_widget { 
+    {multiple_p "f"} 
+    {default ""} 
+} { 
+    Category widget combining categories and subcategories 
+} {
     if { $multiple_p == "f" } {
 	set select_tag "<select name=combocategory_id><option value=\"\">Entire store</option>\n"
     } else {
@@ -27,7 +48,8 @@ ad_proc ec_combocategory_widget { {multiple_p "f"} {default ""} } { Category wid
     set last_category_id ""
 
     # Get all categories and their subcategories
-    db_foreach get_combocategories "select s.category_id, s.subcategory_id, category_name, subcategory_name from ec_categories c, ec_subcategories s where c.category_id=s.category_id order by s.category_id, s.subcategory_id" {
+    db_foreach get_combocategories "
+	select c.category_id, s.subcategory_id, category_name, subcategory_name from ec_categories c left outer join ec_subcategories s using (category_id)" {
 
 	# There is at least one category. Open the select widget on the first pass of the foreach loop
 	if { $category_counter == 0} {
@@ -38,18 +60,24 @@ ad_proc ec_combocategory_widget { {multiple_p "f"} {default ""} } { Category wid
 	    set last_category_id $category_id
 
 	    # Check if the category has been selected.
-	    if { [lsearch -exact $default "$category_id|"] != -1 || [lsearch -exact $default $category_name] != -1 } {
-		append to_return "<option value=\"$category_id|\" selected>&nbsp;&nbsp;$category_name</option>"	    
+	    if { [lsearch -exact $default "$category_id|0"] != -1 || [lsearch -exact $default $category_name] != -1 } {
+		append to_return "<option value=\"$category_id|0\" selected>&nbsp;&nbsp;$category_name</option>"	    
 	    } else {
-		append to_return "<option value=$category_id>&nbsp;&nbsp;$category_name</option>"
+		append to_return "<option value=\"$category_id|0\">&nbsp;&nbsp;$category_name</option>"
 	    }
 	}
 
-	# Check if the subcategory has been selected.
-	if { [lsearch -exact $default "$category_id|$subcategory_id"] != -1 || [lsearch -exact $default $subcategory_name] != -1 } {
-	    append to_return "<option value=\"$category_id|$subcategory_id\" selected>&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name</option>"	    
-	} else {
-	    append to_return "<option value=\"$category_id|$subcategory_id\">&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name</option>"
+	# Check if there are subcategories.
+
+	if {![empty_string_p $subcategory_id]} {
+
+	    # Check if the subcategory has been selected.
+
+	    if { [lsearch -exact $default "$category_id|$subcategory_id"] != -1 || [lsearch -exact $default $subcategory_name] != -1 } {
+		append to_return "<option value=\"$category_id|$subcategory_id\" selected>&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name</option>"	    
+	    } else {
+		append to_return "<option value=\"$category_id|$subcategory_id\">&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name</option>"
+	    }
 	}
     }
     if { $category_counter != 0 } {
@@ -58,7 +86,12 @@ ad_proc ec_combocategory_widget { {multiple_p "f"} {default ""} } { Category wid
     return $to_return
 }
 
-ad_proc ec_only_category_widget { {multiple_p "f"} {default ""} } { category widget } {
+ad_proc ec_only_category_widget { 
+    {multiple_p "f"} 
+    {default ""} 
+} { 
+    category widget 
+} {
     if { $multiple_p == "f" } {
 	set select_tag "<select name=category_id><option value=\"\">Entire store</option>\n"
     } else {
@@ -159,53 +192,81 @@ from ec_templates t"
   return $to_return
 }
 
-ad_proc ec_column_type_widget { {default ""} } { column type widget } {
+ad_proc ec_column_type_widget { 
+    {default ""} 
+} { 
+    Column type widget 
+} {
 
-    ### number and date types for oracle and postgresql
-    if [string match [db_type] "oracle"] {
-	set date "date"
-	set number "number"
-	set boolean "char(1)"
-    } elseif [string match [db_type] "postgresql"] {
-	set date "timestamp"
-	set number "numeric"
-	set boolean "boolean"
+    set database_type [db_type]
+
+    # Set database specific types
+
+    switch -exact $database_type {
+	"oracle" {
+	    set date "date"
+	    set number "number"
+	    set boolean "char(1)"
+	}
+	
+	"postgresql" -
+	default {
+	    set date "timestamp"
+	    set number "numeric"
+	    set boolean "boolean"
+	}
     }
 
-    # boolean will be the default unless specified otherwise
-    # if it's boolean, the check constraint will be added at the end so that it can be named
-    set to_return "<select name=column_type>
-    <option value=\"$boolean\">Boolean (Yes or No)
-    "
+    set boolean_option "<option value=\"$boolean\">Boolean (Yes or No)</option>"
+    set integer_option "<option value=\"integer\">Integer</option>"
+    set real_option "<option value=\"$number\">Real Number</option>"
+    set date_option "<option value=\"$date\">Date</option>"
+    set varchar200_option "<option value=\"varchar(200)\">Text - Up to 200 Characters</option>"
+    set varchar4000_option "<option value=\"varchar(4000)\">Text - Up to 4000 Characters</option>"
 
-    if { $default == "integer" } {
-	append to_return "<option value=\"integer\" selected>Integer\n"
-    } else {
-	append to_return "<option value=\"integer\">Integer\n"
+    switch -exact $default {
+
+	"boolean" -
+	"char(1)" {
+	    set boolean_option "<option value=\"$boolean\" selected>Boolean (Yes or No)</option>"
+	}
+
+	"integer" {
+	    set integer_option "<option value=\"integer\" selected>Integer</option>"
+	}
+
+	"number" -
+	"numeric" {
+	    set real_option "<option value=\"$number\" selected>Real Number</option>"
+	}
+
+	"date" -
+	"timestamp" {
+	    set date_option "<option value=\"$date\" selected>Date</option>"
+	}
+
+	"varchar(200)" {
+	    set varchar200_option "<option value=\"varchar(200)\" selected>Text - Up to 200 Characters</option>"
+	}
+
+	"varchar(4000)" {
+	    set varchar4000_option "<option value=\"varchar(4000)\" selected>Text - Up to 4000 Characters</option>"
+	}
+
+	default {
+	    ns_log warning "ec_column_type_widget: column type $default is an unknown type."
+	}
     }
-    if { $default == "number" } {
-	append to_return "<option value=\"$number\" selected>Real Number\n"
-    } else {
-	append to_return "<option value=\"$number\">Real Number\n"
-    }
-    if { $default == "date" } {
-	append to_return "<option value=\"$date\" selected>Date\n"
-    } else {
-	append to_return "<option value=\"$date\">Date\n"
-    }
-    if { $default == "varchar(200)" } {
-	append to_return "<option value=\"varchar(200)\" selected>Text - Up to 200 Characters\n"
-    } else {
-	append to_return "<option value=\"varchar(200)\">Text - Up to 200 Characters\n"
-    }
-    if { $default == "varchar(4000)" } {
-	append to_return "<option value=\"varchar(4000)\" selected>Text - Up to 4000 Characters\n"
-    } else {
-	append to_return "<option value=\"varchar(4000)\">Text - Up to 4000 Characters\n"
-    }
-    append to_return "</select>\n"
-    
-    return $to_return
+
+    return "
+	<select name=column_type>
+	  $boolean_option
+	  $integer_option
+	  $real_option
+	  $date_option
+	  $varchar200_option
+	  $varchar4000_option
+	</select>"
 }
 
 ad_proc ec_multiple_state_widget { {default_list ""} {select_name "usps_abbrev"} } "Returns a state multiple selection box" {
@@ -509,24 +570,30 @@ ad_proc ec_determine_categorization_widget_defaults { category_list subcategory_
 }
 
 ad_proc ec_continue_shopping_options { } { returns continue shopping options } {
-    return "<form method=post action=\"category-browse\">
-Continue Shopping for [ec_only_category_widget] 
-<input type=submit value=\"Go\">
-</form>
-"
+    return "
+	<form method=post action=\"category-browse\">
+	  Continue Shopping for [ec_only_category_widget] 
+	  <input type=submit value=\"Go\">
+	</form>"
 }
 
-ad_proc ec_country_widget { {default ""} {select_name "country_code"} {size_subtag "size=4"}} "Just like country_widget, except it's not United States centric." {
+ad_proc ec_country_widget { 
+    {default ""} 
+    {select_name "country_code"} 
+    {size_subtag "size=4"}
+} {
+    Just like country_widget, except it's not United States centric.
+} {
 
     set widget_value "<select name=\"$select_name\" $size_subtag>\n"
     if { $default == "" } {
-        append widget_value "<option value=\"\" SELECTED>Choose a Country</option>\n"
+        append widget_value "<option value=\"\" selected>Choose a Country</option>\n"
     }
     set sql "select default_name, iso from countries order by default_name"
      db_foreach get_countries $sql {
         
         if { $default == $iso } {
-            append widget_value "<option value=\"$iso\" SELECTED>$default_name</option>\n" 
+            append widget_value "<option value=\"$iso\" selected>$default_name</option>\n" 
         } else {            
             append widget_value "<option value=\"$iso\">$default_name</option>\n"
         }
@@ -535,67 +602,135 @@ ad_proc ec_country_widget { {default ""} {select_name "country_code"} {size_subt
     return $widget_value
 }
 
-ad_proc ec_creditcard_expire_1_widget {{default ""}} "Gives the HTML for the Expiration Date Month select list." {
-    set header "<select name=creditcard_expire_1>\n"
-    set footer "</select>\n"
-    set defaulted_flag 0
-    foreach size [list "01" "02" "03" "04" "05" "06" "07" "08" "09" "10" "11" "12"] {
-	if { $size == $default } {
-	    append options "<option VALUE=$size SELECTED>$size\n"
-	    set defaulted_flag 1
+ad_proc ec_creditcard_expire_1_widget {
+    {default ""}
+    {disabled ""}
+} {
+    Gives the HTML for the Expiration Date Month select list.
+} {
+    set header "<select name=creditcard_expire_1"
+    if {![empty_string_p $disabled]} {
+	append header " disabled>"
+    } else {
+	append header ">"
+    }
+    set footer "</select>"
+    set default_matched_p 0
+    foreach month [list "01" "02" "03" "04" "05" "06" "07" "08" "09" "10" "11" "12"] {
+	if { $month == $default } {
+	    append options "<option value=\"$month\" selected>$month</option>
+		"
+	    set default_matched_p 1
 	} else {
-	    append options "<option VALUE=$size>$size\n"
+	    append options "<option value=\"$month\">$month</option>
+		"
 	}
     }
-    if $defaulted_flag {
-	return "$header$options$footer"
+    if $default_matched_p {
+	return "
+	    $header
+	    $options
+	    $footer"
     } else {
-	return "${header}<option value=\"\" SELECTED>select\n$options$footer"
+	return "
+	    $header
+	    <option value=\"\" selected>
+	    $options
+	    $footer"
     }
 }
 
-ad_proc ec_creditcard_expire_2_widget {{default ""}} "Gives the HTML for the Expiration Date Year select list." {
-    set header "<select name=creditcard_expire_2>\n"
-    set footer "</select>\n"
-    set defaulted_flag 0
-    foreach option_spec [list [list "01" 2001] [list "02" 2002] [list "03" 2003] [list "04" 2004] [list "05" 2005] [list "06" 2006] [list "07" 2007] [list "08" 2008] ] {
-	set size_for_db [lindex $option_spec 0]
-	set size [lindex $option_spec 1]
-	if { [string compare $size $default] == 0 || [string compare $size_for_db $default] == 0 } {
-	    append options "<option value=\"$size_for_db\" SELECTED>$size\n"
-	    set defaulted_flag 1
+ad_proc ec_creditcard_expire_2_widget {
+    {default ""}
+    {disabled ""}
+} {
+    Gives the HTML for the Expiration Date Year select list.
+} {
+    set header "<select name=creditcard_expire_2"
+    if {![empty_string_p $disabled]} {
+	append header " disabled>"
+    } else {
+	append header ">"
+    }
+    set footer "</select>"
+    set default_matched_p 0
+    set this_year [clock format [clock seconds] -format %Y]
+    set this_year_for_db [clock format [clock seconds] -format %y]
+    foreach option [list \
+			[list $this_year_for_db $this_year] \
+			[list [format "%02d" [expr $this_year_for_db + 1]] [expr $this_year + 1]] \
+			[list [format "%02d" [expr $this_year_for_db + 2]] [expr $this_year + 2]] \
+			[list [format "%02d" [expr $this_year_for_db + 3]] [expr $this_year + 3]] \
+			[list [format "%02d" [expr $this_year_for_db + 4]] [expr $this_year + 4]] \
+			[list [format "%02d" [expr $this_year_for_db + 5]] [expr $this_year + 5]] \
+			[list [format "%02d" [expr $this_year_for_db + 6]] [expr $this_year + 6]] \
+			[list [format "%02d" [expr $this_year_for_db + 7]] [expr $this_year + 7]]] {
+	set year_for_db [lindex $option 0]
+	set year [lindex $option 1]
+	if { [string compare $year $default] == 0 || [string compare $year_for_db $default] == 0 } {
+	    append options "<option value=\"$year_for_db\" selected>$year</option>"
+	    set default_matched_p 1
 	} else {
-	    append options "<option value=\"$size_for_db\">$size\n"
+	    append options "<option value=\"$year_for_db\">$year\n"
 	}
     }
-    if $defaulted_flag {
-	return "$header$options$footer"
+    if $default_matched_p {
+	return "
+	    $header
+	    $options
+	    $footer"
     } else {
-	return "${header}<option value=\"\" SELECTED>select\n$options$footer"
+	return "
+	    $header
+	    <option value=\"\" selected>
+	    $options
+	    $footer"
     }
 }
 
-ad_proc ec_creditcard_widget { {default ""} } { credit card selector } {
-    set to_return "<SELECT NAME=creditcard_type>
-<option value=\"\">Please select one
-<OPTION VALUE=\"a\""
-if { $default == "a" } {
-    append to_return " selected"
-}
-append to_return ">American Express
-<OPTION VALUE=\"m\""
-if { $default == "m" } {
-    append to_return " selected"
-}
-append to_return ">MasterCard
-<OPTION VALUE=\"v\""
-if { $default == "v" } {
-    append doc_body " selected"
-}
-append to_return ">Visa
-</SELECT>
-"
-return $to_return
+ad_proc ec_creditcard_widget { 
+    {default ""}
+    {disabled ""}
+} { 
+    Credit card selector 
+} {
+    set payment_gateway [ad_parameter -package_id [apm_package_id_from_key "ecommerce"] PaymentGateway]
+    if {[acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
+
+	# Use the cards accepted by ecommerce package or if none have
+	# been specified (in the CreditCardsAccepted parameter) use
+	# the cards accepted by the payment gateway implementation.
+
+	array set info [acs_sc_call PaymentGateway Info [list] $payment_gateway]
+	set accepted_credit_cards $info(cards_accepted)
+    } else {
+
+	# There is no binding to a payment gateway, thus use the cards
+	# accepted by the ecommerce package.
+
+	set accepted_credit_cards [ad_parameter -package_id [apm_package_id_from_key "ecommerce"] CreditCardsAccepted]
+    }
+    set to_return "
+	<select name=\"creditcard_type\""
+    if { ![empty_string_p $disabled] } {
+	append to_return " disabled>"
+    } else {
+	append to_return ">"
+    }
+    append to_return "
+	  <option value=\"\">Please select one</option>"
+    foreach credit_card $accepted_credit_cards {
+	set credit_card_code [string map [list MasterCard m VISA v {American Express} a {Discover/Novus} n JCB j {Diners Club} d {Carte Blanche} c] $credit_card]
+	append to_return "<option value=\"$credit_card_code\""
+	if { [string equal $default $credit_card_code] } {
+	    append to_return " selected>"
+	} else {
+	    append to_return ">"
+	}
+	append to_return "[ec_pretty_creditcard_type $credit_card_code]</option>"
+    }
+    append to_return "</select>"
+    return $to_return
 }
 
 ad_proc ec_date_widget {column {date ""}} {Generates a date widget.} {
@@ -648,13 +783,17 @@ ad_proc ec_date_widget {column {date ""}} {Generates a date widget.} {
   return $result
 }
 
-ad_proc ec_date_text {column} {Returns a textual representation of the date.} {
-  upvar $column date
-  if {[empty_string_p $date(year)] && [empty_string_p $date(day)]} {
-    return ""
-  } else {
-    return "$date(year)-$date(month)-$date(day)"
-  }
+ad_proc ec_date_text {
+    column
+} {
+    Returns a textual representation of the date.
+} {
+    upvar $column date
+    if {[empty_string_p $date(year)] && [empty_string_p $date(day)]} {
+	return ""
+    } else {
+	return "$date(year)-[format %02d $date(month)]-[format %02d $date(day)]"
+    }
 }
 
 ad_proc ec_date_widget_validate {column} {Validates a date widget.} {
@@ -713,28 +852,32 @@ ad_proc ec_time_widget {column {time ""}} {Generates a time widget.} {
     }
   }
 
-  return "<input type=text name=\"$column.hour\" size=3 maxlength=2 value=\"$hour\"> : <input type=text name=\"$column.minute\" size=3 maxlength=2 value=\"$minute\"> : <input type=text name=\"$column.second\" size=3 maxlength=2 value=\"$second\"> <select name=\"$column.ampm\"><option [util_decode $ampm "AM" selected ""]>AM</option><option [util_decode $ampm "PM" selected ""]>PM</option></select>"
+  return "<input type=text name=\"$column.hour\" size=3 maxlength=2 value=\"$hour\"> : <input type=text name=\"$column.minute\" size=3 maxlength=2 value=\"$minute\"> : <input type=text name=\"$column.second\" size=3 maxlength=2 value=\"$second\"> <select name=\"$column.ampm\"><option [ec_decode $ampm "AM" selected ""]>AM</option><option [ec_decode $ampm "PM" selected ""]>PM</option></select>"
 }
 
-ad_proc ec_time_text {column} {Returns a textual representation of the time.} {
-  upvar $column time
-  set hour $time(hour)
-  if {[empty_string_p $hour]} {
-    return ""
-  }
-  switch $time(ampm) {
-    AM {
-      if {$hour == 12} {
-	set hour 0
-      }
+ad_proc ec_time_text {
+    column
+} {
+    Returns a textual representation of the time.
+} {
+    upvar $column time
+    set hour $time(hour)
+    if {[empty_string_p $hour]} {
+	return ""
     }
-    PM {
-      if {$hour != 12} {
-	incr hour 12
-      }
+    switch $time(ampm) {
+	AM {
+	    if {$hour == 12} {
+		set hour 0
+	    }
+	}
+	PM {
+	    if {$hour != 12} {
+		incr hour 12
+	    }
+	}
     }
-  }
-  return "$hour:$time(minute):$time(second)"
+    return "[format %02d $hour]:$time(minute):$time(second)"
 }
 
 ad_proc ec_time_widget_validate {column} {Validates time widget input.} {
@@ -782,17 +925,21 @@ ad_proc ec_time_widget_validate {column} {Validates time widget input.} {
   }
 }
 
-ad_proc ec_datetime_text {column} {Generates a textual representation of the date and time.} {
-  upvar $column dt
-  set date_text [ec_date_text dt]
-  set time_text [ec_time_text dt]
-  if {[empty_string_p $time_text]} {
-    return $date_text
-  } elseif {[empty_string_p $date_text]} {
-    return $time_text
-  } else {
-    return "$date_text $time_text"
-  }
+ad_proc ec_datetime_text {
+    column
+} {
+    Generates a textual representation of the date and time.
+} {
+    upvar $column dt
+    set date_text [ec_date_text dt]
+    set time_text [ec_time_text dt]
+    if {[empty_string_p $time_text]} {
+	return $date_text
+    } elseif {[empty_string_p $date_text]} {
+	return $time_text
+    } else {
+	return "$date_text $time_text"
+    }
 }
 
 ad_proc ec_datetime_sql {column} {Generates a sql datetime expression from a date widget or a date widget and a time widget.} {
@@ -801,9 +948,9 @@ ad_proc ec_datetime_sql {column} {Generates a sql datetime expression from a dat
     # needs to be able to handle a null value
     if {![empty_string_p $dt(year)] || ![empty_string_p $dt(day)] || ![empty_string_p $dt(month)]} {
 	if {[info exists dt(ampm)]} {
-	    return "to_date('[DoubleApos "$dt(year)-$dt(month)-$dt(day) $dt(hour):$dt(minute):$dt(second) $dt(ampm)"]', 'YYYY-MM-DD HH12:MI:SS PM')"
+	    return "to_date('[DoubleApos "$dt(year)-[format %02u $dt(month)]-[format %02u $dt(day)] $dt(hour):$dt(minute):$dt(second) $dt(ampm)"]', 'YYYY-MM-DD HH12:MI:SS PM')"
 	} else {
-	    return "to_date('[DoubleApos "$dt(year)-$dt(month)-$dt(day)"]', 'YYYY-MM-DD')"
+	    return "to_date('[DoubleApos "$dt(year)-[format %02u $dt(month)]-[format %02u $dt(day)]"]', 'YYYY-MM-DD')"
 	}
     } else {
         return "null"
@@ -857,14 +1004,22 @@ ad_proc ec_timeentrywidget {column {timestamp 0}} "Gives a HTML form input for a
 
 }
 
-ad_proc ec_timeentrywidget_time_check { timestamp } {
-    checks to make sure that the time part of the timestamp is in the correct format:  HH12:MI:SS.  For instance 02:20:00.  PostgreSQL does not like it when you leave out a digit (id 2:20:00) and it will complain. 
+ad_proc ec_timeentrywidget_time_check { 
+    timestamp 
+} {
+    Checks to make sure that the time part of the timestamp is in
+    the correct format: HH12:MI:SS.  For instance 02:20:00.
+    PostgreSQL does not like it when you leave out a digit (id
+    2:20:00) and it will complain.
+
 } {
     if { ![regexp -nocase {([0-9]+):([0-9]+):([0-9]+)} $timestamp match hours mins secs]} {
 	ad_return_complaint "1" "<li>The time part of the timestamp is not in the correct format.  It must be HH12:MI:SS" 
 	return -code return
     } else {
-        #  check to make sure each field has two digits
+
+        #  Check to make sure each field has two digits
+
         if ![regexp {[0-9][0-9]} $hours] {
 	    set hours 0$hours
 	}

@@ -6,23 +6,6 @@
 -- useful pl/sql utility procedures 
 --
 
--- gilbertw - logical_negation is defined in utilities-create.sql in acs-kernel
--- create function logical_negation (boolean)
--- returns boolean as '
--- DECLARE
---   true_or_false		alias for $1;
--- BEGIN
---   IF true_or_false is null THEN
--- 	return null;
---   ELSE
--- 	IF true_or_false = ''f'' THEN
---     	    return ''t'';   
---   	ELSE 
--- 	    return ''f'';   
--- 	END IF;
---   END IF;
--- END;' language 'plpgsql';
-
 -- useful for ecommerce and other situations where you want to
 -- know whether something happened within last N days (assumes query_date
 -- is in the past)
@@ -33,45 +16,44 @@ declare
   query_date		alias for $1;
   n_days		alias for $2;
 begin
-  IF current_timestamp - query_date <= timespan_days(n_days) THEN 
+  if current_timestamp - query_date <= timespan_days(n_days) then 
     return 1;
-  ELSE
+  else
     return 0;
-  END IF;
+  end if;
 end;' language 'plpgsql';
 
 create function pseudo_contains (varchar, varchar)
 returns integer as '
-DECLARE
-  indexed_stuff			alias for $1;
-  space_sep_list_untrimmed	alias for $2;
+declare
+  indexed_stuff  		alias for $1;
+  space_sep_list_untrimmed alias for $2;
   space_sep_list        	text;
   upper_indexed_stuff   	text;
-  -- if you call this var START you get hosed royally
+  -- if you call this var start you get hosed royally
   first_space           	integer;
   score                 	integer;
-BEGIN 
+begin 
   space_sep_list := upper(ltrim(rtrim(space_sep_list_untrimmed)));
   upper_indexed_stuff := upper(indexed_stuff);
   score := 0;
-  IF space_sep_list is null or indexed_stuff is null THEN
-    RETURN score;  
-  END IF;
-  LOOP
+  if space_sep_list is null or indexed_stuff is null then
+    return score;  
+  end if;
+  loop
    first_space := position('' '' in space_sep_list);
-   IF first_space = 0 THEN
+   if first_space = 0 then
      -- one token or maybe end of list
-     IF position(space_sep_list in upper_indexed_stuff) <> 0 THEN
-        RETURN score+10;
-     END IF;
-     RETURN score;
-   ELSE
-   -- first_space <> 0
-     IF position(substring(space_sep_list from 1 to first_space-1) in upper_indexed_stuff) <> 0 THEN
+     if position(space_sep_list in upper_indexed_stuff) <> 0 then
+        return score+10;
+     end if;
+     return score;
+   else
+     -- first_space <> 0
+     if position(substring(space_sep_list from 1 for first_space-1) in upper_indexed_stuff) <> 0 then
         score := score + 10;
-     END IF;
-   END IF;
+     end if;
+   end if;
     space_sep_list := substring(space_sep_list from first_space+1);
-  END LOOP;  
-END;' language 'plpgsql';
-
+  end loop;  
+end;' language 'plpgsql';

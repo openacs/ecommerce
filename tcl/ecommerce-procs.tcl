@@ -1,4 +1,3 @@
-# /tcl/ecommerce-defs.tcl
 ad_library {
     Definitions for the ecommerce module
     Note: Other ecommerce procedures can be found in ecommerce-*.tcl
@@ -112,20 +111,22 @@ ad_proc ec_package_maintainer {} {
 
 
 ### the url to get to ec
-ad_proc -public ec_url {} {
+ad_proc -public ec_url {
+} {
     @return The url (without protocol or port) of the ecommerce mountpoint if it exists, 0 otherwise.
  } {
     return [util_memoize {ec_url_mem} [ec_cache_refresh]]
 }
 
-ad_proc -private ec_url_mem {} {} {
+ad_proc -private ec_url_mem {
+} {
+} {
     if {[db_table_exists apm_packages]} {
-        return [db_string ec_mountpoint {
-            select site_node.url(s.node_id)
-              from site_nodes s, apm_packages a
-             where s.object_id = a.package_id
-               and a.package_key = 'ecommerce'
-        } -default 0]
+        return [db_string ec_mountpoint "
+	    select site_node.url(s.node_id)
+	    from site_nodes s, apm_packages a
+	    where s.object_id = a.package_id
+	    and a.package_key = 'ecommerce'" -default 0]
     } else {
         return 0
     }
@@ -649,18 +650,17 @@ ad_proc ec_add_to_cart_link {
     {preorder_button_text "Pre-order This Now!"}
     {form_action "shopping-cart-add"}
     {order_id ""}
-} { returns cart link } {
+} { 
+    Returns cart link 
+} {
 
-    db_1row get_product_info_1 {
-	select decode(sign(sysdate-available_date),1,1,null,1,0) as available_p,
-               color_list, size_list, style_list, no_shipping_avail_p
-          from ec_products
-         where product_id = :product_id
-    }
+    db_1row get_product_info_1 "
+	select decode(sign(sysdate-available_date),1,1,null,1,0) as available_p, color_list, size_list, style_list, no_shipping_avail_p
+	from ec_products
+	where product_id = :product_id"
 
     if { ![empty_string_p $color_list] } {
-	set color_widget "Color: <select name=color_choice>
-	"
+	set color_widget "Color: <select name=color_choice>"
 	foreach color [split $color_list ","] {
 	    append color_widget "<option value=\"[ad_quotehtml $color]\">$color\n"
 	}
@@ -694,7 +694,7 @@ ad_proc ec_add_to_cart_link {
     set warnings ""
 
     if { $no_shipping_avail_p == "t" } {
-      append warnings "(Your order cannot be shipped if it includes this item.)"
+      append warnings "(This item does not require shipping.)"
     }
     
     if { $available_p } {
@@ -730,20 +730,22 @@ ad_proc ec_add_to_cart_link {
     return $r
 }
 
-# current_location can be "Shopping Cart", "Your Account", "Home", or
-# any category_id
-ad_proc ec_navbar {{current_location ""}} { returns ec nav bar } {
+ad_proc ec_navbar {
+    {current_location ""}
+} { 
+    Returns ec nav bar. current_location can be "Shopping Cart",
+    "Your Account", "Home", or any category_id
+} {
 
     if { [string equal [lindex $current_location 0] checkout] } {
-        set top_links ""
         set linked_category_list ""
         
         set current_location [lindex $current_location 1]
-	set steps {"Select Address" "Verify Order"}
+	set steps {"Select Shipping Address" "Verify Order"}
 	if { [ad_parameter -package_id [ec_id] ExpressShippingP ecommerce] } {
-	    lappend steps "Select Shipping"
+	    lappend steps "Select Shipping Method"
 	}
-	lappend steps "Payment Info" "Confirm Order"
+	lappend steps "Select Billing Address" "Enter Payment Info" "Confirm Order"
         foreach step $steps {
             set category_descriptions Checkout:
 
@@ -757,66 +759,44 @@ ad_proc ec_navbar {{current_location ""}} { returns ec nav bar } {
     } else {
         set category_descriptions ""
 
-        if { [string compare $current_location "Shopping Cart"] == 0 } {
-            lappend top_links "<b>Shopping Cart</b>"
-        } else {
-            lappend top_links "<a href=\"[ec_insecurelink shopping-cart]\">Shopping Cart</a>"
-        }
-
-        if { [string compare $current_location "Your Account"] == 0 } {
-            lappend top_links "<b>Your Account</b>"
-        } else {
-            lappend top_links "<a href=\"[ec_insecurelink account]\">Your Account</a>"
-        }
-
-        if { [string compare $current_location "Home"] == 0 } {
-            lappend top_links "<b>[ec_system_name] Home</b>"
-        } else {
-            lappend top_links "<a href=\"[ec_insecurelink index]\">[ec_system_name] Home</a>"
-        }
-        
         set linked_category_list [list]
         
-        db_foreach category_select {
-            select category_id, category_name from ec_categories order by sort_key
-        } {
+        db_foreach category_select "
+            select category_id, category_name 
+	    from ec_categories 
+	    order by sort_key " {
             if { [string compare $category_id $current_location] != 0 } {
                 lappend linked_category_list "<a href=\"[ec_insecurelink category-browse?category_id=$category_id]\">$category_name</a>"
             } else {
                 lappend linked_category_list "<b>$category_name</b>"
             }
         }
-
     }
-
-    if {[ad_permission_p [ad_conn package_id] admin]} {
-        lappend top_links "<a href=\"admin/\">[ec_system_name] Administration</a>"
-    }
-
-    set top_links "<table width=100%>
-    <tr>
-    <td>[ec_header_image]</td>
-    <td align=right>
-
-    [join $top_links " | "]
-
-    </td>
-    </tr>
-    </table>
-    "
 
     set linked_category_list "
-    <center>$category_descriptions
-    <table><tr><td bgcolor=bisque>[join $linked_category_list " | "]</td></tr></table>
-    </center>
-    "
+    	<center>
+	  $category_descriptions
+    	  <table>
+	    <tr>
+	      <td bgcolor=bisque>
+		[join $linked_category_list " | "]
+	      </td>
+	    </tr>
+	  </table>
+    	</center>"
 
-    return "$top_links $linked_category_list"
+    return "$linked_category_list"
 }
 
-# for_customer, as opposed to one for the admins
-# if show_item_detail_p is "t", then the user will see the tracking number, etc.
-ad_proc ec_order_summary_for_customer { order_id user_id {show_item_detail_p "f"} } { shows item details } {
+ad_proc ec_order_summary_for_customer { 
+    order_id 
+    user_id 
+    {show_item_detail_p "f"} 
+} { 
+    Shows item details to customers, as opposed to one for the
+    admins. If show_item_detail_p is "t", then the user will see the
+    tracking number, etc.
+} {
     # display : 
     # email address
     # shipping address (w/phone #)
@@ -825,48 +805,42 @@ ad_proc ec_order_summary_for_customer { order_id user_id {show_item_detail_p "f"
     # total cost
 
     # little security check
-    set correct_user_id [db_string correct_user_id {
-	select user_id as correct_user_id from ec_orders where order_id = :order_id
-    }]
-    
+
+    set correct_user_id [db_string correct_user_id "
+	select user_id as correct_user_id 
+	from ec_orders 
+	where order_id = :order_id"]
     if { [string compare $user_id $correct_user_id] != 0 } {
 	return "Invalid Order ID"
     }
 
-    db_1row order_info_select {
-	select eco.confirmed_date, eco.creditcard_id, eco.shipping_method,
-	       u.email,
-	       eca.line1, eca.line2, eca.city, eca.usps_abbrev, eca.zip_code, eca.country_code,
-	       eca.full_state_name, eca.attn, eca.phone, eca.phone_time
-	  from ec_orders eco,
-	       cc_users u,
-	       ec_addresses eca
-	 where eco.order_id = :order_id
-	       and eco.user_id = u.user_id(+)
-	       and eco.shipping_address = eca.address_id(+)
-    }
+    db_1row order_info_select "
+      select o.confirmed_date, o.creditcard_id, o.shipping_method,
+      u.email, o.shipping_address as shipping_address_id, c.billing_address as billing_address_id
+      from ec_orders o
+      left join cc_users u on (o.user_id = u.user_id)
+      left join ec_creditcards c on (o.creditcard_id = c.creditcard_id)
+      where o.order_id = :order_id"
 
-    set address [ec_pretty_mailing_address_from_args $line1 $line2 $city $usps_abbrev $zip_code $country_code $full_state_name $attn $phone $phone_time]
+    set shipping_address [ec_pretty_mailing_address_from_ec_addresses $shipping_address_id]
 
     if { ![empty_string_p $creditcard_id] } {
 	set creditcard_summary [ec_creditcard_summary $creditcard_id]
     } else {
 	set creditcard_summary ""
     }
+    
+    set billing_address [ec_pretty_mailing_address_from_ec_addresses $billing_address_id]
 
     set items_ul ""
 
-    db_foreach order_details_select {
+    db_foreach order_details_select "
 	select i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice,
-	       p.product_name, p.one_line_description, p.product_id,
-	       count(*) as quantity
-	  from ec_items i,
-	       ec_products p
-	 where i.order_id = :order_id
-	   and i.product_id = p.product_id
-         group by p.product_name, p.one_line_description, p.product_id,
-	       i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice
-    } {
+	    p.product_name, p.one_line_description, p.product_id, count(*) as quantity 
+	from ec_items i, ec_products p
+	where i.order_id = :order_id
+	and i.product_id = p.product_id
+	group by p.product_name, p.one_line_description, p.product_id, i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice" {
 
 	set option_list [list]
 	if { ![empty_string_p $color_choice] } {
@@ -883,20 +857,18 @@ ad_proc ec_order_summary_for_customer { order_id user_id {show_item_detail_p "f"
 	    set options "$options; "
 	}
 
-	append items_ul "<li>Quantity $quantity: $product_name; $options$price_name: [ec_pretty_price $price_charged [ad_parameter -package_id [ec_id] Currency ecommerce]]\n"
+	append items_ul "<li>Quantity $quantity: $product_name; $options$price_name: [ec_pretty_price $price_charged [ad_parameter -package_id [ec_id] Currency ecommerce]]"
 	if { $show_item_detail_p == "t" } {
 	    append items_ul "<br>
-	    [ec_shipment_summary_sub $product_id $color_choice $size_choice $style_choice $price_charged $price_name $order_id]
-	    "
+	    [ec_shipment_summary_sub $product_id $color_choice $size_choice $style_choice $price_charged $price_name $order_id]"
 	}
+	append items_ul "</li>"
     }
 
     set shipping_method_to_print "[ec_decode $shipping_method "standard" "Standard Shipping" "express" "Express Shipping" "pickup" "Pickup" "no shipping" "No Shipping" "Unknown Shipping Method"]"
-    
     set price_summary [ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order $order_id]
 
-    set to_return "<pre>
-"
+    set to_return "<pre>"
     if { ![empty_string_p $confirmed_date] } {
 	append to_return "Order date:\n[util_AnsiDatetoPrettyDate $confirmed_date]\n\n"
     }
@@ -905,7 +877,10 @@ ad_proc ec_order_summary_for_customer { order_id user_id {show_item_detail_p "f"
 $email
 
 [ec_decode $shipping_method "pickup" "Address:" "no shipping" "Address:" "Ship to:"]
-$address
+$shipping_address
+
+Bill to:
+$billing_address
 [ec_decode $creditcard_summary "" "" "
 Credit card:
 $creditcard_summary
@@ -921,10 +896,8 @@ $items_ul
 Ship via: $shipping_method_to_print
 
 $price_summary
-</pre>
-"
-
-return $to_return
+</pre>"
+    return $to_return
 }
 
 # Eve deleted the procedure ec_gift_certificate_summary_for_customer
@@ -1072,15 +1045,99 @@ ad_proc ec_items_for_fulfillment_or_return { order_id {for_fulfillment_p "t"} } 
     }
 }
 
-ad_proc ec_price_line { product_id user_id {offer_code "" } {order_confirmed_p "f"} } { returns the price line } {
+ad_proc ec_price_line { 
+    product_id
+    user_id
+    {offer_code "" } 
+    {order_confirmed_p "f"} 
+} { 
+    Returns the price line 
+} {
+    set currency [ad_parameter -package_id [ec_id] Currency]
     set lowest_price_and_price_name [ec_lowest_price_and_price_name_for_an_item $product_id $user_id $offer_code]
-
+    set lowest_price [lindex $lowest_price_and_price_name 0]
     set lowest_price_description [lindex $lowest_price_and_price_name 1]
     if {![string equal "" $lowest_price_description]} {
-        append lowest_price_description :
+        set price_line "
+	    <table width=180 cellspacing=0 cellpadding=0>
+	      <tr>
+	        <td width=140>$lowest_price_description:</td>"
+    } else {
+	set price_line "
+	    <table width=180 cellspacing=0 cellpadding=0>
+	      <tr>
+	        <td width=140>Our Price:</td>"
     }
-    set currency [ad_parameter -package_id [ec_id] Currency]
-    return "$lowest_price_description [ec_pretty_price [lindex $lowest_price_and_price_name 0] $currency]"
+    append price_line "
+	  <td width=40 align=right>
+	    <strong>[ec_pretty_price $lowest_price $currency]</strong>
+	  </td>
+	</tr>"
+
+    if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
+        db_1row get_regular_approvalrequired_price "
+	    select min(case when ucp.price is null then p.price 
+		            when p.price < ucp.price then p.price 
+			    else ucp.price end) as regular_price, ucp.user_class_name 
+	    from ec_products p left join (select uc.product_id, uc.price, c.user_class_name 
+					  from ec_product_user_class_prices uc, ec_user_classes c, 
+					      ec_user_class_user_map m 
+					  where uc.user_class_id = c.user_class_id 
+					  and uc.product_id = :product_id
+					  and uc.user_class_id = m.user_class_id
+					  and m.user_id = :user_id 
+					  and m.user_class_approved_p = 't' 
+					  order by uc.price
+					  limit 1) as ucp using (product_id) 
+	    where p.product_id = :product_id 
+	    group by p.product_id, ucp.user_class_name"
+    } else {
+        db_1row get_regular_no_approval_required_price "
+	    select min(case when ucp.price is null then p.price 
+		            when p.price < ucp.price then p.price 
+			    else ucp.price end) as regular_price, ucp.user_class_name 
+	    from ec_products p left join (select uc.product_id, uc.price, c.user_class_name 
+					  from ec_product_user_class_prices uc, ec_user_classes c, 
+					      ec_user_class_user_map m 
+					  where uc.user_class_id = c.user_class_id 
+					  and uc.product_id = :product_id
+					  and uc.user_class_id = m.user_class_id
+					  and m.user_id = :user_id 
+					  and (m.user_class_approved_p is null 
+					       or m.user_class_approved_p = 't')
+					  order by uc.price
+					  limit 1) as ucp using (product_id) 
+	    where p.product_id = :product_id 
+	    group by p.product_id, ucp.user_class_name"
+    }
+
+    # Compare the sales price with the regular price and show the
+    # savings.
+
+    if {[string compare $lowest_price $regular_price] == -1} {
+	append price_line "
+	      <tr>
+	        <td width=140>Compare to:</td>
+	        <td width=40 align=right><strike>[ec_pretty_price $regular_price $currency]</strike></td>
+	      </tr>
+	      <tr>
+	        <td width=140>Savings:</td>
+	        <td width=40 align=right><font color=red>[format %.2f [expr (($regular_price - $lowest_price) / $regular_price) * 100]]%</font></td>
+	      </tr>
+	    </table>"
+    } else {
+	append price_line "
+	      <tr>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	      </tr>
+	      <tr>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	      </tr>
+	    </table>"
+    }
+    return $price_line
 }
 
 ad_proc ec_product_review_summary {author_name publication review_date} "Returns a one-line user-readable summary of a product review" {
@@ -1102,7 +1159,7 @@ ad_proc ec_order_summary_for_admin { order_id first_names last_name confirmed_da
     if { [exists_and_not_null confirmed_date] } {
 	append to_return " on [ec_IllustraDatetoPrettyDate $confirmed_date] "
     }
-    if { $order_state == "confirmed" || $order_state == "authorized_plus_avs" || $order_state == "authorized_minus_avs" || $order_state == "partially_fulfilled" } {
+    if { $order_state == "confirmed" || $order_state == "authorized" || $order_state == "partially_fulfilled" } {
 	# this is awaiting authorization
 	# or needs to be fulfilled, so highlight the order state
 	append to_return "<font color=red>($order_state)</font>\n"
@@ -1218,71 +1275,53 @@ ad_proc ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order {order_
     return $price_summary
 }
 
-# says how the items with a given product_id, color, size, style, price_charged,
-# and price_name in a given order shipped; the reason we put in all these parameters
-# is that item summaries group items in this manner
-ad_proc ec_shipment_summary_sub { product_id color_choice size_choice style_choice price_charged price_name order_id } { 
-says how the items with a given product_id, color, size, style, price_charged,
-and price_name in a given order shipped; the reason we put in all these parameters is that item summaries group items in this manner
+ad_proc ec_shipment_summary_sub { 
+    product_id 
+    color_choice 
+    size_choice 
+    style_choice 
+    price_charged 
+    price_name
+    order_id
+} { 
+    Says how the items with a given product_id, color, size, style,
+    price_charged, and price_name in a given order shipped; the
+    reason we put in all these parameters is that item summaries
+    group items in this manner
 } {
 
     set shipment_list [list]
 
     db_foreach items_shipped_select "
 	select s.shipment_date, s.carrier, s.tracking_number, s.shipment_id, s.shippable_p, count(*) as n_items
-          from ec_items i,
-               ec_shipments s
-         where i.order_id = :order_id
-	   and i.shipment_id = s.shipment_id
-	   and i.product_id = :product_id
-	   and i.color_choice [ec_decode $color_choice "" "is null" "= :color_choice"]
-	   and i.size_choice [ec_decode $size_choice "" "is null" "= :size_choice"]
-	   and i.style_choice [ec_decode $style_choice "" "is null" "= :style_choice"]
-	   and i.price_charged [ec_decode $price_charged "" "is null" "= :price_charged"]
-	   and i.price_name [ec_decode $price_name "" "is null" "= :price_name"]
-	 group by s.shipment_date, s.carrier, s.tracking_number, s.shipment_id, s.shippable_p
-    " {
+	from ec_items i, ec_shipments s
+	where i.order_id = :order_id
+	and i.shipment_id = s.shipment_id
+	and i.product_id = :product_id
+	and i.color_choice [ec_decode $color_choice "" "is null" "= :color_choice"]
+	and i.size_choice [ec_decode $size_choice "" "is null" "= :size_choice"]
+	and i.style_choice [ec_decode $style_choice "" "is null" "= :style_choice"]
+	and i.price_charged [ec_decode $price_charged "" "is null" "= :price_charged"]
+	and i.price_name [ec_decode $price_name "" "is null" "= :price_name"]
+	group by s.shipment_date, s.carrier, s.tracking_number, s.shipment_id, s.shippable_p" {
 
- 	if { ![empty_string_p $shipment_date] } {
- 	    set to_append_to_shipment_list "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $n_items [ec_decode $shippable_p "t" "shipped" "fullfilled"] on [util_AnsiDatetoPrettyDate $shipment_date]"
+        if { ![empty_string_p $shipment_date] } {
+	    set to_append_to_shipment_list "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $n_items [ec_decode $shippable_p "t" "shipped" "fullfilled"] on [util_AnsiDatetoPrettyDate $shipment_date]"
 	    if { ![empty_string_p $carrier] } {
 		append to_append_to_shipment_list " via $carrier"
 	    }
- 	    if { ![empty_string_p $tracking_number] } {
+	    if { ![empty_string_p $tracking_number] } {
 		if { ([string tolower $carrier] == "fedex" || [string range [string tolower $carrier] 0 2] == "ups") } {
 		    append to_append_to_shipment_list " <font size=-1>(<a href=\"track?[export_url_vars shipment_id]\">track</a>)</font>"
-		} else {
-		    append to_append_to_shipment_list " (tracking # $tracking_number)"
-		}
+		    } else {
+			append to_append_to_shipment_list " (tracking # $tracking_number)"
+		    }
 	    }
 	    lappend shipment_list $to_append_to_shipment_list
 	}
     }
     return "[join $shipment_list "<br>"]"
 }
-
-####
-#### obsoleted and subsited by www/product-file/index.vuh
-####
-### ad_proc ec_return_product_file { } "Returns a file for the product in the calling url." {
-### 
-###     # Get file_path from url
-###     set is_url  [ad_conn url]
-###     set e_url   [ad_conn extra_url]
-###     set f       [ad_conn file]
-###     set p       [ad_conn path_info]
-###     ns_log debug is_url $is_url e_url $e_url f $f p $p
-###     set re {product-file/([^/]+/[^/]+/[^/]+)$}
-###     set re [ec_url]$re
-###     regexp $re $is_url match file_path 
-###     # take any ..'s out of file_path
-###     regsub -all {\.\.} $file_path "" file_path
-###     set full_path "[ec_data_directory][ec_product_directory]$file_path"
-### 
-###     ns_returnfile 200 [ns_guesstype $full_path] $full_path
-### }
-### 
-### ad_register_proc GET /product-file/* ec_return_product_file 
 
 # Returns HTML and JavaScript for a selection widget and a button
 # which will insert canned responses into a text area.
@@ -1359,10 +1398,6 @@ ad_proc ec_export_entire_form_as_url_vars_maybe {} { exports form as url variabl
     if {![empty_string_p [ns_conn form]]} {export_entire_form_as_url_vars} else {concat ""}
 }
 
-ad_proc ec_use_cybercash_p {} {Should we use cybercash? Use ad_parameter UseCyberCashP and default value 1 to find out.} {
-    return [ad_parameter -package_id [ec_id] UseCyberCashP ecommerce 1]
-}
-
 ### concatenate two pieces of a url.  Gets number of /s right.
 ad_proc -private ec_url_concat {a b} {
     joins a & b, ensuring that the right number of slashes are present
@@ -1422,21 +1457,24 @@ ad_proc ec_get_user_session_id {} { Gets the user session from cookies } {
 ad_proc -private ec_create_new_session_if_necessary {
     {more_url_vars_exported ""}
     {cookie_requirement "cookies_are_required"}
-} { Create a new session if needed } {
+} { 
+    Create a new session if needed 
+} {
     uplevel "set _ec_more_url_vars_exported \"$more_url_vars_exported\""
     uplevel "set _ec_cookie_requirement     \"$cookie_requirement\""
+
     # DanW's suggestion 
-    upvar __sql sql
-    set sql [db_map insert_user_session_sql]
+
     uplevel {
 
         if { $user_session_id == 0 } {
             if {![info exists usca_p]} {
 
-                # first time we've seen this visitor
-                # no previous attempt made
+                # First time we've seen this visitor no previous
+                # attempt made.
                 
-                set user_session_id [db_nextval "ec_user_session_sequence"]
+                set user_session_id [db_nextval ec_user_session_sequence]
+
                 ## use ACS 4 faster sessions
                 ## set user_session_id [ad_conn session_id]
                 
@@ -1446,8 +1484,11 @@ ad_proc -private ec_create_new_session_if_necessary {
                 # we should be able to get rid of this in ACS 4, but
                 # we need to examine longevity of ad_sessions
 
-		# DanW's suggestion ------------v
-                db_dml insert_user_session $__sql
+                db_dml insert_user_session "
+		    insert into ec_user_sessions
+		    (user_session_id, ip_address, start_time, http_user_agent)
+		    values
+		    (:user_session_id, :ip_address, current_timestamp, :http_user_agent)"
                 
                 set cookie_name  user_session_id
                 set cookie_value $user_session_id
@@ -1458,15 +1499,17 @@ ad_proc -private ec_create_new_session_if_necessary {
                     append final_page "&" $_ec_more_url_vars_exported
                 }
                 
-		# it would probably be good to add max_age as a parameter
-		# in the future
+		# It would probably be good to add max_age as a
+		# parameter in the future
+
 		ad_set_cookie -replace "t" -path "/" user_session_id $cookie_value
 		ad_returnredirect $final_page
                 template::adp_abort
             } else {
-                # usca_p has been set, but user id is still 0! So, cookies haven't been set!
-                # visitor has been here before
-                # previous attempt made
+
+                # usca_p has been set, but user id is still 0! So,
+                # cookies haven't been set!  visitor has been here
+                # before previous attempt made
                 
                 if {[string compare $_ec_cookie_requirement "cookies_are_required"] ==0} {
                     
@@ -1479,22 +1522,20 @@ ad_proc -private ec_create_new_session_if_necessary {
                 } elseif {[string compare $_ec_cookie_requirement "cookies_are_not_required"] == 0} {
                     
                     # For this page continue
+
                     ns_log debug "ec_create_session cookies are off but that's okay, they aren't required"
                     
                 } elseif {[string compare $_ec_cookie_requirement "shopping_cart_required"] == 0} {
                     
-                    ad_return_error "No Cart Found"  "No Shopping Cart Found</h2>
-<p>
-We could not find any shopping cart for you.  This may be because you have cookies 
-turned off on your browser.  Cookies are necessary in order to have a shopping cart
-system so that we can tell which items are yours.
-<p>
-<i>In Netscape 4.0, you can enable cookies from Edit -> Preferences -> Advanced. <br>
-In Microsoft Internet Explorer 4.0, you can enable cookies from View -> 
-Internet Options -> Advanced -> Security. </i>
-<p>
-[ec_continue_shopping_options]
-"
+                    ad_return_error "No Cart Found"  "
+			<h2>No Shopping Cart Found</h2>
+			<p> We could not find any shopping cart for you.  This may be because you have cookies 
+			turned off on your browser.  Cookies are necessary in order to have a shopping cart
+			system so that we can tell which items are yours.</p>
+			<p><i>In Netscape 4.0, you can enable cookies from Edit -> Preferences -> Advanced. <br>
+			In Microsoft Internet Explorer 4.0, you can enable cookies from View -> 
+			Internet Options -> Advanced -> Security. </i></p>
+			<p>[ec_continue_shopping_options]</p>"
 
                 } else {
 		    ad_return_error "bug" "we should never get here"

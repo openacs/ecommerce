@@ -58,7 +58,7 @@ while { [ns_getcsv $csvfp elements] != -1 } {
 	select c.category_id, c.category_name, s.subcategory_id,
 	s.subcategory_name from ec_subcategories s, ec_categories c
 	where c.category_id = s.category_id
-	and upper(:category) like upper(subcategory_name) || '%'" {
+	and upper(:category) like upper(subcategory_name)" {
 	    set submatch_p 1
 	    
 	    # add this product to the matched subcategory
@@ -77,7 +77,7 @@ while { [ns_getcsv $csvfp elements] != -1 } {
 
 	# see if this matches any categories
 	set match_p 0
-	db_foreach category_match_select "select category_id, category_name from ec_categories where upper(:category) like upper(category_name) || '%'" {
+	db_foreach category_match_select "select category_id, category_name from ec_categories where upper(:category) like upper(category_name)" {
 	    set match_p 1
 	    set sql "insert into ec_category_product_map (product_id, category_id, publisher_favorite_p, last_modified, last_modifying_user, modified_ip_address) values (:product_id, :category_id, 'f', sysdate, :user_id, :ip)"
 	    if { [catch {db_dml category_insert $sql} errmsg] } {

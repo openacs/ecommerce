@@ -1,11 +1,13 @@
-# /www/[ec_url_concat [ec_url] /admin]/orders/revenue.tcl
 ad_page_contract {
-  Financial reports.
 
-  @author Eve Andersson (eveander@arsdigita.com)
-  @creation-date Summer 1999
-  @cvs-id revenue.tcl,v 3.1.2.3 2000/08/17 15:19:15 seb Exp
-  @author ported by Jerry Asher (jerry@theashergroup.com)
+    Financial reports.
+
+    @author Eve Andersson (eveander@arsdigita.com)
+    @creation-date Summer 1999
+    @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @revision-date March 2002
+
 } {
 }
 
@@ -87,7 +89,7 @@ set amount_sum 0
 db_foreach gift_certificates_select "select to_char(issue_date,'YYYY') as issue_year,
 to_char(issue_date,'Q') as issue_quarter,
 nvl(sum(amount),0) as amount
-from ec_gift_certificates where gift_certificate_state in ('authorized_plus_avs','authorized_minus_avs')
+from ec_gift_certificates where gift_certificate_state = 'authorized'
 group by to_char(issue_date,'YYYY'), to_char(issue_date,'Q')
 order by to_char(issue_date,'YYYY') || to_char(issue_date,'Q')" {
     set amount_sum [expr $amount_sum + $amount]
@@ -159,13 +161,13 @@ doc_body_append "</table>
 <br>
 <sup>1</sup> <b>Revenue</b>: the actual amount of credit card charges minus the amount of credit card refunds.
 <p>
-<sup>2</sup> <b>Sales</b>: the price charged, the shipping charged, and the tax charged (minus the amounts refunded) for shipped items (most companies recognize revenue when items are shipped so that they don't risk double counting an account receivable and an item in inventory; see the <a href=\"http://photo.net/wtr/thebook/ecommerce.html\">ecommerce chapter of Philip &amp; Alex's Guide to Web Publishing</a>).  Note that this is different from revenue because revenue includes sales of gift certificates.  Additionally, some products were paid for using gift certificates.
+<sup>2</sup> <b>Sales</b>: the price charged, the shipping charged, and the tax charged (minus the amounts refunded) for shipped items (most companies recognize revenue when items are shipped so that they don't risk double counting an account receivable and an item in inventory; see the <a href=\"http://www.arsdigita.com/books/panda/ecommerce.html\">ecommerce chapter of Philip &amp; Alex's Guide to Web Publishing</a>).  Note that this is different from revenue because revenue includes sales of gift certificates.  Additionally, some products were paid for using gift certificates.
 <p>
 <sup>3</sup> <b>Gift Certificate Sales</b>: the amount of gift certificates purchased (recognized on date of purchase).
 <p>
 <sup>4</sup> <b>Gift Certificates Issued</b>: the amount of gift certificates issued to customers free of charge by web site administrators.
 <p>
 <sup>5</sup> <b>Gift Certificates Outstanding</b>: gift certificates which have not yet been applied to shipped items (therefore they are 
-considered a liability).
+														       considered a liability).
 [ad_admin_footer]
 "

@@ -10,25 +10,30 @@ with this:
 
   	ad_returnredirect "/register/index?return_url=[ns_urlencode [ad_conn url]&http_id=$user_id&[ad_conn query]]"
 
-## you will also need to add http_id handling to packages/acs-subsites/www/register/index.tcl and index.adp
+## you will also need to add http_id handling to packages/acs-subsite/www/register/index.tcl and index.adp
 
 add the following to expected variables for index.tcl.ad_page_contract
     http_id:optional
 
 then add the following to the body of the index.tcl script
-     if {[info exists http_id]} {
-    template::query email onevalue "select email from parties where party_id = :http_id"
+
+    if {[info exists http_id]} {
+        template::query select_email email onevalue "select email from parties where party_id = :http_id"
     } else {
-      set http_id ""
+        set http_id ""
     }     
 
 on register/index.adp do the following:
 
 change 
+
 	<h2>Log In</h2>
+
 to 
 	<h2><if @http_id@ not nil>Secure </if>Log In</h2>
+
 and after the first <hr> tag (roughly line 11) add 
+
 	<if @http_id@ not nil><p>Please login to our secure server.</if>
 
 ## that's it, ofcourse you can customize the template as you wish.

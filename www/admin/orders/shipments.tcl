@@ -1,38 +1,41 @@
-# /www/[ec_url_concat [ec_url] /admin]/orders/shipments.tcl
 ad_page_contract {
 
-  @author Eve Andersson (eveander@arsdigita.com)
-  @creation-date Summer 1999
-  @cvs-id shipments.tcl,v 3.2.2.4 2000/08/18 20:23:44 stevenp Exp
-  @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author Eve Andersson (eveander@arsdigita.com)
+    @creation-date Summer 1999
+    @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @revision-date April 2002
+
 } {
-  {view_carrier "all"}
-  {view_shipment_date "all"}
-  {order_by "shipment_id"}
+    {view_carrier "all"}
+    {view_shipment_date "last_24"}
+    {order_by "shipment_id"}
 }
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "[ad_admin_header "Shipment History"]
+doc_body_append "
+    [ad_admin_header "Shipment History"]
 
-<h2>Shipment History</h2>
+    <h2>Shipment History</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Shipment History"]
+    [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Shipment History"]
 
-<hr>
+    <hr>
 
-<table border=0 cellspacing=0 cellpadding=0 width=100%>
-<tr bgcolor=ececec>
-<td align=center><b>Carrier</b></td>
-<td align=center><b>Shipment Date</b></td>
-</tr>
-<tr>
-<td align=center>
-"
+    <table border=0 cellspacing=0 cellpadding=0 width=100%>
+    <tr bgcolor=ececec>
+      <td align=center><b>Carrier</b></td>
+      <td align=center><b>Shipment Date</b></td>
+    </tr>
+    <tr>
+      <td align=center>"
 
-
-
-set carrier_list [db_list get_carrier_list "select unique carrier from ec_shipments where carrier is not null order by carrier"]
+set carrier_list [db_list get_carrier_list "
+    select unique carrier
+    from ec_shipments 
+    where carrier is not null
+    order by carrier"]
 set carrier_list [concat "all" $carrier_list]
 
 set linked_carrier_list [list]
@@ -45,10 +48,10 @@ foreach carrier $carrier_list {
     }
 }
 
-doc_body_append "\[ [join $linked_carrier_list " | "] \]
-</td>
-<td align=center>
-"
+doc_body_append "
+    \[ [join $linked_carrier_list " | "] \]
+    </td>
+    <td align=center>"
 
 set shipment_date_list [list [list last_24 "last 24 hrs"] [list last_week "last week"] [list last_month "last month"] [list all all]]
 
@@ -62,13 +65,14 @@ foreach shipment_date $shipment_date_list {
     }
 }
 
-doc_body_append "\[ [join $linked_shipment_date_list " | "] \]
+doc_body_append "
+          \[ [join $linked_shipment_date_list " | "] \]
+        </td>
+      </tr>
+    </table>
 
-</td></tr></table>
-
-</form>
-<blockquote>
-"
+    </form>
+    <blockquote>"
 
 if { $view_carrier == "all" } {
     set carrier_query_bit ""
@@ -101,58 +105,54 @@ if { [empty_string_p $carrier_query_bit] && [empty_string_p $shipment_date_query
 
 set link_beginning "shipments?[export_url_vars view_carrier view_shipment_date]"
 
-set order_by_clause [util_decode $order_by \
-    "shipment_id" "s.shipment_id" \
-    "shipment_date" "s.shipment_date" \
-    "order_id" "s.order_id" \
-    "carrier" "s.carrier" \
-    "n_items" "n_items" \
-    "full_or_partial" "full_or_partial"]
+set order_by_clause [ec_decode $order_by \
+			 "shipment_id" "s.shipment_id" \
+			 "shipment_date" "s.shipment_date" \
+			 "order_id" "s.order_id" \
+			 "carrier" "s.carrier" \
+			 "n_items" "n_items" \
+			 "full_or_partial" "full_or_partial"]
 
-set table_header "<table>
-<tr>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "shipment_id"]\">Shipment ID</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "shipment_date"]\">Date Shipped</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "order_id"]\">Order ID</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "carrier"]\">Carrier</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "n_items"]\"># of Items</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "full_or_partial"]\">Full / Partial</a></b></td>
-</tr>"
-
-# set selection [ns_db select $db "select s.shipment_id, s.shipment_date, s.order_id, s.carrier, decode((select count(*) from ec_items where order_id=s.order_id),(select count(*) from ec_items where shipment_id=s.shipment_id),'Full','Partial') as full_or_partial, (select count(*) from ec_items where shipment_id=s.shipment_id) as n_items
-# from ec_shipments s
-# $where_clause
-# order by $order_by"]
+set table_header "
+    <table>
+    <tr>
+      <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "shipment_id"]\">Shipment ID</a></b></td>
+      <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "shipment_date"]\">Date Shipped</a></b></td>
+      <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "order_id"]\">Order ID</a></b></td>
+      <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "carrier"]\">Carrier</a></b></td>
+      <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "n_items"]\"># of Items</a></b></td>
+      <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "full_or_partial"]\">Full / Partial</a></b></td>
+    </tr>"
 
 set row_counter 0
 
 db_foreach shipments_select "
-select s.shipment_id, 
-       s.shipment_date, 
-       s.order_id, 
-       s.carrier, 
+    select s.shipment_id, s.shipment_date, s.order_id, s.carrier, 
        decode(nvl((select count(*) from ec_items where order_id=s.order_id),0),nvl((select count(*) from ec_items where shipment_id=s.shipment_id),0),'Full','Partial') as full_or_partial,
        nvl((select count(*) from ec_items where shipment_id=s.shipment_id),0) as n_items
-from ec_shipments s
-$where_clause
-order by $order_by_clause" {
+    from ec_shipments s
+    $where_clause
+    order by $order_by_clause" {
+
     if { $row_counter == 0 } {
 	doc_body_append $table_header
     }
-    # even rows are white, odd are grey
+
+    # Even rows are white, odd are grey
+
     if { [expr floor($row_counter/2.)] == [expr $row_counter/2.] } {
 	set bgcolor "white"
     } else {
 	set bgcolor "ececec"
     }
-    doc_body_append "<tr bgcolor=\"$bgcolor\">
-<td>$shipment_id</td>
-<td>[ec_nbsp_if_null [util_AnsiDatetoPrettyDate $shipment_date]]</td>
-<td><a href=\"one?[export_url_vars order_id]\">$order_id</a></td>
-<td>[ec_nbsp_if_null $carrier]</td>
-<td>$n_items</td>
-<td>$full_or_partial</td></tr>
-    "
+    doc_body_append "
+	<tr bgcolor=\"$bgcolor\">
+  	  <td>$shipment_id</td>
+  	  <td>[ec_nbsp_if_null [util_AnsiDatetoPrettyDate $shipment_date]]</td>
+  	  <td><a href=\"one?[export_url_vars order_id]\">$order_id</a></td>
+  	  <td>[ec_nbsp_if_null $carrier]</td>
+  	  <td>$n_items</td>
+  	  <td>$full_or_partial</td></tr>"
     incr row_counter
 }
 
@@ -162,7 +162,7 @@ if { $row_counter != 0 } {
     doc_body_append "<center>None Found</center>"
 }
 
-doc_body_append "</blockquote>
+doc_body_append "
+    </blockquote>
 
-[ad_admin_footer]
-"
+    [ad_admin_footer]"

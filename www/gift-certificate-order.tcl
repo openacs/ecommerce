@@ -20,4 +20,4 @@ set maximum_amount [ec_pretty_price [ad_parameter -package_id [ec_id] MaxGiftCer
 # from linked to pages
 set order_url "gift-certificate-order-2"
 
-ec_return_template
+ad_return_template

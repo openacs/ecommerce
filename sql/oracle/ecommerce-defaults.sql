@@ -27,10 +27,7 @@ insert into ec_templates (
         last_modified, last_modifying_user, modified_ip_address
         ) values (
         1,'Default',
-        '<head>' || CHR(10) || '<title><%= $product_name %></title>' || CHR(10) || '</head>' || CHR(10)
-        || '<body bgcolor=white text=black>' || CHR(10) || CHR(10)
-        || '<ec_navbar>$category_id</ec_navbar>' || CHR(10)
-        || '<h2><%= $product_name %></h2>' || CHR(10)  || CHR(10)
+	'<h2><%= $product_name %></h2>' || CHR(10)  || CHR(10)
         || '<table width=100%>' || CHR(10)
         || '<tr>' || CHR(10)
         || '<td>' || CHR(10)
@@ -55,10 +52,7 @@ insert into ec_templates (
         || '<%= [ec_professional_reviews_if_they_exist $product_id] %>' || CHR(10) || CHR(10)
         || '<%= [ec_customer_comments $product_id $comments_sort_by] %>' || CHR(10) || CHR(10)
         || '<p>' || CHR(10) || CHR(10)
-        || '<%= [ec_mailing_list_link_for_a_product $product_id] %>' || CHR(10) || CHR(10)
-        || '<%= [ec_footer] %>' || CHR(10)
-        || '</body>' || CHR(10)
-        || '</html>',
+        || '<%= [ec_mailing_list_link_for_a_product $product_id] %>',
         sysdate, (select grantee_id
                     from acs_permissions
                    where object_id = acs.magic_object_id('security_context_root')
@@ -254,7 +248,7 @@ values
 || 'Sincerely,' || CHR(10) 
 || 'customer_service_signature_here',
 'system_name_here, system_url_here, recipient_email_here, amount_and_message_summary_here, customer_service_signature_here',
-'This is sent to customers who tried to purchase a gift certificate but got no immediate response from CyberCash and we found out later the auth failed.',
+'This is sent to customers who tried to purchase a gift certificate but got no immediate response from the credit card gateway and we found out later the authorization failed.',
 '{gift certificate}', sysdate,
                  (select grantee_id
                     from acs_permissions

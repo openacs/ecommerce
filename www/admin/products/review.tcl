@@ -1,4 +1,3 @@
-#  www/[ec_url_concat [ec_url] /admin]/products/review.tcl
 ad_page_contract {
 
   @author Eve Andersson (eveander@arsdigita.com)
@@ -12,6 +11,7 @@ ad_page_contract {
 ad_require_permission [ad_conn package_id] admin
 
 db_1row review_select "select * from ec_product_reviews where review_id=:review_id"
+set review_date [clock format [clock scan $review_date] -format "%Y-%m-%d" -gmt true]
 
 set product_name [ec_product_name $product_id]
 

@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 
 <queryset>
-  <rdbms><type>oracle</type><version>8.1.6</version></rdbms>
+  <rdbms>
+    <type>oracle</type>
+    <version>8.1.6</version>
+  </rdbms>
 
   <fullquery name="ec_email_new_order.email_info_select">      
     <querytext>

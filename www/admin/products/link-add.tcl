@@ -8,7 +8,7 @@ ad_page_contract {
 } {
   product_id:integer,notnull
   link_product_name:optional
-  link_product_id:integer,notnull,optional
+  link_product_sku:integer,notnull,optional
 }
 
 ad_require_permission [ad_conn package_id] admin
@@ -26,8 +26,8 @@ Please select the product you wish to link to or from:
 <ul>
 "
 
-if { [info exists link_product_id] } {
-    set additional_query_part "product_id=:link_product_id"
+if { [info exists link_product_sku] } {
+    set additional_query_part "sku=:link_product_sku"
 } else {
     set additional_query_part "upper(product_name) like '%' || upper(:link_product_name) || '%'"
 }

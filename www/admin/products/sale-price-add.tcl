@@ -1,20 +1,22 @@
-#  www/[ec_url_concat [ec_url] /admin]/products/sale-price-add.tcl
 ad_page_contract {
-  Add a sale price.
 
-  @author Eve Andersson (eveander@arsdigita.com)
-  @creation-date Summer 1999
-  @cvs-id sale-price-add.tcl,v 3.1.6.3 2000/08/18 20:23:47 stevenp Exp
-  @author ported by Jerry Asher (jerry@theashergroup.com)
+    Add a sale price.
+
+    @author Eve Andersson (eveander@arsdigita.com)
+    @creation-date Summer 1999
+    @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @revision-date April 2002
+
 } {
-  product_id:integer,notnull
+    product_id:integer,notnull
     {price:optional ""}
-  sale_price:notnull
-  {sale_name "Sale Price"}
-  sale_begins:array,date
-  sale_ends:array,date
-  offer_code_needed
-  offer_code:optional
+    sale_price:notnull
+    {sale_name:html "Sale Price"}
+    sale_begins:array,date
+    sale_ends:array,date
+    offer_code_needed
+    offer_code:optional
 }
 
 ad_require_permission [ad_conn package_id] admin
@@ -28,6 +30,7 @@ if {[regexp {^[.]$}  $sale_price match ]} {
     ad_return_complaint 1 "<li>Please enter a number for price."
     return
 }
+
 # If a regular price exists, compare it with sale price
 
 if {![empty_string_p $price]} {
@@ -38,26 +41,27 @@ if {![empty_string_p $price]} {
 }
 
 page_validation {
-#  ec_date_widget_validate sale_begins
+    #  ec_date_widget_validate sale_begins
 } {
-  ec_time_widget_validate sale_begins
+    ec_time_widget_validate sale_begins
 } {
-#  ec_date_widget_validate sale_ends
+    #  ec_date_widget_validate sale_ends
 } {
-  ec_time_widget_validate sale_ends
+    ec_time_widget_validate sale_ends
 }
 
 if { [empty_string_p [ec_datetime_text sale_begins]] } {
-  ad_return_complaint 1 "You forgot to enter the time that the sale begins."
-  return
+    ad_return_complaint 1 "You forgot to enter the time that the sale begins."
+    return
 }
 
 if { [empty_string_p [ec_datetime_text sale_ends]] } {
-  ad_return_complaint 1 "You forgot to enter the time that the sale begins."
-  return
+    ad_return_complaint 1 "You forgot to enter the time that the sale begins."
+    return
 }
 
-# Not compare the time (assuming usually the time boxes are left blank)
+# Not compare the time (assuming usually the time boxes are left
+# blank)
 
 if {![empty_string_p $sale_begins(date)] && ![empty_string_p $sale_ends(date)]} {
     if {[db_0or1row select_one "select 1 from dual where to_date('$sale_begins(date)','YYYY-MM-DD HH24:MI:SS')  >to_date('$sale_ends(date)', 'YYYY-MM-DD HH24:MI:SS')"] ==1} {
@@ -66,14 +70,17 @@ if {![empty_string_p $sale_begins(date)] && ![empty_string_p $sale_ends(date)]} 
     }
 }
 
-# error checking done
+# Error checking done
 
-# if offer_code_needed is yes_generate, I need to generate a offer_code
+# If offer_code_needed is yes_generate, I need to generate a
+# offer_code
+
 if { $offer_code_needed == "yes_generate" } {
     set offer_code [ec_generate_random_string 8]
 }
 
-# for the case where no offer code is required to get the sale price
+# For the case where no offer code is required to get the sale price
+
 if { ![info exists offer_code] } {
     set offer_code ""
 }

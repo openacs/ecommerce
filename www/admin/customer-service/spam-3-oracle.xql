@@ -6,8 +6,11 @@
   <partialquery name="bought_product">
     <querytext>
       select unique u.user_id as user_id, first_names, last_name, email 
-      from cc_users u, ec_items 1, ec_orders o, ec_products p 
-      where i.order_id=o.order_id and o.user_id=u.user_id and i_items.product_id=p.product_id and p.sku=:product_sku
+      from cc_users u, ec_items i, ec_orders o, ec_products p 
+      where i.order_id = o.order_id 
+      and o.user_id = u.user_id
+      and i.product_id = p.product_id
+      and p.sku = :product_sku
     </querytext>
   </partialquery>
 

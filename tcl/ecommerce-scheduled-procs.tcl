@@ -5,9 +5,10 @@ ad_library {
   Other ecommerce procedures can be found in ecommerce-*.tcl
 
   Procedures:
+
     ec_calculate_product_purchase_combinations
-    ec_sweep_for_cybercash_zombies
-    ec_sweep_for_cybercash_zombie_gift_certificates
+    ec_sweep_for_payment_zombies
+    ec_sweep_for_payment_zombie_gift_certificates
     ec_send_unsent_new_order_email
     ec_send_unsent_new_gift_certificate_order_email
     ec_send_unsent_gift_certificate_recipient_email
@@ -15,30 +16,46 @@ ad_library {
     ec_expire_old_carts
     ec_remove_creditcard_data
 
-  financial transaction procedures:
-    ec_unauthorized_transactions - to_be_captured_date is over 1/2 hr old and authorized_date is null
-    ec_unmarked_transactions - to_be_captured_p is 't' and authorized_date is not null and marked_date is null
-    ec_unsettled_transactions - marked_date is non-null and settled_date is null
-    ec_unrefunded_transactions - transaction_type is 'refund' and inserted_date is over 1/2 hr old and refunded_date is null
-    ec_unrefund_settled_transactions - refunded_date is non-null and refund_settled_date is null
+  Financial transaction procedures:
 
-  I'll run this nightly so that calculations of popular product
-  combinations don't have to be done each time a product's page is
-  accessed. I will actually look at all orders, not just orders which
-  have been confirmed, so that there will be more data (so this isn't
-  *technically* a calculation of people who bought this product also
-  bought these products, because the buying didn't have to take place,
-  only the placing into the cart).
+    ec_unauthorized_transactions     - to_be_captured_date is over 1/2 hr old 
+                                       and authorized_date is null
+
+    ec_unmarked_transactions         - to_be_captured_p is 't' 
+                                       and authorized_date is not null 
+                                       and marked_date is null
+
+    ec_unrefunded_transactions       - transaction_type is 'refund' 
+                                       and inserted_date is over 1/2 hr old 
+                                       and refunded_date is null
 
   @author Eve Andersson (eveander@arsdigita.com)
   @creation-date April 1999
-  @cvs-id ecommerce-scheduled-procs.tcl,v 3.6.2.4 2000/08/17 17:37:16 seb Exp
   @author ported by Jerry Asher (jerry@theashergroup.com)
+  @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+  @revision-date March 2002
+
 }
 
-ad_proc ec_calculate_product_purchase_combinations {} { finds product purchase combinations } {
-    # for each product, I want to find other products that are items of
-    # orders with the same user id
+ad_proc ec_calculate_product_purchase_combinations {
+} { 
+
+    Find product purchase combinations and store those in
+    ec_product_purchase_comb.
+
+    This procedure runs nightly so that calculations of popular product
+    combinations don't have to be done each time a product's page is
+    accessed. The procedure looks at all orders, not just orders which
+    have been confirmed, so that there will be more data. *Technically*
+    the calculation isn't a calculation of people who bought this
+    product also bought these products, because the buying didn't have
+    to take place. Placing products into the cart is sufficient to be
+    included in the calculation.
+
+} {
+
+    # For each product find other products that are items of orders
+    # with the same user_id.
 
     db_foreach products_select "select product_id from ec_products" {
 	set correlated_product_counter 0
@@ -46,751 +63,1117 @@ ad_proc ec_calculate_product_purchase_combinations {} { finds product purchase c
 	set insert_vals [list]
 	set update_items [list]
   
-	db_foreach correlated_products_select {
-	    select i2.product_id as correlated_product_id,
-	           count(*) as n_product_occurrences
-	      from ec_items i2
-	     where i2.order_id in (select o2.order_id
-				     from ec_orders o2
-				    where o2.user_id in (select user_id
-							   from ec_orders o
-							  where o.order_id in (select i.order_id
-									         from ec_items i
-									        where product_id = :product_id)))
-	       and i2.product_id <> :product_id
+	db_foreach correlated_products_select "
+	    select i2.product_id as correlated_product_id, count(*) as n_product_occurrences
+	    from ec_items i2
+	    where i2.order_id in (select o2.order_id
+		from ec_orders o2
+		where o2.user_id in (select user_id
+		     from ec_orders o
+		     where o.order_id in (select i.order_id
+			  from ec_items i
+			  where product_id = :product_id)))
+	     and i2.product_id <> :product_id
 	     group by i2.product_id
-	     order by n_product_occurrences desc
-	} {
+	     order by n_product_occurrences desc" {
 	    if { $correlated_product_counter >= 5 } {
 		break
 	    }
-	    # I don't know whether it will be an update or insert
+	    
+	    # Unknown at this point whether it will be an update or
+	    # insert.
+
 	    lappend insert_cols "product_$correlated_product_counter"
 	    lappend insert_vals $correlated_product_id
 	    lappend update_items "product_$correlated_product_counter = $correlated_product_id"
 	    incr correlated_product_counter
 	}
 
-	if { [db_string product_purchase_comb_select "select count(*) from ec_product_purchase_comb where product_id=:product_id"] == 0 } {
+	if { [db_string product_purchase_comb_select "
+		select count(*) 
+		from ec_product_purchase_comb 
+		where product_id=:product_id"] == 0 } {
 	    if { [llength $insert_cols] > 0 } {
+
+		# Insert the new product purchase combination.
+
 		db_dml product_purchase_comb_insert "
 		    insert into ec_product_purchase_comb
 		    (product_id, [join $insert_cols ", "])
 		    values
-		    (:product_id, [join $insert_vals ", "])
-		"
+		    (:product_id, [join $insert_vals ", "])"
+
 	    }
 	} else {
 	    if { [llength $update_items] > 0 } {
+
+		# Update an existing product purchase combination.
+
 		db_dml product_purchase_comb_update "
 		    update ec_product_purchase_comb
 		    set [join $update_items ", "]
-		    where product_id=:product_id
-		"
+		    where product_id=:product_id"
+
 	    }
 	}
     }
 }
 
-ad_proc ec_sweep_for_cybercash_zombies {} "Looks for confirmed orders that aren't either failed or authorized, i.e., where we didn't hear back from CyberCash" {
-  # cron job to dig up confirmed but not failed or authorized orders
-  # over 15 minutes old ("zombies")
-  # These only happen when we go off to CyberCash to authorize an order
-  # but either we got no response or the response indicated nothing about
-  # whether the card was actually valid.  It also happens if the consumer
-  # pushes reload after the order is inserted into the database but
-  # before it goes through to CyberCash.
-  #
-  # OVERALL STRATEGY
-  # (1) query CyberCash to see if they have a record of the order
-  # (2) if CyberCash has the record and it was successful,
-  #     update order_state to authorized_plus/minus_avs
-  # (3) if CyberCash doesn't have the order or it was inconclusive,
-  #     retry order
-  #     (a) if successful, update order_state to authorized_*_avs
-  #     (b) if inconclusive, leave in this state
-  #     (c) if a definite failure, change order_state failed_authorization
-  #         (it will later be moved back to in_basket by ec_delayed_credit_denied)
+ad_proc ec_sweep_for_payment_zombies {
+} {
 
+    Cron job to dig up confirmed orders over 15 minutes old ("zombies") 
+    that did not fail and haven't been authorized . 
+
+    These only happen when there is no response from the payment
+    gateway when authorizing an order or the response indicated 
+    nothing about whether the card was actually valid.  
+
+    It also happens if the consumer pushes reload after the order
+    is inserted into the database but before it goes through to 
+    the payment gateway. 
+
+    OVERALL STRATEGY
+
+    (1) If the authorization was successful, update order_state to 
+    authorized
     
-  ns_log Notice "ec_sweep_for_cybercash_zombies starting"
+    (2) If the response was inconclusive, leave the order in this state.
 
-  # Note that the outer loop uses $db2, so use $db within it
-  db_foreach confirmed_orders_select {
-      select order_id, ec_order_cost(order_id) as total_order_price
-      from ec_orders
-      where order_state = 'confirmed' 
-      and (sysdate - confirmed_date) > 1/96
-  } {
-      ns_log Notice "ec_sweep_for_cybercash_zombies working on order $order_id"
-	
-      if { $total_order_price == 0 } {
-	  set auth_status_is_now "success"
-      } else {
-	  set transaction_id [db_string transaction_id_select {
-	      select max(transaction_id)
-	      from ec_financial_transactions
-	      where order_id = :order_id
-	  }]
-	    
-	  # Query CyberCash:
-	  set cc_args [ns_set new]
-	  ns_set put $cc_args "order-id" "$transaction_id"
-	  ns_set put $cc_args "txn-type" "auth"
-	    
-	  set ttcc_output [ec_talk_to_cybercash "query" $cc_args]
-	    
-	  set txn_status [ns_set get $ttcc_output "txn_status"]
-	    
-	  if { [regexp {success} $txn_status] } {
-	      set auth_status_is_now "success"
-	  } elseif { [empty_string_p $txn_status] || [regexp {failure} $txn_status] } {
-	      # Retry the authorization
-	      set new_cc_status [ec_creditcard_authorization $order_id]
-	      if { $new_cc_status == "authorized_plus_avs" || $new_cc_status == "authorized_minus_avs" } {
-		  set auth_status_is_now "success"
-	      } elseif { $new_cc_status == "failed_authorization" } {
-		  set auth_status_is_now "failure"
-	      } else {
-		  set auth_status_is_now "lack_of_success"
-		  if { $new_cc_status == "invalid_input" } {
-		      ns_log Notice "invalid input to ec_creditcard_authorization in ec_sweep_for_cybercash_zombies "
-		  }
-	      }
-	  } elseif { [regexp {pending} $txn_status] } {
-	      # We need to retry the auth using the API call "retry"
-	      
-	      set cc_args_2 [ns_set new]
-	      ns_set put $cc_args_2 "order-id" "$transaction_id"
-	      ns_set put $cc_args_2 "txn-type" "auth"
-	      
-	      set ttcc_output_2 [ec_talk_to_cybercash "retry" $cc_args_2]
-	      
-	      if { [regexp {success} [ns_set get $ttcc_output_2 "txn_status"]] } {
-		  set auth_status_is_now "success"
-	      } else {
-		  set auth_status_is_now "lack_of_success"
-		  # This proc won't do anything with it in this case.  It'll
-		  # be caught next time around (ec_creditcard_authorization
-		  # knows how to interpret the various failure messages).
-	      }
-	  } else {
-	      # weird result, which we don't know what to do with. We should
-	      # just leave the order_state alone and let it be subjected to this
-	      # proc again in another half-hour, by which time things may have
-	      # cleared up.
-	      
-	      set auth_status_is_now "unknown"
+    (3) If the retry failed definitely, change order_state to
+    failed_authorization (it will later be moved back to in_basket
+    by ec_delayed_credit_denied)
 
-	      set problem_details "Strange CyberCash result when querying about auth: [ns_set get $ttcc_output_2 "txn_status"]"
-	      
-	      db_dml problems_log_insert {
-		  insert into ec_problems_log
-		  (problem_id, problem_date, problem_details, order_id)
-		  values
-		  (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-	      }
-	  }
-	  # end of non-free order section
-      }
-	
-      # If the auth_status_is_now is "success" or "failure", then we want to 
-      # update the order state.  Otherwise, the order
-      # stays in the confirmed state.
-      
-      if { $auth_status_is_now == "success" } {
-	  if { ![ec_use_cybercash_p] } {
-	      # ignore cybercash and assume credit card is completely authorized
-	      set new_order_state "authorized_plus_avs"
-	  } elseif { $total_order_price > 0 } {
-	      # get avs code from CyberCash log for most recent row containing this
-	      # order_id
-	      db_1row avs_code_select {
-		  select avs_code 
-		    from ec_cybercash_log
-		   where transaction_id = :transaction_id 
-		     and avs_code != ''
-		     and txn_attempted_time = (select MAX(txn_attempted_time)
-					         from ec_cybercash_log log2
-					        where log2.transaction_id = :transaction_id)
-	      }
-	      if { [ec_avs_acceptable_p $avs_code] == 1 } {
-		  set new_order_state "authorized_plus_avs"
-	      } else {
-		  set new_order_state "authorized_minus_avs"
-	      }
-	  } else {
-	      set new_order_state "authorized_plus_avs"
-	  }
-	  # update the order_state
-	  ec_update_state_to_authorized $order_id [ec_decode $new_order_state "authorized_plus_avs" "t" "f"]
-      } elseif { $auth_status_is_now == "failure" } {
-	  # this will get changed to in_basket by the ec_delayed_credit_denied proc
-	  set new_order_state "failed_authorization"
-	  db_dml order_state_update "update ec_orders set order_state=:new_order_state where order_id=:order_id"
-      }
-  }
+} {
 
-  ns_log Notice "ec_sweep_for_cybercash_zombies finishing"
+    # Lookup the selected currency.
+
+    set currency [ad_parameter Currency ecommerce]
+
+    # Lookup the selected payment gateway
+
+    set payment_gateway [ad_parameter PaymentGateway -default [ad_parameter -package_id [ec_id] PaymentGateway]]
+    if {[empty_string_p $payment_gateway] } {
+	    ns_log warning "ec_sweep_for_payment_zombies: No payment gateway has been selected."
+	    return
+    } else {
+	if {![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
+	    ns_log warning "ec_sweep_for_payment_zombies: Payment gateway $payment_gateway is not bound to the Payment Service Contract."
+	    return
+	}
+    }
+
+    # Select the transaction of all orders that have been confirmed
+    # over 15 minutes ago. These orders should have reached either an
+    # authorized state or failure state if the credit card
+    # authorization failed. Orders that are still in the confirmed
+    # state need to be reprocessed. At this stage there is a one on
+    # one relationship between transactions and orders.
+
+    db_foreach transactions_select "
+	select o.order_id, ec_order_cost(o.order_id) as total_order_price, 
+	    f.transaction_id, f.inserted_date, f.transaction_amount, c.creditcard_type as card_type, 
+	    p.first_names || ' ' || p.last_name as card_name, 
+	    c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type,
+	    a.zip_code as billing_zip,
+            a.line1 as billing_address, 
+            a.city as billing_city, 
+            coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
+            a.country_code as billing_country
+	from ec_orders o, ec_financial_transactions f, ec_creditcards c, persons p 
+	where order_state = 'confirmed' 
+	and (sysdate - confirmed_date) > 1/96
+	and f.failed_p = 'f'
+	and f.order_id = o.order_id
+	and f.creditcard_id = c.creditcard_id 
+	and c.user_id = p.person_id
+	and c.billing_address = a.address_id" {
+
+        # Log the orders that are being processed.
+
+	ns_log notice "ec_sweep_for_payment_zombies working on transaction $transaction_id"
+	    
+	# If the order amount is 0 (zero) then there is thus no need
+	# to contact the payment gateway. Record an instant success.
+
+	if { $total_order_price == 0 } {
+
+	    # Update the status of the order to authorized
+	    
+	    ec_update_state_to_authorized $order_id
+
+	} else {
+
+	    # Convert the one digit creditcard abbreviation to the
+	    # standardized name of the card.
+
+	    set card_type [ec_pretty_creditcard_type $creditcard_type]
+
+	    # Connect to the payment gateway to authorize the transaction.
+
+	    array set response [acs_sc_call "PaymentGateway" "Authorize" \
+				    [list $transaction_id \
+					 $transaction_amount \
+					 $card_type \
+					 $card_number \
+					 $card_exp_month \
+					 $card_exp_year \
+					 $card_name \
+					 $billing_address \
+					 $billing_city \
+					 $billing_state \
+					 $billing_zip \
+					 $billing_country] \
+				    $payment_gateway]
+	    
+	    # Extract response_code, reason and the gateway transaction id
+	    # from the response. The response_code values are defined in
+	    # payment-gateway/tcl/payment-gateway-init.tcl. The reason is a
+	    # human readable description of the response and the
+	    # transaction id is the ID as returned by the payment gateway.
+
+	    set response_code $response(response_code)
+	    set reason $response(reason)
+	    set pgw_transaction_id $response(transaction_id)
+
+	    # Interpret the response_code.
+
+	    switch -exact $response_code {
+
+		"failure" -
+		"not_supported" -
+		"not_implemented" -
+		default {
+
+		    # The payment gateway rejected to authorize the
+		    # transaction, can not authorize any transaction
+		    # or the gateway returned an unknown
+		    # response_code. Fail the authorization to be on
+		    # the safe side.
+		    
+		    # Set the order status to
+		    # failed_authorization. Later the proc
+		    # ec_delayed_credit_denied will change the status
+		    # to in_basket.
+
+		    db_dml order_failure_update "
+			update ec_orders 
+			set order_state = 'failed_authorization' 
+			where order_id = :order_id"
+
+		    db_dml transaction_failure_update "
+			update ec_financial_transactions
+			set failed_p = 't'
+			where transaction_id = :transaction_id"
+		}
+		
+		"failure-retry" {
+		    
+		    # The response_code is failure-retry, this means
+		    # there was a temporary failure that can be
+		    # retried. Fail the transaction however, if the
+		    # order was confirmed a while ago (as defined in
+		    # package parameter PaymentRetryPeriod) the
+		    # temporary failure turns out to be less
+		    # 'temporary'.
+
+		    if { [expr [dt_interval_check $inserted_date [clock format [clock seconds] -format "%D %H:%M:%S"]] / (60 * 60) ] > \
+			     [ad_parameter PaymentRetryPeriod -default [ad_parameter -package_id [ec_id] PaymentRetryPeriod]] } {
+
+			db_transaction {
+
+			    # Flag the transaction as failed so that it
+			    # will not be retried. Don't set the order to
+			    # 'failed_authorization' as this is a
+			    # technical problem with the payment gateway
+			    # that the customer has nothing to do with.
+
+			    db_dml transaction_failure_update "
+  			    	update ec_financial_transactions
+			    	set failed_p = 't'
+			    	where transaction_id = :transaction_id"
+
+			    # Log this failure in the problem log.
+
+			    set problem_details "Transaction $transaction_id failed to authorize due to repeated 'failure-retry' reponses from the payment gateway"
+			    db_dml problems_log_insert "
+			    	insert into ec_problems_log
+			    	(problem_id, problem_date, problem_details, order_id)
+			    	values
+			    	(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+			}
+			
+		    } else {
+			
+			# Leave the order as is so that the order will
+			# be retried the next time this procedure is
+			# run.
+			
+		    }
+		} 
+
+		"success" {
+		    
+		    # The payment gateway authorized the transaction.
+		    # Update the status of the order to
+		    # authorized. And update the transaction_id to the
+		    # id returned by the payment gateway.
+
+		    ec_update_state_to_authorized $order_id
+		    db_dml update_transaction_id "
+			update ec_financial_transactions 
+			set transaction_id = :pgw_transaction_id
+			where transaction_id = :transaction_id"
+		    
+		}
+	    }
+	}
+    }
 }
 
-ad_proc ec_sweep_for_cybercash_zombie_gift_certificates {} "Looks for confirmed gift certificates that aren't either failed or authorized, i.e., where we didn't hear back from CyberCash" {
-  # cron job to dig up confirmed but not failed or authorized gift certificates
-  # over 15 minutes old ("zombies")
-  # These only happen when we go off to CyberCash to authorize a transaction
-  # but either we got no response or the response indicated nothing about
-  # whether the card was actually valid.  It can also happen if the consumer
-  # pushes reload after the gift certificate is inserted into the database but
-  # before it goes through to CyberCash.
-  #
-  # This is similar to ec_sweep_for_cybercash_zombies except that inconclusiveness
-  # is not tolerated in the case of gift certificates.  If it's inconclusive we
-  # fail it and send a note telling them to reorder.
-  #
-  # OVERALL STRATEGY
-  # (1) query CyberCash to see if they have a record of the transaction
-  # (2) if CyberCash has the record and it was successful,
-  #     update gift_certificate_state to authorized_plus/minus_avs
-  # (3) if CyberCash doesn't have the transaction or it was inconclusive,
-  #     retry order
-  #     (a) if successful, update gift_certificate_state to authorized_*_avs
-  #     (c) if inconclusive or failure, change gift_certificate_state failed_authorization
+ad_proc ec_sweep_for_payment_zombie_gift_certificates {
+} {
 
-  ns_log Notice "ec_sweep_for_cybercash_zombie_gift_certificates starting"
+    Looks for confirmed gift certificates that aren't either failed
+    or authorized, i.e., where we didn't hear back from the payment
+    cron job to dig up confirmed but not failed or authorized gift
+    certificates over 15 minutes old ("zombies"). 
+
+    These only happen when authorizing a transaction returned
+    failure-retry, : an inconclusive failure. In other words the
+    response indicated nothing about whether the card was actually
+    valid. 
+
+    It can also happen if the consumer pushes reload after the gift
+    certificate is inserted into the database but before it goes
+    through to the payment gateway.
+
+    This proc is similar to ec_sweep_for_payment_zombies except that
+    inconclusiveness is not tolerated in the case of gift
+    certificates.  If the response from the payment gateway is
+    inconclusive fail the transaction and send a note to the user to
+    reorder.
+
+} {
     
-  db_foreach gift_certificate_select {
-      select g.gift_certificate_id, t.transaction_id
-      from ec_gift_certificates g, ec_financial_transactions t
-      where g.gift_certificate_id=t.gift_certificate_id
-      and g.gift_certificate_state = 'confirmed' 
-      and (sysdate - g.issue_date) > 1/96
-  } {
-      ns_log Notice "ec_sweep_for_cybercash_zombies working on order $order_id"
-	
-      # there's a 1-1 correspondence between user-purchased gift certificates and
-      # financial transactions
-      set transaction_id [db_string transaction_id_select "select transaction_id from ec_financial_transactions where gift_certificate_id=:gift_certificate_id"]
-	
-      # Query CyberCash:
-      set cc_args [ns_set new]
-      ns_set put $cc_args "order-id" "$transaction_id"
-      ns_set put $cc_args "txn-type" "auth"
-	
-      set ttcc_output [ec_talk_to_cybercash "query" $cc_args]
-	
-      set txn_status [ns_set get $ttcc_output "txn_status"]
-      set avs_code [ns_set get $ttcc_output "avs_code"]
+    # Lookup the selected currency.
 
-      if { [empty_string_p $txn_status] } {
-	  # no response; inconclusive=failure for gift certificates
-	  set cybercash_status "failure"
-      } elseif { $txn_status == "success" || $txn_status == "success-duplicate" } {
-	  set cybercash_status "success"
-      } elseif { $txn_status == "failure-q-or-cancel" || $txn_status == "pending" } {
-	  # we'll retry once
-	  ns_log Notice "Retrying failure-q-or-cancel gift certificate # $gift_certificate_id (transaction # $transaction_id)"
-	  set cc_args [ns_set new]
-	  ns_set put $cc_args "txn-type" "auth"
-	  ns_set put $cc_args "order-id" "$transaction_id"
+    set currency [ad_parameter Currency ecommerce]
+
+    # Lookup the selected payment gateway
+
+    set payment_gateway [ad_parameter PaymentGateway -default [ad_parameter -package_id [ec_id] PaymentGateway]]
+    if {[empty_string_p $payment_gateway] } {
+	    ns_log warning "ec_sweep_for_payment_zombie_gift_certificates: No payment gateway has been selected."
+	    return
+    } else {
+	if {![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
+	    ns_log warning "ec_sweep_for_payment_zombie_gift_certificates: Payment gateway $payment_gateway is not bound to the Payment Service Contract."
+	    return
+	}
+    }
+
+    # Select all gift certificates that have been confirmed over 15
+    # minutes ago. These certificates should have reached either an
+    # authorized state or failure state if the credit card
+    # authorization failed. Certificates that are still in the
+    # confirmed state need to be reprocessed. There's a one on one
+    # correspondence between user-purchased gift certificates and
+    # transactions.
+
+    db_foreach transactions_select "
+	select g.gift_certificate_id, f.transaction_id, f.transaction_amount, f.inserted_date, 
+	    c.creditcard_type, c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, 
+	    p.first_names || ' ' || p.last_name as card_name, 
+            a.zip_code as billing_zip,
+            a.line1 as billing_address, 
+	    a.city as billing_city, 
+            coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
+            a.country_code as billing_country
+	from ec_gift_certificates g, ec_financial_transactions f, ec_creditcards c, persons p 
+	where g.gift_certificate_state = 'confirmed' 
+	and (sysdate - g.issue_date) > 1/96
+	and g.gift_certificate_id = f.gift_certificate_id
+	and f.creditcard_id = c.creditcard_id 
+	and c.user_id = p.person_id
+        and c.billing_address = a.address_id" {
 	    
-	  set ttcc_output [ec_talk_to_cybercash "retry" $cc_args]
-	  set txn_status [ns_set get $ttcc_output "txn_status"]
-	  set errmsg [ns_set get $ttcc_output "errmsg"]
-	  set avs_code [ns_set get $ttcc_output "avs_code"]
+        ns_log notice "ec_sweep_for_payment_zombies_gift_certificates working on transaction $transaction_id"
+	    
+	# Convert the one digit creditcard abbreviation to the
+	# standardized name of the card.
 
-	  if {[regexp {success} $txn_status]} {
-	      set cybercash_status "success"
-	  } else {
-	      set cybercash_status "failure"
-	  }
-      } else {
-	  set cybercash_status "failure"
-      }
+	set card_type [ec_pretty_creditcard_type $creditcard_type]
 
-      # Now deal with the cybercash_status:
-      # 1. If success, update transaction and gift certificate to authorized, 
-      #    and send gift certificate order email
-      # 2. If failure, update gift certificate and transaction to failed,
-      #    and send gift certificate order failure email
-      
-      if { $cybercash_status == "success" } {
-	  if { [ ec_avs_acceptable_p $avs_code ] == 1 } {
-	      set cc_result "authorized_plus_avs"
-	  } else {
-	      set cc_result "authorized_minus_avs"
-	  }
-	  # update transaction and gift certificate to authorized
-	  # setting to_be_captured_p to 't' will cause ec_unmarked_transactions to come along and mark it for capture
-	  db_dml financial_transactions_update {
-	      update ec_financial_transactions
-	      set authorized_date=sysdate,
-	      to_be_captured_p='t'
-	      where transaction_id = :transaction_id
-	  }
+	# Connect to the payment gateway to authorize the transaction.
 
-	  db_dml gift_certificate_state_update {
-	      update ec_gift_certificates
-	         set authorized_date = sysdate,
-	             gift_certificate_state = :cc_result
-	       where gift_certificate_id = :gift_certificate_id
-	  }
+	array set response [acs_sc_call "PaymentGateway" "Authorize" \
+				[list $transaction_id \
+				     $transaction_amount \
+				     $card_type \
+				     $card_number \
+				     $card_exp_month \
+				     $card_exp_year \
+				     $card_name \
+				     $billing_address \
+				     $billing_city \
+				     $billing_state \
+				     $billing_zip \
+				     $billing_country] \
+				$payment_gateway]
 
-	  # send gift certificate order email
-	  ec_email_new_gift_certificate_order $gift_certificate_id
+	# Extract response_code, reason and the gateway transaction id
+	# from the response. The response_code values are defined in
+	# payment-gateway/tcl/payment-gateway-init.tcl. The reason is a
+	# human readable description of the response and the transaction
+	# id is the ID as returned by the payment gateway.
 
-      } else {
-	  # we probably don't need to do this update of to_be_captured_p
-	  # because no cron jobs distinguish between null and 'f' right
-	  # now, but it doesn't hurt and it might alleviate someone's
-	  # concern when they're looking at ec_financial_transactions and
-	  # wondering whether they should be concerned that failed_p is
-	  # 't'
+	set response_code $response(response_code)
+	set reason $response(reason)
+	set pgw_transaction_id $response(transaction_id)
 
-	  db_dml financial_transactions_update_1 "update ec_financial_transactions set failed_p='t', to_be_captured_p='f' where transaction_id=:transaction_id"
-	  db_dml gift_certificate_state_update_1 "update ec_gift_certificates set gift_certificate_state='failed_authorization' where gift_certificate_id=:gift_certificate_id"
+	# Interpret the response_code.
 
-	  # send gift certificate order failure email
-	  ec_email_gift_certificate_order_failure $gift_certificate_id
-      }
-  }
+	switch -exact $response_code {
+	    
+	    "failure" -
+	    "failure-retry" -
+	    "not_supported" -
+	    "not_implemented" -
+	    default {
 
-  ns_log Notice "ec_sweep_for_cybercash_zombie_gift_certificates finishing"
+		# The payment gateway rejected to authorize the
+		# transaction, can not authorize any transaction or the
+		# gateway returned an unknown response_code. Fail the
+		# authorization to be on the safe side. Update gift
+		# certificate and transaction to failed, and send a gift
+		# certificate order failure email to the user.
+		
+		# There is no immediate need to update of
+		# to_be_captured_p because no cron jobs distinguish
+		# between null and 'f' right now, but it doesn't hurt
+		# and it might alleviate someone's concern when they're
+		# looking at ec_financial_transactions and wondering
+		# whether they should be concerned that failed_p is 't'
+
+		db_dml transaction_failure_update "
+                  update ec_financial_transactions 
+                  set failed_p = 't', to_be_captured_p = 'f' 
+                  where transaction_id=:transaction_id"
+
+		db_dml certificate_failure_update "
+                  update ec_gift_certificates 
+                  set gift_certificate_state='failed_authorization' 
+                  where gift_certificate_id=:gift_certificate_id"
+
+		# Send a gift certificate order failure email to the user.
+
+		ec_email_gift_certificate_order_failure $gift_certificate_id
+	    }
+	    
+	    "success" {
+
+		# The payment gateway authorized the transaction. Update
+		# the transaction and gift certificate to authorized,
+		# and send a gift certificate order email to the user.
+
+		# Update transaction and gift certificate to authorized
+		# setting to_be_captured_p to 't' will cause
+		# ec_unmarked_transactions to come along and mark it for
+		# capture
+
+		db_dml transaction_success_update "
+		  update ec_financial_transactions
+		  set transaction_id = :pgw_transaction_id, authorized_date=sysdate,
+		  to_be_captured_p='t'
+		  where transaction_id = :transaction_id"
+
+		db_dml certificate_success_update "
+		  update ec_gift_certificates
+		  set authorized_date = sysdate,
+		  gift_certificate_state = 'authorized'
+		  where gift_certificate_id = :gift_certificate_id"
+		
+		# Send out the gift certificate order email
+
+		ec_email_new_gift_certificate_order $gift_certificate_id
+	    }
+	}
+    }
 }
 
-# this procedure is needed because new order email is only sent after
-# the order is authorized and some authorizations occur when the user is
-# not on the web site or execution of the thread on the site may
-# terminate after the order is authorized but before the email is sent
+ad_proc ec_send_unsent_new_order_email {
+} {
 
-ad_proc ec_send_unsent_new_order_email {} "Finds authorized orders for which confirmation email has not been sent, sends the email, and records that it has been sent." {
-    db_foreach unsent_orders_select {
+    Finds authorized orders for which confirmation email has not
+    been sent, sends the email, and records that it has been sent.
+
+    This procedure is needed because new order email is only sent
+    after the order is authorized and some authorizations occur when
+    the user is not on the web site or execution of the thread on
+    the site may terminate after the order is authorized but before
+    the email is sent
+
+} {
+    db_foreach orders_select "
 	select order_id
 	from ec_orders o
-	where (order_state='authorized_plus_avs' or order_state='authorized_minus_avs')
-	and (0=(select count(*) from ec_automatic_email_log log where log.order_id=o.order_id and email_template_id=1))
-    } {
+	where order_state='authorized'
+	and (0=(select count(*) 
+            from ec_automatic_email_log log 
+            where log.order_id=o.order_id and email_template_id=1))" {
 	ec_email_new_order $order_id
     }
 }
 
-# ec_send_unsent_new_gift_certificate_order_email
-ad_proc ec_send_unsent_new_gift_certificate_order_email {} "Finds authorized_plus/minus_avs gift certificates for which confirmation email has not been sent, sends the email, and records that it has been sent." {
+ad_proc ec_send_unsent_new_gift_certificate_order_email {
+} {
 
-    db_foreach unsent_gift_certificate_email {
+    Finds authorized gift certificates for which confirmation email
+    has not been sent, sends the email, and records that it has been
+    sent.
+
+} {
+
+    db_foreach certificates_select "
 	select gift_certificate_id
 	from ec_gift_certificates g
-	where (gift_certificate_state='authorized_plus_avs' or gift_certificate_state='authorized_minus_avs')
-	and (0=(select count(*) from ec_automatic_email_log log where log.gift_certificate_id=g.gift_certificate_id and email_template_id=4))
-    } {
+	where gift_certificate_state='authorized'
+	and (0=(select count(*) 
+            from ec_automatic_email_log log 
+            where log.gift_certificate_id=g.gift_certificate_id 
+            and email_template_id=4))" {
 	ec_email_new_gift_certificate_order $gift_certificate_id
     }
 }
 
-# ec_send_unsent_gift_certificate_recipient_email
-ad_proc ec_send_unsent_gift_certificate_recipient_email {} "Finds authorized_plus/minus_avs gift certificates for which email has not been sent to the recipient, sends the email, and records that it has been sent." {
-    ns_log Notice "ec_send_unsent_gift_certificate_recipient_email starting"
+ad_proc ec_send_unsent_gift_certificate_recipient_email {} {
+ 
+   Finds authorized gift certificates for which email
+   has not been sent to the recipient, sends the email, and records
+   that it has been sent.
 
-    db_foreach unsent_gift_certificate_select {
+} {
+    db_foreach certificates_select "
 	select gift_certificate_id
 	from ec_gift_certificates g
-	where (gift_certificate_state='authorized_plus_avs' or gift_certificate_state='authorized_minus_avs')
-	and (0=(select count(*) from ec_automatic_email_log log where log.gift_certificate_id=g.gift_certificate_id and email_template_id=5))
-    } {
+	where gift_certificate_state='authorized'
+	and (0=(select count(*) 
+	    from ec_automatic_email_log log 
+	    where log.gift_certificate_id=g.gift_certificate_id 
+	    and email_template_id=5))" {
 	ec_email_gift_certificate_recipient $gift_certificate_id
     }
-
-    ns_log Notice "ec_send_unsent_gift_certificate_recipient_email ending"
 }
 
-ad_proc ec_delayed_credit_denied {}  { Sends "Credit Denied" email to consumers whose authorization was initially inconclusive and then failed, and then saves the order for them (so that consumer can go back to site and retry the authorization).
+ad_proc ec_delayed_credit_denied {
+}  { 
+
+    Sends "Credit Denied" email to consumers whose authorization was
+    initially inconclusive and then failed, and then saves the order
+    for them (so that consumer can go back to site and retry the
+    authorization).
+
 } {
-    ns_log Notice "ec_delayed_credit_denied starting"
-    set order_id_list [db_list denied_orders_select "select order_id from ec_orders where order_state='failed_authorization'"]
+    set order_id_list [db_list denied_orders_select "
+	select order_id 
+	from ec_orders 
+	where order_state='failed_authorization'"]
 
     foreach order_id $order_id_list {
-	ns_log Notice "working on order #$order_id"
 
-	# save this shopping cart for the user
-	db_dml order_state_update "update ec_orders set order_state='in_basket', saved_p='t' where order_id=:order_id"
+	ns_log notice "ec_delayed_credit_denied working on order #$order_id"
+
+	# Save this shopping cart for the user
+
+	db_dml order_state_update "
+	    update ec_orders 
+	    set order_state='in_basket', saved_p='t' 
+	    where order_id=:order_id"
 
 	ec_email_delayed_credit_denied $order_id
     }
-
-    ns_log Notice "ec_delayed_credit_denied ending"
 }
 
-ad_proc ec_expire_old_carts {} { expires old carts } {
+ad_proc ec_expire_old_carts {
+} { 
+
+    Expires old carts.
+
+} {
+    set cart_duration [ad_parameter -package_id [ec_id] CartDuration ecommerce]
     db_transaction {
-      db_dml expired_carts_update "update ec_orders set order_state='expired', expired_date=sysdate where order_state='in_basket' and sysdate-in_basket_date > [ad_parameter -package_id [ec_id] CartDuration ecommerce]"
-      db_dml item_state_update "update ec_items set item_state='expired', expired_date=sysdate where item_state='in_basket' and order_id in (select order_id from ec_orders where order_state='expired')"
+	db_dml expired_carts_update "
+            update ec_orders 
+            set order_state='expired', expired_date=sysdate 
+            where order_state='in_basket' 
+            and sysdate-in_basket_date > :cart_duration"
+	db_dml item_state_update "
+            update ec_items 
+            set item_state='expired', expired_date=sysdate 
+            where item_state='in_basket' 
+            and order_id in (select order_id 
+                from ec_orders 
+                where order_state='expired')"
     }
 }
 
-ad_proc ec_remove_creditcard_data {} { remove credit card data } {
-    # if SaveCreditCardDataP=0 we should remove the creditcard_number for the cards whose numbers are
-    # no longer needed (i.e. all their orders are fulfilled, returned, void, or expired)
+ad_proc ec_remove_creditcard_data {
+} { 
+
+    Remove credit card number from ec_creditcards if package
+    parameter SaveCreditCardDataP = 0. Ec_remove_creditcard_data
+    removes only the credit card numbers for the cards whose numbers
+    are no longer needed (i.e. all their orders are fulfilled,
+    returned, void, or expired). The last four digits -also stored in
+    ec_creditcards- remain.
+
+} {
     if { [ad_parameter -package_id [ec_id] SaveCreditCardDataP ecommerce] == 0 } {
-	db_dml creditcard_update {
+	db_dml creditcard_update "
 	    update ec_creditcards
 	    set creditcard_number=null
 	    where creditcard_id in (select unique c.creditcard_id
-				    from ec_creditcards c, ec_orders o
-				    where c.creditcard_id = o.creditcard_id
-				    and c.creditcard_number is not null
-				    and 0=(select count(*)
-					   from ec_orders o2
-					   where o2.creditcard_id=c.creditcard_id
-					   and o2.order_state not in ('fulfilled','returned','void','expired')))
-	}
+		from ec_creditcards c, ec_orders o
+		where c.creditcard_id = o.creditcard_id
+		and c.creditcard_number is not null
+		and 0=(select count(*)
+		    from ec_orders o2
+		    where o2.creditcard_id=c.creditcard_id
+		    and o2.order_state not in ('fulfilled','returned','void','expired'))
+		and 0=(select count(*)
+		    from ec_financial_transactions
+		    where transaction_type = 'refund'
+		    and refunded_date is null))"
     }
 }
 
-# to_be_captured_date is over 1/2 hr old and authorized_date is null
-# this is similar to ec_sweep_for_cybercash_zombies except that in this
-# case these are shipments that are unauthorized
-ad_proc ec_unauthorized_transactions {} { searches for unauthorized transactions } {
-    db_foreach unauthorized_transactions_select {
-	select transaction_id, order_id from ec_financial_transactions
+ad_proc ec_unauthorized_transactions {
+} { 
+
+    Ec_unauthorized_transactions searches for unauthorized transactions
+    whose to_be_captured_date is over 1/2 hr old and authorized_date is
+    null this is similar to ec_sweep_for_payment_zombies except that in
+    this case these are shipments that are unauthorized.
+
+} {
+
+    # Lookup the selected currency.
+
+    set currency [ad_parameter Currency ecommerce]
+
+    # Lookup the selected payment gateway
+
+    set payment_gateway [ad_parameter PaymentGateway -default [ad_parameter -package_id [ec_id] PaymentGateway]]
+    if {[empty_string_p $payment_gateway]} {
+	    ns_log warning "ec_unauthorized_transactions: No payment gateway has been selected."
+	    return
+    } else {
+	if {![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
+	    ns_log warning "ec_unauthorized_transactions: Payment gateway $payment_gateway is not bound to the Payment Service Contract."
+	    return
+	}
+    }
+
+    db_foreach transactions_select "
+        select f.transaction_id, f.order_id, f.transaction_amount, f.to_be_captured_date, 
+            p.first_names || ' ' || p.last_name as card_name, 
+            substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_number as card_number, c.creditcard_type,
+            a.zip_code as billing_zip,
+            a.line1 as billing_address, 
+	    a.city as billing_city, 
+            coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
+            a.country_code as billing_country
+        from ec_financial_transactions f, ec_creditcards c, persons p, ec_addresses a
 	where to_be_captured_p='t'
 	and sysdate-to_be_captured_date > 1/48
 	and authorized_date is null
 	and failed_p='f'
-    } {
-	ns_log Notice "ec_unauthorized_transactions working on transaction_id $transaction_id"
+        and f.creditcard_id=c.creditcard_id 
+        and c.user_id=p.person_id
+	and c.billing_address = a.address_id" {
 
-	# Query CyberCash:
-	set cc_args [ns_set new]
-	ns_set put $cc_args "order-id" "$transaction_id"
-	ns_set put $cc_args "txn-type" "auth"
+	ns_log notice "ec_unauthorized_transactions working on transaction $transaction_id"
 
-	set ttcc_output [ec_talk_to_cybercash "query" $cc_args]
+	# Convert the one digit creditcard abbreviation to the
+	# standardized name of the card.
 
-	if { [regexp {success} [ns_set get $ttcc_output "txn_status"]] } {
-	    set auth_status_is_now "success"
-	} elseif { [ns_set get $ttcc_output "txn_status"] == "" || [regexp {failure} [ns_set get $ttcc_output "txn_status"]] } {
-	    # Retry the authorization
-	    set new_cc_status [ec_creditcard_authorization $order_id $transaction_id]
+	set card_type [ec_pretty_creditcard_type $creditcard_type]
+
+	# Connect to the payment gateway to authorize the transaction.
+
+	array set response [acs_sc_call "PaymentGateway" "Authorize" \
+				[list $transaction_id \
+				     $transaction_amount \
+				     $card_type \
+				     $card_number \
+				     $card_exp_month \
+				     $card_exp_year \
+				     $card_name \
+				     $billing_address \
+				     $billing_city \
+				     $billing_state \
+				     $billing_zip \
+				     $billing_country] \
+				$payment_gateway]
+
+	# Extract response_code, reason and the gateway transaction id
+	# from the response. The response_code values are defined in
+	# payment-gateway/tcl/payment-gateway-init.tcl. The reason is a
+	# human readable description of the response and the transaction
+	# id is the ID as returned by the payment gateway.
+
+	set response_code $response(response_code)
+	set reason $response(reason)
+	set pgw_transaction_id $response(transaction_id)
+
+	# Interpret the response_code.
+
+	switch -exact $response_code {
 	    
-	    if { $new_cc_status == "authorized_plus_avs" || $new_cc_status == "authorized_minus_avs" } {
-		set auth_status_is_now "success"
-	    } elseif { $new_cc_status == "failed_authorization" } {
-		set auth_status_is_now "failure"
-	    } else {
-		set auth_status_is_now "lack_of_success"
-		if { $new_cc_status == "invalid_input" } {
-		    db_dml problems_log_insert {
+	    "failure" -
+	    "not_supported" -
+	    "not_implemented" - 
+	    default {
+
+		# The payment gateway rejected to authorize the
+		# transaction, can not authorize any transaction.
+
+		# Flag the transaction as failed and log the problem
+		# in the ecommerce problem log for the administrator.
+
+		db_transaction {
+		    db_dml transaction_failed_update "
+			update ec_financial_transactions 
+			set failed_p = 't' 
+			where transaction_id = :transaction_id"
+		    set problem_details "The authorization failed for transaction_id $transaction_id for the following reason: $reason"
+		    db_dml problems_log_insert "
 			insert into ec_problems_log
 			(problem_id, problem_date, problem_details, order_id)
 			values
-			(ec_problem_id_sequence.nextval, sysdate, 'invalid input to ec_creditcard_authorization in ec_unauthorized_transactions', :order_id)
+			(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+		}
+	    }
+	    
+	    "failure-retry" {
+
+		# The response_code is failure-retry, this means there
+		# was a temporary failure that can be retried. Fail
+		# the transaction however, if the order was authorized
+		# a while ago (as defined in package parameter
+		# PaymentRetryPeriod) the temporary failure turns out
+		# to be less 'temporary'.
+
+		if { [expr [dt_interval_check $to_be_captured_date [clock format [clock seconds] -format "%D %H:%M:%S"]] / (60 * 60) ] > \
+			 [ad_parameter PaymentRetryPeriod -default [ad_parameter -package_id [ec_id] PaymentRetryPeriod]] } {
+
+		    db_transaction {
+
+			# Flag the transaction as failed so that it
+			# will not be retried.
+
+			db_dml transaction_failure_update "
+			    update ec_financial_transactions
+			    set failed_p = 't'
+			    where transaction_id=:transaction_id"
+
+			# Log this failure in the problem log.
+
+			set problem_details "Transaction $transaction_id failed to mark due to repeated 'failure-retry' reponses from the payment gateway"
+			db_dml problems_log_insert "
+			    insert into ec_problems_log
+			    (problem_id, problem_date, problem_details, order_id)
+			    values
+			    (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
 		    }
+		} else {
+
+		    # Leave the order as is so that the order will be
+		    # retried the next time this procedure is run.
+
 		}
 	    }
-	} elseif { [regexp {pending} [ns_set get $ttcc_output "txn_status"]] } {
-	    # We need to retry the auth using the API call "retry"
-	    set cc_args_2 [ns_set new]
-	    ns_set put $cc_args_2 "order-id" "$transaction_id"
-	    ns_set put $cc_args_2 "txn-type" "auth"
-	    
-	    set ttcc_output_2 [ec_talk_to_cybercash "retry" $cc_args_2]
-	    
-	    if { [regexp {success} [ns_set get $ttcc_output_2 "txn_status"]] } {
-		set auth_status_is_now "success"
-	    } else {
-		set auth_status_is_now "lack_of_success"
-		# This proc won't do anything with it in this case.  It'll
-		# be caught next time around (ec_creditcard_authorization
-		# knows how to interpret the various failure messages).
-	    }
-	} else {
-	    # weird result, which we don't know what to do with.  We should just leave
-	    # the order_state alone and let it be subjected to this proc again in
-	    # another half-hour, by which time things may have cleared up.
-	    set auth_status_is_now "unknown"
 
-	    set problem_details "Strange CyberCash result when querying about auth: [ns_set get $ttcc_output_2 "txn_status"]"
+	    "success" {
 
-	    db_dml problems_insert {
-		insert into ec_problems_log
-		(problem_id, problem_date, problem_details, order_id)
-		values
-		(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-	    }
-	} 
-	# done determining auth_status
-	
-	# If the auth_status_is_now is "success" or "failure", then we want to 
-	# update the transaction.  Otherwise, it stays as it is.
-	
-	if { $auth_status_is_now == "success" } {
-	    db_dml transaction_success_update "update ec_financial_transactions set authorized_date=sysdate where transaction_id=:transaction_id"
-	} elseif { $auth_status_is_now == "failure" } {
-	    db_transaction {
-		db_dml transaction_failed_update "update ec_financial_transactions set failed_p='t' where transaction_id=:transaction_id"
-		set problem_details "The authorization failed for transaction_id $transaction_id."
-		db_dml problems_log_insert {
-		    insert into ec_problems_log
-		    (problem_id, problem_date, problem_details, order_id)
-		    values
-		    (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-		}
+		# The payment gateway authorized the
+		# transaction. Update the # transaction.
+
+		db_dml transaction_success_update "
+		    update ec_financial_transactions 
+		    set transaction_id = :pgw_transaction_id, authorized_date=sysdate 
+		    where transaction_id=:transaction_id"
 	    }
 	}
     } 
-
-    ns_log Notice "ec_unauthorized_transactions finishing"
 }
 
-#  to_be_captured_p is 't' and authorized_date is not null and marked_date is null
-ad_proc ec_unmarked_transactions {} { unmarked transactions } {
-    ns_log Notice "ec_unmarked_transactions starting"
-
-    db_foreach unmarked_transactions_select {
-	select transaction_id, order_id from ec_financial_transactions
-	where to_be_captured_p='t'
-	and authorized_date is not null
-	and marked_date is null
-	and failed_p='f'
-    } {
-	ns_log Notice "ec_unmarked_transactions working on transaction_id $transaction_id"
-
-	set postauth_success [ec_creditcard_marking $transaction_id]
-	
-	if { $postauth_success != "success" } {
-	    
-	    # the error may be because the order was already marked, so check for that
-	    set cc_args [ns_set new]
-	    ns_set put $cc_args "order-id" "$transaction_id"
-	    ns_set put $cc_args "txn-type" "postauth"
-	    
-	    set ttcc_output [ec_talk_to_cybercash "query" $cc_args]
-	    
-	    if { [regexp {success} [ns_set get $ttcc_output "txn_status"]] } {
-		db_dml financial_transaction_success_update "update ec_financial_transactions set marked_date=sysdate where transaction_id=:transaction_id"
-	    } else {
-		db_transaction {
-		    db_dml financial_transaction_failed_update "update ec_financial_transactions set failed_p='t' where transaction_id=:transaction_id"
-		    set problem_details "The marking failed for transaction_id $transaction_id."
-		    db_dml problems_log_insert {
-			insert into ec_problems_log
-			(problem_id, problem_date, problem_details, order_id)
-			values
-			(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-		    }
-		}
-	    }
-	} else {
-	    # postauth successful
-	    db_dml financial_transactions_update "update ec_financial_transactions set marked_date=sysdate where transaction_id=:transaction_id"
-	}
-    }
-    ns_log Notice "ec_unmarked_transactions ending"
-}
-
-# marked_date is non-null and settled_date is null
-# this should be run late at night because CyberCash settled marked transactions in the early night (before midnight)
-# if it isn't settled 2 days after it's marked, failed_p is set to 't' and a row is added to the problems_log
-ad_proc ec_unsettled_transactions {} { unsettled transactions } {
-    ns_log Notice "ec_unsettled_transactions starting"
+ad_proc ec_unmarked_transactions {
+} {
  
-    db_foreach unsettled_transactions_select {
-	select transaction_id, order_id from ec_financial_transactions
-	where marked_date is not null
-	and settled_date is null
-	and failed_p='f'
-    } {
-	ns_log Notice "ec_unsettled_transactions working on transaction_id $transaction_id"
+    unmarked transactions 
+    to_be_captured_p is 't' and authorized_date is not null and marked_date is null
 
-	# query CyberCash
-	set cc_args [ns_set new]
-	ns_set put $cc_args "order-id" "$transaction_id"
-	ns_set put $cc_args "txn-type" "settled"
-	
-	set ttcc_output [ec_talk_to_cybercash "query" $cc_args]
-	if { [regexp {success} [ns_set get $ttcc_output "txn_status"]] } {
-	    db_dml settled_date_update "update ec_financial_transactions set settled_date=sysdate where transaction_id=:transaction_id"
-	} else {
-	    # see if it's been at least 2 days since the order was marked (otherwise, don't bother
-	    # making a note of the failure yet; in my experience, there were a number of times
-	    # when it took more than a day for us to find out that an order settled, with the delay
-	    # perhaps due to CyberCash's nightly settlement not occurring or due to a communications
-	    # failure between us and CyberCash)
-	    
-	    # to see if a > b, check the sign of (1 - (a/b)); if it's positive, then a<b, if it's 0,
-	    # then a=b, and if it's negative, then a>b.  I use this in the following decode to see
-	    # whether (sysdate - marked_date) > 2.
-	    
-	    if { [db_string two_days_since_order_was_marked_p "select decode(sign(1 - ((sysdate-marked_date)/2)), -1, 1, 0) from ec_financial_transactions where transaction_id=:transaction_id"] } {
-		db_transaction {
-		    db_dml transaction_failed_update "update ec_financial_transactions set failed_p='t' where transaction_id=:transaction_id"
-		    set problem_details "The settlement failed for transaction_id $transaction_id even though it has been more than 2 days since the transaction was marked."
-		    db_dml problems_log_insert {
-			insert into ec_problems_log
-			(problem_id, problem_date, problem_details, order_id)
-			values
-			(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-		    }
-		}
-	    }
-	}
-    }
-    ns_log Notice "ec_unsettled_transactions ending"
-}
+} {
 
-#   transaction_type is 'refund' and inserted_date is over 1/2 hr old and refunded_date is null
-ad_proc ec_unrefunded_transactions {} { unrefunded transactions } {
-    ns_log Notice "ec_unrefunded_transactions starting"
+    # Lookup the selected currency.
 
-    db_foreach unrefunded_transactions_select {
-	select transaction_id, order_id from ec_financial_transactions
-	where transaction_type='refund'
-	and sysdate - inserted_date > 1/48
-	and refunded_date is null
-	and failed_p='f'
-    } {
-	ns_log Notice "ec_unrefunded_transactions working on transaction_id $transaction_id"
-	
-	set return_success [ec_creditcard_return $transaction_id]
-	
-	if { $return_success != "success" } {
-	    
-	    # the error may be because the order was already marked, so check for that
-	    set cc_args [ns_set new]
-	    ns_set put $cc_args "order-id" "$transaction_id"
-	    ns_set put $cc_args "txn-type" "markret"
-	    
-	    set ttcc_output [ec_talk_to_cybercash "query" $cc_args]
-	    
-	    if { [regexp {success} [ns_set get $ttcc_output "txn_status"]] } {
-		db_dml financial_transactions_update "update ec_financial_transactions set refunded_date=sysdate where transaction_id=:transaction_id"
-	    } else {
-		db_transaction {
-		    db_dml financial_transaction_failed_update "update ec_financial_transactions set failed_p='t' where transaction_id=:transaction_id"
-		    set problem_details "The refund (the marking of it) failed for transaction_id $transaction_id."
-		    db_dml problems_log_insert {
-			insert into ec_problems_log
-			(problem_id, problem_date, problem_details, order_id)
-			values
-			(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-		    }
-		}
-	    }
-	} else {
-	    # refund successful
-	    db_dml financial_transaction_refund_update "update ec_financial_transactions set refunded_date=sysdate where transaction_id=:transaction_id"
-	}
-    }
-    ns_log Notice "ec_unrefunded_transactions ending"
-}
+    set currency [ad_parameter Currency ecommerce]
 
-# refunded_date is non-null and refund_settled_date is null
-# yes, I know the name of this proc is gramatically iffy, but I want to be consistent
-ad_proc ec_unrefund_settled_transactions {} { unrefunded settled transactions } {
-  ns_log Notice "ec_unrefund_settled_transactions starting"
+    # Lookup the selected payment gateway
 
-  db_foreach unrefund_settled_transactions_select "select transaction_id, order_id from ec_financial_transactions
-  where refunded_date is not null
-  and refund_settled_date is null
-  and failed_p='f'" {
-    ns_log Notice "ec_unrefund_settled_transactions working on transaction_id $transaction_id"
-
-    # query CyberCash
-    set cc_args [ns_set new]
-    ns_set put $cc_args "order-id" "$transaction_id"
-    ns_set put $cc_args "txn-type" "setlret"
-
-    set ttcc_output [ec_talk_to_cybercash "query" $cc_args]
-    if { [regexp {success} [ns_set get $ttcc_output "txn_status"]] } {
-      db_dml financial_transaction_refund_settled_update "update ec_financial_transactions set refund_settled_date=sysdate where transaction_id=:transaction_id"
+    set payment_gateway [ad_parameter PaymentGateway -default [ad_parameter -package_id [ec_id] PaymentGateway]]
+    if {[empty_string_p $payment_gateway]} {
+	    ns_log warning "ec_unmarked_transactions: No payment gateway has been selected."
+	    return	
     } else {
-      # see if it's been at least 2 days since the order was marked (otherwise, don't bother
-      # making a note of the failure yet; in my experience, there were a number of times
-      # when it took more than a day for us to find out that a refund settled, with the delay
-      # perhaps due to CyberCash's nightly settlement not occurring or due to a communications
-      # failure between us and CyberCash)
-
-      # to see if a > b, check the sign of (1 - (a/b)); if it's positive, then a<b, if it's 0,
-      # then a=b, and if it's negative, then a>b.  I use this in the following decode to see
-      # whether (sysdate - refunded_date) > 2.
-
-      if { [db_string two_days_since_order_was_refunded_p "select decode(sign(1 - ((sysdate-refunded_date)/2)), -1, 1, 0) from ec_financial_transactions where transaction_id=:transaction_id"] } {
-	db_transaction {
-	  db_dml transaction_failed_update "update ec_financial_transactions set failed_p='t' where transaction_id=:transaction_id"
-	  set problem_details "The refund settlement failed for transaction_id $transaction_id even though it has been more than 2 days since the transaction was marked refunded."
-	  db_dml problems_log_insert "insert into ec_problems_log
-	  (problem_id, problem_date, problem_details, order_id)
-	  values
-	  (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-	  "
+	if {![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
+	    ns_log warning "ec_unmarked_transactions: Payment gateway $payment_gateway is not bound to the Payment Service Contract."
+	    return
 	}
-      }
     }
-  }
-  ns_log Notice "ec_unrefund_settled_transactions ending"
+
+    db_foreach transactions_select "
+        select f.transaction_id, f.order_id, f.transaction_amount, f.to_be_captured_date,
+            p.first_names || ' ' || p.last_name as card_name, 
+	    c.creditcard_number as card_number,  c.creditcard_type, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year,
+            a.zip_code as billing_zip,
+            a.line1 as billing_address, 
+	    a.city as billing_city, 
+            coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
+            a.country_code as billing_country
+        from ec_financial_transactions f, ec_creditcards c, persons p, ec_addresses a
+	where to_be_captured_p='t'
+	and marked_date is null
+	and f.failed_p='f'
+        and f.creditcard_id=c.creditcard_id 
+        and c.user_id=p.person_id
+	and c.billing_address = a.address_id" {
+
+	ns_log notice "ec_unmarked_transactions working on transaction $transaction_id"
+
+	# Convert the one digit creditcard abbreviation to the
+	# standardized name of the card.
+
+	set card_type [ec_pretty_creditcard_type $creditcard_type]
+
+	# Connect to the payment gateway to authorize the transaction.
+
+	array set response [acs_sc_call "PaymentGateway" "ChargeCard" \
+				[list $transaction_id \
+				     $transaction_amount \
+				     $card_type \
+				     $card_number \
+				     $card_exp_month \
+				     $card_exp_year \
+				     $card_name \
+				     $billing_address \
+				     $billing_city \
+				     $billing_state \
+				     $billing_zip \
+				     $billing_country] \
+				$payment_gateway]
+
+	# Extract response_code, reason and the gateway transaction id
+	# from the response. The response_code values are defined in
+	# payment-gateway/tcl/payment-gateway-init.tcl. The reason is a
+	# human readable description of the response and the transaction
+	# id is the ID as returned by the payment gateway.
+
+	set response_code $response(response_code)
+	set reason $response(reason)
+	set pgw_transaction_id $response(transaction_id)
+
+	# Interpret the response_code.
+
+	switch -exact $response_code {
+	    
+	    "failure" -
+	    "not_supported" -
+	    "not_implemented" -
+	    default {
+
+		# The payment gateway rejected to post authorize the
+		# transaction, can not post authorize any
+		# transaction. Or the gateway returned an unknown
+		# response_code.
+
+		# Flag the transaction as failed and log the problem
+		# in the ecommerce problem log for the administrator.
+
+		db_transaction {
+		    db_dml transaction_failed_update "
+			update ec_financial_transactions 
+			set failed_p='t' 
+			where transaction_id=:transaction_id"
+		    set problem_details "The post authorization failed for transaction_id $transaction_id for the following reason: $reason"
+		    db_dml problems_log_insert "
+			insert into ec_problems_log
+			(problem_id, problem_date, problem_details, order_id)
+			values
+			(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+		}
+	    }
+	    
+	    "failure-retry" {
+
+		# The response_code is failure-retry, this means there
+		# was a temporary failure that can be retried. Fail
+		# the transaction however, if the order was authorized
+		# a while ago (as defined in package parameter
+		# PaymentRetryPeriod) the temporary failure turns out
+		# to be less 'temporary'.
+
+		if { [expr [dt_interval_check $to_be_captured_date [clock format [clock seconds] -format "%D %H:%M:%S"]] / (60 * 60) ] > \
+			 [ad_parameter PaymentRetryPeriod -default [ad_parameter -package_id [ec_id] PaymentRetryPeriod]] } {
+
+		    db_transaction {
+
+			# Flag the transaction as failed so that it
+			# will not be retried.
+
+			db_dml transaction_failure_update "
+			    update ec_financial_transactions
+			    set failed_p = 't'
+			    where transaction_id=:transaction_id"
+
+			# Log this failure in the problem log.
+
+			set problem_details "Transaction $transaction_id failed to mark due to repeated 'failure-retry' reponses from the payment gateway"
+			db_dml problems_log_insert "
+			    insert into ec_problems_log
+			    (problem_id, problem_date, problem_details, order_id)
+			    values
+			    (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+		    }
+		} else {
+
+		    # Leave the order as is so that the order will be
+		    # retried the next time this procedure is run.
+
+		}
+	    }
+
+	    "success" {
+
+		# The payment gateway approved the transaction. Update
+		# the transaction. The gateway returns a new
+		# transaction_id when ChargeCard resulted in a new
+		# transaction rather than the next step in processing
+		# an existing transaction.
+
+		if { [empty_string_p $pgw_transaction_id] } {
+		    set pgw_transaction_id $transaction_id
+		}
+		db_dml transaction_success_update "
+		    update ec_financial_transactions 
+		    set transaction_id = :pgw_transaction_id, marked_date=sysdate 
+		    where transaction_id=:transaction_id"
+	    }
+	}
+    }
 }
 
-## Schedule these procedures
+ad_proc ec_unrefunded_transactions {
+} { 
 
-set ec_procs_scheduled_p 0
-set ep [ad_parameter -package_id [ec_id] EnabledP ecommerce 0]
+    Unrefunded transactions. Transaction_type is 'refund' and
+    inserted_date is over 1/2 hr old and refunded_date is null
 
-if { !$ec_procs_scheduled_p  && $ep} {
-    set ec_procs_scheduled_p 1
+} {
+
+    # Lookup the selected currency.
+
+    set currency [ad_parameter Currency ecommerce]
+
+    # Lookup the selected payment gateway
+
+    set payment_gateway [ad_parameter PaymentGateway -default [ad_parameter -package_id [ec_id] PaymentGateway]]
+    if {[empty_string_p $payment_gateway]} {
+	    ns_log warning "ec_unrefunded_transactions: No payment gateway has been selected."
+	    return	
+    } else {
+	if {![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
+	    ns_log warning "ec_unrefunded_transactions: Payment gateway $payment_gateway is not bound to the Payment Service Contract."
+	    return
+	}
+    }
+
+    db_foreach transactions_select "
+        select f.transaction_id, f.order_id, f.transaction_amount, f.to_be_captured_date, c.creditcard_type as card_type, 
+            p.first_names || ' ' || p.last_name as card_name, c.creditcard_number as card_number, 
+            c.creditcard_expire as card_expiration, c.creditcard_type
+            a.zip_code as billing_zip,
+	    a.line1 as billing_address, 
+	    a.city as billing_city, 
+            nsvl(a.usps_abbrev, a.full_state_name) as billing_state, 
+            a.country_code as billing_country
+        from ec_financial_transactions f, ec_creditcards c, persons p, ec_addresses a 
+	where transaction_type = 'refund'
+	and f.refunded_date is null
+	and f.failed_p='f'
+        and f.creditcard_id = c.creditcard_id 
+        and c.user_id = p.person_id
+	and c.billing_address = a.address_id
+	and sysdate-to_be_captured_date > 1/48" {
+
+        ns_log notice "ec_unrefunded_transactions working on transaction $transaction_id"
+	    
+	# Convert the one digit creditcard abbreviation to the
+	# standardized name of the card.
+
+	set card_type [ec_pretty_creditcard_type $creditcard_type]
+
+	# Connect to the payment gateway to authorize the transaction.
+
+	array set response [acs_sc_call "PaymentGateway" "Return" \
+				[list $marked_transaction_id \
+				     $transaction_amount \
+				     $card_type \
+				     $card_number \
+				     $card_exp_month \
+				     $card_exp_year \
+				     $card_name \
+				     $billing_address \
+				     $billing_city \
+				     $billing_state \
+				     $billing_zip \
+				     $billing_country] \
+				$payment_gateway]
+
+	# Extract response_code, reason and the gateway transaction id
+	# from the response. The response_code values are defined in
+	# payment-gateway/tcl/payment-gateway-init.tcl. The reason is a
+	# human readable description of the response and the transaction
+	# id is the ID as returned by the payment gateway.
+
+	set response_code $response(response_code)
+	set reason $response(reason)
+	set pgw_transaction_id $response(transaction_id)
+
+	# Interpret the response_code.
+
+	switch -exact $response_code {
+	    
+	    "failure" -
+	    "not_supported" -
+	    "not_implemented" -
+	    default {
+
+		# The payment gateway rejected to refund the
+		# transaction, can not refund any transactions. Or
+		# returned an unknown response_code.
+
+		# Flag the transaction as failed and log the problem
+		# in the ecommerce problem log for the administrator.
+
+		db_transaction {
+		    db_dml transaction_failed_update "
+			update ec_financial_transactions 
+			set failed_p='t' 
+			where transaction_id=:transaction_id"
+		    set problem_details "The refund failed for transaction_id $transaction_id for the following reason: $reason"
+		    db_dml problems_log_insert "
+			insert into ec_problems_log
+			(problem_id, problem_date, problem_details, order_id)
+			values
+			(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+		}
+
+	    }
+
+	    "failure-retry" {
+
+		# The response_code is failure-retry, this means there
+		# was a temporary failure that can be retried. Fail
+		# the transaction however, if the order was authorized
+		# a while ago (as defined in package parameter
+		# PaymentRetryPeriod) the temporary failure turns out
+		# to be less 'temporary'.
+
+		if { [expr [dt_interval_check $to_be_captured_date [clock format [clock seconds] -format "%D %H:%M:%S"]] / (60 * 60) ] > \
+			 [ad_parameter PaymentRetryPeriod -default [ad_parameter -package_id [ec_id] PaymentRetryPeriod]] } {
+
+		    db_transaction {
+
+			# Flag the transaction as failed so that it
+			# will not be retried.
+
+			db_dml transaction_failure_update "
+			    update ec_financial_transactions
+			    set failed_p = 't'
+			    where transaction_id=:transaction_id"
+
+			# Log this failure in the problem log.
+
+			set problem_details "Transaction $transaction_id failed to mark due to repeated 'failure-retry' reponses from the payment gateway"
+			db_dml problems_log_insert "
+			    insert into ec_problems_log
+			    (problem_id, problem_date, problem_details, order_id)
+			    values
+			    (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+		    }
+		} else {
+
+		    # Leave the order as is so that the order will be
+		    # retried the next time this procedure is run.
+
+		}
+	    }
+
+	    "success" {
+		
+		# The payment gateway refunded the transaction. Update
+		# the transaction.
+
+		db_dml transaction_success_update "
+		    update ec_financial_transactions 
+		    set refunded_date=sysdate, transaction_id = :pgw_transaction_id 
+		    where transaction_id=:transaction_id"
+	    }
+	}
+    }
+}
+
+# Schedule these procedures if there is a binding with a payment
+# service contract.
+
+if { [acs_sc_binding_exists_p "PaymentGateway" [ad_parameter PaymentGateway -default [ad_parameter -package_id [ec_id] PaymentGateway]]] } {
 
     # Scheduled proc scheduling:
-
-    # Nightly
-    # pi time + 1 = 4:14am EST = late in U.S., early in Europe
+    # Nightly pi time + 1 = 4:14am
     
-    ns_log Notice "scheduling ec_calculate_product_purchase_combinations"
     ns_schedule_daily -thread 4 14 ec_calculate_product_purchase_combinations
 
-    # A few times a day
-    # every three hours or so (slightly different intervals so they'll eventually space themselves out)
+    # A few times a day every three hours or so (slightly different
+    # intervals so they'll eventually space themselves out)
 
     set infrequent_base [expr 3 * 60 * 60]
 
-    ns_log Notice "scheduling ec_expire_old_carts"
     ad_schedule_proc -thread t [expr $infrequent_base + 0] ec_expire_old_carts
     
-    ns_log Notice "scheduling ec_unauthorized_transactions"
     ad_schedule_proc -thread t [expr $infrequent_base + 50] ec_unauthorized_transactions
 
-    ns_log Notice "scheduling ec_unmarked_transactions"
     ad_schedule_proc -thread t [expr $infrequent_base + 10] ec_unmarked_transactions
 
-    ns_log Notice "scheduling ec_unsettled_transactions"
-    ad_schedule_proc -thread t [expr $infrequent_base + 150] ec_unsettled_transactions
-
-    ns_log Notice "scheduling ec_unrefunded_transactions"
     ad_schedule_proc -thread t [expr $infrequent_base + 200] ec_unrefunded_transactions
 
-    ns_log Notice "scheduling ec_unrefund_settled_transactions"
-    ad_schedule_proc -thread t [expr $infrequent_base + 250] ec_unrefund_settled_transactions
-
-    # Often
-    # every half hour or so
+    # Often, every 10 - 15 minutes
 
     set frequent_base [expr 60 * 10]
 
-    ns_log Notice "scheduling ec_sweep_for_cybercash_zombies"
-    ad_schedule_proc -thread t [expr $frequent_base + 0] ec_sweep_for_cybercash_zombies
+    ad_schedule_proc -thread t [expr $frequent_base + 0] ec_sweep_for_payment_zombies
 
-    ns_log Notice "scheduling ec_sweep_for_cybercash_zombie_gift_certificates"
-    ad_schedule_proc -thread t [expr $frequent_base + 25] ec_sweep_for_cybercash_zombie_gift_certificates
+    ad_schedule_proc -thread t [expr $frequent_base + 25] ec_sweep_for_payment_zombie_gift_certificates
 
-    ns_log Notice "scheduling ec_send_unsent_new_order_email"
     ad_schedule_proc -thread t [expr $frequent_base + 50] ec_send_unsent_new_order_email
 
-    ns_log Notice "scheduling ec_delayed_credit_denied"
     ad_schedule_proc -thread t [expr $frequent_base + 100] ec_delayed_credit_denied
 
-    ns_log Notice "scheduling ec_remove_creditcard_data"
     ad_schedule_proc -thread t [expr $frequent_base + 150] ec_remove_creditcard_data
 
-    ns_log Notice "scheduling ec_send_unsent_new_gift_certificate_order_email"
     ad_schedule_proc -thread t [expr $frequent_base + 200] ec_send_unsent_new_gift_certificate_order_email
 
-    ns_log Notice "scheduling ec_send_unsent_gift_certificate_recipient_email"
     ad_schedule_proc -thread t [expr $frequent_base + 250] ec_send_unsent_gift_certificate_recipient_email
 }

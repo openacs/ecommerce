@@ -99,7 +99,7 @@ what New York State collects).  If you're a Fortune 500 company with
 nexus in 50 states, you'll probably have to add in a fair amount of
 complexity to collect tax more precisely or at least <em>remit</em>
 sales tax more precisely.  See 
-<a href=\"http://photo.net/wtr/thebook/ecommerce.html\">the ecommerce chapter
+<a href=\"http://www.arsdigita.com/books/panda/ecommerce.html\">the ecommerce chapter
  of Philip and Alex's Guide to Web Publishing</a> for 
 more on this mournful topic.
 

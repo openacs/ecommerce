@@ -48,18 +48,7 @@
   
   <fullquery name="standard_shipping">      
     <querytext>
-      select count(*) 
-      from ec_orders_shippable 
-      where shipping_method='standard'
     </querytext>
   </fullquery>
 
-  <fullquery name="express_shipping">      
-    <querytext>
-      select count(*) 
-      from ec_orders_shippable 
-      where shipping_method='express'
-    </querytext>
-  </fullquery>
-  
 </queryset>

@@ -1,22 +1,20 @@
-#  www/ecommerce/gift-certificate.tcl
 ad_page_contract {
     @param gift_certificate_id
     @param usca_p
 
-  @author
-  @creation-date
-  @cvs-id gift-certificate.tcl,v 3.2.2.5 2000/08/18 21:46:33 stevenp Exp
-  @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author
+    @creation-date
+    @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @revision-date April 2002
+
 } {
     gift_certificate_id:integer
     usca_p:optional 
 }
 
-
-
-
-
 # we need them to be logged in
+
 set user_id [ad_verify_and_get_user_id]
 
 if {$user_id == 0} {
@@ -75,5 +73,5 @@ if { [db_0or1row get_gc_info "select purchased_by, amount, recipient_email, cert
     }
 }
 db_release_unused_handles
-ec_return_template
+ad_return_template
 

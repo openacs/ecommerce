@@ -1,12 +1,17 @@
-#  www/ecommerce/index.tcl
 ad_page_contract {
+
+    Entry page to the ecommerce store.
+
     @param usca_p
     @param how_many
     @param start
-  @author
-  @creation-date
-  @cvs-id index.tcl,v 3.4.2.8 2000/08/21 20:14:29 tzumainn Exp
-  @author ported by Jerry Asher (jerry@theashergroup.com)
+
+    @author
+    @creation-date
+    @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @revision-date April 2002
+
 } {
     usca_p:optional
     {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
@@ -14,6 +19,7 @@ ad_page_contract {
 }
 
 # see if they're logged in
+
 set user_id [ad_verify_and_get_user_id]
 if { $user_id != 0 } {
     set user_name [db_string get_user_name "select first_names || ' ' || last_name from cc_users where user_id=:user_id"]
@@ -49,68 +55,74 @@ if { ![empty_string_p [db_string get_check_of_categories "select 1 from dual whe
     set search_widget ""
 }
 
-set recommendations_if_there_are_any ""
+set recommendations_if_there_are_any "<table width=100%>"
 
-set header_to_print "<b>We Recommend</b><p><blockquote>"
-set header_printed 0
-
-if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
+if [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
 } else {
     set user_class_approved_p_clause ""
 }
 
-db_foreach get_produc_recs "select p.product_name, p.product_id, p.dirname, r.recommendation_text
-from ec_products_displayable p, ec_product_recommendations r
-where p.product_id=r.product_id
-and category_id is null 
-and subcategory_id is null 
-and subsubcategory_id is null
-and (r.user_class_id is null or r.user_class_id in (select user_class_id
-     from ec_user_class_user_map 
-     where user_id = :user_id
-     $user_class_approved_p_clause))
+db_foreach get_produc_recs "
+    select p.product_id, p.product_name, p.dirname, r.recommendation_text, o.offer_code
+    from ec_product_recommendations r, ec_products_displayable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
+    where p.product_id=r.product_id
+    and category_id is null 
+    and subcategory_id is null 
+    and subsubcategory_id is null
+    and (r.user_class_id is null or r.user_class_id in (select user_class_id
+							from ec_user_class_user_map 
+							where user_id = :user_id
+							$user_class_approved_p_clause))
 and r.active_p='t'" {
 
-    if { !$header_printed } {
-        append recommendations_if_there_are_any $header_to_print
-	set header_printed 1
-    }
-    append recommendations_if_there_are_any "<table>
-<tr>
-<td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
-<td valign=top><a href=\"product?[export_url_vars product_id]\">$product_name</a>
-<p>
-$recommendation_text
-</td>
-</tr>
-</table>
-"
+    append recommendations_if_there_are_any "
+	<table width=100%>
+	  <tr>
+	    <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
+	    <td valign=top><a href=\"product?[export_url_vars product_id]\">$product_name</a>
+	      <p>$recommendation_text</p>
+	    </td>
+	    <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
+         </tr>"
 }
-
-append recommendations_if_there_are_any "</blockquote>"
+if {[string equal $recommendations_if_there_are_any "<table width=100%>"]} {
+    set recommendations_if_there_are_any ""
+} else {
+    append recommendations_if_there_are_any "</table>"
+}
 
 if { [ad_parameter -package_id [ec_id] SellGiftCertificatesP ecommerce] == 1 } {
     set gift_certificates_are_allowed 1
 } else {
     set gift_certificates_are_allowed 0
 }
-set products ""
+set products "<table width=100%>"
 
 set have_how_many_more_p f
 set count 0
 
 # find all top-level products (those that are uncategorized)
-db_foreach get_tl_products "select
-p.product_name, p.product_id, p.one_line_description
-from ec_products_searchable p
-where not exists (select 1 from ec_category_product_map m where p.product_id = m.product_id)
-order by p.product_name" {
+
+db_foreach get_tl_products "
+    select p.product_id, p.product_name, p.one_line_description, o.offer_code
+    from ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
+    where not exists (select 1 from ec_category_product_map m where p.product_id = m.product_id)
+    order by p.product_name" {
 
 
     if { $count >= $start && [expr $count - $start] < $how_many } {
 
-	append products "<table><tr valign=top><td>[expr $count + 1]</td><td><a href=\"product?product_id=$product_id\"><b>$product_name</b></a><br>$one_line_description</td></tr></table>\n"
+	append products "
+	      <tr valign=top>
+	        <td>[expr $count + 1]</td>
+	        <td colspan=2><a href=\"product?product_id=$product_id\"><b>$product_name</b></a></td>
+	      </tr>
+	      <tr valign=top>
+		<td></td>
+		<td>$one_line_description</td>
+		<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
+	      </tr>"
     }
     incr count
     if { $count > [expr $start + (2 * $how_many)] } {
@@ -121,8 +133,11 @@ order by p.product_name" {
 	set have_how_many_more_p f
     }
 }
-
-append products ""
+if {[string equal $products "<table width=100%>"]} {
+    set products ""
+} else {
+    append products "</table>"
+}
 
 if { $start >= $how_many } {
     set prev_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]>Previous $how_many</a>"
@@ -146,6 +161,6 @@ if { [empty_string_p $next_link] || [empty_string_p $prev_link] } {
 } else {
     set separator "|"
 }
-db_release_unused_handles
 
-ec_return_template
+db_release_unused_handles
+ad_return_template

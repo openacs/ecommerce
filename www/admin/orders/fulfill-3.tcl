@@ -1,10 +1,12 @@
-# /www/[ec_url_concat [ec_url] /admin]/orders/fulfill-3.tcl
 ad_page_contract {
 
     @author Eve Andersson (eveander@arsdigita.com)
     @creation-date Summer 1999
-    @cvs-id fulfill-3.tcl,v 3.4.2.6 2000/08/18 21:46:57 stevenp Exp
     @author ported by Jerry Asher (jerry@theashergroup.com)
+
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @revision-date April 2002
+
 } {
     shipment_id:integer,notnull
     order_id:integer,notnull
@@ -20,54 +22,52 @@ ad_require_permission [ad_conn package_id] admin
 
 set item_id_list $item_id
 
-
-# We have to:
 # 1. Add a row to ec_shipments.
+
 # 2. Update item_state and shipment_id in ec_items.
-# 3. Compute how much we need to charge the customer
-#    (a) If the total amount is the same as the amount previously calculated
-#        for the entire order, then update to_be_captured_p and to_be_captured_date
-#        in ec_financial_transactions and try to mark the transaction*
+
+# 3. Compute how much to charge the customer. The shipment can be a
+#    pratial shipment, products can have been added to or removed from
+#    the order after the original order was approved
+
+#    (a) If the total amount is the same as the amount previously
+#        calculated for the entire order, then update to_be_captured_p
+#        and to_be_captured_date in ec_financial_transactions and try
+#        to mark the transaction*
+
 #    (b) If the total amount is different and greater than 0:
-#        I.  add a row to ec_financial_transactions with
-#             to_be_captured_p and to_be_captured_date set
-#        II. do a new authorization*
+#        I.    add a row to ec_financial_transactions with
+#              to_be_captured_p and to_be_captured_date set
+#        II.   do a new authorization*
 #        III.  mark transaction*
 
-# * I was debating with myself whether it really makes sense to do the CyberCash
-# transactions on this page since, by updating to_be_captured_* in
-# ec_financial_transactions, a cron job can easily come around later and
-# see what needs to be done.
-# Pros: (1) instant feedback, if desired, if the transaction fails, which means the
-#           shipment can possibly be aborted
-#       (2) if it were done via a cron job, the cron job would need to query CyberCash
-#           first to see if CyberCash had a record for the transaction before it could
-#           try to auth/mark it (in case we had attempted the transaction before an got
-#           an inconclusive result), whereas on this page there's no need to query first
-#           (you know CyberCash doesn't have a record for it).  CyberCash charges 20
-#           cents per transaction, although I don't actually know if a query is considered
-#           a transaction.
-# Cons: it slows things down for the person recording shipments
+# The customer service rep must be logged on
 
-# I guess I'll just do the transactions on this page, for now, and if they prove too
-# slow they can be taken out without terrible consequences (the cron job has to run
-# anyway in case the results here are inconclusive).
-
-# the customer service rep must be logged on
 ad_maybe_redirect_for_registration
 set customer_service_rep [ad_verify_and_get_user_id]
 
-# doubleclick protection
-if { [db_string doubleclick_select "select count(*) from ec_shipments where shipment_id=:shipment_id"] > 0 } {
+# Doubleclick protection
+
+if { [db_string doubleclick_select "
+	select count(*) 
+	from ec_shipments 
+	where shipment_id=:shipment_id"] > 0 } {
     ad_returnredirect "fulfillment"
     return
 }
 
-set shipping_method [db_string shipping_method_select "select shipping_method from ec_orders where order_id=:order_id"]
+set shipping_method [db_string shipping_method_select "
+   select shipping_method 
+   from ec_orders 
+    where order_id=:order_id"]
 
-set shippable_p [ec_decode [db_string shippable_p_select "select shipping_method from ec_orders where order_id=:order_id"] "no shipping" 0 1]
+set shippable_p [ec_decode [db_string shippable_p_select "
+    select shipping_method 
+    from ec_orders 
+    where order_id=:order_id"] "no shipping" 0 1]
 
-# 0. Calculate shipment tax charged.
+# 0. Calculate shipment tax charged. Start by calculating the shipping
+#    cost.
 
 set item_id_vars [list]
 foreach item_id $item_id_list {
@@ -76,152 +76,256 @@ foreach item_id $item_id_list {
     lappend item_id_vars ":$var_name"
 }
 
-set total_price_of_items [db_string total_price_of_items_select "select nvl(sum(price_charged),0) from ec_items where item_id in ([join $item_id_vars ", "])"]
+set total_price_of_items [db_string total_price_of_items_select "
+    select nvl(sum(price_charged),0) 
+    from ec_items
+    where item_id in ([join $item_id_list ", "])"]
+
+# Calculate the total shipping cost of the shipment.
 
 if { $shippable_p } {
-    # see if base shipping cost should be included in total_shipping_of_items
-    set n_shipments_already [db_string n_shipments_already_select "select count(*) from ec_shipments where order_id=:order_id"]
+
+    # See if base shipping cost should be included in
+    # total_shipping_of_items
+
+    set n_shipments_already [db_string n_shipments_already_select "
+	select count(*) 
+	from ec_shipments
+	where order_id=:order_id"]
     
-    set shipping_of_items [db_string shipping_of_items_select "select nvl(sum(shipping_charged),0) from ec_items where item_id in ([join $item_id_vars ", "])"]
-    
+    set shipping_of_items [db_string shipping_of_items_select "
+	select nvl(sum(shipping_charged),0) 
+	from ec_items
+	where item_id in ([join $item_id_list ", "])"]
+
     if { $n_shipments_already == 0 } {
-	set total_shipping_of_items [db_string total_shipping_of_items_select "select $shipping_of_items + shipping_charged from ec_orders where order_id=:order_id"]
+	set total_shipping_of_items [db_string total_shipping_of_items_select "
+	    select $shipping_of_items + shipping_charged 
+	    from ec_orders 
+	    where order_id=:order_id"]
     } else {
 	set total_shipping_of_items $shipping_of_items
     }
 } else {
-    # it's a pickup order
+
+    # It's a pickup order
+
     set total_shipping_of_items 0
     set expected_arrival_date ""
     set carrier ""
     set tracking_number ""
 }
 
-set total_tax_of_items [db_string total_tax_of_items_select "select ec_tax(:total_price_of_items, :total_shipping_of_items, :order_id) from dual"]
+set total_tax_of_items [db_string total_tax_of_items_select "
+    select ec_tax(:total_price_of_items, :total_shipping_of_items, :order_id)
+    from dual"]
 
 set peeraddr [ns_conn peeraddr]
 set shippable_p_tf [ec_decode $shippable_p 0 f t]
 
-db_transaction {
-    db_dml insert_shipment_info "insert into ec_shipments
-  (shipment_id, order_id, shipment_date, expected_arrival_date, carrier, tracking_number, shippable_p, last_modified, last_modifying_user, modified_ip_address)
-  values
-  (:shipment_id, :order_id, to_date(:shipment_date, 'YYYY-MM-DD HH12:MI:SSAM'), to_date(:expected_arrival_date, 'YYYY-MM-DD HH12:MI:SSAM'), :carrier, :tracking_number, :shippable_p_tf, sysdate, :customer_service_rep, :peeraddr)
-  "
+db_dml insert_shipment_info "
+    insert into ec_shipments
+    (shipment_id, order_id, shipment_date, expected_arrival_date, carrier, tracking_number, shippable_p, last_modified, last_modifying_user, modified_ip_address)
+    values
+    (:shipment_id, :order_id, to_date(:shipment_date, 'YYYY-MM-DD HH12:MI:SSAM'), 
+     to_date(:expected_arrival_date, 'YYYY-MM-DD HH12:MI:SSAM'), :carrier, :tracking_number, :shippable_p_tf, sysdate, :customer_service_rep, :peeraddr)"
 
-    db_dml item_state_update "
-  update ec_items
-  set item_state='shipped', shipment_id=:shipment_id
-  where item_id in ([join $item_id_vars ", "])
-  "
+db_dml item_state_update "
+    update ec_items
+    set item_state='shipped', shipment_id=:shipment_id
+    where item_id in ([join $item_id_list ", "])"
 
-    # calculate the total shipment cost (price + shipping + tax - gift certificate) of the shipment
-    set shipment_cost [db_string shipment_cost_select "select ec_shipment_cost(:shipment_id) from dual"]
+# Calculate the total shipment cost (price + shipping + tax - gift
+# certificate) of the shipment
 
-    # calculate the total order cost (price + shipping + tax - gift_certificate) so we'll
-    # know if we can use the original transaction
-    set order_cost [db_string order_cost_select "select ec_order_cost(:order_id) from dual"]
+set shipment_cost [db_string shipment_cost_select "
+		       select ec_shipment_cost(:shipment_id) 
+		       from dual"]
 
-    # It is conceivable, albeit unlikely, that a partial shipment,
-    # return, and an addition of more items to the order by the site
-    # administrator can make the order_cost equal the shipment_cost
-    # even if it isn't the first shipment, which is fine.  But if
-    # this happens twice, this would have caused the system (which is
-    # trying to minimize financial transactions) to try to reuse an old
-    # transaction, which will fail, so I've added the 2nd half of the
-    # "if statement" below to make sure that transaction doesn't get reused:
+# No financial transactions need to be update when the shipment is
+# for free.
 
-    if { $shipment_cost == $order_cost && [db_string to_be_captured_p_select "select count(*) from ec_financial_transactions where order_id=:order_id and to_be_captured_p='t'"] == 0} {
-	set transaction_id [db_string transaction_id_select "select max(transaction_id) from ec_financial_transactions where order_id=:order_id"]
-	# 1999-08-11: added shipment_id to the update
-	
-	# 1999-08-29: put the update inside an if statement in case there is
-	# no transaction to update
-	if { ![empty_string_p $transaction_id] } {
-	    db_dml transaction_update "update ec_financial_transactions set shipment_id=:shipment_id, to_be_captured_p='t', to_be_captured_date=sysdate where transaction_id=:transaction_id"
-	}
+if { $shipment_cost >= 0 } {
 
-	# try to mark the transaction
-	# 1999-08-29: put the marking inside an if statement in case there is
-	# no transaction to update
-	if { ![empty_string_p $transaction_id] } {
+    # Calculate the total order cost (price + shipping + tax -
+    # gift_certificate) so we'll know if we can use the original
+    # transaction
 
-	    set cc_mark_result [ec_creditcard_marking $transaction_id]
-	    if { $cc_mark_result == "invalid_input" } {
-		set problem_details "When trying to mark shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $cc_mark_result"
-		db_dml problems_log_insert "insert into ec_problems_log
-	(problem_id, problem_date, problem_details, order_id)
-	values
-	(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-	"
-	    } elseif { $cc_mark_result == "success" } {
-		db_dml transaction_success_update "update ec_financial_transactions set marked_date=sysdate where transaction_id=:transaction_id"
+    set hard_goods_total_cost [db_string hard_goods_cost_select "
+	select coalesce(sum(i.price_charged),0) - coalesce(sum(i.price_refunded),0) + 
+	    coalesce(sum(i.price_tax_charged),0) - coalesce(sum(i.shipping_refunded),0) +
+            coalesce(sum(i.shipping_charged),0) - coalesce(sum(i.shipping_refunded),0)  + 
+	    coalesce(sum(i.shipping_tax_charged),0) - coalesce(sum(i.shipping_tax_refunded),0)
+	from ec_items i, ec_products p
+	where i.order_id = :order_id
+	and i.item_state <> 'void'
+	and i.product_id = p.product_id
+	and p.no_shipping_avail_p = 'f'"]
+    set order_shipping [db_string get_order_shipping "
+	select coalesce(shipping_charged, 0)
+	from ec_orders
+	where order_id = :order_id"]
+    set order_shipping_tax [db_string get_order_shipping_tax "
+	select ec_tax(0, :order_shipping, :order_id)"]
+    set order_cost [expr $hard_goods_total_cost + $order_shipping + $order_shipping_tax]
+
+    # Verify that the shipment is for the entire order.
+
+    if {$shipment_cost == $order_cost} {
+
+	# The shipment could be for the entire order but it could also
+	# be that a partial shipment, return, and an addition of more
+	# items to the order by the site administrator maked the
+	# order_cost equal the shipment_cost.
+
+	# Get the amount that was authorized when the user placed the
+	# order. It could be that the customer instructed the
+	# administrator to add items to or remove items from the
+	# order. The transaction can only be marked for settlement if
+	# the shipment cost equals the authorized amount.
+
+	# Bart Teeuwisse: Many (all?) credit card gateways can settle
+	# a lower amount than the amount authorized but the ecommerce
+	# package is designed to always settle the authorized
+	# amount. ec_financial_transactions only stores 1 transaction
+	# amount and can thus not differentiate between the amount
+	# authorized and the amount to capture.
+
+	if {[string equal $shipment_cost [db_string authorized_amount_select "
+	    select transaction_amount
+	    from ec_financial_transactions
+	    where order_id = :order_id
+	    and to_be_captured_p is null
+	    and transaction_type = 'charge'" -default ""]]} {
+
+	    set transaction_id [db_string transaction_id_select "
+		select transaction_id
+		from ec_financial_transactions 
+		where order_id = :order_id
+		and to_be_captured_p is null
+		and transaction_type = 'charge'" -default ""]
+	    
+	    if { ![empty_string_p $transaction_id] } {
+		db_dml transaction_update "
+		    update ec_financial_transactions 
+		    set shipment_id=:shipment_id, to_be_captured_p='t', to_be_captured_date=sysdate
+		    where transaction_id=:transaction_id"
+		
+		# Mark the transaction
+
+		array set response [ec_creditcard_marking $transaction_id]
+		set mark_result $response(response_code)
+		set pgw_transaction_id $response(transaction_id)
+		if { [string equal $mark_result "invalid_input"]} {
+		    set problem_details "When trying to mark shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
+		    db_dml problems_log_insert "
+			insert into ec_problems_log
+			(problem_id, problem_date, problem_details, order_id)
+			values
+			(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+		} elseif {[string equal $mark_result "success"]} {
+		    db_dml transaction_success_update "
+			update ec_financial_transactions 
+			set marked_date=sysdate
+			where transaction_id = :pgw_transaction_id"
+		}
+
+		# Flag that no new transactions need to be
+		# created for this shipment.
+
+		set create_new_transaction false
 	    }
+	} else {
+	    
+	    # The shipment is a partial shipment but the
+	    # shipment cost equals the order cost. 
+
+	    set create_new_transaction false
 	}
     } else {
-	if { $shipment_cost >= 0 } {
-	    # 1. add a row to ec_financial_transactions with to_be_captured_p and to_be_captured_date set
-	    # 2. do a new authorization
-	    # 3. mark transaction
-	    
-	    # Note: 1 is the only one we want to do inside the transaction; if 2 & 3 fail, they will be
-	    # tried later with a cron job (they involve talking to CyberCash, so you never know what will
-	    # happen with them)
-	    
-	    # Get id for the new transaction.
-	    set transaction_id [db_nextval ec_transaction_id_sequence]
-	    # 1999-08-11: added shipment_id to the insert
-	    
-	    db_dml transaction_insert "insert into ec_financial_transactions
-      (transaction_id, order_id, shipment_id, transaction_amount, transaction_type, to_be_captured_p, inserted_date, to_be_captured_date)
-      values
-      (:transaction_id, :order_id, :shipment_id, :shipment_cost, 'charge','t',sysdate, sysdate)
-      "
+	set create_new_transaction true
+    }
 
-	    # CyberCash stuff
-	    # this attempts an auth and returns failed_authorization, authorized_plus_avs, authorized_minus_avs, no_recommendation, or invalid_input
-	    set cc_result [ec_creditcard_authorization $order_id $transaction_id]
-	    if { $cc_result == "failed_authorization" || $cc_result == "invalid_input" } {
-		set problem_details "When trying to authorize shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $cc_result"
+    # Create new financial transactions as needed and process them.
+
+    if { $create_new_transaction } {
+
+	# 1. add a row to ec_financial_transactions with
+	#    to_be_captured_p and to_be_captured_date set
+	# 2. do a new authorization
+	# 3. mark transaction
+	
+	# Get id for the new transaction.
+
+	set transaction_id [db_nextval ec_transaction_id_sequence]
+	db_dml transaction_insert "
+		insert into ec_financial_transactions
+      		(transaction_id, order_id, shipment_id, transaction_amount, transaction_type, to_be_captured_p, inserted_date, to_be_captured_date)
+      		values
+      		(:transaction_id, :order_id, :shipment_id, :shipment_cost, 'charge', 't', sysdate, sysdate)"
+
+	# Authorize the transaction, ec_creditcard_authorization
+	# returns failed_authorization, authorized,
+	# no_recommendation, or invalid_input.
+
+	array set response [ec_creditcard_authorization $order_id $transaction_id]
+	set result $response(response_code)
+	set pgw_transaction_id $response(transaction_id)
+	if {[string equal $result "failed_authorization"] || [string equal $result "invalid_input"]} {
+	    set problem_details "When trying to authorize shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $result"
+	    db_dml problems_insert "
+		    insert into ec_problems_log
+		    (problem_id, problem_date, problem_details, order_id)
+		    values
+		    (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+
+	    if { [ad_parameter -package_id [ec_id] DisplayTransactionMessagesDuringFulfillmentP ecommerce] } {
+		ad_return_warning "Credit Card Failure" "
+		    <p>Warning: the credit card authorization for this shipment (shipment_id $shipment_id) of order_id $order_id failed.</p>
+		    <p>You may wish to abort the shipment (if possible) until this is issue is resolved. A note has been made in the problems log.</p>
+		    <p><a href=\"fulfillment\">Continue with order fulfillment.</a></p>"
+		return
+	    }
+	    if {[string equal $result "failed_p"]} {
+		db_dml transaction_failed_update "
+			update ec_financial_transactions 
+			set failed_p='t' 
+			where transaction_id=:transaction_id"
+	    }
+	} elseif {[string equal $result "authorized"]} {
+
+	    # Put authorized_date into ec_financial_transacions.
+
+	    db_dml transaction_authorized_update "
+			update ec_financial_transactions
+			set authorized_date=sysdate 
+			where transaction_id=:pgw_transaction_id"
+
+	    # Mark the transaction.
+
+	    array set response [ec_creditcard_marking $pgw_transaction_id]
+	    set mark_result $response(response_code)
+	    set pgw_transaction_id $response(transaction_id)
+	    if {[string equal $mark_result "invalid_input"]} {
+		set problem_details "When trying to mark shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
 		db_dml problems_insert "
-	insert into ec_problems_log
-	(problem_id, problem_date, problem_details, order_id)
-	values
-	(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-	"
-
-		if { [ad_parameter -package_id [ec_id] DisplayTransactionMessagesDuringFulfillmentP ecommerce] } {
-		    ad_return_warning "Credit Card Failure" "Warning: the credit card authorization for this shipment (shipment_id $shipment_id) of order_id $order_id failed.  You may wish to abort the shipment (if possible) until this is issue is resolved.  A note has been made in the problems log.<p><a href=\"fulfillment\">Continue with order fulfillment.</a>"
-		    return
-		}
-		if { $cc_result == "failed_p" } {
-		    db_dml transaction_failed_update "update ec_financial_transactions set failed_p='t' where transaction_id=:transaction_id"
-		}
-	    } elseif { $cc_result == "authorized_plus_avs" || $cc_result == "authorized_minus_avs" } {
-		# put authorized_date into ec_financial_transacions
-		db_dml transaction_authorized_udpate "update ec_financial_transactions set authorized_date=sysdate where transaction_id=:transaction_id"
-		# try to mark the transaction
-		set cc_mark_result [ec_creditcard_marking $transaction_id]
-		ns_log Notice "fulfill-3.tcl: cc_mark_result is $cc_mark_result"
-		if { $cc_mark_result == "invalid_input" } {
-		    set problem_details "When trying to mark shipment $shipment_id (transaction $transaction_id) at [ad_conn url], the following result occurred: $cc_mark_result"
-		    db_dml problems_insert "insert into ec_problems_log
-	  (problem_id, problem_date, problem_details, order_id)
-	  values
-	  (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)
-	  "
-		} elseif { $cc_mark_result == "success" } {
-		    db_dml transaction_success_update "update ec_financial_transactions set marked_date=sysdate where transaction_id=:transaction_id"
-		}
+			insert into ec_problems_log
+	  		(problem_id, problem_date, problem_details, order_id)
+	  		values
+	  		(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+	    } elseif {[string equal $mark_result "success"]} {
+		db_dml transaction_success_update "
+			update ec_financial_transactions 
+			set marked_date = sysdate
+			where transaction_id=:pgw_transaction_id"
 	    }
 	}
     }
 }
 
-# send the "Order Shipped" email iff it was a shippable order
+# Send the "Order Shipped" email if it was a shippable order
 
 if { $shippable_p } {
     ec_email_order_shipped $shipment_id
 }
-
 ad_returnredirect "fulfillment"

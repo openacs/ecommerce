@@ -1,11 +1,10 @@
-#  www/[ec_url_concat [ec_url] /admin]/products/sale-prices.tcl
 ad_page_contract {
-  Let's site admin define a special time-limited price for an item.
+    Let's site admin define a special time-limited price for an item.
 
-  @author Eve Andersson (eveander@arsdigita.com) 
-  @creation-date June 1999
-  @cvs-id sale-prices.tcl,v 3.1.6.3 2000/08/18 20:23:47 stevenp Exp
-  @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author Eve Andersson (eveander@arsdigita.com) 
+    @creation-date June 1999
+    @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
 } {
   product_id:integer,notnull
   price:optional
@@ -46,6 +45,8 @@ proc ec_write_out_one_sale {} {
     }
 }
 
+set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
+
 doc_body_append "[ad_admin_header "Sale Prices for $product_name"]
 
 <h2>Sale Price for $product_name</h2>
@@ -53,11 +54,18 @@ doc_body_append "[ad_admin_header "Sale Prices for $product_name"]
 [ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" "One"] "Sale Prices"]
 
 <hr>
+"
+if {[info exists price]} {
+    doc_body_append "
+	<h3>Regular Price</h3>
+	<blockquote>
+	  Regular: [ec_pretty_price $price $currency]
+	</blockquote>"
+}
+doc_body_append "
 <h3>Current Sale Prices</h3>
 <ul>
 "
-set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
-
 
 set sale_price_counter 0
 db_foreach current_sales_select "select sale_price_id, sale_name, sale_price, offer_code, to_char(sale_begins,'YYYY-MM-DD HH24:MI:SS') as sale_begins, to_char(sale_ends,'YYYY-MM-DD HH24:MI:SS') as sale_ends, decode(sign(sysdate-sale_begins),1,1,0) as sale_begun_p, decode(sign(sysdate-sale_ends),1,1,0) as sale_expired_p

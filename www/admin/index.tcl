@@ -14,8 +14,12 @@ ad_require_permission [ad_conn package_id] admin
 doc_body_append "[ad_admin_header "[ec_system_name] Administration"]
 
 <h2>[ec_system_name] Administration</h2>
-
-[ad_admin_context_bar Ecommerce([ec_system_name])]
+<table width=\"100%\">
+  <tr>
+   <td>[ad_admin_context_bar Ecommerce([ec_system_name])]</td>
+   <td align=\"right\">\[ <a href=\"/doc/ecommerce/\">help</a> \]</td>
+  </tr>
+</table>
 
 <hr>
 Documentation: <a href=\"/doc/ecommerce\">/doc/ecommerce</a> or <a href=\"[ec_url]doc/\">[ec_url]doc/</a>

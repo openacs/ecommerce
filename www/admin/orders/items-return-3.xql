@@ -3,38 +3,24 @@
 
   <fullquery name="get_count_refunds">      
     <querytext>
-      select count(*) from ec_refunds where refund_id=:refund_id
+      select count(*) 
+      from ec_refunds 
+      where refund_id=:refund_id
     </querytext>
   </fullquery>
 
-  <fullquery name="get_items_for_return">      
+  <fullquery name="get_billing_info">      
     <querytext>
-      select i.item_id, p.product_name, coalesce(i.price_charged,0) as price_charged, coalesce(i.shipping_charged,0) as shipping_charged, coalesce(i.price_tax_charged,0) as price_tax_charged, coalesce(i.shipping_tax_charged,0) as shipping_tax_charged
-      from ec_items i, ec_products p
-      where i.product_id=p.product_id
-      and i.item_id in ([join $item_id_list ", "])
+      select c.creditcard_id, c.creditcard_type, c.creditcard_number, c.creditcard_last_four, 
+	  c.creditcard_expire as card_expiration, 
+	  p.first_names || ' ' || p.last_name as card_name,
+	  a.line1 as billing_street, a.city as billing_city, a.usps_abbrev as billing_state, a.zip_code as billing_zip, a.country_code as billing_country
+      from ec_orders o, ec_creditcards c, persons p, ec_addresses a 
+      where o.creditcard_id = c.creditcard_id
+      and c.billing_address=a.address_id 
+      and c.user_id = p.person_id
+      and o.order_id=:order_id
     </querytext>
   </fullquery>
-  
-  <fullquery name="get_shipping_charged_values">      
-    <querytext>
-      select coalesce(shipping_charged,0) - coalesce(shipping_refunded,0) as base_shipping, coalesce(shipping_tax_charged,0) - coalesce(shipping_tax_refunded,0) as base_shipping_tax from ec_orders where order_id=:order_id
-    </querytext>
-  </fullquery>
-
-  
-  <fullquery name="get_cc_number">      
-    <querytext>
-      select creditcard_number from ec_orders o, ec_creditcards c where o.creditcard_id=c.creditcard_id and o.order_id=:order_id
-    </querytext>
-  </fullquery>
-
-  
-  <fullquery name="get_zip_code">      
-    <querytext>
-      select zip_code from ec_orders o, ec_addresses a where o.shipping_address=a.address_id and o.order_id=:order_id
-    </querytext>
-  </fullquery>
-
   
 </queryset>

@@ -1,4 +1,3 @@
-#  www/ecommerce/category-browse.tcl
 ad_page_contract {
 
     This one file is used to browse not only categories, but also subcategories and subsubcategories.
@@ -12,10 +11,11 @@ ad_page_contract {
 
     @author
     @creation-date
-    @cvs-id category-browse.tcl,v 3.2.2.7 2000/08/18 21:46:31 stevenp Exp
     @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @revision-date May 2002
 } {
-    category_id:notnull,naturalnum
+    category_id:optional,naturalnum
     subcategory_id:optional,naturalnum
     subsubcategory_id:optional,naturalnum
     {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
@@ -23,16 +23,45 @@ ad_page_contract {
     usca_p:optional
 }
 
+# Redirect the visitor the store home page if no category_id has been
+# selected.
 
-proc ident {x} {return $x}
-proc have {var} { upvar $var x; return [expr {[info exists x] && [string compare $x "0"] != 0}]}
-proc in_subcat    {} {return [uplevel {have subcategory_id}]}
-proc in_subsubcat {} {return [uplevel {have subsubcategory_id}]}
-proc at_bottom_level_p {} {return [uplevel in_subsubcat]}
+if {![info exists category_id] || ([info exists category_id] && [empty_string_p $category_id])} {
+    ad_returnredirect index
+}
+
+proc ident {x} {
+    return $x
+}
+
+proc have {var} { 
+    upvar $var x
+    return [expr {[info exists x] && [string compare $x "0"] != 0}]
+}
+
+proc in_subcat    {} {
+    return [uplevel {have subcategory_id}]
+}
+
+proc in_subsubcat {} {
+    return [uplevel {have subsubcategory_id}]
+}
+
+proc at_bottom_level_p {} {
+    return [uplevel in_subsubcat]
+}
 
 set sub ""
-if [in_subcat]    {append sub "sub"} else {set subcategory_id 0}
-if [in_subsubcat] {append sub "sub"} else {set subsubcategory_id 0}
+if {[in_subcat]} {
+    append sub "sub"
+} else {
+    set subcategory_id 0
+}
+if {[in_subsubcat]} {
+    append sub "sub"
+} else {
+    set subsubcategory_id 0
+}
 
 set product_map()       "ec_category_product_map"
 set product_map(sub)    "ec_subcategory_product_map"
@@ -59,22 +88,34 @@ if { $user_id != 0 } {
 # 4. Log this category_id into the user session
 
 ec_create_new_session_if_necessary [export_url_vars category_id subcategory_id subsubcategory_id how_many start] cookies_are_not_required
-# type4
 
 if { [string compare $user_session_id "0"] != 0 } {
-    db_dml grab_new_session_id "insert into ec_user_session_info (user_session_id, category_id) values (:user_session_id, :category_id)"
+    db_dml grab_new_session_id "
+	insert into ec_user_session_info
+	(user_session_id, category_id)
+	values 
+	(:user_session_id, :category_id)"
 }
 
-set category_name [db_string get_category_name "select category_name from ec_categories where category_id=:category_id"]
+set category_name [db_string get_category_name "
+    select category_name 
+    from ec_categories
+    where category_id=:category_id"]
 
 set subcategory_name ""
 if [have subcategory_id] {
-    set subcategory_name [db_string get_subcat_name "select subcategory_name from ec_subcategories where subcategory_id=:subcategory_id"]
+    set subcategory_name [db_string get_subcat_name "
+	select subcategory_name
+	from ec_subcategories
+	where subcategory_id = :subcategory_id"]
 }
 
 set subsubcategory_name ""
 if [have subsubcategory_id] {
-    set subsubcategory_name [db_string get_subsubcat_name "select subsubcategory_name from ec_subsubcategories where subsubcategory_id=:subsubcategory_id"]
+    set subsubcategory_name [db_string get_subsubcat_name "
+	select subsubcategory_name
+	from ec_subsubcategories 
+	where subsubcategory_id = :subsubcategory_id"]
 }
 
 #==============================
@@ -82,10 +123,7 @@ if [have subsubcategory_id] {
 
 # Recommended products in this category
 
-set recommendations ""
-
-set header_to_print "<b>We Recommend</b><p>"
-set header_printed 0
+set recommendations "<table width=100%>"
 
 if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
@@ -93,33 +131,31 @@ if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
     set user_class_approved_p_clause ""
 }
 
-db_foreach get_recommended_products "select 
- p.product_name, p.product_id, p.dirname, r.recommendation_text
-from ec_products_displayable p, ec_product_recommendations r
-where p.product_id = r.product_id
-and r.${sub}category_id=:${sub}category_id
-and r.active_p='t'
-and (r.user_class_id is null or r.user_class_id in 
-      (select user_class_id 
-       from ec_user_class_user_map m 
-       where user_id=:user_id
-       $user_class_approved_p_clause))
-order by p.product_name" {
+db_foreach get_recommended_products "
+    select p.product_id, p.product_name, p.dirname, r.recommendation_text, o.offer_code
+    from ec_product_recommendations r, ec_products_displayable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
+    where p.product_id = r.product_id
+    and r.${sub}category_id=:${sub}category_id
+    and r.active_p='t'
+    and (r.user_class_id is null or r.user_class_id in (select user_class_id 
+							from ec_user_class_user_map m 
+							where user_id=:user_id
+							$user_class_approved_p_clause))
+    order by p.product_name" {
 
-    if { !$header_printed } {
-	append recommendations $header_to_print
-	incr header_printed
-    }
-    append recommendations "<table>
-<tr>
-<td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
-<td valign=top><a href=\"product?[export_url_vars product_id]\">$product_name</a>
-<p>
-$recommendation_text
-</td>
-</tr>
-</table>
-"
+    append recommendations "
+	  <tr>
+	    <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
+	    <td valign=top><a href=\"product?[export_url_vars product_id]\">$product_name</a>
+	      <p>$recommendation_text</p>
+	    </td>
+	    <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
+         </tr>"
+}
+if {[string equal $recommendations "<table width=100%>"]} {
+    set recommendations ""
+} else {
+    append recommendations "</table>"
 }
 
 #==============================
@@ -129,35 +165,45 @@ $recommendation_text
 
 set exclude_subproducts ""
 if ![at_bottom_level_p] {
-  set exclude_subproducts "
-and not exists (
-select 'x' from $product_map(sub$sub) s, ec_sub${sub}categories c
-                 where p.product_id = s.product_id
-                   and s.sub${sub}category_id = c.sub${sub}category_id
-                   and c.${sub}category_id = :${sub}category_id)
-"
+    set exclude_subproducts "
+	and not exists (select 'x' from $product_map(sub$sub) s, ec_sub${sub}categories c
+			where p.product_id = s.product_id
+			and s.sub${sub}category_id = c.sub${sub}category_id
+			and c.${sub}category_id = :${sub}category_id)"
 }
 
-set products ""
+set products "<table width=90%>"
 
 set have_how_many_more_p f
 set count 0
 
-db_foreach get_regular_product_list "select p.product_id, p.product_name, p.one_line_description
-from ec_products_searchable p, $product_map($sub) m
-where p.product_id = m.product_id
-and m.${sub}category_id = :${sub}category_id
-$exclude_subproducts
-order by p.product_name
-" {
+db_foreach get_regular_product_list "
+    select p.product_id, p.product_name, p.one_line_description, o.offer_code
+    from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
+    where p.product_id = m.product_id
+    and m.${sub}category_id = :${sub}category_id
+    $exclude_subproducts
+    order by p.product_name" {
 
     if { $count >= $start && [expr $count - $start] < $how_many } {
 
-	append products "<table><tr valign=top><td>[expr $count + 1]</td><td><a href=\"product?product_id=$product_id\"><b>$product_name</b></a><br>$one_line_description</td></tr></table>\n"
+	append products "
+	      <tr valign=top>
+	        <td>[expr $count + 1]</td>
+	        <td colspan=2><a href=\"product?product_id=$product_id\"><b>$product_name</b></a></td>
+	      </tr>
+	      <tr valign=top>
+		<td></td>
+		<td>$one_line_description</td>
+		<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
+	      </tr>"
     }
     incr count
     if { $count > [expr $start + (2 * $how_many)] } {
-	# we know there are at least how_many more items to display next time
+
+	# We know there are at least how_many more items to display
+	# next time
+
 	set have_how_many_more_p t
 	break
     } else {
@@ -165,7 +211,7 @@ order by p.product_name
     }
 }
 
-append products ""
+append products "</table>"
 
 if { $start >= $how_many } {
     set prev_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]>Previous $how_many</a>"
@@ -195,25 +241,20 @@ if { [empty_string_p $next_link] || [empty_string_p $prev_link] } {
 
 set subcategories ""
 if ![at_bottom_level_p] {
-  db_foreach get_subcategories "
-SELECT * from ec_sub${sub}categories c
- WHERE ${sub}category_id = :${sub}category_id
-   AND exists (
-       SELECT 'x' from ec_products_displayable p, $product_map(sub$sub) s
-        where p.product_id = s.product_id
-          and s.sub${sub}category_id = c.sub${sub}category_id
-     )
- ORDER BY sort_key, sub${sub}category_name
-" {
+    db_foreach get_subcategories "
+	select * from ec_sub${sub}categories c
+	where ${sub}category_id = :${sub}category_id
+	and exists (select 'x' from ec_products_displayable p, $product_map(sub$sub) s
+		    where p.product_id = s.product_id
+		    and s.sub${sub}category_id = c.sub${sub}category_id)
+	order by sort_key, sub${sub}category_name" {
 
-  
-      append subcategories "<li><a href=category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]>[eval "ident \$sub${sub}category_name"]</a>"
+	append subcategories "
+	    <li><a href=category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]>[eval "ident \$sub${sub}category_name"]</a></li>"
   }
 }
 
 set the_category_id   [eval "ident \$${sub}category_id"]
 set the_category_name [eval "ident \$${sub}category_name"]
 db_release_unused_handles
-ec_return_template
-
-
+ad_return_template

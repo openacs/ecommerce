@@ -1,13 +1,19 @@
-#  www/ecommerce/mailing-list-add-2.tcl
 ad_page_contract {
+
+    Add the visitor to the selected mailing list. Mailling list are
+    organized by (sub)(sub)categories.
+
     @param category_id:integer
     @param subcategory_id:optional
     @param subsubcategory_id:optional
     @param usca_p:optional
+
     @author
     @creation-date
-    @cvs-id mailing-list-add-2.tcl,v 3.4.2.7 2000/08/18 21:46:34 stevenp Exp
     @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @revision-date April 2002
+
 } {
     category_id:integer,notnull
     subcategory_id:integer,optional
@@ -15,15 +21,9 @@ ad_page_contract {
     usca_p:optional
 }
 
-
-
-
 set user_id [ad_verify_and_get_user_id]
-
 if {$user_id == 0} {
-    
     set return_url "[ad_conn url]?[export_form_vars category_id subcategory_id subsubcategory_id]"
-
     ad_returnredirect "/register?[export_url_vars return_url]"
     return
 }
@@ -31,9 +31,7 @@ if {$user_id == 0} {
 # user session tracking
 set user_session_id [ec_get_user_session_id]
 
-
 ec_create_new_session_if_necessary [export_entire_form_as_url_vars]
-# type2
 
 if { ![info exists subcategory_id] || [empty_string_p $subcategory_id] } {
     set check_string "select count(*) from ec_cat_mailing_lists where user_id=:user_id and category_id=:category_id and subcategory_id is null"
@@ -63,4 +61,4 @@ set remove_link "<a href=\"mailing-list-remove?[export_url_vars category_id subc
 set continue_shopping_options [ec_continue_shopping_options]
 db_release_unused_handles
 
-ec_return_template
+ad_return_template

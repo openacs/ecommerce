@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 
 <queryset>
-  <rdbms><type>postgresql</type><version>7.1</version></rdbms>
+  <rdbms>
+    <type>postgresql</type>
+    <version>7.1</version>
+  </rdbms>
 
   <fullquery name="ec_email_new_order.email_info_select">      
     <querytext>

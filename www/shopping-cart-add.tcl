@@ -1,5 +1,5 @@
-#  www/ecommerce/shopping-cart-add.tcl
 ad_page_contract {
+
     This adds an item to an 'in_basket' order, although if there
     exists a 'confirmed' order for this user_session_id, the user is
     told they have to wait because 'confirmed' orders can potentially
@@ -17,10 +17,13 @@ ad_page_contract {
     @param color_choice
     @param style_choice
     @param usca_p:optional
+
     @author
     @creation-date
-    @cvs-id shopping-cart-add.tcl,v 3.3.2.6 2000/08/17 18:01:28 seb Exp
     @author ported by Jerry Asher (jerry@theashergroup.com)
+    @author revised by Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @revision-date April 2002
+
 } { 
     product_id:integer
     size_choice
@@ -41,56 +44,82 @@ ad_page_contract {
 
 set user_session_id [ec_get_user_session_id]
 ec_create_new_session_if_necessary [export_url_vars product_id]
-set n_confirmed_orders [db_string get_n_confirmed_orders "select count(*) from ec_orders where user_session_id=:user_session_id and order_state='confirmed'"]
+set n_confirmed_orders [db_string get_n_confirmed_orders "
+    select count(*) 
+    from ec_orders 
+    where user_session_id = :user_session_id
+    and order_state = 'confirmed'"]
 if { $n_confirmed_orders > 0 } {
-    ad_return_complaint 1 "Sorry, you have an order for which credit card authorization has not yet taken place. Please wait for the authorization to complete before adding new items to your shopping cart. Thank you."
+    ad_return_complaint 1 "
+	<p>Sorry, you have an order for which credit card authorization has not yet taken place. 
+	Please wait for the authorization to complete before adding new items to your shopping cart.</p>
+	<p>Thank you.</p>"
     return
 }
 
-set order_id [db_string get_order_id "select order_id from ec_orders where user_session_id=:user_session_id and order_state='in_basket'"  -default ""]
+set order_id [db_string get_order_id "
+    select order_id
+    from ec_orders
+    where user_session_id = :user_session_id
+    and order_state = 'in_basket'"  -default ""]
 
-# Here's the airtight way to do it: do the check on order_id, then insert
-# a new order where there doesn't exist an old one, then set order_id again
-# (because the correct order_id might not be the one set inside the if 
-# statement).  It should now be impossible for order_id to be the empty
-# string (if it is, log the error and redirect them to product.tcl).
+# Here's the airtight way to do it: do the check on order_id, then
+# insert a new order where there doesn't exist an old one, then set
+# order_id again (because the correct order_id might not be the one
+# set inside the if statement).  It should now be impossible for
+# order_id to be the empty string (if it is, log the error and
+# redirect them to product.tcl).
 
 if { [empty_string_p $order_id] } {
     set order_id [db_nextval ec_order_id_sequence]
-    # create the order (iff an in_basket order *still* doesn't exist)
-    db_dml insert_new_ec_order "insert into ec_orders
-    (order_id, user_session_id, order_state, in_basket_date)
-    select :order_id, :user_session_id, 'in_basket', sysdate from dual
-    where not exists (select 1 from ec_orders where user_session_id=:user_session_id and order_state='in_basket')"
+  
+    # Create the order (if an in_basket order *still* doesn't exist)
 
-    # now either an in_basket order should have been inserted by the above
-    # statement or it was inserted by a different thread milliseconds ago
-    set order_id [db_string  get_order_id "select order_id from ec_orders where user_session_id=:user_session_id and order_state='in_basket'" -default ""]
+    db_dml insert_new_ec_order "
+	insert into ec_orders
+	(order_id, user_session_id, order_state, in_basket_date)
+	select :order_id, :user_session_id, 'in_basket', sysdate from dual
+	where not exists (select 1 from ec_orders where user_session_id=:user_session_id and order_state='in_basket')"
+
+    # Now either an in_basket order should have been inserted by the
+    # above statement or it was inserted by a different thread
+    # milliseconds ago
+
+    set order_id [db_string  get_order_id "
+	select order_id
+	from ec_orders
+	where user_session_id = :user_session_id
+	and order_state = 'in_basket'" -default ""]
     if { [empty_string_p $order_id] } {
-	# I don't expect this to ever happen, but just in case, I'll log
-	# the problem and redirect them to product.tcl
+
+	# I don't expect this to ever happen, but just in case, I'll
+	# log the problem and redirect them to product.tcl
+
 	set errormsg "Null order_id on shopping-cart-add.tcl for user_session_id :user_session_id.  Please report this problem to [ec_package_maintainer]."
-	db_dml insert_problem_into_log "insert into ec_problems_log
-  	  (problem_id, problem_date, problem_details)
-	  values
-	  (ec_problem_id_sequence.nextval, sysdate,:errormsg)"
+	db_dml insert_problem_into_log "
+	    insert into ec_problems_log
+	    (problem_id, problem_date, problem_details)
+	    values
+	    (ec_problem_id_sequence.nextval, sysdate,:errormsg)"
 	ad_returnredirect "product?[export_url_vars product_id]"
 	return
     }
 }
 
-# Insert an item into that order if an identical item doesn't
-# exist (this is double click protection).
-# If they want to update quantities, they can do so from the
-# shopping cart page.
+# Insert an item into that order if an identical item doesn't exist
+# (this is double click protection).  If they want to update
+# quantities, they can do so from the shopping cart page.  
+
 # Bart Teeuwisse: Fine tuned the postgresql version to only reject
 # items that were added to the shopping cart in the last 5 seconds.
-# That should be enough to protect from double clicks yet provides
-# a more intuitive user experience.
+# That should be enough to protect from double clicks yet provides a
+# more intuitive user experience.
 
-db_dml insert_new_item_in_order "insert into ec_items
-  (item_id, product_id, color_choice, size_choice, style_choice, order_id, in_cart_date)
-  (select ec_item_id_sequence.nextval, :product_id, :color_choice, :size_choice, :style_choice, :order_id, sysdate from dual
-   where not exists (select 1 from ec_items where order_id=:order_id and product_id=:product_id and color_choice  [ec_decode $color_choice "" "is null" "= :color_choice"]  and size_choice [ec_decode $size_choice "" "is null" "= :size_choice"] and style_choice [ec_decode $style_choice "" "is null" "= :style_choice"]))"
+db_dml insert_new_item_in_order "
+    insert into ec_items
+    (item_id, product_id, color_choice, size_choice, style_choice, order_id, in_cart_date)
+    (select ec_item_id_sequence.nextval, :product_id, :color_choice, :size_choice, :style_choice, :order_id, sysdate from dual
+     where not exists (select 1 from ec_items where order_id=:order_id and product_id=:product_id and color_choice  [ec_decode $color_choice "" "is null" "= :color_choice"]  and size_choice [ec_decode $size_choice "" "is null" "= :size_choice"] and style_choice [ec_decode $style_choice "" "is null" "= :style_choice"]))"
+
 db_release_unused_handles
 ad_returnredirect shopping-cart.tcl?[export_url_vars product_id]
