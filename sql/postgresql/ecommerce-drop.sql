@@ -267,3 +267,4 @@ drop sequence ec_template_id_seq;
 \i pl-sql-utilities-drop.sql
 \i ec-product-package-drop.sql
 \i acs-geo-tables-drop.sql
+\i ec-products-sc-drop.sql
