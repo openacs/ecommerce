@@ -3,7 +3,7 @@
 
 <fullquery name="num_non_void_items_select">      
       <querytext>
-      select count(*) from ec_items where order_id=:order_id and product_id=:product_id and item_state<>'void'
+      select count(*) from ec_items where order_id=:order_id and product_id=:product_id and item_state <> 'void'
       </querytext>
 </fullquery>
 

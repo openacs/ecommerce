@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <queryset>
+  <rdbms><type>postgresql</type><version>7.1</version></rdbms>
 
   <fullquery name="product_check">      
     <querytext>
       select product_id from ec_products 
-      where sku = :sku;
+      where sku = :sku
     </querytext>
   </fullquery>
 
