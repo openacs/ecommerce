@@ -9,14 +9,14 @@
 <blockquote>
   <if @page_function@ eq "view">
     <form method=post action="shopping-cart-retrieve-3">
-      @hidden_form_variables@
+      @hidden_form_variables;noquote@
       <input type=submit name=submit value="Retrieve">
       <input type=submit name=submit value="Discard">
     </form>
     <center>
       <p>Saved on @saved_date@</p>
       <table border=0 cellspacing=0 cellpadding=5>
-	@shopping_cart_items@
+	@shopping_cart_items;noquote@
       </table>
     </center>
     <if @product_counter@ eq 0>
@@ -40,7 +40,7 @@
 
   <if @page_function@ eq "discard">
     <form method=post action="shopping-cart-retrieve-3">
-    @hidden_form_variables@
+    @hidden_form_variables;noquote@
     <p>If you discard this shopping cart, it will never be
     retrievable.  Are you sure you want to discard it?</p>
     <center>

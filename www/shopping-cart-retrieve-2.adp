@@ -8,5 +8,5 @@
 
 <blockquote>
   <p>Your saved shopping cart(s):</p>
-  @saved_carts@
+  @saved_carts;noquote@
 </blockquote>
