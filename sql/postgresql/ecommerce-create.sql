@@ -25,6 +25,10 @@
 -- They have an column for each column of the main table, plus
 -- a column for marking when a logged entry was for a deleted row.
 
+-- gilbertw: acs-references is not complete yet.  use old acs-geo-tables until
+-- acs-references is done
+\i acs-geo-tables-create.sql
+
 -- product display templates
 create sequence ec_template_id_seq start 2;
 create view ec_template_id_sequence as select nextval('ec_template_id_seq') as nextval;
