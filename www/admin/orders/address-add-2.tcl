@@ -18,7 +18,7 @@ ad_page_contract {
     {usps_abbrev ""}
     {full_state_name ""}
     zip_code
-    {country_code "us"}
+    {country_code "US"}
     phone
     phone_time
 }

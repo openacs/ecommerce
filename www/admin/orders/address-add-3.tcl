@@ -10,7 +10,7 @@ ad_page_contract {
 
 } {
     order_id:integer,notnull
-    creditcard_id:integer,optional
+    {creditcard_id:integer ""}
     attn
     line1
     line2
@@ -18,14 +18,14 @@ ad_page_contract {
     {usps_abbrev ""}
     {full_state_name ""}
     zip_code
-    {country_code "us"}
+    {country_code "US"}
     phone
     phone_time
 }
 
 ad_require_permission [ad_conn package_id] admin
 
-if {![info exists creditcard_id] || ([info exists creditcard_id] && [empty_string_p $creditcard_id])} {
+if {[empty_string_p $creditcard_id]} {
 
     # Insert the address into ec_addresses, update the address in
     # ec_orders
