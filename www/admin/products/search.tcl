@@ -1,21 +1,22 @@
 #  www/[ec_url_concat [ec_url] /admin]/products/search.tcl
 ad_page_contract {
-  Search for a product based on name or id.
+  Search for a product based on name or sku.
 
   @author Eve Andersson (eveander@arsdigita.com)
+  @author Bart Teeuwisse (bart.teeuwisse@7-sisters.com)
   @creation-date Summer 1999
   @cvs-id search.tcl,v 3.2.2.2 2000/07/22 07:57:45 ron Exp
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
-  product_id:integer,notnull,optional
+  sku:notnull,optional
   product_name:optional
 }
 
 ad_require_permission [ad_conn package_id] admin
 
-if { [info exists product_id] } {
-    set additional_query_part "product_id=:product_id"
-    set description "Products with id #$product_id:"
+if { [info exists sku] } {
+    set additional_query_part "sku=:sku"
+    set description "Products with SKU #$sku:"
 } else {
     set product_name_search $product_name
     set additional_query_part "upper(product_name) like '%' || upper(:product_name_search) || '%'"
