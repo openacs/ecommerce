@@ -1418,7 +1418,7 @@ ad_proc -private ec_create_new_session_if_necessary {
 
 		db_dml insert_user_session $__sql
                 
-                set cookie_name  user_session_id
+                set cookie_name  "user_session_id"
                 set cookie_value $user_session_id
                 
                 set usca_p "t"
@@ -1439,22 +1439,25 @@ ad_proc -private ec_create_new_session_if_necessary {
                 # cookies haven't been set!  visitor has been here
                 # before previous attempt made
                 
-                if {[string compare $_ec_cookie_requirement "cookies_are_required"] ==0} {
-                    
+                if {[string compare $_ec_cookie_requirement "cookies_are_required"] == 0} {
+
+                    ns_log Notice "ec_create_new_session_if_necessary(ref 1): requested user to accept cookies."
+
                     ad_return_complaint 1 "
                     You need to have cookies turned on so that we can
                     remember what you have in your shopping cart.  Please turn on cookies
                     in your browser.
-
                     "
                 } elseif {[string compare $_ec_cookie_requirement "cookies_are_not_required"] == 0} {
                     
                     # For this page continue
 
-                    ns_log debug "ec_create_session cookies are off but that's okay, they aren't required"
+                    ns_log Notice "ec_create_new_session_if_necessary: ec_create_session cookies are off but that's okay, they aren't required."
                     
                 } elseif {[string compare $_ec_cookie_requirement "shopping_cart_required"] == 0} {
-                    
+
+                    ns_log Warning "ec_create_new_session_if_necessary(ref 2): requested user to accept cookies, nothing found in cart."
+
                     ad_return_error "No Cart Found"  "
 			<h2>No Shopping Cart Found</h2>
 			<p> We could not find any shopping cart for you.  This may be because you have cookies 
@@ -1534,3 +1537,17 @@ ad_proc ec_IllustraDatetoPrettyDate {sql_date} { date to pretty date } {
 
 }
 
+ad_proc ec_max_of_list {
+    listofargs
+} {
+    finds max value from a list of values
+} {
+    set args [split $listofargs]
+    set max [lindex $args 0]
+    foreach arg $args {
+        if { $arg > $max } {
+            set max $arg
+        }
+    }
+    return $max
+}
