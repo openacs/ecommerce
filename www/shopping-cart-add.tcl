@@ -26,11 +26,13 @@ ad_page_contract {
 
 } { 
     product_id:integer
-    size_choice
-    color_choice
-    style_choice
+    {size_choice ""}
+    {color_choice ""}
+    {style_choice ""}
     usca_p:optional
 }
+# added default values to above params so that this page works
+# when a post from a form to shopping-cart-add originates from another domain.
 
 # 1. get user_session_id
 # 1.5 see if there exists a 'confirmed' order for this user_session_id
@@ -54,6 +56,7 @@ if { $n_confirmed_orders > 0 } {
 	<p>Sorry, you have an order for which credit card authorization has not yet taken place. 
 	Please wait for the authorization to complete before adding new items to your shopping cart.</p>
 	<p>Thank you.</p>"
+    ns_log Warning "shopping-cart-add.tcl,line59: User tried to add an item to the shopping cart after making a purchase, but was rejected!"
     ad_script_abort
 }
 
@@ -70,7 +73,7 @@ set order_id [db_string get_order_id "
 # order_id to be the empty string (if it is, log the error and
 # redirect them to product.tcl).
 
-if { [empty_string_p $order_id] } {
+if { [value_if_exists order_id] < 1 || [ad_var_type_check_number_p $order_id] == 0 } {
     set order_id [db_nextval ec_order_id_sequence]
   
     # Create the order (if an in_basket order *still* doesn't exist)
@@ -79,7 +82,7 @@ if { [empty_string_p $order_id] } {
 	insert into ec_orders
 	(order_id, user_session_id, order_state, in_basket_date)
 	select :order_id, :user_session_id, 'in_basket', sysdate from dual
-	where not exists (select 1 from ec_orders where user_session_id=:user_session_id and order_state='in_basket')"
+	where not exists (select 1 from ec_orders where user_session_id = :user_session_id and order_state = 'in_basket')"
 
     # Now either an in_basket order should have been inserted by the
     # above statement or it was inserted by a different thread
