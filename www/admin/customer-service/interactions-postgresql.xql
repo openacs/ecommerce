@@ -36,4 +36,31 @@
 </fullquery>
 
 
+<partialquery name="last_24">
+      <querytext>
+
+      and now()-i.interaction_date <= timespan_days(1)
+
+      </querytext>
+</partialquery>
+
+
+<partialquery name="last_week">
+      <querytext>
+
+      and now()-i.interaction_date <= timespan_days(7)
+
+      </querytext>
+</partialquery>
+      
+
+<partialquery name="last_month">
+      <querytext>
+
+      and now()-i.interaction_date <= '1 month'::interval
+
+      </querytext>
+</partialquery>
+
+
 </queryset>

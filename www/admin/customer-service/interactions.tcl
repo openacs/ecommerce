@@ -152,11 +152,14 @@ if { $view_interaction_type == "all" } {
 }
 
 if { $view_interaction_date == "last_24" } {
-    set interaction_date_query_bit "and sysdate-i.interaction_date <= 1"
+    #set interaction_date_query_bit "and sysdate-i.interaction_date <= 1"
+    set interaction_date_query_bit [db_map last_24]
 } elseif { $view_interaction_date == "last_week" } {
-    set interaction_date_query_bit "and sysdate-i.interaction_date <= 7"
+    #set interaction_date_query_bit "and sysdate-i.interaction_date <= 7"
+    set interaction_date_query_bit [db_map last_week]
 } elseif { $view_interaction_date == "last_month" } {
-    set interaction_date_query_bit "and months_between(sysdate,i.interaction_date) <= 1"
+    #set interaction_date_query_bit "and months_between(sysdate,i.interaction_date) <= 1"
+    set interaction_date_query_bit [db_map last_month]
 } else {
     set interaction_date_query_bit ""
 }

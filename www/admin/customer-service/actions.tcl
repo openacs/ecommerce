@@ -80,13 +80,14 @@ append doc_body "</select>
 <option value=\"all\">All
 "
 
-set sql "
-  select i.customer_service_rep as rep, u.first_names as rep_first_names, u.last_name as rep_last_name
-    from ec_customer_serv_interactions i, cc_users u
-   where i.customer_service_rep=u.user_id
-group by i.customer_service_rep, u.first_names, u.last_name
-order by u.last_name, u.first_names
-"
+set sql [db_map get_customer_service_data_sql]
+#set sql "
+#  select i.customer_service_rep as rep, u.first_names as rep_first_names, u.last_name as rep_last_name
+#    from ec_customer_serv_interactions i, cc_users u
+#   where i.customer_service_rep=u.user_id
+#group by i.customer_service_rep, u.first_names, u.last_name
+#order by u.last_name, u.first_names
+#"
 
 db_foreach get_customer_service_data $sql {
     
@@ -129,34 +130,38 @@ if { $view_rep == "all" } {
 }
 
 if { $view_interaction_date == "last_24" } {
-    set interaction_date_query_bit "and sysdate-i.interaction_date <= 1"
+    #set interaction_date_query_bit "and sysdate-i.interaction_date <= 1"
+    set interaction_date_query_bit [db_map last_24]
 } elseif { $view_interaction_date == "last_week" } {
-    set interaction_date_query_bit "and sysdate-i.interaction_date <= 7"
+    #set interaction_date_query_bit "and sysdate-i.interaction_date <= 7"
+    set interaction_date_query_bit [db_map last_week]
 } elseif { $view_interaction_date == "last_month" } {
-    set interaction_date_query_bit "and months_between(sysdate,i.interaction_date) <= 1"
+    #set interaction_date_query_bit "and months_between(sysdate,i.interaction_date) <= 1"
+    set interaction_date_query_bit [db_map last_month]
 } else {
     set interaction_date_query_bit ""
 }
 
 if { $view_info_used == "none" } {
-    set sql_query "
-    select a.action_id, a.interaction_id, a.issue_id,
-           i.interaction_date, i.customer_service_rep, i.interaction_originator, i.interaction_type,
-           to_char(i.interaction_date,'YYYY-MM-DD HH24:MI:SS') as full_interaction_date,
-           reps.first_names as rep_first_names, reps.last_name as rep_last_name,
-           i.user_identification_id, customer_info.user_id as customer_user_id,
-           customer_info.first_names as customer_first_names, customer_info.last_name as customer_last_name
-      from ec_customer_service_actions a, ec_customer_serv_interactions i, cc_users reps,
-           (select id.user_identification_id, id.user_id, u2.first_names, u2.last_name
-              from ec_user_identification id, cc_users u2
-             where id.user_id=u2.user_id(+)) customer_info
-     where a.interaction_id = i.interaction_id
-       and i.user_identification_id=customer_info.user_identification_id
-       and i.customer_service_rep=reps.user_id(+)
-       and 0 = (select count(*) from ec_cs_action_info_used_map map where map.action_id=a.action_id)
-           $interaction_date_query_bit $rep_query_bit
-  order by $order_by
-    "
+     set sql_query [db_map none_sql]
+#    set sql_query "
+#    select a.action_id, a.interaction_id, a.issue_id,
+#           i.interaction_date, i.customer_service_rep, i.interaction_originator, i.interaction_type,
+#           to_char(i.interaction_date,'YYYY-MM-DD HH24:MI:SS') as full_interaction_date,
+#           reps.first_names as rep_first_names, reps.last_name as rep_last_name,
+#           i.user_identification_id, customer_info.user_id as customer_user_id,
+#           customer_info.first_names as customer_first_names, customer_info.last_name as customer_last_name
+#      from ec_customer_service_actions a, ec_customer_serv_interactions i, cc_users reps,
+#           (select id.user_identification_id, id.user_id, u2.first_names, u2.last_name
+#              from ec_user_identification id, cc_users u2
+#             where id.user_id=u2.user_id(+)) customer_info
+#     where a.interaction_id = i.interaction_id
+#       and i.user_identification_id=customer_info.user_identification_id
+#       and i.customer_service_rep=reps.user_id(+)
+#       and 0 = (select count(*) from ec_cs_action_info_used_map map where map.action_id=a.action_id)
+#           $interaction_date_query_bit $rep_query_bit
+#  order by $order_by
+#    "
 } elseif { $view_info_used == "all others" } {
     if { [llength $important_info_used_list] > 0 } {
 	set safe_important_info_used_list [DoubleApos $important_info_used_list]
@@ -165,43 +170,45 @@ if { $view_info_used == "none" } {
 	set info_used_query_bit ""
     }
 
-    set sql_query "
-    select a.action_id, a.interaction_id, a.issue_id,
-           i.interaction_date, i.customer_service_rep, i.user_identification_id, i.interaction_originator, i.interaction_type,
-           to_char(i.interaction_date,'YYYY-MM-DD HH24:MI:SS') as full_interaction_date,
-           reps.first_names as rep_first_names, reps.last_name as rep_last_name,
-           customer_info.user_id as customer_user_id, customer_info.first_names as customer_first_names, customer_info.last_name as customer_last_name
-      from ec_customer_service_actions a, ec_customer_serv_interactions i, ec_cs_action_info_used_map map, cc_users reps,
-           (select id.user_identification_id, id.user_id, u2.first_names, u2.last_name
-              from ec_user_identification id, cc_users u2
-             where id.user_id=u2.user_id(+)) customer_info
-     where a.interaction_id = i.interaction_id
-       and i.user_identification_id=customer_info.user_identification_id
-       and a.action_id=map.action_id
-       and i.customer_service_rep=reps.user_id(+) $info_used_query_bit
-           $interaction_date_query_bit $rep_query_bit
-  order by $order_by
-    "
+    set sql_query [db_map all_others_sql]
+#    set sql_query "
+#    select a.action_id, a.interaction_id, a.issue_id,
+#           i.interaction_date, i.customer_service_rep, i.user_identification_id, i.interaction_originator, i.interaction_type,
+#           to_char(i.interaction_date,'YYYY-MM-DD HH24:MI:SS') as full_interaction_date,
+#           reps.first_names as rep_first_names, reps.last_name as rep_last_name,
+#           customer_info.user_id as customer_user_id, customer_info.first_names as customer_first_names, customer_info.last_name as customer_last_name
+#      from ec_customer_service_actions a, ec_customer_serv_interactions i, ec_cs_action_info_used_map map, cc_users reps,
+#           (select id.user_identification_id, id.user_id, u2.first_names, u2.last_name
+#              from ec_user_identification id, cc_users u2
+#             where id.user_id=u2.user_id(+)) customer_info
+#     where a.interaction_id = i.interaction_id
+#       and i.user_identification_id=customer_info.user_identification_id
+#       and a.action_id=map.action_id
+#       and i.customer_service_rep=reps.user_id(+) $info_used_query_bit
+#           $interaction_date_query_bit $rep_query_bit
+#  order by $order_by
+#    "
 } else {
 
-    set sql_query "
-      select a.action_id, a.interaction_id, a.issue_id,
-             i.interaction_date, i.customer_service_rep, i.user_identification_id, i.interaction_originator, i.interaction_type,
-             to_char(i.interaction_date,'YYYY-MM-DD HH24:MI:SS') as full_interaction_date,
-             reps.first_names as rep_first_names, reps.last_name as rep_last_name,
-             customer_info.user_id as customer_user_id, customer_info.first_names as customer_first_names, customer_info.last_name as customer_last_name
-       from ec_customer_service_actions a, ec_customer_serv_interactions i, ec_cs_action_info_used_map map, cc_users reps,
-            (select id.user_identification_id, id.user_id, u2.first_names, u2.last_name
-               from ec_user_identification id, cc_users u2
-              where id.user_id=u2.user_id(+)) customer_info
-      where a.interaction_id = i.interaction_id
-        and i.user_identification_id=customer_info.user_identification_id
-        and reps.user_id=i.customer_service_rep
-        and a.action_id=map.action_id
-        and map.info_used=:view_info_used
-           $interaction_date_query_bit $rep_query_bit
-  order by $order_by
-    "
+    set sql_query [db_map default_sql]
+#    set sql_query "
+#      select a.action_id, a.interaction_id, a.issue_id,
+#             i.interaction_date, i.customer_service_rep, i.user_identification_id, i.interaction_originator, i.interaction_type,
+#             to_char(i.interaction_date,'YYYY-MM-DD HH24:MI:SS') as full_interaction_date,
+#             reps.first_names as rep_first_names, reps.last_name as rep_last_name,
+#             customer_info.user_id as customer_user_id, customer_info.first_names as customer_first_names, customer_info.last_name as customer_last_name
+#       from ec_customer_service_actions a, ec_customer_serv_interactions i, ec_cs_action_info_used_map map, cc_users reps,
+#            (select id.user_identification_id, id.user_id, u2.first_names, u2.last_name
+#               from ec_user_identification id, cc_users u2
+#              where id.user_id=u2.user_id(+)) customer_info
+#      where a.interaction_id = i.interaction_id
+#        and i.user_identification_id=customer_info.user_identification_id
+#        and reps.user_id=i.customer_service_rep
+#        and a.action_id=map.action_id
+#        and map.info_used=:view_info_used
+#           $interaction_date_query_bit $rep_query_bit
+#  order by $order_by
+#    "
 }
 
 # set link_beginning "actions.tcl?[export_url_vars view_issue_type view_status view_open_date]"
