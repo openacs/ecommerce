@@ -2651,7 +2651,7 @@ begin
 end;' language 'plpgsql';
 
 create trigger fin_trans_ccard_update_tr
-after insert on ec_financial_transactions
+before insert on ec_financial_transactions
 for each row execute procedure fin_trans_ccard_update_tr ();
 
 create table ec_cybercash_log (
