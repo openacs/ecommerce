@@ -89,9 +89,9 @@ ad_proc ec_secure_location {} {
 	}
         ### nsopenssl 3 has variable locations for the secure port
 	# This next check might best be handled by creating another
-	# parameter value for inboundssldriver
+	# parameter value for users/inboundssl (custom driver name)
         if { [empty_string_p $secure_port] || [string match $secure_port 443] } {
-	    set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver/ssldriver/inboundssldriver" port 443]
+	    set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver/ssldriver/users" port 443]
 	}
 
         set secure_location "https://[ns_config ns/server/[ns_info server]/module/$sdriver Hostname]"
@@ -100,9 +100,9 @@ ad_proc ec_secure_location {} {
 	    set secure_location "https://[ns_config ns/server/[ns_info server]/module/$sdriver ServerHostname]"
 	}
         ### nsopenssl 3 uses Hostname and custom driver name
-        # made need to make inboundssldriver (custom driver name) another parameter value
+        # made need to make users/inboundssl (custom driver name) another parameter value
         if { [string match $secure_location "https://"] } {
-	    set secure_location "https://[ns_config ns/server/[ns_info server]/module/$sdriver/ssldriver/inboundssldriver hostname]"
+	    set secure_location "https://[ns_config ns/server/[ns_info server]/module/$sdriver/ssldriver/users hostname]"
 	}
 
         if {![empty_string_p $secure_port] && ($secure_port != 443)}  {
