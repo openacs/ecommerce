@@ -3,18 +3,18 @@
   <property name="signatory">@ec_system_owner;noquote@</property>
 
 <if @address_type@ eq "shipping">
-  <property name="title">Enter Your Shipping Address</property>
+  <property name="title">Completing Your Order: Shipping Address</property>
 
   <include src="checkout-progress" step="1">
 
-  <h2>Enter Your Shipping Address</h2>
+  <h2>Your shipping address</h2>
 </if>
 <else>
-  <property name="title">Enter Your Billing Address</property>
+  <property name="title">Completing Your Order: Billing Address</property>
   <if @referer@ ne "gift-certificate-billing">
     <include src="checkout-progress" step="4">
   </if>
-  <h2>Enter Your Billing Address</h2>
+  <h2>Your billing address</h2>
 </else>
 
 <form method="post" action="address-2">
