@@ -176,7 +176,7 @@ if { $shipment_cost >= 0 } {
 
     # Verify that the shipment is for the entire order.
 
-    if {$shipment_cost == $order_cost} {
+    if { [ec_same_value $shipment_cost $order_cost] } {
 
 	# The shipment could be for the entire order but it could also
 	# be that a partial shipment, return, and an addition of more
@@ -196,13 +196,13 @@ if { $shipment_cost >= 0 } {
 	# amount and can thus not differentiate between the amount
 	# authorized and the amount to capture.
 
-	if { $shipment_cost == [db_string authorized_amount_select "
+	if { [ec_same_value $shipment_cost [db_string authorized_amount_select "
 	    select transaction_amount
 	    from ec_financial_transactions
 	    where order_id = :order_id
 	    and to_be_captured_p is null
             and authorized_date is not null
-	    and transaction_type = 'charge'" -default ""]} {
+	    and transaction_type = 'charge'" -default ""] ]} {
 
 	    set transaction_id [db_string transaction_id_select "
 		select transaction_id
