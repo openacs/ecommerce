@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 
+<queryset>
+
 <fullquery name="orders_select">      
       <querytext>
 
