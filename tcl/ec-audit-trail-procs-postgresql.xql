@@ -3,7 +3,7 @@
 <queryset>
    <rdbms><type>postgresql</type><version>7.1</version></rdbms>
 
-<fullquery name="ec_audit_process_row.audit_table_insert">      
+<fullquery name="ec_audit_delete_row.audit_table_insert">      
       <querytext>
       
     insert into $audit_table_name

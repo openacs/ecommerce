@@ -3,7 +3,7 @@
 <queryset>
    <rdbms><type>oracle</type><version>8.1.6</version></rdbms>
 
-<fullquery name="ec_audit_process_row.audit_table_insert">      
+<fullquery name="ec_audit_delete_row.audit_table_insert">      
       <querytext>
       
     insert into $audit_table_name
