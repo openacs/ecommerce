@@ -108,24 +108,20 @@ ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_orig
     return [list $user_identification_id $issue_id]
 }
 
-ad_proc ec_all_cs_issues_by_one_user { {user_id ""} {user_identification_id ""} } { lists all issues by user_id or user_identification } {
-    set to_return "<ul>"
-
+ad_proc ec_all_cs_issues_by_one_user { 
+    {user_id ""}
+    {user_identification_id ""}
+} { 
+    creates html list of all issues by user_id or user_identification 
+} {
+    set to_return ""
+    set no_issues 0
     set old_issue_id ""
     set issue_type_list [list]
 
     if { ![empty_string_p $user_id] } {
 
-	set sql 
-
-        db_foreach user_customer_service_issue {
-	    select i.issue_id, i.open_date, i.close_date, m.issue_type
-	    from ec_customer_service_issues i, ec_cs_issue_type_map m, ec_user_identification id
-	    where i.issue_id = m.issue_id(+)
-	    and i.user_identification_id = id.user_identification_id
-	    and id.user_id = :user_id
-	    order by i.issue_id
-	    } {
+       db_foreach user_customer_service_issue {} {
 
 	    if { $issue_id != $old_issue_id } {
 	        if { [llength $issue_type_list] > 0 } {
@@ -141,17 +137,14 @@ ad_proc ec_all_cs_issues_by_one_user { {user_id ""} {user_identification_id ""} 
 	        lappend issue_type_list $issue_type
 	    }
 	    set old_issue_id $issue_id
+
+        } if_no_rows { 
+            set no_issues 1
         }
 
-    } else {
+    } elseif { ![empty_string_p $user_identification_id] } {
 
-        db_foreach customer_service_issue {
-	    select i.issue_id, i.open_date, i.close_date, m.issue_type
-	    from ec_customer_service_issues i, ec_cs_issue_type_map m
-	    where i.issue_id = m.issue_id(+)
-	    and i.user_identification_id = :user_identification_id
-	    order by i.issue_id
-	    } {
+        db_foreach ident_customer_service_issue {} {
 
 	    if { $issue_id != $old_issue_id } {
 	        if { [llength $issue_type_list] > 0 } {
@@ -167,14 +160,16 @@ ad_proc ec_all_cs_issues_by_one_user { {user_id ""} {user_identification_id ""} 
 	        lappend issue_type_list $issue_type
 	    }
 	    set old_issue_id $issue_id
+
+        } if_no_rows { 
+            set no_issues 1
         }
     }
 
-
-    if { [llength $issue_type_list] > 0 } {
-	append to_return " ([join $issue_type_list ", "])"
+    if { $no_issues } {
+        set to_return "<p>No customer service issues found for this contact.</p>"
+    } else {
+	set to_return "<ul>${to_return}</ul>"
     }
-
-    append to_return "</ul>"
     return $to_return
 }

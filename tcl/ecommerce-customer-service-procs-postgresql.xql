@@ -30,7 +30,7 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="user_customer_service_issue">
+  <fullquery name="ec_all_cs_issues_by_one_user.user_customer_service_issue">
     <querytext>
       select i.issue_id, i.open_date, i.close_date, m.issue_type
       from ec_user_identification id, ec_customer_service_issues i left join ec_cs_issue_type_map m on (i.issue_id = m.issue_id)
@@ -40,7 +40,7 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="customer_service_issue">
+  <fullquery name="ec_all_cs_issues_by_one_user.ident_customer_service_issue">
     <querytext>
       select i.issue_id, i.open_date, i.close_date, m.issue_type
       from ec_customer_service_issues i left join ec_cs_issue_type_map m
