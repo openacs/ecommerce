@@ -5,7 +5,7 @@
     <package-name>E-Commerce</package-name>
     <pretty-plural>E-Commerce-ii</pretty-plural>
     <initial-install-p>f</initial-install-p>
-    <singleton-p>f</singleton-p>
+    <singleton-p>t</singleton-p>
 
     <version name="4.6" url="http://www.arsdigita.com/acs-repository/download/apm/ecommerce-4.6.apm">
     <database-support>
