@@ -43,8 +43,9 @@ set hash [ns_sha1 "$time$token_id$token"]
 # if http_id is set, change the first headline of the page to "Secure Login" 
 # if http_id is set, display a small banner, asking the user to "Please login to the secure server" 
 
+# gilbertw: OpenACS templating fix
 if {[info exists http_id]} {
-    template::query email onevalue "select email from parties where party_id = :http_id"
+    template::query get_email email onevalue "select email from parties where party_id = :http_id" 
 } else {
     set http_id ""
 }
