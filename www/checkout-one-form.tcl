@@ -296,20 +296,25 @@ if { [exists_and_equal shipping_required "t"] } {
             and i.order_id=:order_id
             order by i.product_id" {
                 # ordering by i.product_id so loop can identify first instance of a quantity
-                if { $product_id == $last_product_id } {
-                    set first_instance 0
-                } else {
+
+                if { $product_id != $last_product_id } {
                     set first_instance 1
                     db_1row get_shipping_info "
-	            select shipping, shipping_additional, weight 
-	            from ec_products 
-	            where product_id=:product_id"
+	            select shipping, shipping_additional, weight, no_shipping_avail_p
+                    from ec_products 
+                    where product_id=:product_id"
+                } else {
+                    set first_instance 0
                 }
-		set shipping_prices_for_one_item [ec_shipping_prices_for_one_item_by_rate $product_id $shipping $shipping_additional $default_shipping_per_item $weight $weight_shipping_cost $first_instance $add_exp_amount_per_item $add_exp_amount_by_weight]
+                # if no_shipping_avail_p, skip calculating shipping for this item
+                if { [string equal $no_shipping_avail_p "f"] } {
 
-                set total_reg_shipping_price [expr $total_reg_shipping_price + [lindex $shipping_prices_for_one_item 0]]
-                set total_exp_shipping_price [expr $total_exp_shipping_price + [lindex $shipping_prices_for_one_item 1]]
-                set last_product_id $product_id
+		    set shipping_prices_for_one_item [ec_shipping_prices_for_one_item_by_rate $product_id $shipping $shipping_additional $default_shipping_per_item $weight $weight_shipping_cost $first_instance $add_exp_amount_per_item $add_exp_amount_by_weight]
+
+                    set total_reg_shipping_price [expr $total_reg_shipping_price + [lindex $shipping_prices_for_one_item 0]]
+                    set total_exp_shipping_price [expr $total_exp_shipping_price + [lindex $shipping_prices_for_one_item 1]]
+                    set last_product_id $product_id
+                }
             }
 
 

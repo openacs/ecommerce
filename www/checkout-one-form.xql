@@ -132,6 +132,14 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="get_shipping_info">      
+    <querytext>
+        select shipping, shipping_additional, weight, no_shipping_avail_p
+        from ec_products
+        where product_id=:product_id
+    </querytext>
+  </fullquery>
+
   <fullquery name="get_creditcards_onfile">      
     <querytext>
       select c.creditcard_id, c.creditcard_type, c.creditcard_last_four, c.creditcard_expire
