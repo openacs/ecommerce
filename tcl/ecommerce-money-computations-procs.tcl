@@ -413,3 +413,15 @@ ad_proc ec_shipping_prices_for_one_item_by_rate {
 
     return [list $total_reg_shipping_cost $total_exp_shipping_cost 0]
 }
+
+ad_proc ec_same_value {
+    value_one
+    value_two
+} { 
+    Returns true if values are essentially the same for monetary purposes, otherwise returns false.
+    This takes care of comparisons of two calculated, binary values where the difference is monetarily insignificant,
+    yet logical comparisons would be false.
+} {
+    set is_same [expr [expr abs( $value_one - $value_two ) ] < 0.009]
+    return $is_same
+}
