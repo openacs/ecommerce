@@ -91,7 +91,10 @@ doc_body_append "<li><a href=\"mailing-lists/\">Mailing Lists</a>
 <li><a href=\"email-templates/\">Email Templates</a>\n
 
 <p>
+<li><a href=\"searches\">User Search Terms</a>
+</ul>
 
+<p>
 <li><a href=\"audit-tables\">Audit [ec_system_name]</a>
 </ul>
 

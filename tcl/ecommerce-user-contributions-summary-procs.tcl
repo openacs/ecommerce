@@ -66,7 +66,7 @@ from ec_addresses where user_id = :user_id"]
     where c.product_id = p.product_id
     and user_id = :user_id" {
 
-	append moby_string "<li>[util_AnsiDatetoPrettyDate $comment_date] : <a href=\"[ec_url_concat [ec_url] /admin]/customer-reviews/one?[export_url_vars comment_id]\">$product_name</a>\n"
+	append moby_string "<li>[util_AnsiDatetoPrettyDate $comment_date] : <a href=\"[ec_url_concat [ec_url] /admin]/customer-reviews/one?[export_vars comment_id]\">$product_name</a>\n"
     }
 
     append moby_string "</ul>

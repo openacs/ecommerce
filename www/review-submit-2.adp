@@ -7,10 +7,10 @@
 
 <blockquote>
   <form method="post" action="review-submit-3">
-    @hidden_form_variables@
+    @hidden_form_variables;noquote@
     <p>Here is your review the way it will appear:</p>
     <hr>
-    <p>@review_as_it_will_appear@</p>
+    <p>@review_as_it_will_appear;noquote@</p>
     <hr>
     <p>If this isn't the way you want it to look, please back up using
     your browser and edit your review.  Submissions become the

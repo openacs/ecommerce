@@ -85,7 +85,7 @@ if {[db_0or1row shipping_avail "
 
 if { $shipping_required == "false" } {
     set address_id ""
-    ad_returnredirect "checkout-2?[export_url_vars address_id address_type]"
+    ad_returnredirect "checkout-2?[export_vars address_id address_type]"
     ad_script_abort
 }
 

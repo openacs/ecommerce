@@ -134,7 +134,7 @@ ad_proc ec_email_product_notification {
     require it.
 } {
 
-    set order_link [ec_securelink "[ad_url][ec_url]admin/orders/one?[export_url_vars order_id]"]
+    set order_link [ec_securelink "[ad_url][ec_url]admin/orders/one?[export_vars order_id]"]
 
     db_foreach notification_select {
 	select ep.email_on_purchase_list, ep.product_name

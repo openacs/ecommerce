@@ -383,7 +383,7 @@ ad_proc ec_mailing_list_link_for_a_product { product_id } {
     db_0or1row mailing_categories {}
 
     if { ![empty_string_p $category_id] || ![empty_string_p $subcategory_id] || ![empty_string_p $subsubcategory_id] } {
-        return "<a href=\"[ns_urlencode [ec_url]mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]]\">Add yourself to the [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] mailing list!</a>"
+        return "<a href=\"[ns_urlencode [ec_url]mailing-list-add?[export_vars category_id subcategory_id subsubcategory_id]]\">Add yourself to the [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] mailing list!</a>"
     } else { 
         return ""
     }
@@ -466,7 +466,7 @@ ad_proc ec_product_links_if_they_exist { product_id } { return product links } {
 	select p.product_id, p.product_name from ec_products_displayable p, ec_product_links l where l.product_a = :product_id and l.product_b = p.product_id
     } {
 	incr link_counter
-	append to_return "<li><a href=\"product?[export_url_vars product_id product_name]\">$product_name</a>\n"
+	append to_return "<li><a href=\"product?[export_vars product_id product_name]\">$product_name</a>\n"
     }
 
     if { $link_counter == 0 } {
@@ -516,10 +516,10 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
 
     if { $comments_sort_by == "rating" } {
 	append end_of_comment_query "\norder by c.rating desc"
-	append sort_blurb "sorted by rating | <a href=\"product?[export_url_vars product_id]&comments_sort_by=last_modified\">sort by date</a>"
+	append sort_blurb "sorted by rating | <a href=\"product?[export_vars product_id]&comments_sort_by=last_modified\">sort by date</a>"
     } else {
 	append end_of_comment_query "\norder by c.last_modified desc"
-	append sort_blurb "sorted by date | <a href=\"product?[export_url_vars product_id]&comments_sort_by=rating\">sort by rating</a>"
+	append sort_blurb "sorted by date | <a href=\"product?[export_vars product_id]&comments_sort_by=rating\">sort by rating</a>"
     }
 
     set to_return "<hr>
@@ -543,7 +543,7 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
     " {
 
         array set person [person::get -person_id $user_id]
-	append comments_to_print "<b><a href=\"/shared/community-member?[export_url_vars user_id]\">$person(first_names) $person(last_name)</a></b> rated this product [ec_display_rating $rating] on <i>$last_modified_pretty</i> and wrote:<br>
+	append comments_to_print "<b><a href=\"/shared/community-member?[export_vars user_id]\">$person(first_names) $person(last_name)</a></b> rated this product [ec_display_rating $rating] on <i>$last_modified_pretty</i> and wrote:<br>
 	<b>$one_line_summary</b><br>
 	$user_comment 
 	<p>
@@ -564,10 +564,10 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
 	
 	<p>
 
-	<a href=\"review-submit?[export_url_vars product_id]\">Write your own review!</a>
+	<a href=\"review-submit?[export_vars product_id]\">Write your own review!</a>
 	"
     } else {
-	append to_return "<p>\n<a href=\"review-submit?[export_url_vars product_id]\">Be the first to review this product!</a>\n"
+	append to_return "<p>\n<a href=\"review-submit?[export_vars product_id]\">Be the first to review this product!</a>\n"
     }
  
     return $to_return
@@ -1151,7 +1151,7 @@ ad_proc ec_display_product_purchase_combinations { product_id } { display produc
     for { set counter 0 } { $counter < 5 } { incr counter } {
 	set product_id [set product_$counter]
 	if { ![empty_string_p $product_id] } {
-    append to_return "<li><a href=\"product?[export_url_vars product_id]\">[db_string product_name_select {select product_name from ec_products where product_id = :product_id}]</a>\n"
+    append to_return "<li><a href=\"product?[export_vars product_id]\">[db_string product_name_select {select product_name from ec_products where product_id = :product_id}]</a>\n"
 	}
     }
     
@@ -1241,7 +1241,7 @@ ad_proc ec_shipment_summary_sub {
 	    }
 	    if { ![empty_string_p $tracking_number] } {
 		if { ([string tolower $carrier] == "fedex" || [string range [string tolower $carrier] 0 2] == "ups") } {
-		    append to_append_to_shipment_list " <font size=-1>(<a href=\"track?[export_url_vars shipment_id]\">track</a>)</font>"
+		    append to_append_to_shipment_list " <font size=-1>(<a href=\"track?[export_vars shipment_id]\">track</a>)</font>"
 		    } else {
 			append to_append_to_shipment_list " (tracking # $tracking_number)"
 		    }
@@ -1422,7 +1422,7 @@ ad_proc -private ec_create_new_session_if_necessary {
                 set cookie_value $user_session_id
                 
                 set usca_p "t"
-                set final_page "[ns_conn url]?[export_url_vars usca_p]"
+                set final_page "[ns_conn url]?[export_vars usca_p]"
                 if ![empty_string_p $_ec_more_url_vars_exported] {
                     append final_page "&" $_ec_more_url_vars_exported
                 }
