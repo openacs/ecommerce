@@ -606,13 +606,13 @@ create table ec_addresses (
         city            varchar(100),
         -- state
         -- Jerry, we'll need to creat the states table as part of this
-        usps_abbrev     char(2) references states,
+        usps_abbrev     char(2) references us_states(abbrev),
         -- big enough to hold zip+4 with dash
         zip_code        varchar(10),
         phone           varchar(30),
         -- for international addresses
         -- Jerry, same for country_codes
-        country_code    char(2) references country_codes(iso),
+        country_code    char(2) references countries(iso),
         -- this can be the province or region for an international address
         full_state_name varchar(30),
         -- D for day, E for evening
@@ -1745,7 +1745,7 @@ for each row execute procedure ec_admin_settings_audit_tr ();
 -- this is populated by the rules the administrator sets in packages/ecommerce/www/admin]/sales-tax.tcl
 create table ec_sales_tax_by_state (
        -- Jerry
-        usps_abbrev             char(2) not null primary key references states,
+        usps_abbrev             char(2) not null primary key references us_states(abbrev),
         -- this a decimal number equal to the percentage tax divided by 100
         tax_rate                numeric not null,
         -- charge tax on shipping?
@@ -1806,14 +1806,14 @@ create table ec_retailers (
         city                    varchar(100),
         -- state
         -- Jerry
-        usps_abbrev     	char(2) references states,
+        usps_abbrev     	char(2) references us_states(abbrev),
         -- big enough to hold zip+4 with dash
         zip_code                varchar(10),
         phone                   varchar(30),
         fax                     varchar(30),
         -- for international addresses
         -- Jerry
-        country_code            char(2) references country_codes(iso),
+        country_code            char(2) references countries(iso),
         --national, local, international
         reach                   varchar(15) check (reach in ('national','local','international','regional','web')),
         url                     varchar(200),
@@ -1915,7 +1915,7 @@ create table ec_retailer_locations (
         -- state
         -- Jerry
 	-- usps_abbrev reinstated by wtem@olywa.net
-        usps_abbrev     	char(2) references states,
+        usps_abbrev     	char(2) references us_states(abbrev),
         -- big enough 0to hold zip+4 with dash
         zip_code                varchar(10),
         phone                   varchar(30),
@@ -1923,7 +1923,7 @@ create table ec_retailer_locations (
         -- for international addresses
         -- Jerry
 	-- country_code reinstated by wtem@olywa.net
-        country_code            char(2) references country_codes(iso),
+        country_code            char(2) references countries(iso),
         url                     varchar(200),
         financing_policy        varchar(4000),
         return_policy           varchar(4000),
