@@ -1014,7 +1014,7 @@ ad_proc ec_timeentrywidget_time_check {
 
 } {
     if { ![regexp -nocase {([0-9]+):([0-9]+):([0-9]+)} $timestamp match hours mins secs]} {
-	ad_return_complaint "1" "<li>The time part of the timestamp is not in the correct format.  It must be HH12:MI:SS" 
+	ad_return_complaint 1 "<li>The time part of the timestamp is not in the correct format.  It must be HH12:MI:SS" 
 	return -code return
     } else {
 
