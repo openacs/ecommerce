@@ -74,10 +74,16 @@ db_transaction {
   # we have to generate audit information
   set audit_fields "last_modified, last_modifying_user, modified_ip_address"
 
+  ### find out which database we are using
+  # for postgresql we need to run two queries for the insert
+  # for oracle, we only need to run the product_insert query
+  set db_type [db_type]
   # db_map this
   # set audit_info "sysdate, :user_id, :peeraddr"
   set audit_info [db_map audit_info_sql] 
-    db_exec_plsql user_insert {
+
+  if [string match $db_type "oracle"] {
+    db_exec_plsql product_insert {
 	begin
 	:1 := ec_product.new(product_id => :product_id,
 	object_type => 'ec_product',
@@ -109,6 +115,41 @@ db_transaction {
 	);
 	end;
     }
+  } elseif [string match $db_type "postgresql"] {
+    set product_id [db_exec_plsql product_insert {
+	select ec_product__new(
+        :product_id,
+        :user_id,
+        :context_id,
+        :product_name,
+        :price,
+        :sku,
+        :one_line_description,
+        :detailed_description,
+        :search_keywords,
+        :present_p,
+        :stock_status,
+        :dirname,
+        to_date(:available_date, 'YYYY-MM-DD'),
+        :color_list,
+        :size_list,
+        :peeraddr
+        );
+    }]
+
+    db_dml product_update {
+	update ec_products set style_list = :style_list,
+        email_on_purchase_list = :email_on_purchase_list,
+        url = :url,
+        no_shipping_avail_p = :no_shipping_avail_p,
+        shipping = :shipping,
+        shipping_additional = :shipping_additional,
+        weight = :weight,
+        active_p = 't',
+        template_id = :template_id
+        where product_id = :product_id;
+    }
+  }
 
 #    db_dml product_insert "
 #    insert into ec_products

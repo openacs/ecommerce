@@ -3,7 +3,7 @@
 <queryset>
    <rdbms><type>oracle</type><version>8.1.6</version></rdbms>
 
-<fullquery name="user_insert">      
+<fullquery name="product_insert">      
       <querytext>
       
 	begin
