@@ -43,8 +43,8 @@
             <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-product-package-drop.sql"/>
             <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-product-sws-drop.sql"/>
             <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-product-sws-setup.sql"/>
-            <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-products-sc-create.sql"/>
-            <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-products-sc-drop.sql"/>
+            <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-product-sc-create.sql"/>
+            <file type="data_model" db_type="postgresql" path="sql/postgresql/ec-product-sc-drop.sql"/>
             <file type="data_model_create" db_type="postgresql" path="sql/postgresql/ecommerce-create.sql"/>
             <file type="data_model" db_type="postgresql" path="sql/postgresql/ecommerce-defaults.sql"/>
             <file type="data_model_drop" db_type="postgresql" path="sql/postgresql/ecommerce-drop.sql"/>
@@ -55,7 +55,7 @@
             <file type="query_file" db_type="postgresql" path="tcl/ec-audit-trail-procs-postgresql.xql"/>
             <file type="tcl_procs" path="tcl/ec-audit-trail-procs.tcl"/>
             <file type="query_file" path="tcl/ec-audit-trail-procs.xql"/>
-            <file type="tcl_procs" path="tcl/ec-products-sc-procs.tcl"/>
+            <file type="tcl_procs" path="tcl/ec-product-sc-procs.tcl"/>
             <file type="tcl_procs" path="tcl/ec-style-procs.tcl"/>
             <file type="query_file" path="tcl/ec-style-procs.xql"/>
             <file type="query_file" db_type="oracle" path="tcl/ecommerce-credit-procs-oracle.xql"/>
