@@ -3,7 +3,7 @@ ad_page_contract {
     License information of the Authorize.net Gateway, an
     implementation of the Payment Service Contract.
 
-    @author Bart Teeuwisse <bart.teeuwisse@7-sisters.com>
+    @author Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @creation-date May 2002
 
 } {
@@ -25,4 +25,4 @@ set context_bar [ad_context_bar [list . $package_name] License]
 
 # Set signatory for at the bottom of the page
 
-set signatory "bart.teeuwisse@7-sisters.com"
+set signatory "bart.teeuwisse@thecodemill.biz"

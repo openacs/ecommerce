@@ -1,7 +1,7 @@
 <master>
   <property name=title>Operation of the Ecommerce Module</property>
-  <property name="signatory">@signatory@</property>
-  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@signatory;noquote@</property>
+  <property name="context_bar">@context_bar;noquote@</property>
 
   <p>Before reading this, make sure that you have read about <a
    href="ecommerce-setup">setting up your ecommerce module</a>.  This
@@ -104,9 +104,9 @@ RECEIVED_BACK
     <p>OK, so what can you actually do with orders?  You can:</p>
 
     <ul>
-      <li><a href="@package_url@admin/orders/by-order-state-and-time">view them</a></li>
-      <li><a href="@package_url@admin/orders/fulfillment">fulfill them</a></li>
-      <li><a href="@package_url@admin/orders/">search for individual orders</a></li>
+      <li><if @package_url@ not nil><a href="@package_url@admin/orders/by-order-state-and-time"></if>view them<if @package_url@ not nil></a></if></li>
+      <li><if @package_url@ not nil><a href="@package_url@admin/orders/fulfillment"></if>fulfill them<if @package_url@ not nil></a></if></li>
+      <li><if @package_url@ not nil><a href="@package_url@admin/orders/"></if>search for individual orders<if @package_url@ not nil></a></if></li>
     </ul>
     
     <p>On an individual order, you can:</p>
@@ -167,12 +167,12 @@ AUTHORIZED   FAILED_AUTHORIZATION
   <p>Things you can do with gift certificates:</p>
 
   <ul>
-    <li>view <a href="@package_url@admin/orders/gift-certificates">purchased
-	gift certificates</a></li>
-    <li>view <a href="@package_url@admin/orders/gift-certificates-issued">issued
-        gift certificates</a></li>
-    <li>see your <a href="@package_url@admin/orders/revenue">gift certificate
-	liability</a></li>
+    <li>view <if @package_url@ not nil><a href="@package_url@admin/orders/gift-certificates"></if>purchased
+	gift certificates<if @package_url@ not nil></a></if></li>
+    <li>view <if @package_url@ not nil><a href="@package_url@admin/orders/gift-certificates-issued"></if>issued
+        gift certificates<if @package_url@ not nil></a></if></li>
+    <li>see your <if @package_url@ not nil><a href="@package_url@admin/orders/revenue"></if>gift certificate
+	liability<if @package_url@ not nil></a></if></li>
     <li>see a customer's gift certificates (find the customer using
         the customer service module or <a
         href="/acs-admin/users/">/acs-admin/users</a>) and void their gift
@@ -184,19 +184,19 @@ AUTHORIZED   FAILED_AUTHORIZATION
   <p>Besides the most important task of filling orders, there are some
     other things that need to be done once in a while.</p>
 
-  <p>Naturally, you'll want to rotate your <a
-     href="@package_url@admin/products/recommendations">product
-     recommendations</a> every so often to keep your site looking
+  <p>Naturally, you'll want to rotate your <if @package_url@ not nil><a
+     href="@package_url@admin/products/recommendations"></if>product
+     recommendations<if @package_url@ not nil></a></if> every so often to keep your site looking
      fresh, even if your product database doesn't change.  You will
-     also need to periodically <a
-     href="@package_url@admin/customer-reviews/">approve/disapprove
-     customer reviews</a> (if you've set reviews to require approval)
-     and perhaps view <a href="@package_url@admin/orders/">some reports</a>
+     also need to periodically <if @package_url@ not nil><a
+     href="@package_url@admin/customer-reviews/"></if>approve/disapprove
+     customer reviews<if @package_url@ not nil></a></if> (if you've set reviews to require approval)
+     and perhaps view <if @package_url@ not nil><a href="@package_url@admin/orders/"></if>some reports<if @package_url@ not nil></a></if>
      to make sure everything is going as you expected.</p>
 
   <h3>Dealing with Problems</h3>
 
-  <p>A <a href="@package_url@admin/problems/">log of potential problems</a>
+  <p>A <if @package_url@ not nil><a href="@package_url@admin/problems/"></if>log of potential problems<if @package_url@ not nil></a></if>
     is maintained by the system when it comes across issues that it is
     unable to resolve.  These problems (hopefully infrequent) will
     need to be resolved by hand.</p>

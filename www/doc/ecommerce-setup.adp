@@ -1,7 +1,7 @@
 <master>
   <property name=title>Setup of the Ecommerce Module</property>
-  <property name="signatory">@signatory@</property>
-  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@signatory;noquote@</property>
+  <property name="context_bar">@context_bar;noquote@</property>
 
   <p>This is intended to be a guide for the content administrators of
     @package_name@.  Content administrators are not assumed to have any
@@ -10,8 +10,8 @@
 
   <p> These are the basic steps needed to get @package_name@ up and
     running.  Most functions below can be performed using the
-    @package_name@ administration pages in <a
-    href="@package_url@admin/">@package_url@admin/</a> (must be
+    @package_name@ administration pages in <if @package_url@ not nil><a
+    href="@package_url@admin/">@package_url@</if>admin/<if @package_url@ not nil></a></if> (must be
     accessed using HTTPS).</p>
 
   <ol>
@@ -115,8 +115,8 @@
 
     <li>
 
-      <p>Set up product categorization (<a
-       href="@package_url@admin/cat/">@package_url@admin/cat/</a>):</p>
+      <p>Set up product categorization (<if @package_url@ not nil><a
+       href="@package_url@admin/cat/">@package_url@</if>admin/cat/<if @package_url@ not nil></a></if>):</p>
 
       <p>Product categories, subcategories and subsubcategories are
 	optional, but if you intend to offer many products for sale,
@@ -151,15 +151,15 @@
 
     <li>
 
-      <p>Set up your shipping cost rules (<a
-        href="@package_url@admin/shipping-costs/">@package_url@admin/shipping-costs/</a>).
+      <p>Set up your shipping cost rules (<if @package_url@ not nil><a
+        href="@package_url@admin/shipping-costs/">@package_url@</if>admin/shipping-costs/<if @package_url@ not nil></a></if>).
         @package_name@ is flexible regarding how you charge your
-        customers for shipping. The <a
-        href="@package_url@admin/shipping-costs/" >Shipping Costs
-        page</a> in the admin section will lead you through it.  Make
-        sure you read the <a
-        href="@package_url@admin/shipping-costs/examples">Shipping
-        Cost Examples page</a> if you don't already know how you want
+        customers for shipping. The <if @package_url@ not nil><a
+        href="@package_url@admin/shipping-costs/"></if>Shipping Costs
+        page<if @package_url@ not nil></a></if> in the admin section will lead you through it.  Make
+        sure you read the <if @package_url@ not nil><a
+        href="@package_url@admin/shipping-costs/examples"></if>Shipping
+        Cost Examples page<if @package_url@ not nil></a></if> if you don't already know how you want
         to set it up.</p> 
 
       <p>Check out the <if @shipping_gateway_installed@><a
@@ -176,9 +176,9 @@
 
     <li>
 
-      <p>Set up your sales tax rules (<a
+      <p>Set up your sales tax rules (<if @package_url@ not nil><a
         href="@package_url@admin/sales-tax/"
-        >@package_url@admin/sales-tax/</a>).  If your company is
+        >@package_url@</if>admin/sales-tax/<if @package_url@ not nil></a></if>).  If your company is
         located only in one or a few states, this will be easy.  On
         the other hand, if you're a Fortune 500 company and you have
         nexus (i.e. have an office or factory or store) in many
@@ -194,22 +194,23 @@
     <li>
 
       <p>Decide if you want to add any custom product fields.  First
-        look at the current fields available (<a
+        look at the current fields available (<if @package_url@ not nil><a
         href="@package_url@admin/products/add"
-        >@package_url@admin/products/add</a>) to see if they meet your
+        >@package_url@</if>admin/products/add<if @package_url@ not nil></a></if>) to see if they meet your
         needs.  The current fields are probably sufficient for many
         types of products.  However, a bookseller may wish to add a
         custom field to store the ISBN, or someone who sells clothing
         from many manufacturers may wish to add a manufacturers field.
-        Custom fields are added at <a
-        href="@package_url@admin/products/custom-fields">@package_url@admin/products/custom-fields</a>.</p>
+        Custom fields are added at <if @package_url@ not nil><a
+        href="@package_url@admin/products/custom-fields">@package_url@</if>
+	admin/products/custom-fields<if @package_url@ not nil></a></if>.</p>
 
     </li>
 
     <li>
 
-      <p>Create new product display templates (<a
-	href="@package_url@admin/templates/">@package_url@admin/templates/</a>)
+      <p>Create new product display templates (<if @package_url@ not nil><a
+	href="@package_url@admin/templates/">@package_url@</if>admin/templates/<if @package_url@ not nil></a></if>)
 	(unless you're happy with the somewhat minimalist default
 	template).  The reason for having product display templates is
 	that you might want to present different types of products in
@@ -237,9 +238,9 @@
 
     <li>
 
-      <p>Set up user classes (<a
+      <p>Set up user classes (<if @package_url@ not nil><a
         href="@package_url@admin/user-classes/"
-        >@package_url@admin/user-classes/</a>).  User classes are
+        >@package_url@</if>admin/user-classes/<if @package_url@ not nil></a></if>).  User classes are
         groupings of the users, such as "student", "retired",
         "institution", "publisher", etc. They may get special prices,
         different views of the site, or different product
@@ -258,16 +259,16 @@
     <li>
 
       <p>Enter your products into the database.  This can be done
-        using the simple form at <a
+        using the simple form at <if @package_url@ not nil><a
         href="@package_url@admin/products/add"
-        >@package_url@admin/products/add</a>.</p>
+        >@package_url@</if>admin/products/add<if @package_url@ not nil></a></if>.</p>
 
       <p>However, if you have many products already stored in another
 	database, you will not want to enter them one by one.
 	Instead, export them into a CSV file (or a series of CSV
-	files), and manipulate them into the formats documented at <a
+	files), and manipulate them into the formats documented at <if @package_url@ not nil><a
 	href="@package_url@admin/products/upload-utilities"
-	>@package_url@admin/products/upload-utilities</a> so that they
+	>@package_url@</if>admin/products/upload-utilities<if @package_url@ not nil></a></if> so that they
 	can be uploaded in bulk.</p>
 
     </li>
@@ -288,8 +289,8 @@
 
     <li>
 
-      <p>Add product recommendations (<a
-	href="@package_url@admin/products/recommendations">@package_url@dmin/products/recommendations</a>).
+      <p>Add product recommendations (<if @package_url@ not nil><a
+	href="@package_url@admin/products/recommendations">@package_url@</if>dmin/products/recommendations<if @package_url@ not nil></a></if>).
 	If you have many products subdivided into a number of
 	categories/subcategories/subsubcategories, it's good to
 	include product recommendations in order to make the site more
@@ -308,8 +309,8 @@
 
     <li>
 
-      <p>Modify the email templates (<a
-	href="@package_url@admin/email-templates/">@package_url@admin/email-templates/</a>),
+      <p>Modify the email templates (<if @package_url@ not nil><a
+	href="@package_url@admin/email-templates/">@package_url@</if>admin/email-templates/<if @package_url@ not nil></a></if>),
 	which are used when the system sends out automatic email to
 	customers.  There are seven predefined email templates for
 	email sent out when a customer's order is authorized, when a

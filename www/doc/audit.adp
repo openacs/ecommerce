@@ -1,7 +1,7 @@
 <master>
   <property name=title>Audit Trail Package</property>
-  <property name="signatory">@signatory@</property>
-  <property name="context_bar">@context_bar@</property>
+  <property name="signatory">@signatory;noquote@</property>
+  <property name="context_bar">@context_bar;noquote@</property>
 
   <h2>The Big Picture</h2>
 
