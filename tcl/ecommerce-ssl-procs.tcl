@@ -151,7 +151,6 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 	    # replaced ad_ssl_available_p with ec_ssl_available_p
 	    # which detects nsopenssl
 	    if { ![ec_ssl_available_p] } {
-		ns_log notice "debug 3: ec_ssl_available_p thinks ssl isn't installed"
 		# there's no ssl
 		# if ssl is required return an error message; otherwise, do nothing
 		ad_return_error "No SSL available" "
@@ -179,19 +178,13 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 		# in packages/ecommerce/www/register/user-login.tcl
 		set user_session_id [ec_get_user_session_id]
 
-		if { $user_session_id == 0 } {
-		    # we need the specialized ecommerce register pipeline
-		    # based out of the ecommerce instance site-node
-		    # so that links from both /ecommerce-instance/ and 
-		    # and /ecommerce-instance/admin work
-		    set register_url "[ec_secure_location][ad_conn package_url]register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
-
-		    ad_returnredirect $register_url
-		    template::adp_abort
-		} else {
-		    ec_makesecure
-		}
-	    }
+		# we need the specialized ecommerce register pipeline
+		# based out of the ecommerce instance site-node
+		# so that links from both /ecommerce-instance/ and 
+		# and /ecommerce-instance/admin work
+		set register_url "[ec_secure_location][ad_conn package_url]register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
+		ad_returnredirect $register_url
+		template::adp_abort
 	}
     }
 }
