@@ -81,4 +81,42 @@
     </querytext>
   </fullquery>
 
+<fullquery name="ec_price_line.get_regular_approvalrequired_price">      
+    <querytext>
+      select min(decode(ucp.price,null,p.price,
+      decode(sign(ucp.price-p.price),1,p.price,ucp.price))) as regular_price,
+      ucp.user_class_name
+      from ec_products p, (select * from (select uc.product_id, uc.price, c.user_class_name 
+      from ec_product_user_class_prices uc, ec_user_classes c, 
+      ec_user_class_user_map m 
+      where uc.user_class_id = c.user_class_id 
+      and uc.product_id = :product_id
+      and uc.user_class_id = m.user_class_id
+      and m.user_id = :user_id 
+      and m.user_class_approved_p = 't' order by uc.price)
+      where rownum=1) ucp
+      where p.product_id = :product_id and ucp.product_id(+)=p.product_id
+      group by p.product_id, p.price, ucp.user_class_name, ucp.price
+    </querytext>
+  </fullquery>
+
+  <fullquery name="ec_price_line.get_regular_no_approval_required_price">      
+    <querytext>
+      select min(decode(ucp.price,null,p.price,
+      decode(sign(ucp.price-p.price),1,p.price,ucp.price))) as regular_price,
+      ucp.user_class_name
+      from ec_products p, (select * from (select uc.product_id, uc.price, c.user_class_name 
+      from ec_product_user_class_prices uc, ec_user_classes c, 
+      ec_user_class_user_map m 
+      where uc.user_class_id = c.user_class_id 
+      and uc.product_id = :product_id
+      and uc.user_class_id = m.user_class_id
+      and m.user_id = :user_id 
+      and (m.user_class_approved_p is null or m.user_class_approved_p = 't') order by uc.price)
+      where rownum=1) ucp
+      where p.product_id = :product_id and ucp.product_id(+)=p.product_id
+      group by p.product_id, p.price, ucp.user_class_name, ucp.price
+    </querytext>
+  </fullquery>
+
 </queryset>
