@@ -84,14 +84,25 @@ ad_proc ec_secure_location {} {
             
         set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver" Port]
 	### nsopenssl 2.0 has different names for the secure port
-	if [empty_string_p $secure_port] {
+	if { [empty_string_p $secure_port] } {
 	    set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver" ServerPort 443]
+	}
+        ### nsopenssl 3 has variable locations for the secure port
+	# This next check might best be handled by creating another
+	# parameter value for inboundssldriver
+        if { [empty_string_p $secure_port] || [string match $secure_port 443] } {
+	    set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver/ssldriver/inboundssldriver" port 443]
 	}
 
         set secure_location "https://[ns_config ns/server/[ns_info server]/module/$sdriver Hostname]"
 	### nsopenssl 2.0 uses ServerHostname instead of Hostname
-        if [string match $secure_location "https://"] {
+        if { [string match $secure_location "https://"] } {
 	    set secure_location "https://[ns_config ns/server/[ns_info server]/module/$sdriver ServerHostname]"
+	}
+        ### nsopenssl 3 uses Hostname and custom driver name
+        # made need to make inboundssldriver (custom driver name) another parameter value
+        if { [string match $secure_location "https://"] } {
+	    set secure_location "https://[ns_config ns/server/[ns_info server]/module/$sdriver/ssldriver/inboundssldriver hostname]"
 	}
 
         if {![empty_string_p $secure_port] && ($secure_port != 443)}  {
@@ -182,6 +193,7 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 		# based out of the ecommerce instance site-node
 		# so that links from both /ecommerce-instance/ and 
 		# and /ecommerce-instance/admin work
+
 		set register_url "[ec_secure_location][ad_conn package_url]register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
 		ad_returnredirect $register_url
 		template::adp_abort
