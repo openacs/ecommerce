@@ -603,9 +603,14 @@ ad_proc -public ec_creditcard_precheck {
 		}		    
 	    }
 
+            "n" {
+                # no pattern available to precheck validity of card
+            }
+
 	    default {
 		incr exception_count
 		append exception_text "<li> Sorry, the credit card type is of an unknown type: [ec_pretty_creditcard_type $creditcard_type].</li>"
+                ns_log Warning "ec_creditcard_precheck: Possible configuration error. Rejected a user supplied creditcard as unknown."
 	    }
 	}
     }
