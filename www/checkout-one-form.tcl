@@ -443,7 +443,7 @@ if { [exists_and_equal shipping_required "t"] } {
     # if we want to bias users to use their billing addresses. 
     set shipping_address_ids [db_list get_shipping_address_ids "
         select address_id
-`        from ec_addresses
+        from ec_addresses
         where user_id=:user_id
         and address_type = 'shipping'" ]
 
