@@ -114,9 +114,18 @@
       </ol>
 
     <li>
+      <p>Change DefaultMaster template to use the ecommerce search and extra links toolbar.
+        An example modified defaultmaster template is provided to get you started. 
+        Locate the subsite Main Site's DefaultMaster parameter from the 
+        <a href="/admin/site-map/">site map<a> page. Change the value from 
+        '/www/default-master' to '/packages/ecommerce/www/default-master'.
+      </p>
+    </li>
 
-      <p>Set up product categorization (<if @package_url@ not nil><a
-       href="@package_url@admin/cat/">@package_url@</if>admin/cat/<if @package_url@ not nil></a></if>):</p>
+    <li>
+
+      <p>Set up product categorization (<if @package_url@ not nil>
+       <a href="@package_url@admin/cat/">@package_url@</if>admin/cat/<if @package_url@ not nil></a></if>):</p>
 
       <p>Product categories, subcategories and subsubcategories are
 	optional, but if you intend to offer many products for sale,
