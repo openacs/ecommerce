@@ -31,9 +31,9 @@ if { [info exists last_name] } {
     append page_html "<h3>Users whose last name contains '$last_name':</h3>\n"
     set last_bit_of_query "upper(last_name) like :u_last_name"
 } else {
- set u_email %[string toupper $email]%
+ set l_email %[string tolower $email]%
     append page_html "<h3>Users whose email contains '$email':</h3>\n"
-    set last_bit_of_query "upper(email) like :u_email"
+    set last_bit_of_query "email like :l_email"
 }
 
 append page_html "<ul>

@@ -110,7 +110,7 @@ set positively_identified_p 0
 # if their email address was filled in, see if they're a registered user
 if { ![empty_string_p $email] } {
     set email [string toupper $email]
-    set row_exists_p [db_0or1row get_row_exists_name "select first_names as d_first_names, last_name as d_last_name, user_id as d_user_id from cc_users where upper(email) = :email"]
+    set row_exists_p [db_0or1row get_row_exists_name "select first_names as d_first_names, last_name as d_last_name, user_id as d_user_id from cc_users where email = lower(:email)"]
     
     if { [info exists d_user_id] } {
 	append doc_body "<li>This is a registered user of the system: <a target=user_window href=\"[ec_acs_admin_url]users/one?user_id=$d_user_id\">$d_first_names $d_last_name</a>.

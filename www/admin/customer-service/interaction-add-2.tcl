@@ -232,7 +232,7 @@ if { ![info exists c_user_identification_id] } {
     # if their email address was filled in, see if they're a registered user
     if { ![empty_string_p $email] } {
 	set email [string toupper $email]
-	if {  [db_0or1row get_does_row_exist_p "select first_names as d_first_names, last_name as d_last_name, user_id as d_user_id from cc_users where upper(email) =:email "]==1 } {
+	if {  [db_0or1row get_does_row_exist_p "select first_names as d_first_names, last_name as d_last_name, user_id as d_user_id from cc_users where email =lower(:email) "]==1 } {
 	
 
 	    append doc_body "<li>This is a registered user of the system: <a target=user_window href=\"[ec_acs_admin_url]users/one?user_id=$d_user_id\">$d_first_names $d_last_name</a>.
@@ -276,7 +276,7 @@ if { ![info exists c_user_identification_id] } {
 	
 	set already_selected_user_identification_id_list [list]
 	if { ![empty_string_p $email] } {
-	    set sql "select user_identification_id as d_user_identification_id from ec_user_identification where upper(email)=upper(:email) and user_id is null"
+	    set sql "select user_identification_id as d_user_identification_id from ec_user_identification where email=lower(:email) and user_id is null"
 	    
 	    db_foreach get_user_identification $sql {
 		

@@ -154,7 +154,7 @@
       
     select user_id
       from cc_users
-     where upper(email)=upper(:email)
+     where email=lower(:email)
     
       </querytext>
 </fullquery>
@@ -162,7 +162,7 @@
  
 <fullquery name="user_identification_id_select">      
       <querytext>
-      select user_identification_id from ec_user_identification where upper(email)=upper(:email)
+      select user_identification_id from ec_user_identification where email=lower(:email)
       </querytext>
 </fullquery>
 

@@ -10,7 +10,7 @@
  
 <fullquery name="get_row_exists_name">      
       <querytext>
-      select first_names as d_first_names, last_name as d_last_name, user_id as d_user_id from cc_users where upper(email) = :email
+      select first_names as d_first_names, last_name as d_last_name, user_id as d_user_id from cc_users where email = lower(:email)
       </querytext>
 </fullquery>
 

@@ -29,7 +29,7 @@ append doc_body "[ad_admin_header $page_title]
 # keyword can refer to email, first_names, last_name, postal_code, or other_id_info
 set keyword [string tolower $keyword]
 set sql "select user_identification_id from ec_user_identification
-where (lower(email) like :keyword or lower(first_names || ' ' || last_name) like :keyword or lower(postal_code) like :keyword or lower(other_id_info) like :keyword)
+where (email like :keyword or lower(first_names || ' ' || last_name) like :keyword or lower(postal_code) like :keyword or lower(other_id_info) like :keyword)
 and user_id is null
 "
 

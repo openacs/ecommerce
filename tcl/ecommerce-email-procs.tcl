@@ -447,7 +447,7 @@ ad_proc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this to
     set user_id [db_string user_id_select "
     select user_id
       from cc_users
-     where upper(email)=upper(:email)
+     where email=lower(:email)
     " -default ""]
 
     db_transaction {
@@ -458,7 +458,7 @@ ad_proc ec_email_gift_certificate_recipient { gift_certificate_id } "Use this to
 	set user_identification_id [lindex $user_identification_and_issue_id 0]
       } else {
 	# check if the recipient is an unregistered user of the system
-	set user_identification_id [db_string user_identification_id_select "select user_identification_id from ec_user_identification where upper(email)=upper(:email)" -default ""]
+	set user_identification_id [db_string user_identification_id_select "select user_identification_id from ec_user_identification where email=lower(:email)" -default ""]
 
 	if { [empty_string_p $user_identification_id] } {
 	  set user_identification_id [db_nextval ec_user_ident_id_sequence]
