@@ -50,7 +50,7 @@ set page_html "[ad_admin_header "Add a New Subsubcategory"]
 
 <h2>Add a New Subsubcategory</h2>
 
-[ad_admin_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Product Categories"] [list "category?[export_url_vars category_id category_name]" $category_name] [list "subcategory?[export_url_vars category_id category_name subcategory_id subcategory_name]" $subcategory_name] "Add a New Subsubcategory"]
+[ad_context_bar [list "index" "Product Categories"] [list "category?[export_url_vars category_id category_name]" $category_name] [list "subcategory?[export_url_vars category_id category_name subcategory_id subcategory_name]" $subcategory_name] "Add a New Subsubcategory"]
 
 <hr>
 

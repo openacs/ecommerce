@@ -6,5 +6,5 @@
   <include src="toolbar">
 
 <blockquote>
-  To remove yourself anytime, go to @remove_link@
+  To remove yourself anytime, go to @remove_link;noquote@
 </blockquote>

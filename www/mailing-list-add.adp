@@ -6,7 +6,7 @@
 <blockquote>
   We think that you are @user_name@.  If not, please <a href="@register_link@">log in</a>.  Otherwise,
   <form method="post" action="mailing-list-add-2">
-    @hidden_form_variables@
+    @hidden_form_variables;noquote@
     <center>
       <input type="submit" value="Continue">
     </center>
