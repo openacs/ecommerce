@@ -1410,6 +1410,9 @@ ad_proc -private ec_create_new_session_if_necessary {
     Create a new session if needed 
 } {
     uplevel "set _ec_more_url_vars_exported \"$more_url_vars_exported\""
+    upvar __sql sql
+    set sql [db_map insert_user_session_sql]
+
     uplevel "set _ec_cookie_requirement     \"$cookie_requirement\""
 
     # DanW's suggestion 
@@ -1433,11 +1436,7 @@ ad_proc -private ec_create_new_session_if_necessary {
                 # we should be able to get rid of this in ACS 4, but
                 # we need to examine longevity of ad_sessions
 
-                db_dml insert_user_session "
-		    insert into ec_user_sessions
-		    (user_session_id, ip_address, start_time, http_user_agent)
-		    values
-		    (:user_session_id, :ip_address, current_timestamp, :http_user_agent)"
+		db_dml insert_user_session $__sql
                 
                 set cookie_name  user_session_id
                 set cookie_value $user_session_id

@@ -57,7 +57,7 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="ec_create_new_session_if_necessary.insert_user_session">      
+  <fullquery name="ec_create_new_session_if_necessary.insert_user_session_sql">      
     <querytext>
       insert into ec_user_sessions
       (user_session_id, ip_address, start_time, http_user_agent)
