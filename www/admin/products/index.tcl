@@ -54,7 +54,7 @@ doc_body_append "
 <p>
 
 <form method=post action=search>
-<li>Search by ID: <input type=text name=product_id size=3>
+<li>Search by SKU: <input type=text name=sku size=3>
 <input type=submit value=\"Search\">
 </form>
 
