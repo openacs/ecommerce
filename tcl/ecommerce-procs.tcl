@@ -208,16 +208,15 @@ ad_proc -private ec_product_directory_mem {} {
 # current_location can be "Shopping Cart", "Your Account", "Home", or
 # any category_id
 ad_proc ec_footer { {current_location ""} {category_id ""} {subcategory_id ""} {search_text ""} } { returns the ecommerce footer } {
-    set to_return "<hr>
-<center>
-[ec_search_widget "$category_id|subcategory_id"  $search_text]"
+    set to_return "
+        <hr>
+        <center>
+        [ec_search_widget "$category_id|$subcategory_id"  $search_text]"
     if { [string compare $current_location "Shopping Cart"] == 0 } {
 	append to_return "<b>Shopping Cart</b>"
     } else {
 	append to_return "<a href=\"[ec_insecurelink shopping-cart]\">Shopping Cart</a>"
     }
-#      append to_return " <a href=\"[ec_insecurelink shopping-cart]\">Insecure Shopping Cart</a> "
-#      append to_return " <a href=\"[ec_securelink shopping-cart]\">Secure Shopping Cart</a> "
     append to_return " | "
     if { [string compare $current_location "Your Account"] == 0 } {
 	append to_return "<b>Your Account</b>"
@@ -235,12 +234,11 @@ ad_proc ec_footer { {current_location ""} {category_id ""} {subcategory_id ""} {
     } else {
 	set ds_link ""
     }
-#    [ad_site_home_link]
     append to_return "<br>
-    <a href='[ad_url]'>[ad_system_name]</a>
-    </center>
-    <hr>
-    $ds_link"
+        <a href='[ad_url]'>[ad_system_name]</a>
+        </center>
+        <hr>
+        $ds_link"
     return $to_return
 }
 

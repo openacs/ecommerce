@@ -15,6 +15,8 @@ ad_page_contract {
 } {
     search_text
     {combocategory_id ""}
+    {category_id ""}
+    {subcategory_id ""}
     usca_p:optional
 }
 
@@ -35,7 +37,6 @@ set user_session_id [ec_get_user_session_id]
 
 # Decode the combo of category and subcategory ids
 if { ![empty_string_p $combocategory_id] } {
-    ns_log debug "BART: combocategory_id $combocategory_id"
     set category_id [lindex [split $combocategory_id "|"] 0]
     set subcategory_id [lindex [split $combocategory_id "|"] 1]
 } else {

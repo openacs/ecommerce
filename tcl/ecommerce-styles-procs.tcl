@@ -36,12 +36,14 @@ parameter can be used to specify the current location, either
     eval "uplevel { ec_navbar \[subst \"$string\"\] }"
 }
 
-ec_register_styletag "ec_footer" "insert the standard ecommerce section footer;  the location parameter can be used to specify the current location, either \"Shopping Cart\" or \"Your Account\" or \"Home\", the category parameter can be used to specify the category that is selected in by default, and the text parameter can be used to specify the default search string." { 
+ec_register_styletag "ec_footer" "insert the standard ecommerce section footer;  the location parameter can be used to specify the current location, either \"Shopping Cart\" or \"Your Account\" or \"Home\", the category and subcatory parameters can be used to specify the (sub)category that is selected in by default, and the text parameter can be used to specify the default search string." { 
 
     upvar category_id category_id
+    upvar subcategory_id subcategory_id
     upvar search_text search_text
 
     if { ![info exists category_id] || $category_id == ""} {
+	ns_log debug "BART category_id does not exist or is empty"
 	set category [ns_set get $tagset "category"]
 	if {$category == ""} {
 	    set category_id ""
@@ -49,11 +51,19 @@ ec_register_styletag "ec_footer" "insert the standard ecommerce section footer; 
 	    set category_id [db_string get_cat_id "select category_id from ec_categories where category_name = :category"]
 	}
     }
+    if { ![info exists subcategory_id] || $subcategory_id == ""} {
+	set subcategory [ns_set get $tagset "subcategory"]
+	if {$subcategory == ""} {
+	    set subcategory_id ""
+	} else {
+	    set subcategory_id [db_string get_subcat_id "select subcategory_id from ec_subcategories where category_name = :subcategory"]
+	}
+    } 
     if { ![info exists search_text] || $search_text == ""} {
 	set search_text [ns_set get $tagset "text"]
-    }
+    } 
 
-    ec_footer $string $category_id $search_text
+    ec_footer $string $category_id $subcategory_id $search_text
 }
 
 ec_register_styletag "ec_search" "insert the standard ecommerce search bar; the category parameter can be used to specify the category that is selected in by default, and the text parameter can be used to specify the default search string." { 
