@@ -157,7 +157,7 @@ doc_body_append "<tr>
 <td>Is this product shippable?</td>
 <td><input type=radio name=no_shipping_avail_p value=\"f\""
 
-if { $present_p == "f" } {
+if { $no_shipping_avail_p == "f" } {
     doc_body_append " checked "
 }
 
@@ -165,7 +165,7 @@ doc_body_append ">Yes
 &nbsp;&nbsp;
 <input type=radio name=no_shipping_avail_p value=\"t\""
 
-if { $present_p == "t" } {
+if { $no_shipping_avail_p == "t" } {
     doc_body_append " checked "
 }
 
