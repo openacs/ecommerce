@@ -403,6 +403,8 @@
             <file type="query_file" path="www/admin/orders/items-void-2.xql"/>
             <file type="content_page" path="www/admin/orders/items-void.tcl"/>
             <file type="query_file" path="www/admin/orders/items-void.xql"/>
+            <file type="query_file" db_type="oracle" path="www/admin/orders/one-oracle.xql"/>
+            <file type="query_file" db_type="postgresql" path="www/admin/orders/one-postgresql.xql"/>
             <file type="content_page" path="www/admin/orders/one.tcl"/>
             <file type="query_file" path="www/admin/orders/one.xql"/>
             <file type="query_file" db_type="oracle" path="www/admin/orders/refunds-oracle.xql"/>
