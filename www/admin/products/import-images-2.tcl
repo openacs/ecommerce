@@ -62,6 +62,7 @@ set datafilefp [open $unix_file_name]
 
 set count 0
 set errors 0
+set line_errors 0
 set success_count 0
 
 # Get the values that we use repeatedly in the main process loop(s)
@@ -129,16 +130,16 @@ while { $line_status != -1 && !$errors} {
         # Assign the values in the datafile row to the required field names.
 
         foreach required_field_name $required_field_names {
-            set $required_field_name [lindex ${required_field_name}_column]
+            set $required_field_name [lindex $elements [expr $${required_field_name}_column]]
             if { [empty_string_p $required_field_name] } {
-                incr errors
+                incr line_errors
             }
         }
 
         # copy the product image and create the thumbnail if all the required fields were
         # given values.
 
-        if {!$errors} {
+        if {!$line_errors} {
 
             # Check if there is a product with the give sku.
             # otherwise, there is no place to copy the product image to.
@@ -146,23 +147,25 @@ while { $line_status != -1 && !$errors} {
             if { $product_id != ""} {
                 # We found a product_id for the given sku
                 # get the product directory
-                regsub - all {[a-zA-z]} $dirname "" product_id 
+                set dirname [db_string dirname_select "select dirname from ec_products where product_id=:product_id"]
+
                 set subdirectory [ec_product_file_directory $product_id]
                 set full_dir_path [file join ${products_root_path} ${subdirectory} ${dirname}]
                 set file_suffix [string range $image_fullpathname end-3 end]
                 set product_image_location [file join $full_dir_path "product${file_suffix}" ]
                 # update the product image
                 if { [catch {file copy $image_fullpathname $product_image_location} ] } {
-                    doc_body_append "<p><font color=red>Error!</font>Image update of <i>$sku</i> failed with error:<\p><p>$errmsg</p>"
+                    doc_body_append "<p><font color=red>Error!</font> (ref: 157) Image update of <i>$sku</i> failed with error:<\p><p>$errmsg</p>"
+                    incr line_errors
                 } else {
                     doc_body_append "<p>Imported images for product: $sku</p>"
                     # A product row has been successfully processed, increase counter
                     incr success_count
                 }
                 # create a thumbnail
-                if { $use_both_param_dimensions } {
+                if { $use_both_param_dimensions && !$line_errors } {
                     set convert_dimensions "${thumbnail_width}x${thumbnail_height}>"
-                } else {
+                } elseif { !$line_errors } {
                     if  { $thumbnail_width_is_blank } {
 	                if  { $thumbnail_height_is_blank } {
 	                    set convert_dimensions "100x10000"
@@ -177,15 +180,17 @@ while { $line_status != -1 && !$errors} {
 	        set perm_thumbnail_filename [file join $full_dir_path "product-thumbnail.jpg"]
 
                 if [catch {exec $convert -geometry $convert_dimensions -comment \"$image_comment\" $product_image_location $perm_thumbnail_filename} errmsg ] {
-                    doc_body_append "<p><font color=red>Error!</font> Could not create thumbnail for product: <i>$sku</i> Error is: $errmsg</p>"
+                    doc_body_append "<p><font color=red>Error!</font> (ref:182) Could not create thumbnail for product: <i>$sku</i> Error is: $errmsg</p>"
+                    incr line_errors
                 }
 
             } else {
 
                 # Let them know this sku is not in the catalog
-                doc_body_append "<font color=red>FAILURE!</font>Could not import image for sku: <i>$sku</i>, because sku was not found in catalog.</p>"
+                doc_body_append "<font color=red>Error!</font> (ref:189) Could not import image for sku: <i>$sku</i>, because sku was not found in catalog.</p>"
             }
-        } 
+        }
+     
     } 
 
     # read next line of data file, depending on file type, or end read loop if error.
@@ -199,7 +204,7 @@ while { $line_status != -1 && !$errors} {
     # no valid filetype chosen
     set line_status -1
     }
-
+    set line_errors 0
 }
 
 if { $success_count == 1 } {
