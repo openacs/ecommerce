@@ -26,10 +26,10 @@
     </tr>
   </table>      
 </if>
-  <h4><a href="@category_url;noquote@">@category_name@</a> &gt; @subcategory_name@ products:</h4>
+  <h4><a href="@category_url@">@category_name@</a> &gt; @subcategory_name@ products:</h4>
   @products;noquote@
 
-  @prev_link@ @separator@ @next_link@
+  @prev_link;noquote@ @separator@ @next_link;noquote@
 </blockquote>
 
 <p><a href="<%= mailing-list-add?category_id=@category_id@&subcategory_id=@subcategory_id@ %>">Add yourself to the @the_category_name@ mailing list!</a></p>
