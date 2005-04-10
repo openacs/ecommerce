@@ -11,7 +11,7 @@
       <if @recommendations@ >
         <td>
 	  <h4>We recommend:</h4>
-	  @recommendations@
+	  @recommendations;noquote@
         </td>
      </if>
     </tr>

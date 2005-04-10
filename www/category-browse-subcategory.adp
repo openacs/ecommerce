@@ -13,14 +13,14 @@
         <td width="50%">
 	  <h4>Browse:</h4>
 	  <ul>
-	    @subcategories@
+	    @subcategories;noquote@
 	  </ul>
         </td>
       </if>
       <if @recommendations@ >
         <td>
 	  <h4>We recommend:</h4>
-	  @recommendations@
+	  @recommendations;noquote@
         </td>
      </if>
     </tr>
