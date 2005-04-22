@@ -153,7 +153,13 @@ if { $search_count == 0 } {
     set search_results "No products found."
 } else {
     set search_results "<p> $search_count [ec_decode $search_count "1" "item found." "items found, most relevant first."]</p>"
-    append search_results "<p>Showing items [expr $start_row + 1] to $last_row_this_page."
+    if { $start_row != 0 || $search_count > $rows_per_page } {
+        if { [info exists last_row_this_page] } {
+            append search_results "<p>Showing items [expr $start_row + 1] to $last_row_this_page.</p>"
+        } else {
+            append search_results "<p>Display scope out of range of search results.</p>"
+        }
+    }
     append search_results "${search_string}${prev_link}${separator}${next_link}"
 }
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "[ec_system_name] search results"]]]
