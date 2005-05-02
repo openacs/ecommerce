@@ -781,5 +781,5 @@ db_transaction {
 }
 
 db_release_unused_handles
-rp_form_put url checkout-one-form-2
+rp_form_put referer checkout-one-form-2
 rp_internal_redirect checkout-3.tcl
