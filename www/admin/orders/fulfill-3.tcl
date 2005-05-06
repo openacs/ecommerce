@@ -287,7 +287,7 @@ if { $shipment_cost >= 0 } {
 	# returns failed_authorization, authorized,
 	# no_recommendation, or invalid_input.
 
-	array set response [ec_creditcard_authorization $order_id]
+	array set response [ec_creditcard_authorization $order_id $transaction_id]
 	set result $response(response_code)
 	set pgw_transaction_id $response(transaction_id)
 	if {[string equal $result "failed_authorization"] || [string equal $result "invalid_input"]} {
