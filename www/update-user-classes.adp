@@ -16,7 +16,7 @@
       <p>Select the user classes you belong in:</p>
     </else>
     <blockquote>
-      @user_class_select_list@
+      @user_class_select_list;noquote@
     </blockquote>
     <center>
       <input type="submit" value="Done">

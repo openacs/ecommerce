@@ -16,7 +16,7 @@
 
       <if @recommendations_if_there_are_any@>
 	<h4>We recommend:</h4>
-	@recommendations_if_there_are_any@
+	@recommendations_if_there_are_any;noquote@
       </if>
 
       <if @products@>

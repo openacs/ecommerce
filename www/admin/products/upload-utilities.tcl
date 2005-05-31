@@ -55,7 +55,7 @@ These utilities help you load catalog data into the database:
  products, and creates thumbnails for them.  
  Place product images in a set of directories accessible by this server. Then use this utility
  to upload a file that maps product <tt>sku</tt> to the location of the product images
- <tt>full_imagepathname</tt>. <b>This option is untested and therefore buggy, but will be tested over the next day or so</b>
+ <tt>full_imagepathname</tt>.
 </p></li>
 
 </ul>

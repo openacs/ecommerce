@@ -48,7 +48,7 @@ ad_require_permission [ad_conn package_id] admin
 # being added)
 
 # we need them to be logged in
-auth::require_login
+ad_maybe_redirect_for_registration
 set user_id [ad_get_user_id]
 set peeraddr [ns_conn peeraddr]
 

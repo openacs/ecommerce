@@ -12,7 +12,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-auth::require_login
+ad_maybe_redirect_for_registration
 set customer_service_rep [ad_get_user_id]
 
 db_transaction {

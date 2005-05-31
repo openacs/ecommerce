@@ -1,10 +1,5 @@
-<?xml version="1.0"?>
-
-<queryset>
-  <rdbms>
-    <type>oracle</type>
-    <version>8.1.6</version>
-  </rdbms>
+    </querytext>
+  </fullquery>
 
   <fullquery name="insert_other_claim_prob">      
     <querytext>

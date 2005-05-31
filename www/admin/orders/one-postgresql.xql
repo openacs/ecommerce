@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <queryset>
 
-  <rdbms><type>postgresql</type><version>7.2</version></rdbms>
-
   <fullquery name="order_select">
     <querytext>
       select o.order_state, o.creditcard_id, o.confirmed_date, o.cs_comments,

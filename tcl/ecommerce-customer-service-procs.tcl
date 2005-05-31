@@ -128,7 +128,7 @@ ad_proc ec_all_cs_issues_by_one_user {
 		    append to_return " ([join $issue_type_list ", "])"
 	       	    set issue_type_list [list]
 	        }
-	        append to_return "<li> <a href=\"[ec_url_concat [ec_url] /admin]/customer-service/issue?[export_vars issue_id]\">$issue_id</a>: opened [util_AnsiDatetoPrettyDate $open_date]"
+	        append to_return "<li> <a href=\"[ec_url_concat [ec_url] /admin]/customer-service/issue?[export_url_vars issue_id]\">$issue_id</a>: opened [util_AnsiDatetoPrettyDate $open_date]"
 	        if { ![empty_string_p $close_date] } {
 		    append to_return ", closed [util_AnsiDatetoPrettyDate $close_date]"
 	        }

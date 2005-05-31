@@ -64,10 +64,10 @@ foreach picklist $picklist_list {
     }
     
     if { $picklist_item_counter != 0 } {
-	append doc_body "<td> &nbsp;&nbsp;<font face=\"MS Sans Serif, arial,helvetica\"  size=1><a href=\"picklist-item-add?prev_sort_key=$old_sort_key&next_sort_key=[expr $old_sort_key + 2]&picklist_name=[ns_urlencode [lindex $picklist 0]]\">insert after</a></font></td></tr>
+	append doc_body "<td> &nbsp;&nbsp;<font face=\"MS Sans Serif, arial,helvetica\"  size=1><a href=\"picklist-item-add?prev_sort_key=$old_sort_key&next_sort_key=[expr $old_sort_key + 512]&picklist_name=[ns_urlencode [lindex $picklist 0]]\">insert after</a></font></td></tr>
 	"
     } else {
-	append doc_body "You haven't added any items.  <a href=\"picklist-item-add?prev_sort_key=1&next_sort_key=2&picklist_name=[ns_urlencode [lindex $picklist 0]]\">Add a picklist item.</a>\n"
+	append doc_body "You haven't added any items.  <a href=\"picklist-item-add?prev_sort_key=1&next_sort_key=512&picklist_name=[ns_urlencode [lindex $picklist 0]]\">Add a picklist item.</a>\n"
     }
 
     incr picklist_counter

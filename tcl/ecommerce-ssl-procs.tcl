@@ -70,12 +70,12 @@ ad_proc ec_preferred_drivers {} {
 }
 
 ad_proc ec_secure_location {} {
-    @return the secure location https://host:port, favoring the https module specified as an ecommerce parameter.
+    @returns the secure location https://host:port, favoring the https module specified as an ecommerce parameter.
 } {
-    # set loc [ad_parameter -package_id [ec_id] SecureLocation]
+
     set loc [ad_parameter -package_id [ec_id] SecureLocation]
     if {[empty_string_p $loc] || [string equal -nocase $loc "No Value"]} {
-        # set sdriver [ad_parameter -package_id [ec_id] httpsModule]
+
         set sdriver [ad_parameter -package_id [ec_id] httpsModule]
         if {[empty_string_p $sdriver]} {
             array set drivers [ec_preferred_drivers]
@@ -88,8 +88,7 @@ ad_proc ec_secure_location {} {
 	    set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver" ServerPort 443]
 	}
         ### nsopenssl 3 has variable locations for the secure port
-	# This next check might best be handled by creating another
-	# parameter value for users/inboundssl (custom driver name)
+        # this is matched to the aolserver config.tcl
         if { [empty_string_p $secure_port] || [string match $secure_port 443] } {
 	    set secure_port [ns_config -int "ns/server/[ns_info server]/module/$sdriver/ssldriver/users" port 443]
 	}
@@ -156,10 +155,10 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 } {
     uplevel {
 	# wtem@olywa.net, 2001-03-22
-	# made this simpler by relying on security::secure_conn_p
-	if {![security::secure_conn_p]} {
+	# made this simpler by relying on ad_secure_conn_p
+	if {![ad_secure_conn_p]} {
 	    # see if ssl is installed
-	    # replaced security::https_available_p with ec_ssl_available_p
+	    # replaced ad_ssl_available_p with ec_ssl_available_p
 	    # which detects nsopenssl
 	    if { ![ec_ssl_available_p] } {
 		# there's no ssl
@@ -180,7 +179,7 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 
 		# grab the user_id 
 		# 0 if user is not logged in
-		set user_id [ad_conn user_id]
+		set user_id [ad_verify_and_get_user_id]
 
 		# grab the current user_session_id
 		# otherwise we lose the session 
@@ -194,7 +193,7 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 		# so that links from both /ecommerce-instance/ and 
 		# and /ecommerce-instance/admin work
 
-		set register_url "[ec_secure_location][ad_conn package_url]register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
+		set register_url "[ec_securelink [ad_get_login_url]]?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
 		ad_returnredirect $register_url
 		template::adp_abort
 	    }
@@ -227,8 +226,8 @@ ad_proc ec_makesecure {} {
             return 0
         } else {
             array set drivers [ec_preferred_drivers]
-            set secure_url "https://[ns_config ns/server/[ns_info server]/module/$drivers(sdriver) Hostname]"
-            set secure_port [ns_config ns/server/[ns_info server]/module/$drivers(sdriver) Port]
+            set secure_url "https://[ns_info hostname]"
+            set secure_port [ns_config ns/server/[ns_info server]/module/$drivers(sdriver) ServerPort]
             if ![empty_string_p $secure_port] {
                 append secure_url ":$secure_port"
             }
@@ -249,7 +248,7 @@ ad_proc ec_makeinsecure {} {
     If the current url is secure, will redirect the user to the
     insecure version of this page. One disadvantage of this
     is the Netscape throws up a "the  document you requested was 
-    supposed to be secure" window. ec_insecureurl might be a 
+    supposed to be secure" window. ec_insecurelink might be a 
     better choice.
 
 } {
@@ -275,26 +274,21 @@ ad_proc ec_makeinsecure {} {
 
 ad_proc ec_securelink {new_page} {
 
-    Allows you to create a relative link to a secure page
+    Creates a url to a secure page from a relative url that may or may not be secure
 
 } {
 
-    if {![security::https_available_p]} {
+    if {![ad_ssl_available_p]} {
         # we don't have ssl installed, so return the original URL
         return $new_page
     }
 
-    if { [string match "nsssl" [ns_conn driver]] ||
-    [string match "nsopenssl" [ns_conn driver]] } {
-        # we don't need to do anything
+    if { [string match "nsssl" [ns_conn driver]] || [string match "nsopenssl" [ns_conn driver]] } {
+        # we are already connected via ssl, no need to do anything
         return $new_page
     } else {
-        array set drivers [ec_preferred_drivers]
-        set new_url "https://[ns_config ns/server/[ns_info server]/module/$drivers(sdriver) Hostname]"
-        set port [ns_config ns/server/[ns_info server]/module/$drivers(sdriver) Port]
-        if {![empty_string_p $port] && ($port != 443)} {
-            append new_url ":$port"
-        }
+
+        set new_url [ec_secure_location]
         
         if [string match /* $new_page] {
             append new_url $new_page
@@ -309,17 +303,15 @@ ad_proc ec_securelink {new_page} {
 
 ad_proc ec_insecurelink {new_page} {
 
-    Allows you to create a relative link from a secure page to an
-    insecure page
+    Creates a url from a possible secure page to an insecure page
 
 } {
-    if {![security::https_available_p]} {
+    if {![ad_ssl_available_p]} {
         # we don't have ssl installed, so return the original URL
         return $new_page
     }
 
-    if {(![string match "nsssl" [ns_conn driver]] &&
-    ![string match "nsopenssl" [ns_conn driver]])} {
+    if {(![string match "nsssl" [ns_conn driver]] && ![string match "nsopenssl" [ns_conn driver]])} {
         # We're not on a secure page, so this relative link is already
         # doing the right thing.
         return $new_page

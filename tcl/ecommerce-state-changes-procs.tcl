@@ -134,6 +134,15 @@ ad_proc ec_update_state_to_confirmed {
 	update ec_orders 
 	set order_state = 'confirmed', confirmed_date = sysdate 
 	where order_id = :order_id"
+
+    # Call after-checkout callback
+    db_foreach products {
+	select product_id, price_charged
+	from ec_items
+	where order_id = :order_id
+    } {
+	callback -- ecommerce::after-checkout -user_id $user_id -product_id $product_id -price $price_charged
+    }
 }
 
 ad_proc ec_apply_gift_certificate_balance { 

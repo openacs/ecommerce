@@ -10,8 +10,8 @@
 ad_page_variables {item item_group return_url {delete_the_sort 0} {col -multiple-list} {dir -multiple-list} {item_original {}}}
 
 set db [ns_db gethandle]
-set user_id [ad_conn user_id] 
-auth::require_login    
+set user_id [ad_verify_and_get_user_id] 
+ad_maybe_redirect_for_registration    
 set item_type {table_sort}
 set value_type {list}
 

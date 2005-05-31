@@ -333,7 +333,7 @@ ad_proc ec_audit_process_row { } {
             }
             append audit_entry "</table>"
             if { ![empty_string_p $restore_url] } {
-                set exports [export_vars id id_column \
+                set exports [export_url_vars id id_column \
                         main_table_name audit_table_name rowid]
                 append audit_entry "
                 Restore <a href=\"$restore_url?$exports\">this record</a>
@@ -439,7 +439,7 @@ ns_log debug "eatp id_list:[llength $id_list] $id_list"
         # Set the HTML link tags to a page which displays the full
         # audit history.
         if { ![empty_string_p $audit_url] } {
-            set exports [export_vars id id_column \
+            set exports [export_url_vars id id_column \
                     main_table_name audit_table_name]
             set id_href "<a href=\"$audit_url?$exports\">"
             set id_href_close "</a>"
@@ -484,7 +484,7 @@ ns_log debug "eatp id_list:[llength $id_list] $id_list"
         # Set the HTML link tags to a page which displays the full
         # audit history.
         if { ![empty_string_p $audit_url] } {
-            set exports [export_vars id id_column main_table_name \
+            set exports [export_url_vars id id_column main_table_name \
                     audit_table_name]
             set id_href "<a href=\"$audit_url?$exports\">"
             set id_href_close "</a>"

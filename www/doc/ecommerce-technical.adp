@@ -164,7 +164,7 @@
 	      email address</p>
 	  </li>
 	  <li>
-	    <p>Make sure to replace <i>yourservername</i> in
+	    <p>Make sure to replace <i>service0</i> in
 	      EcommerceDataDirectory with the correct path!  This
 	      parameter should also have a trailing slash!</p>
 	  </li>

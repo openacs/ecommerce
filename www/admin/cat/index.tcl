@@ -36,7 +36,7 @@ db_foreach get_categories_loop "select category_id, sort_key, category_name from
 }
 
 if { $category_counter != 0 } {
-    append page_html "<td> &nbsp;&nbsp;<font face=\"MS Sans Serif, arial,helvetica\"  size=1><a href=\"category-add-0?prev_sort_key=$old_sort_key&next_sort_key=[expr $old_sort_key + 2]\">insert after</a></font></td></tr>
+    append page_html "<td> &nbsp;&nbsp;<font face=\"MS Sans Serif, arial,helvetica\"  size=1><a href=\"category-add-0?prev_sort_key=$old_sort_key&next_sort_key=[expr $old_sort_key + 512]\">insert after</a></font></td></tr>
     "
 } else {
     append page_html "You haven't set up any categories.  <a href=\"category-add-0?prev_sort_key=1&next_sort_key=2\">Add a category.</a>\n"

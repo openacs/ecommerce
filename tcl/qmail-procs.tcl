@@ -12,5 +12,9 @@ ad_proc qmail {to from subject body {extraheaders {}}} {
     @author jsc 
     @creation-date 1999-01-15
 } {
-    ns_sendmail $to $from $subject $body $extraheaders
+    if { ![empty_string_p $to] } {
+        ns_sendmail $to $from $subject $body $extraheaders
+    } else {
+        ns_log Notice "qmail-procs.tcl: Warning, requested to send an email without an email address. subject=$subject"
+    }
 }

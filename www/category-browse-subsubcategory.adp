@@ -11,7 +11,7 @@
       <if @recommendations@ >
         <td>
 	  <h4>We recommend:</h4>
-	  @recommendations@
+	  @recommendations;noquote@
         </td>
      </if>
     </tr>
@@ -20,7 +20,7 @@
   <h4><a href="category-browse?category_id=@the_category_id@">@category_name@</a> > <a href="category-browse-subcategory?category_id=@the_category_id@&subcategory_id=@subcategory_id@">@subcategory_name@</a> > @subsubcategory_name@ products:</h4>
   @products@
 
-  @prev_link@ @separator@ @next_link@
+  @prev_link;noquote@ @separator@ @next_link;noquote@
 </blockquote>
 
 <p><a href="mailing-list-add?category_id=@the_category_id@&subcategory_id=@subcategory_id@&subsubcategory_id=@subsubcategory_id@">Add yourself to the @the_category_name@ mailing list!</a></p>

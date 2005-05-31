@@ -43,8 +43,8 @@ set item_id_list $item_id
 
 # The customer service rep must be logged on
 
-auth::require_login
-set customer_service_rep [ad_conn user_id]
+ad_maybe_redirect_for_registration
+set customer_service_rep [ad_verify_and_get_user_id]
 
 # Doubleclick protection
 

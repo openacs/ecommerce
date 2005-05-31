@@ -30,7 +30,7 @@ regsub -all " " $creditcard_number "" creditcard_number
 
 # User must be logged in
 
-set user_id [ad_conn user_id]
+set user_id [ad_verify_and_get_user_id]
 
 # Error checking
 

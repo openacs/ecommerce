@@ -1241,7 +1241,7 @@ ad_proc ec_shipment_summary_sub {
 	    }
 	    if { ![empty_string_p $tracking_number] } {
 		if { ([string tolower $carrier] == "fedex" || [string range [string tolower $carrier] 0 2] == "ups") } {
-		    append to_append_to_shipment_list " <font size=-1>(<a href=\"track?[export_vars shipment_id]\">track</a>)</font>"
+		    append to_append_to_shipment_list " <font size=-1>(<a href=\"track?[export_url_vars shipment_id]\">track</a>)</font>"
 		    } else {
 			append to_append_to_shipment_list " (tracking # $tracking_number)"
 		    }

@@ -99,7 +99,6 @@ if { $multiple_retailers_p } {
 
 doc_body_append "<li><a href=\"mailing-lists/\">Mailing Lists</a></li>
 <li><a href=\"email-templates/\">Email Templates</a></li>
-<li><a href=\"searches\">User Search Terms</a></li>
 <li><a href=\"audit-tables\">Audit [ec_system_name]</a></li>"
 
 doc_body_append "</ul>

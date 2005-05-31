@@ -26,7 +26,7 @@ ad_require_permission [ad_conn package_id] admin
 
 # The customer service rep must be logged on.
 
-auth::require_login
+ad_maybe_redirect_for_registration
 set customer_service_rep [ad_get_user_id]
 
 if { ![empty_string_p $carrier_other] } {

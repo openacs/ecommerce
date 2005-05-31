@@ -43,7 +43,7 @@ EXPIRED      CONFIRMED------------------+ before returning to IN_BASKET)
   <p>An order is IN_BASKET when the customer has put items into their
     shopping cart on the site but has not indicated an intent to buy
     (if they stay there too long they go into the EXPIRED state; "too
-    long" is defined in the parameters/yourservername.ini file;
+    long" is defined by the ecommerce parameter CartDuration;
     default is 30 days).  When the customer submits their order, the
     state becomes CONFIRMED.  Only then do we try to authorize their
     credit card.  If the authorization succeeds, the order state will
