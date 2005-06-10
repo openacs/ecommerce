@@ -52,6 +52,9 @@ if { ![empty_string_p $combocategory_id] } {
     set subcategory_id [lindex [split $combocategory_id "|"] 1]
 }
 
+# filter extra spaces
+regsub -all -- {\s+} $search_text { } search_text]
+set search_text "[string trim $search_text]"
 # filter overflow attempts from really long search strings
 set search_text "[string range $search_text 0 100 ]"
 
@@ -72,37 +75,42 @@ if { ![empty_string_p $subcategory_id] && $subcategory_id > 0} {
 
 if { ![empty_string_p $subcategory_id] && $subcategory_id > 0} {
     set query_string [db_map search_subcategory] 
+    set query_count_string [db_map search_count_subcategory] 
     # select p.product_name, p.product_id, p.dirname, p.one_line_description,pseudo_contains(p.product_name || p.one_line_description || p.detailed_description || p.search_keywords, :search_text) as score
     # from ec_products_searchable p, ec_subcategory_product_map c
     # where c.subcategory_id=:subcategory_id
     # and p.product_id=c.product_id
     # and pseudo_contains(p.product_name || p.one_line_description ||  p.detailed_description || p.search_keywords, :search_text) > 0
-    # order by score desc
+    # order by score desc limit :rows_per_page offset :start_row
 } else {
     if { ![empty_string_p $category_id] } {
 	set query_string [db_map search_category] 
+	set query_count_string [db_map search_count_category] 
 	# select p.product_name, p.product_id, p.dirname, p.one_line_description,pseudo_contains(p.product_name || p.one_line_description || p.detailed_description || p.search_keywords, :search_text) as score
 	# from ec_products_searchable p, ec_category_product_map c
 	# where c.category_id=:category_id
 	# and p.product_id=c.product_id
 	# and pseudo_contains(p.product_name || p.one_line_description ||  p.detailed_description || p.search_keywords, :search_text) > 0
-	# order by score desc
+	# order by score desc limit :rows_per_page offset :start_row
     } else {
 	set query_string [db_map search_all]
+	set query_count_string [db_map search_count_all]
 	# select p.product_name, p.product_id, p.dirname, p.one_line_description,pseudo_contains(p.product_name || p.one_line_description || p.detailed_description || p.search_keywords, :search_text) as score
 	# from ec_products_searchable p
 	# where pseudo_contains(p.product_name || p.one_line_description ||  p.detailed_description || p.search_keywords, :search_text) > 0
-	# order by score desc
+	# order by score desc limit :rows_per_page offset :start_row
     }
 }
 
 set search_string ""
-set search_count 0
+set page_count 0
+#  make  search_count equal to count(*) of query
+# getting the count of search results requires a second db hit, 
+# which is magnitudes better than the tcl filtering that used to be in this loop
+db_1row get_search_count $query_count_string 
 set have_how_many_more_p "f"
 set end_row_of_next_page [expr $start_row + (2 * $rows_per_page)]
 db_foreach get_product_listing_from_search $query_string {
-    
-    if { $search_count >= $start_row && [expr $search_count - $start_row] < $rows_per_page } {
 
     append search_string "
       <table width=90%>
@@ -117,14 +125,14 @@ db_foreach get_product_listing_from_search $query_string {
           <td align=right valign=top>[ec_linked_thumbnail_if_it_exists $dirname "t" "t"]</td>
         </tr>
       </table>"
-    set last_row_this_page [expr $search_count + 1]
-    }
-    incr search_count
-    if { $search_count > $end_row_of_next_page } {
+
+    incr page_count
+}
+set last_row_this_page [expr $page_count + $start_row ]
+if { $search_count > $end_row_of_next_page } {
 	# we know there are at least how_many more items to display next time
 	set have_how_many_more_p "t"
-    } 
-}
+} 
 
 if { $start_row >= $rows_per_page } {
     set prev_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id rows_per_page search_text]&start_row=[expr $start_row - $rows_per_page]>Previous $rows_per_page</a>"
@@ -135,7 +143,7 @@ if { $start_row >= $rows_per_page } {
 if { [string equal $have_how_many_more_p "t"] } {
     set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id rows_per_page search_text]&start_row=[expr $start_row + $rows_per_page]>Next $rows_per_page</a>"
 } else {
-    set number_of_remaining_products [expr $search_count - $start_row - $rows_per_page]
+    set number_of_remaining_products [expr $search_count - $start_row - $rows_per_page ]
     if { $number_of_remaining_products > 0 } {
 	set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id rows_per_page search_text]&start_row=[expr $start_row + $rows_per_page]>Next $number_of_remaining_products</a>"
     } else {
