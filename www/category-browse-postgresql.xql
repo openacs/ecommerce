@@ -23,6 +23,16 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="get_regular_product_list_count">      
+    <querytext>
+      select count(*) as product_count
+      from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
+      where p.product_id = m.product_id
+      and m.${sub}category_id = :${sub}category_id
+      $exclude_subproducts
+    </querytext>
+  </fullquery>
+
   <fullquery name="get_regular_product_list">      
     <querytext>
       select p.product_id, p.product_name, p.one_line_description, o.offer_code
@@ -30,7 +40,7 @@
       where p.product_id = m.product_id
       and m.${sub}category_id = :${sub}category_id
       $exclude_subproducts
-      order by p.product_name
+      order by p.product_name limit :how_many offset :start_row
     </querytext>
   </fullquery>
 

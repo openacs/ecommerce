@@ -23,8 +23,23 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="get_regular_product_count">      
+    <querytext>
+      select count(*) as product_count
+      from $product_map($sub) m, ec_products_searchable p, ec_user_session_offer_codes o
+      where (p.product_id=o.product_id(+) and (user_session_id=:user_session_id or user_session_id is null))
+      and p.product_id = m.product_id
+      and m.${sub}category_id = :${sub}category_id
+      $exclude_subproducts
+    </querytext>
+  </fullquery>
+
   <fullquery name="get_regular_product_list">      
     <querytext>
+        select r.*
+        from (
+            select rownum as r_rownum, q.*
+            from (
       select p.product_id, p.dirname, p.product_name, p.one_line_description, o.offer_code
       from $product_map($sub) m, ec_products_searchable p, ec_user_session_offer_codes o
       where (p.product_id=o.product_id(+) and (user_session_id=:user_session_id or user_session_id is null))
@@ -32,6 +47,10 @@
       and m.${sub}category_id = :${sub}category_id
       $exclude_subproducts
       order by p.product_name
+            ) q
+        ) r
+        where r_rownum > :start_row
+        and r_rownum <= :start_row + :how_many
     </querytext>
   </fullquery>
 

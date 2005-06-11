@@ -6,7 +6,7 @@ ad_page_contract {
     @param subcategory_id The ID of the subcategory
     @param subsubcategory_id The ID of the subsubcategory
     @param how_many How many products to show on a page
-    @param start Which product to start at
+    @param start_row Which product to start at
     @param usca_p User session begun or not
 
     @author
@@ -19,7 +19,7 @@ ad_page_contract {
     subcategory_id:optional,naturalnum
     subsubcategory_id:optional,naturalnum
     {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
-    {start:naturalnum "0"}
+    {start_row:naturalnum "0"}
     usca_p:optional
 }
 
@@ -58,7 +58,7 @@ if { $user_id != 0 } {
 #        want their offer price
 # 4. Log this category_id into the user session
 
-ec_create_new_session_if_necessary [export_url_vars category_id subcategory_id subsubcategory_id how_many start] cookies_are_not_required
+ec_create_new_session_if_necessary [export_url_vars category_id subcategory_id subsubcategory_id how_many start_row] cookies_are_not_required
 # type4
 
 if { [string compare $user_session_id "0"] != 0 } {
@@ -138,15 +138,20 @@ set products "<table width=90%>"
 set have_how_many_more_p f
 set count 0
 
+db_1row get_regular_product_count "
+    select count(*) as product_count
+    from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
+    where p.product_id = m.product_id
+    and m.${sub}category_id = :${sub}category_id
+    $exclude_subproducts"
+
 db_foreach get_regular_product_list "
     select p.product_id, p.product_name, p.one_line_description, o.offer_code
     from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
     where p.product_id = m.product_id
     and m.${sub}category_id = :${sub}category_id
     $exclude_subproducts
-    order by p.product_name" {
-
-    if { $count >= $start && [expr $count - $start] < $how_many } {
+    order by p.product_name limit :how_many offset :start_row" {
 
 	append products "
 	      <tr valign=top>
@@ -158,31 +163,30 @@ db_foreach get_regular_product_list "
 		<td>$one_line_description</td>
 		<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
 	      </tr>"
-    }
+
     incr count
-    if { $count > [expr $start + (2 * $how_many)] } {
-	# we know there are at least how_many more items to display next time
-	set have_how_many_more_p t
-	break
-    } else {
-	set have_how_many_more_p f
-    }
+}
+if { $product_count > [expr $start_row + (2 * $how_many)] } {
+    # we know there are at least how_many more items to display next time
+    set have_how_many_more_p t
+} else {
+    set have_how_many_more_p f
 }
 
 append products "</table>"
 
-if { $start >= $how_many } {
-    set prev_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]>Previous $how_many</a>"
+if { $start_row >= $how_many } {
+    set prev_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start_row=[expr $start_row - $how_many]>Previous $how_many</a>"
 } else {
     set prev_link ""
 }
 
 if { $have_how_many_more_p == "t" } {
-    set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $how_many</a>"
+    set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start_row=[expr $start_row + $how_many]>Next $how_many</a>"
 } else {
-    set number_of_remaining_products [expr $count - $start - $how_many]
+    set number_of_remaining_products [expr $product_count - $start_row - $how_many]
     if { $number_of_remaining_products > 0 } {
-	set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $number_of_remaining_products</a>"
+	set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start_row=[expr $start_row + $how_many]>Next $number_of_remaining_products</a>"
     } else {
 	set next_link ""
     }
