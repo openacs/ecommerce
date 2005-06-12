@@ -189,7 +189,7 @@ if { $have_how_many_more_p == "t" } {
 } else {
     set number_of_remaining_products [expr $product_count - $start_row - $how_many]
     if { $number_of_remaining_products > 0 } {
-	set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start_row=[expr $start_rowy + $how_many]>Next $number_of_remaining_products</a>"
+	set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start_row=[expr $start_row + $how_many]>Next $number_of_remaining_products</a>"
     } else {
 	set next_link ""
     }
