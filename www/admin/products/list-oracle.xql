@@ -3,15 +3,6 @@
 <queryset>
    <rdbms><type>oracle</type><version>8.1.6</version></rdbms>
 
-<fullquery name="product_select_count">      
-      <querytext>
-      select count(*) as product_count
-from ec_products ep, ec_items_reportable eir, ec_product_comments epc
-where ep.product_id = eir.product_id(+) 
-and ep.product_id = epc.product_id(+) $category_exclusion_clause
-      </querytext>
-</fullquery>
-
 <fullquery name="product_select">      
       <querytext>
         select r.*

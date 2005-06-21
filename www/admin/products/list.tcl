@@ -55,12 +55,18 @@ set list_items ""
 set have_how_many_more_p f
 set count $start_row
 
-db_1row product_select_count "
-    select count(*) as product_count
-    from ec_products ep
-	LEFT JOIN ec_items_reportable eir using (product_id)
-	LEFT JOIN ec_product_comments epc on (ep.product_id = epc.product_id)
-    $category_exclusion_clause"
+if {[info exists category_id]} {
+    db_1row product_select_count_for_category "
+        select count(product_id) as product_count
+        from ec_category_product_map map
+        where map.category_id = :category_id
+        "
+} else {
+    db_1row product_select_count_all "
+        select count(product_id) as product_count
+        from ec_products
+        "
+}
 
 db_foreach product_select "SELECT ep.product_id, ep.product_name, ep.available_date, count(distinct eir.item_id) as n_items_ordered, count(distinct epc.comment_id) as n_comments FROM ec_products ep, ec_items_reportable eir, ec_product_comments epc WHERE ep.product_id = eir.product_id(+) AND ep.product_id = epc.product_id(+) GROUP BY ep.product_id, ep.product_name, ep.available_date $category_exclusion_clause $order_by_clause" {
 
