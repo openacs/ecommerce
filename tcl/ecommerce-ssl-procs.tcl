@@ -278,7 +278,7 @@ ad_proc ec_securelink {new_page} {
 
 } {
 
-    if {![ad_ssl_available_p]} {
+    if {![ec_ssl_available_p]} {
         # we don't have ssl installed, so return the original URL
         return $new_page
     }
@@ -306,7 +306,7 @@ ad_proc ec_insecurelink {new_page} {
     Creates a url from a possible secure page to an insecure page
 
 } {
-    if {![ad_ssl_available_p]} {
+    if {![ec_ssl_available_p]} {
         # we don't have ssl installed, so return the original URL
         return $new_page
     }
