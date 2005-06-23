@@ -2,7 +2,7 @@
 
 ad_library {
     
-    
+    Callback proceduers
     
     @author Roel Canicula (roelmc@pldtdsl.net)
     @creation-date 2005-05-19
@@ -14,6 +14,8 @@ namespace eval ecommerce {}
 
 ad_proc -callback ecommerce::after-checkout {
     -user_id
-    -product_id
-    -price
-} {} {}
+    -order_id
+    -patron_id
+} {
+    Run code associated with an order
+} {}
