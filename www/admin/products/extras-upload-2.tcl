@@ -34,7 +34,7 @@ doc_body_append "[ad_admin_header "Uploading Extras"]
 [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Uploading Extras"]
 
 <hr>
-
+<p>
 "
 
 set unix_file_name ${csv_file.tmpfile}
@@ -50,11 +50,10 @@ if { [string length $delimiter] != 1 && [string eq $file_type "delim"]} {
     return
 }
 
-doc_body_append "<pre>
-"
-
 set datafilefp [open $unix_file_name]
 set count 0
+set rows_updated 0
+set rows_inserted 0
 set errors 0
 # Continue reading the file till the end but stop when an error
 # occured.
@@ -74,56 +73,81 @@ if {[string eq $file_type "csv"]} {
 while { $line_status != -1 && !$errors} {
     incr count
     if { $count == 1 } {
-	# first time thru, we grab the number of columns and their names
-	set number_of_columns [llength $elements]
-	set columns $elements
-	set product_id_column [lsearch -exact $columns "product_id"]
+        # first time thru, we grab the number of columns and their names
+        set number_of_columns [llength $elements]
+        set columns $elements
+        set product_id_column [lsearch -exact $columns "product_id"]
         # Caroline@meekshome.com Allows you to specify either the product_id or the sku
         set sku_column [lsearch -exact $columns "sku"]
+        ns_log Notice "ecommerce: beginning bulk uploading of custom product fields with file $csv_file"
     } else {
-	# this line is a product
-# (this file used to insert rows into ec_custom_product_field_values, but
-# now that is done in upload-2.tcl, so we need to update instead)
-# 	set columns_sql "insert into ec_custom_product_field_values (last_modified, last_modifying_user, modified_ip_address "
-# 	set values_sql " values (sysdate or now(), $user_id, '$ip' "
-# 	for { set i 0 } { $i < $number_of_columns } { incr i } {
-# 	    append columns_sql ", [lindex $columns $i]"
-# 	    append values_sql ", '[DoubleApos [lindex $elements $i]]'"
-# 	}
-# 	set sql "$columns_sql ) $values_sql )"
+        # this line is a product
+        # This file used to insert rows into ec_custom_product_field_values, but
+        # now that is done in upload-2.tcl, so we default to update instead.
+        # For legacy systems where custom product fields do not yet exist, 
+        # we still need insert fields, so we test each imported row.
 
-	set sql "update ec_custom_product_field_values set last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address=:ip"
-        set moresql ""
-
+        # build query for updating and another for inserting
+        set sqlupdate "update ec_custom_product_field_values set last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address=:ip"
+        set sqlinsert_columns "insert into ec_custom_product_field_values (last_modified, last_modifying_user, modified_ip_address, product_id"
+        set sqlinsert_values "values (sysdate, :user_id, :ip, :product_id"
+        set moresqlupdate ""
+        set moresqlinsert_columns ""
+        set moresqlinsert_values ""
+        # setup sql for custom field values
         for { set i 0 } { $i < $number_of_columns } { incr i } {
-	    set var_name "var_$i"
-	    set $var_name [lindex $elements $i]
-	    if { $i != $product_id_column && $i != $sku_column} {
-	        append moresql ", [lindex $columns $i]=:$var_name"
-	    }
-	}
+            set var_name "var_$i"
+            set $var_name [lindex $elements $i]
+            set field_name [lindex $columns $i]
+            if { $i != ${product_id_column} && $i != ${sku_column} } {
+                append moresqlupdate ", ${field_name}=:$var_name"
+                append moresqlinsert_columns ", $field_name"
+                append moresqlinsert_values ", :$var_name"
+            }
+        }
+        # find the product and update the custom fields
+        set length_sku 0
+        set product_id 0
+
         # Caroline@meekshome.com - see if we have a product_id or need to use the sku
         if { $product_id_column > -1 } {
-            # product_id supplied
-            append sql "${moresql} where product_id=:var_$product_id_column"
-            if { [catch {db_dml product_update_with_product_id $sql} errmsg] } {
-	        append bad_products_sql "$sql\n"
-	        doc_body_append "<font color=red>FAILURE!</font> SQL: $sql<br> $errmsg\n"
-	    } else {
-	        doc_body_append "Success!<br>\n"
-	    }
-        } elseif { $sku_column > -1 } {
-            append sql "${moresql} where product_id = (select product_id from ec_products where sku = :var_$sku_column)"
-	    if { [catch {db_dml product_update_with_sku $sql} errmsg] } {
-	        append bad_products_sql "$sql\n"
-	        doc_body_append "<font color=red>FAILURE!</font> SQL: $sql<br> $errmsg\n"
-	    } else {
-	        doc_body_append "Success!<br>\n"
-	    }
-        } else {
-            ad_return_complaint 1 "Each row must either supply the product_id ($product_id_column) or the sku ($sku_column); number_of_columns: $number_of_columns, columns: $columns"
+            set product_id var_${product_id_column}             
+        } elseif { ${sku_column} > -1 && ${product_id} == 0 } {
+            set sku_var var_${sku_column}
+            set sku [expr $$sku_var]
+            # sku supplied, product_id not supplied
+            # still need to test for product_id below because sku might not have a product_id (from legacy data)
+            set product_id [db_string get_product_id_from_sku "select product_id from ec_products where sku = :sku" -default "0"]
+            set length_sku [string length $sku]
+        } 
+        if { $product_id > 0 } {
+            # check to see if data exists, or if this will be a new row
+            set custom_product_id [db_string get_custom_field_product_id "select product_id as custom_product_id from ec_custom_product_field_values where product_id = :product_id" -default "0"]            
+            if { $custom_product_id > 0} {
+                set sql "${sqlupdate} ${moresqlupdate} where product_id=:product_id"
+                if { [catch {db_dml product_update_with_product_id $sql} errmsg] } {
+                    append bad_products_sql "$sql\n<"
+                    doc_body_append "</p><pre><font color=red>FAILURE!</font> SQL: $sql<br> $errmsg\n</pre><p>"
+                } else {
+                    doc_body_append ". "
+                    incr rows_updated
+                }
+            } else {
+                # no custom fields exist for this product_id, insert custom fields
+                set sql "${sqlinsert_columns} ${moresqlinsert_columns} ) ${sqlinsert_values} ${moresqlinsert_values} )"
+                if { [catch {db_dml insert_custom_fields_with_product_id $sql} errmsg] } {
+                    append bad_products_sql "$sql\n<"
+                    doc_body_append "</p><pre><font color=red>FAILURE!</font> SQL: $sql<br> $errmsg\n</pre><p>"
+                } else {
+                    doc_body_append "i "
+                    incr rows_inserted
+                }
+            }
+        }  else {
+            # adding ns_log for cases where uploading extends past max input time (config.tcl:recwait)
+            ns_log Notice "While bulk uploading custom fields, cannot obtain an existing product_id for row $count in file $csv_file."
+            doc_body_append "</p><p>Row $count must supply either product_id ($product_id_column) or the sku ($sku_column); sku length: $length_sku number_of_columns: $number_of_columns,<br><pre>  row values: $elements</pre><p>"
         }
-
     }
 
     # read next line of data file, depending on file type, or end read loop if error.
@@ -139,15 +163,12 @@ while { $line_status != -1 && !$errors} {
     }
 
 }
+# post upload report to log in case the connection timed out.
+ns_log Notice "ecommerce: Custom fields loader read $count lines from ${csv_file}. Updated $rows_updated rows. Inserted $rows_inserted rows."
+doc_body_append "</p>
+<p>Done reading [ec_decode $count "0" "0" [expr $count -1]] rows from $csv_file, updated(.) $rows_updated and inserted(i) $rows_inserted product extras!
+</p>
 
-doc_body_append "</pre>
-<p>Done loading [ec_decode $count "0" "0" [expr $count -1]] products extras!
-
-<p>
-
-(Note: \"success\" doesn't actually mean that the information was uploaded; it
-just means that the database did not choke on it (since updates to tables are considered
-successes even if 0 rows are updated).  If you need reassurance, spot check some of the individual products.)
 [ad_admin_footer]
 "
 
