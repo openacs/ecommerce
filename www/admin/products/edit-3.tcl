@@ -36,7 +36,7 @@ ad_page_contract {
   category_id_list
   subcategory_id_list
   subsubcategory_id_list
-  ec_custom_fields:array,optional
+  ec_custom_fields:array,html,optional
 }
 
 ad_require_permission [ad_conn package_id] admin

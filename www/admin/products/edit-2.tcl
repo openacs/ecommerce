@@ -34,7 +34,7 @@ ad_page_contract {
   upload_file:optional
   upload_file.tmpfile:optional
   template_id
-  ec_custom_fields:array,optional
+  ec_custom_fields:array,html,optional
 
 } -validate {
 
