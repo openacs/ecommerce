@@ -53,7 +53,7 @@ if { ![empty_string_p $combocategory_id] } {
 }
 
 # filter extra spaces
-regsub -all -- {\s+} $search_text { } search_text]
+regsub -all -- {\s+} $search_text { } search_text
 set search_text "[string trim $search_text]"
 # filter overflow attempts from really long search strings
 set search_text "[string range $search_text 0 100 ]"
