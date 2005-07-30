@@ -7,7 +7,7 @@
   <property name="current_location">gift-certificate</property>
 
 <form method=post action="gift-certificate-order-4">
-  @hidden_form_variables@
+  @hidden_form_variables;noquote@
   <blockquote>
     <table>
       <tr>
@@ -16,11 +16,11 @@
       </tr>
       <tr>
 	<td>Type:</td>
-	<td>@ec_creditcard_widget@</td>
+	<td>@ec_creditcard_widget;noquote@</td>
       </tr>
       <tr>
 	<td>Expires:</td>
-	<td>@ec_expires_widget@</td>
+	<td>@ec_expires_widget;noquote@</td>
       </tr>
     </table>
   </blockquote>

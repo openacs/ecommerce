@@ -8,7 +8,7 @@
 
 <blockquote>
   <form method="post" action="gift-certificate-finalize-order">
-    @hidden_form_variables@
+    @hidden_form_variables;noquote@
     <b>Push Submit to send us your order!</b> <input type="submit" value="Submit">
       <blockquote>
 	<table>
