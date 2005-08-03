@@ -49,7 +49,7 @@
 
   <fullquery name="select_matching_charge_transaction">
     <querytext>
-      select transaction_id as charged_transaction_id, marked_date 
+      select transaction_id as charged_transaction_id, to_char(marked_date, 'yyyy-mm-dd hh24:mi:ss') as marked_date
       from ec_financial_transactions 
       where order_id = :order_id
       and transaction_type = 'charge' 
