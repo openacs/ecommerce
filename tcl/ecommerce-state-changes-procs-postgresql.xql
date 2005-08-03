@@ -62,7 +62,7 @@
       select gift_certificate_id, gift_certificate_amount_left(gift_certificate_id) as amount_available
       from ec_gift_certificates_approved
       where user_id = :user_id
-      and current_timestamp - expires < 0
+      and current_timestamp < expires
       and amount_remaining_p = 't'
       and gift_certificate_amount_left(gift_certificate_id) > 0
       order by expires
