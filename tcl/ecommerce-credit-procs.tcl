@@ -40,7 +40,7 @@ ad_proc -public ec_creditcard_authorization {
 
     # Lookup the selected currency.
 
-    set currency [ad_parameter Currency ecommerce]
+    set currency [ad_parameter Currency -default [ad_parameter -package_id [ec_id] Currency]]
 
     # Lookup the selected payment gateway
 
@@ -237,11 +237,11 @@ ad_proc -public ec_creditcard_marking {
 
     # Lookup the selected currency.
 
-    set currency [ad_parameter Currency ecommerce]
+    set currency [ad_parameter Currency -default [ad_parameter -package_id [ec_id] Currency]]
 
     # Lookup the selected payment gateway
 
-    set payment_gateway [ad_parameter PaymentGateway]
+    set payment_gateway [ad_parameter PaymentGateway -default [ad_parameter -package_id [ec_id] PaymentGateway]]
 
     # Return an error when no payment gateway has been selected or if
     # there is no binding between the selected gateway and the
@@ -405,11 +405,11 @@ ad_proc -public ec_creditcard_return {
 
     # Lookup the selected currency.
 
-    set currency [ad_parameter Currency ecommerce]
+    set currency [ad_parameter Currency -default [ad_parameter -package_id [ec_id] Currency]]
 
     # Lookup the selected payment gateway
 
-    set payment_gateway [ad_parameter PaymentGateway]
+    set payment_gateway [ad_parameter PaymentGateway -default [ad_parameter -package_id [ec_id] PaymentGateway]]
 
     # Return an error when no payment gateway has been selected or if
     # there is no binding between the selected gateway and the
