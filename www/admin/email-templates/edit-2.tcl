@@ -21,6 +21,7 @@ ad_page_contract {
     message:notnull
     when_sent
     issue_type:multiple
+    {return_url ""}
 }
 
 ad_require_permission [ad_conn package_id] admin
@@ -63,5 +64,8 @@ if { [catch {db_dml update_ec_email_template "
 }
 
 db_release_unused_handles
+if {[string equal "" $return_url]} {
+    set return_url "index.tcl"
+}
 
-ad_returnredirect "index.tcl"
+ad_returnredirect $return_url

@@ -8,6 +8,7 @@ ad_page_contract {
     @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
     email_template_id
+    {return_url ""}
 }
 
 ad_require_permission [ad_conn package_id] admin
@@ -17,7 +18,7 @@ append doc_body "[ad_admin_header "Edit Email Template"]
 [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Email Templates"] "Edit Template"]
 <hr>
 <form method=post action=\"edit-2\">
-[export_form_vars email_template_id]
+[export_form_vars email_template_id return_url]
 "
 
 
