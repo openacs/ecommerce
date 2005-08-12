@@ -57,4 +57,12 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="ec_creditcard_return.transaction_success_update">      
+    <querytext>
+      update ec_financial_transactions 
+      set transaction_id = :pgw_transaction_id, refunded_date = current_timestamp
+      where transaction_id = :transaction_id
+    </querytext>
+  </fullquery>
+
 </queryset>
