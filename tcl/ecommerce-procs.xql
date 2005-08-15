@@ -253,17 +253,6 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="ec_item_summary_in_confirmed_order.item_summary_info_select">      
-    <querytext>
-      select i.price_charged, i.price_name, i.color_choice, i.size_choice, i.style_choice, p.product_name, p.one_line_description, p.product_id, count(*) as quantity
-      from ec_items i, ec_products p
-      where i.order_id = :order_id
-      and i.product_id = p.product_id
-      group by p.product_name, p.one_line_description, p.product_id,
-      i.price_charged, i.price_name, i.color_choice, i.size_choice, i.style_choice
-    </querytext>
-  </fullquery>
-
   <fullquery name="ec_items_for_fulfillment_or_return.n_items_in_an_order_select">      
     <querytext>
       select count(*) 
