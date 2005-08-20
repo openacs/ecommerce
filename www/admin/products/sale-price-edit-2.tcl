@@ -26,16 +26,6 @@ if {![regexp {^[0-9|.]+$} $sale_price ]} {
     return
 }
 
-page_validation {
-    #  ec_date_widget_validate sale_begins
-} {
-    ec_time_widget_validate sale_begins
-} {
-    #  ec_date_widget_validate sale_ends
-} {
-    ec_time_widget_validate sale_ends
-}
-
 set exception_count 0
 set exception_text ""
 

@@ -40,16 +40,6 @@ if {![empty_string_p $price]} {
     }
 }
 
-page_validation {
-    #  ec_date_widget_validate sale_begins
-} {
-    ec_time_widget_validate sale_begins
-} {
-    #  ec_date_widget_validate sale_ends
-} {
-    ec_time_widget_validate sale_ends
-}
-
 if { [empty_string_p [ec_datetime_text sale_begins]] } {
     ad_return_complaint 1 "You forgot to enter the time that the sale begins."
     return
