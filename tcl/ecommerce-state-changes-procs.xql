@@ -31,7 +31,7 @@
       update ec_financial_transactions
       set to_be_captured_p = 'f'
       where order_id=:order_id
-      and creditcard_id =: creditcard_id
+      and creditcard_id = :creditcard_id
     </querytext>
   </fullquery>
   
