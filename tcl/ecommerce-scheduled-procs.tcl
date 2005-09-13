@@ -1018,7 +1018,7 @@ ad_proc ec_unrefunded_transactions {
 	    a.line1 as billing_address, 
 	    a.city as billing_city, 
             nsvl(a.usps_abbrev, a.full_state_name) as billing_state, 
-            a.country_code as billing_country
+            a.country_code as billing_country, f.refunded_transaction_id
         from ec_financial_transactions f, ec_creditcards c, persons p, ec_addresses a 
 	where transaction_type = 'refund'
 	and f.refunded_date is null
@@ -1038,7 +1038,7 @@ ad_proc ec_unrefunded_transactions {
 	# Connect to the payment gateway to authorize the transaction.
 
 	array set response [acs_sc_call "PaymentGateway" "Return" \
-				[list $transaction_id \
+				[list $refunded_transaction_id \
 				     $transaction_amount \
 				     $card_type \
 				     $card_number \
