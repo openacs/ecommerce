@@ -28,6 +28,7 @@ set package_url [apm_package_url_from_key "ecommerce"]
 set shipping_gateway_installed [apm_package_installed_p "shipping-gateway"]
 set payment_gateway_installed [apm_package_installed_p "payment-gateway"]
 set authorize_gateway_installed [apm_package_installed_p "authorize-gateway"]
+set ezic_gateway_installed [apm_package_installed_p "ezic-gateway"]
 set payflowpro_gateway_installed [apm_package_installed_p "payflowpro"]
 
 # Set the context bar.
