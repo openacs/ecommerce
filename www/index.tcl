@@ -14,7 +14,7 @@ ad_page_contract {
 
 } {
     usca_p:optional
-    {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
+    {how_many:naturalnum {[parameter::get -parameter ProductsToDisplayPerPage -package_id [ec_id] -default 10 ]}}
     {start_row "0"}
 }
 
@@ -54,7 +54,7 @@ set base_url "[ec_insecurelink [ad_conn url]]"
 
 set recommendations_if_there_are_any "<table width=\"100%\">"
 
-if [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] {
+if {[parameter::get -parameter UserClassApproveP -package_id [ec_id] -default 1 ]} {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
 } else {
     set user_class_approved_p_clause ""
@@ -68,19 +68,19 @@ db_foreach get_produc_recs "
     and subcategory_id is null 
     and subsubcategory_id is null
     and (r.user_class_id is null or r.user_class_id in (select user_class_id
-							from ec_user_class_user_map 
-							where user_id = :user_id
-							$user_class_approved_p_clause))
+                                                        from ec_user_class_user_map 
+                                                        where user_id = :user_id
+                                                        $user_class_approved_p_clause))
 and r.active_p='t'" {
 
     append recommendations_if_there_are_any "
-	<table width=\"100%\">
-	  <tr>
-	    <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
+        <table width=\"100%\">
+          <tr>
+            <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
 <td valign=top><a href=\"${base_url}product?[export_url_vars product_id]\">$product_name</a>
-	      <p>$recommendation_text</p>
-	    </td>
-	    <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
+              <p>$recommendation_text</p>
+            </td>
+            <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
          </tr>"
 }
 if {[string equal $recommendations_if_there_are_any "<table width=\"100%\">"]} {
@@ -114,9 +114,9 @@ db_foreach get_tl_products "
             <td colspan=2><a href=\"${base_url}product?product_id=$product_id\"><b>$product_name</b></a></td>
           </tr>
           <tr valign=top>
-    	<td></td>
-    	<td>$one_line_description</td>
-    	<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
+            <td></td>
+            <td>$one_line_description</td>
+            <td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
           </tr>"
 
     incr count
@@ -146,9 +146,9 @@ if { $have_how_many_more_p == "t" } {
 } else {
     set number_of_remaining_products [expr $product_count - $start_row - $how_many]
     if { $number_of_remaining_products > 0 } {
-	set next_link "<a href=${base_url}?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start_row=[expr $start_row + $how_many]>Next $number_of_remaining_products</a>"
+        set next_link "<a href=${base_url}?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start_row=[expr $start_row + $how_many]>Next $number_of_remaining_products</a>"
     } else {
-	set next_link ""
+        set next_link ""
     }
 }
 
