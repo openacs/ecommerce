@@ -87,6 +87,12 @@ ad_proc ec_pretty_price {
     
     if { $currency == "USD" } {
 	return "\$$formatted_price"
+    } elseif { $currency == "GBP" } {
+	return "&pound;$formatted_price"
+    } elseif { $currency == "EUR" } {
+	return "&euro;$formatted_price"
+    } elseif { $currency == "YEN" } {
+	return "&yen;$formatted_price"
     } else {
 	return "$formatted_price $currency"
     }
