@@ -649,8 +649,9 @@ ad_proc ec_creditcard_expire_2_widget {
     set default_matched_p 0
     set this_year [clock format [clock seconds] -format %Y]
     set this_year_for_db [clock format [clock seconds] -format %y]
+    set this year_for_db [string trimleft $this_year_for_db 0]
     foreach option [list \
-			[list $this_year_for_db $this_year] \
+			[list [format "%02d" $this_year_for_db] $this_year] \
 			[list [format "%02d" [expr $this_year_for_db + 1]] [expr $this_year + 1]] \
 			[list [format "%02d" [expr $this_year_for_db + 2]] [expr $this_year + 2]] \
 			[list [format "%02d" [expr $this_year_for_db + 3]] [expr $this_year + 3]] \
