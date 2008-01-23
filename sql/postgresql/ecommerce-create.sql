@@ -33,23 +33,6 @@
 create sequence ec_template_id_seq start 2;
 create view ec_template_id_sequence as select nextval('ec_template_id_seq') as nextval;
 
--- Helper stuff (ben@adida.net)
--- gilbertw - I pulled this from OpenACS 3.2.5
--- there are a few calls to the Oracle least function
-create function least(numeric,numeric)
-returns numeric
-as '
-DECLARE
-        first alias for $1;
-        second alias for $2;
-BEGIN
-        if first < second
-        then return first;
-        else return second;
-        end if;
-END;
-' language 'plpgsql';
-
 -- gilbertw
 -- timespan_days taken from OpenACS 3.2.5
 -- can't cast numeric to varchar/text so I made the input varchar
