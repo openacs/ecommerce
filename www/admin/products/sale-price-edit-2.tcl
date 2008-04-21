@@ -1,3 +1,7 @@
+
+set exception_count 0
+set exception_text ""
+
 ad_page_contract {
 
     Update a sale price.
@@ -7,6 +11,8 @@ ad_page_contract {
     @author ported by Jerry Asher (jerry@theashergroup.com)
     @author revised by Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
     @revision-date April 2002
+    @author Mark Aufflick (mark@aufflick.com) page_validation code ported to validate block
+    @revision-date 22 April 2008
 
 } {
     sale_price_id:integer,notnull
@@ -17,6 +23,21 @@ ad_page_contract {
     sale_ends:array,date
     offer_code_needed
     offer_code:optional
+} -validate {
+    sale_begins_ok {
+	set errmsg [ec_time_widget_validate sale_begins]
+	if { $errmsg ne "" } {
+	    append exception_text "<li>$errmsg.\n"
+	    incr exception_count
+	}
+    }
+    sale_ends_ok { 
+	set errmsg [ec_time_widget_validate sale_ends]
+	if { $errmsg ne "" } {
+	    append exception_text "<li>$errmsg.\n"
+	    incr exception_count
+	}
+    }
 }
 
 ad_require_permission [ad_conn package_id] admin
@@ -25,19 +46,6 @@ if {![regexp {^[0-9|.]+$} $sale_price ]} {
     ad_return_complaint 1 "The price you entered is not a valid number."
     return
 }
-
-page_validation {
-    #  ec_date_widget_validate sale_begins
-} {
-    ec_time_widget_validate sale_begins
-} {
-    #  ec_date_widget_validate sale_ends
-} {
-    ec_time_widget_validate sale_ends
-}
-
-set exception_count 0
-set exception_text ""
 
 if { $offer_code_needed == "yes_supplied" && (![info exists offer_code] || [empty_string_p $offer_code]) } {
     incr exception_count

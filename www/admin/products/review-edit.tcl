@@ -6,6 +6,10 @@ ad_page_contract {
   @creation-date Summer 1999
   @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
+
+  @author Mark Aufflick (mark@aufflick.com) removed unused page_validation block
+  @revision-date 22 April 2008
+
 } {
   product_id:integer,notnull
   publication
@@ -18,9 +22,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-page_validation {
-#  ec_date_widget_validate review_date
-}
+# TODO: validate review_date field
 
 # we need them to be logged in
 set user_id [ad_get_user_id]

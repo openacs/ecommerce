@@ -234,7 +234,15 @@ ad_proc ec_audit_process_row { } {
 
     uplevel {
 
-        set_variables_after_query
+        # inlining old set_variables_after_query
+	# TODO: improve entire audit code!
+
+	set set_variables_after_query_i 0
+	set set_variables_after_query_limit [ns_set size $selection]
+	while {$set_variables_after_query_i<$set_variables_after_query_limit} {
+	    set [ns_set key $selection $set_variables_after_query_i] [ns_set value $selection $set_variables_after_query_i]
+	    incr set_variables_after_query_i
+	}
 
         # Loop through each column key and value in the selection
         set selection_counter_i 0

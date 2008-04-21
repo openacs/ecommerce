@@ -17,10 +17,6 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-page_validation {
-#  ec_date_widget_validate review_date
-}
-
 set product_name [ec_product_name $product_id]
 
 doc_body_append "[ad_admin_header "Confirm Review of $product_name"]

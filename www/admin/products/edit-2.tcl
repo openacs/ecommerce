@@ -115,25 +115,6 @@ foreach categorization $categorization {
     }
 }
 
-#  ns_log debug edit-2 B category_id_list $category_id_list
-#  ns_log debug edit-2 B subcategory_id_list $subcategory_id_list
-#  ns_log debug edit-2 B subsubcategory_id_list $subsubcategory_id_list
-
-# Now deal with dates.
-# The column available_date is known to be a date.
-# Also, some of the custom fields may be dates.
-
-#page_validation {
-  #ec_date_widget_validate available_date
-#} {
-#    set date_field_identifiers [db_list custom_date_fields_select "select field_identifier from ec_custom_product_fields where column_type='date' and active_p='t'"]
- # foreach field_identifier $date_field_identifiers {
-  #  array set date {year ec_custom_fields($field_identifier.year) month ec_custom_fields($field_identifier.month) ec_custom_fields($field_identifier.day)}
-  # ec_date_widget_validate date
-  #}
-#}
-
-
 
 
 # one last manipulation of data is needed: get rid of "http://" if that's all that's

@@ -56,11 +56,8 @@ if { ![info exists shipping_unavailable_p] && [empty_string_p $shipping] } {
     append exception_text "<li>You have specified that only Pick Up is available, therefore you must leave the shipping price blank.\n"
 }
 
-page_validation {
-  ec_date_widget_validate offer_begins
-} {
-  ec_date_widget_validate offer_ends
-}
+# TODO: validate offer_begins and offer_ends with ec_date_widget_validate or form builder
+
 
 set offer_begins_text [ec_date_text offer_begins]
 set offer_ends_text [ec_date_text offer_ends]
