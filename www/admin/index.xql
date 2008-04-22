@@ -19,7 +19,7 @@
 
   <fullquery name="num_products_select">      
     <querytext>
-      select count(*) as n_products, round(avg(price),2) as avg_price 
+      select count(*) as n_products, coalesce(round(avg(price),2), 0) as avg_price 
       from ec_products_displayable
     </querytext>
   </fullquery>
