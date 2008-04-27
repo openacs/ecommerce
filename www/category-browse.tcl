@@ -178,23 +178,21 @@ set products {<table width="90%">}
 set have_how_many_more_p f
 set count 0
 
-db_foreach get_regular_product_list "
-    select p.product_id, p.product_name, p.one_line_description, o.offer_code
-    from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
-    where p.product_id = m.product_id
-    and m.${sub}category_id = :${sub}category_id
-    $exclude_subproducts
-    order by p.product_name" {
+db_foreach get_regular_product_list "sql in db specific xql filessw" {
 
     if { $count >= $start && [expr $count - $start] < $how_many } {
 
+        array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
+        set image_html ""
+        # assumes exists...
+        set image_html "<img src=\"$thumbnail_info(url)\" height=\"$thumbnail_info(height)\" width=\"$thumbnail_info(width)\">"
+
 	append products "
 	      <tr valign=top>
-	        <td>[expr $count + 1]</td>
+	        <td rowspan=2>$image_html</td>
 	        <td colspan=2><a href=\"product?product_id=$product_id\"><b>$product_name</b></a></td>
 	      </tr>
 	      <tr valign=top>
-		<td></td>
 		<td>$one_line_description</td>
 		<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
 	      </tr>"

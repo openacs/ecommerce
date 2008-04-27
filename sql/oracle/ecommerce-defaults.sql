@@ -33,7 +33,13 @@ insert into ec_templates (
         || '<td>' || CHR(10)
         || ' <table>' || CHR(10)
         || ' <tr>' || CHR(10)
-        || ' <td><%= [ec_linked_thumbnail_if_it_exists $dirname] %></td>' || CHR(10)
+        || ' <%' || '\n'
+        || 'array set image_info [ecommerce::resource::image_info -type ProductImage -product_id $product_id -dirname $dirname]' || '\n'
+        || 'array set fullsize_info [ecommerce::resource::image_info -product_id $product_id -dirname $dirname]' || '\n'
+        || '%>' || '\n'
+        || '<td><if @image_info.url@ defined>' || '\n'
+        || '<a border="0" href="@fullsize_info.url@"><img src="@image_info.url@" height="@image_info.height@" width="@image_info.width@"></a>' || '\n'
+        || '</if></td>' || '\n'
         || ' <td>' || CHR(10)
         ||     ' <b><%= $one_line_description %></b>' || CHR(10)
         ||     ' <br>' || CHR(10)

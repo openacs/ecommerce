@@ -196,4 +196,5 @@ db_release_unused_handles
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $product_name]]]
 set ec_system_owner [ec_system_owner]
 
-set formatted_product [ns_adp_parse -string $template]
+# TODO should memoize this
+set product_code [template::adp_compile -string $template]

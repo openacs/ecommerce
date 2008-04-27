@@ -135,61 +135,21 @@ set full_dirname "[ec_data_directory][ec_product_directory]$subdirectory/$dirnam
 # dimensions specified in parameters/whatever.ini)
 
 if { [exists_and_not_null upload_file] } {
-    
-    # this takes the upload_file and sticks its contents into a temporary
-    # file (will be deleted when the thread ends)
-    set tmp_filename ${upload_file.tmpfile}
-    
-    # so that we'll know if it's a gif or a jpg
-    set file_extension [file extension $upload_file]
 
-    # copies this temp file into a permanent file
-    set perm_filename "$full_dirname/product$file_extension"
-    ns_cp $tmp_filename $perm_filename
-    
-    # create thumbnails
+    # tmp file will be deleted when the thread ends
+    set tmp_filename ${upload_file.tmpfile}
+
+    # copy image & create thumbnails
     # thumbnails are all jpg files
     
-    # set thumbnail dimensions
-    set use_both_param_dimensions [parameter::get -parameter ThumbnailSizeOuterlimits]
-    set thumbnail_width_is_blank [catch {set thumbnail_width [parameter::get -parameter ThumbnailWidth]} ]
-    set thumbnail_height_is_blank [catch {set thumbnail_height [parameter::get -parameter ThumbnailHeight]} ]
-    if { $use_both_param_dimensions } {
-        set convert_dimensions "${thumbnail_width}x${thumbnail_height}>"
-    } else {
-        if  { $thumbnail_width_is_blank } {
-	    if  { $thumbnail_height_is_blank } {
-	        set convert_dimensions "100x10000"
-	    } else {
-	        set convert_dimensions "10000x${thumbnail_height}"
-	    }
-        } else {
-	    set convert_dimensions "${thumbnail_width}x10000"
-        }
-    }
+    ecommerce::resource::make_product_images \
+        -file_extension [file extension $upload_file] \
+        -product_id $product_id \
+        -tmp_filename ${upload_file.tmpfile}
 
-    set system_url [parameter::get -package_id [ad_acs_kernel_id] -parameter SystemURL]
-    set system_name [parameter::get -package_id [ad_acs_kernel_id] -parameter SystemName]
-    set image_comment "from $system_url $system_name"
-
-    set perm_thumbnail_filename "$full_dirname/product-thumbnail.jpg"
-
-    set convert [ec_convert_path]
-    if {![string equal "" $convert] && [file exists $convert]} {
-        if [catch {exec $convert -geometry $convert_dimensions -comment \"$image_comment\" $perm_filename $perm_thumbnail_filename} errmsg ] {
-            ad_return_complaint 1 "
-                I am sorry, an error occurred converting the picture.  $errmsg
-            "
-        }
-    } else {
-        ad_return_complaint 1 {
-            I am sorry, I could not find ImageMagick's <b>convert</b> utility for
-            image thumbnail creation.  Please reconfigure this subsystem before
-            uploading pictures
-        }
-    }
 }
 
+set dirname [ecommerce::resource::dirname -product_id $product_id -product_name $product_name]
 set linked_thumbnail [ec_linked_thumbnail_if_it_exists $dirname]
 
 doc_body_append "[ad_admin_header "Confirm Product Changes"]

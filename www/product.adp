@@ -10,4 +10,4 @@
 
   <property name="show_toolbar_p">t</property>
 
-  @formatted_product;noquote@
+  <% eval $product_code %>
