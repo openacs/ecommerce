@@ -19,7 +19,7 @@ ad_page_contract {
     subcategory_id:optional,naturalnum
     subsubcategory_id:optional,naturalnum
     {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
-    {start:naturalnum "0"}
+    {start:naturalnum "1"}
     usca_p:optional
 }
 
@@ -162,8 +162,7 @@ if {[string equal $recommendations {<table width="100%">}]} {
 #==============================
 # products
 
-# All products in the "category" and not in "subcategories"
-
+# All products in the "category" and not in "subcategories" (used in xql subst)
 set exclude_subproducts ""
 if ![at_bottom_level_p] {
     set exclude_subproducts "
@@ -173,84 +172,62 @@ if ![at_bottom_level_p] {
 			and c.${sub}category_id = :${sub}category_id)"
 }
 
-set products {<table width="90%">}
-
-set have_how_many_more_p f
 set count 0
 
-db_foreach get_regular_product_list "sql in db specific xql filessw" {
+# TODO: memoize
+# NOTE: careful if you do cache this since the code block calculates per-user specials, and also change implementation of count
+db_multirow -extend {
+                    thumbnail_url
+                    thumbnail_height
+                    thumbnail_width
+                    price_line
+                    } products get_regular_product_list "sql in db specific xql files" {
+                        
+    array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
+    set thumbnail_url $thumbnail_info(url)
+    set thumbnail_width $thumbnail_info(width)
+    set thumbnail_height $thumbnail_info(height)
 
-    if { $count >= $start && [expr $count - $start] < $how_many } {
+    set price_line [ec_price_line $product_id $user_id $offer_code]
 
-        array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
-        set image_html ""
-        # assumes exists...
-        set image_html "<img src=\"$thumbnail_info(url)\" height=\"$thumbnail_info(height)\" width=\"$thumbnail_info(width)\">"
-
-	append products "
-	      <tr valign=top>
-	        <td rowspan=2>$image_html</td>
-	        <td colspan=2><a href=\"product?product_id=$product_id\"><b>$product_name</b></a></td>
-	      </tr>
-	      <tr valign=top>
-		<td>$one_line_description</td>
-		<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
-	      </tr>"
-    }
     incr count
-    if { $count > [expr $start + (2 * $how_many)] } {
-
-	# We know there are at least how_many more items to display
-	# next time
-
-	set have_how_many_more_p t
-	break
-    } else {
-	set have_how_many_more_p f
-    }
 }
 
-append products "</table>"
-
+# what if start is < how many? shouldn't happen I guess...
 if { $start >= $how_many } {
-    set prev_link "<a href=\"[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]\">Previous $how_many</a>"
-} else {
-    set prev_link ""
+    set prev_url [export_vars -base [ad_conn url] -override {{start {[expr $start - $how_many]}}} {category_id subsubcategory_id how_many}]
 }
 
-if { $have_how_many_more_p == "t" } {
-    set next_link "<a href=\"[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]\">Next $how_many</a>"
-} else {
-    set number_of_remaining_products [expr $count - $start - $how_many]
-    if { $number_of_remaining_products > 0 } {
-	set next_link "<\"a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]\">Next $number_of_remaining_products</a>"
+set how_many_more [expr $count - $start - $how_many + 1]
+
+if { $how_many_more > 0 } {
+    set next_url [export_vars -base [ad_conn url] -override {{start {[expr $start + $how_many]}}} {category_id subsubcategory_id how_many}]
+
+    if { $how_many_more >= $how_many } {
+        set how_many_next $how_many
     } else {
-	set next_link ""
+        set how_many_next $how_many_more
     }
 }
 
-if { [empty_string_p $next_link] || [empty_string_p $prev_link] } {
-    set separator ""
-} else {
-    set separator "|"
-}
+set end [expr $start + $how_many - 1]
 
 #==============================
 # subcategories
 
-set subcategories ""
+set subcategories_p 0
 if ![at_bottom_level_p] {
-    db_foreach get_subcategories "
-	select * from ec_sub${sub}categories c
-	where ${sub}category_id = :${sub}category_id
-	and exists (select 'x' from ec_products_displayable p, $product_map(sub$sub) s
-		    where p.product_id = s.product_id
-		    and s.sub${sub}category_id = c.sub${sub}category_id)
-	order by sort_key, sub${sub}category_name" {
 
-	append subcategories "
-	  &gt;  <a href=\"category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]\">[eval "ident \$sub${sub}category_name"]</a><br>"
-  }
+    db_multirow -extend { url name } subcategories get_subcategories "see xql" {
+        set url [export_vars -base "category-browse-sub${sub}category" {category_id subcategory_id subsubcategory_id}]
+        set name [eval "ident \$sub${sub}category_name"]
+    }
+
+    if { ${subcategories:rowcount} > 0 } {
+        set subcategories_p 1
+        # ident? what is this??
+    }
+
 }
 
 set the_category_id   [eval "ident \$${sub}category_id"]

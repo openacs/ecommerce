@@ -136,67 +136,45 @@ select 'x' from $product_map(sub$sub) s, ec_sub${sub}categories c
 "
 }
 
-set products {<table width="90%">}
-
-set have_how_many_more_p f
 set count 0
 
-db_foreach get_regular_product_list "
-    select p.product_id, p.dirname, p.product_name, p.one_line_description, o.offer_code
-    from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
-    where p.product_id = m.product_id
-    and m.${sub}category_id = :${sub}category_id
-    $exclude_subproducts
-    order by p.product_name" {
+# TODO: memoize
+# NOTE: careful if you do cache this since the code block calculates per-user specials, and also change implementation of count
+db_multirow -extend {
+                    thumbnail_url
+                    thumbnail_height
+                    thumbnail_width
+                    price_line
+                    } products get_regular_product_list "sql in db specific xql files" {
+                        
+    array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
+    set thumbnail_url $thumbnail_info(url)
+    set thumbnail_width $thumbnail_info(width)
+    set thumbnail_height $thumbnail_info(height)
 
-    if { $count >= $start && [expr $count - $start] < $how_many } {
+    set price_line [ec_price_line $product_id $user_id $offer_code]
 
-	append products "
-	      <tr valign=top>
-	        <td>[expr $count + 1]</td>
-	        <td colspan=2><a href=\"product?product_id=$product_id\"><b>$product_name</b></a></td>
-	      </tr>
-	      <tr valign=top>
-		<td></td>
-		<td>$one_line_description<br>
-                    [ec_add_to_cart_link $product_id "Add to Shopping Cart"]</td>
-		<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
-	      </tr>"
-    }
     incr count
-    if { $count > [expr $start + (2 * $how_many)] } {
-	# we know there are at least how_many more items to display next time
-	set have_how_many_more_p t
-	break
-    } else {
-	set have_how_many_more_p f
-    }
 }
 
-append products "</table>"
-
+# what if start is < how many? shouldn't happen I guess...
 if { $start >= $how_many } {
-    set prev_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]>Previous $how_many</a>"
-} else {
-    set prev_link ""
+    set prev_url [export_vars -base [ad_conn url] -override {{start {[expr $start - $how_many]}}} {category_id subsubcategory_id how_many}]
 }
 
-if { $have_how_many_more_p == "t" } {
-    set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $how_many</a>"
-} else {
-    set number_of_remaining_products [expr $count - $start - $how_many]
-    if { $number_of_remaining_products > 0 } {
-	set next_link "<a href=[ad_conn url]?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $number_of_remaining_products</a>"
+set how_many_more [expr $count - $start - $how_many + 1]
+
+if { $how_many_more > 0 } {
+    set next_url [export_vars -base [ad_conn url] -override {{start {[expr $start + $how_many]}}} {category_id subsubcategory_id how_many}]
+
+    if { $how_many_more >= $how_many } {
+        set how_many_next $how_many
     } else {
-	set next_link ""
+        set how_many_next $how_many_more
     }
 }
 
-if { [empty_string_p $next_link] || [empty_string_p $prev_link] } {
-    set separator ""
-} else {
-    set separator "|"
-}
+set end [expr $start + $how_many - 1]
 
 #==============================
 # subcategories

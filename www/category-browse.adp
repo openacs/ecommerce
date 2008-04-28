@@ -5,15 +5,19 @@
 
   <property name="show_toolbar_p">t</property>
 
-<if @subcategories@ or @recommendations@>
+<if @subcategories_p@ true or @recommendations@>
   <table width="90%">
     <tr valign="top">
-      <if @subcategories@>
+      <if @subcategories_p@ true>
         <td width="50%">
 	  <h4>@category_name@ &gt; subcategories</h4>
-	  
-	    @subcategories;noquote@
-	  
+
+      <if subcategories_p true>
+      <multiple name="subcategories">
+      &gt;  <a href="@subcategories.url@">@subcategories.name@</a><br>
+      </multiple>
+      </if>
+	 	  
         </td>
       </if>
       <if @recommendations@ >
@@ -29,12 +33,34 @@
 
   <if @count@ gt 0>
   <h4>@category_name@ items:</h4>
-  @products;noquote@
 
-  @prev_link;noquote@ @separator;noquote@ @next_link;noquote@
-  </if>
+<table width="90%">
+<multiple name="products">
+<if @products.rownum@ ge @start@ and @products.rownum@ le @end@>
+	      <tr valign=top>
+	        <td rowspan=2><img src="@products.thumbnail_url@" height="@products.thumbnail_height@" width="@products.thumbnail_width@"></td>
+	        <td colspan=2><a href="product?product_id=@products.product_id@"><b>@products.product_name@</b></a></td>
+	      </tr>
+	      <tr valign=top>
+		<td>@products.one_line_description;noquote@</td>
+		<td align=right>@products.price_line;noquote@</td>
+	      </tr>
+</if>
+</multiple>
+</table>
 
-  <if @count@ eq 0 and @subcategories@ eq "">
+<if @prev_url@ defined>
+<a href="@prev_url;noquote@">Previous @how_many@</a>
+
+<if @next_url@ defined>|</if>
+</if>
+
+<if @next_url@ defined>
+<a href="@next_url;noquote@">Next @how_many_next@</a>
+</if>
+</if>
+
+  <if @count@ eq 0 and @subcategories_p@ false>
 	There are currently no items listed in this category.&nbsp;&nbsp;Please check back often for updates.
   </if>
 
