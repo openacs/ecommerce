@@ -25,8 +25,10 @@ if {[empty_string_p $context_addition]} {
 
 set ec_admin_p [permission::permission_p -no_login -object_id [ad_conn package_id] -privilege admin]
 if {$ec_admin_p} {
-    set ec_admin_link "[apm_package_url_from_id [ad_conn package_id]]admin/"
+    set ec_admin_link "[ec_url]admin/"
 }
+
+set cart_link "[ec_url]shopping-cart"
 
 # Get the name of the ecommerce package
 
