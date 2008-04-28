@@ -6,28 +6,46 @@
   <property name="show_toolbar_p">t</property>
 
 <blockquote>
-<if @subcategories@ or @recommendations@>
+<if @subcategories:rowcount@ or @recommendations:rowcount@>
   <table width="90%">
     <tr valign="top">
-      <if @subcategories@ >
+      <if @subcategories:rowcount@ >
         <td width="50%">
 	  <h4>Browse:</h4>
 	  <ul>
-	    @subcategories@
+      <multiple name="subcategories">
+      &gt;  <a href="@subcategories.url@">@subcategories.name@</a><br>
+      </multiple>
+
 	  </ul>
         </td>
       </if>
-      <if @recommendations@ >
+      <if @recommendations:rowcount@ >
         <td>
 	  <h4>We recommend:</h4>
-	  @recommendations@
+    <table width="100%">
+    <multiple name="recommendations">
+    <tr>
+	    <td valign=top>
+<if @recommendations.thumbnail_url@ not nil>
+<a href="@recommendations.product_url@"><img src="@recommendations.thumbnail_url@" height="@recommendations.thumbnail_height@" width="@recommendations.thumbnail_width@"></a>
+</if>
+    </td>
+	    <td valign=top><a href="@recommendations.product_url@">@recommendations.product_name@</a>
+	      <p>@recommendations.recommendation_text;noquote@</p>
+	    </td>
+	    <td valign=top align=right>@recommendations.price_line;noquote@</td>
+    </tr>
+    </multiple>
+        </table>
+
         </td>
      </if>
     </tr>
   </table>      
 </if>
 
- <if @count@ gt 0>
+ <if @products:rowcount@ gt 0>
   <h4><a href="@category_url;noquote@">@category_name@</a> &gt; @subcategory_name@ products:</h4>
 
 <table width="90%">

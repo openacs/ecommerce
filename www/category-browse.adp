@@ -5,33 +5,44 @@
 
   <property name="show_toolbar_p">t</property>
 
-<if @subcategories_p@ true or @recommendations@>
+<if @subcategories:rowcount@ true or @recommendations:rowcount@>
   <table width="90%">
     <tr valign="top">
-      <if @subcategories_p@ true>
+      <if @subcategories:rowcount@ true>
         <td width="50%">
 	  <h4>@category_name@ &gt; subcategories</h4>
 
-      <if subcategories_p true>
       <multiple name="subcategories">
       &gt;  <a href="@subcategories.url@">@subcategories.name@</a><br>
       </multiple>
-      </if>
 	 	  
         </td>
       </if>
-      <if @recommendations@ >
+      <if @recommendations:rowcount@ >
         <td>
 	  <h4>We recommend:</h4>
-	  @recommendations;noquote@
-       
+    <table width="100%">
+    <multiple name="recommendations">
+    <tr>
+	    <td valign=top>
+<if @recommendations.thumbnail_url@ not nil>
+<a href="@recommendations.product_url@"><img src="@recommendations.thumbnail_url@" height="@recommendations.thumbnail_height@" width="@recommendations.thumbnail_width@"></a>
+</if>
+    </td>
+	    <td valign=top><a href="@recommendations.product_url@">@recommendations.product_name@</a>
+	      <p>@recommendations.recommendation_text;noquote@</p>
+	    </td>
+	    <td valign=top align=right>@recommendations.price_line;noquote@</td>
+    </tr>
+    </multiple>
+        </table>
         </td>
      </if>
     </tr>
   </table>      
 </if>
 
-  <if @count@ gt 0>
+  <if @products:rowcount@ gt 0>
   <h4>@category_name@ items:</h4>
 
 <table width="90%">
@@ -64,7 +75,7 @@
 </if>
 </if>
 
-  <if @count@ eq 0 and @subcategories_p@ false>
+  <if @products:rowcount@ eq 0 and @subcategories:rowcount@ false>
 	There are currently no items listed in this category.&nbsp;&nbsp;Please check back often for updates.
   </if>
 

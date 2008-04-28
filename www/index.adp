@@ -14,9 +14,23 @@
 
       <include src="browse-categories">
 
-      <if @recommendations_if_there_are_any@>
+      <if @recommendations:rowcount@>
 	<h4>We recommend:</h4>
-	@recommendations_if_there_are_any;noquote@
+    <table width="100%">
+    <multiple name="recommendations">
+        <tr>
+	    <td valign=top>
+<if @recommendations.thumbnail_url@ not nil>
+<a href="@recommendations.product_url@"><img src="@recommendations.thumbnail_url@" height="@recommendations.thumbnail_height@" width="@recommendations.thumbnail_width@"></a>
+</if>
+        </td>
+            <td valign=top><a href="@recommendations.product_url@">@recommendations.product_name@</a>
+	      <p>@recommendations.recommendation_text;noquote@</p>
+	    </td>
+	    <td valign=top align=right>@recommendations.price_line;noquote@</td>
+         </tr>
+    </multiple>
+    </table>
       </if>
 
       <if @products@>

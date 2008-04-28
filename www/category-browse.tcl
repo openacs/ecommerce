@@ -73,7 +73,8 @@ set user_session_id [ec_get_user_session_id]
 # see if they're logged in
 set user_id [ad_conn user_id]
 if { $user_id != 0 } {
-    set user_name [db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:user_id"]
+    acs_user::get -user_id $user_id -array user_info
+    set user_name "$user_info(first_names) $user_info(last_name)"
 } else {
     set user_name ""
 }
@@ -90,6 +91,7 @@ if { $user_id != 0 } {
 
 ec_create_new_session_if_necessary [export_url_vars category_id subcategory_id subsubcategory_id how_many start] cookies_are_not_required
 
+# this is expensive - do we really need to log this every time? can we write to a file for batched reading later?
 if { [string compare $user_session_id "0"] != 0 } {
     db_dml grab_new_session_id "
 	insert into ec_user_session_info
@@ -98,14 +100,14 @@ if { [string compare $user_session_id "0"] != 0 } {
 	(:user_session_id, :category_id)"
 }
 
-set category_name [db_string get_category_name "
+set category_name [db_string -cache_key "ec-category_name-${category_id}" get_category_name "
     select category_name 
     from ec_categories
     where category_id=:category_id"]
 
 set subcategory_name ""
 if [have subcategory_id] {
-    set subcategory_name [db_string get_subcat_name "
+    set subcategory_name [db_string -cache_key "ec-subcategory_name-${subcategory_id}" get_subcat_name "
 	select subcategory_name
 	from ec_subcategories
 	where subcategory_id = :subcategory_id"]
@@ -113,7 +115,7 @@ if [have subcategory_id] {
 
 set subsubcategory_name ""
 if [have subsubcategory_id] {
-    set subsubcategory_name [db_string get_subsubcat_name "
+    set subsubcategory_name [db_string get_subsubcat_name -cache_key "ec-subsubcategory_name-${subsubcategory_id}" "
 	select subsubcategory_name
 	from ec_subsubcategories 
 	where subsubcategory_id = :subsubcategory_id"]
@@ -124,40 +126,41 @@ if [have subsubcategory_id] {
 
 # Recommended products in this category
 
-set recommendations {<table width="100%">}
-
 if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
 } else {
     set user_class_approved_p_clause ""
 }
 
-db_foreach get_recommended_products "
-    select p.product_id, p.product_name, p.dirname, r.recommendation_text, o.offer_code
-    from ec_product_recommendations r, ec_products_displayable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
-    where p.product_id = r.product_id
-    and r.${sub}category_id=:${sub}category_id
-    and r.active_p='t'
-    and (r.user_class_id is null or r.user_class_id in (select user_class_id 
-							from ec_user_class_user_map m 
-							where user_id=:user_id
-							$user_class_approved_p_clause))
-    order by p.product_name" {
+# when caching the db results, it must be limited to the (sub)category and also the user
+# since per-user prices are calculated
+# TODO: actually, it could be by offer code, which would allow less caching
+upvar 0 ${sub}category_id cat_id
+set cache_key_prefix "ec-${sub}category-browse-products-${cat_id}-${user_id}"
+ns_log Notice "using cache_key_prefix: $cache_key_prefix"
 
-    append recommendations "
-	  <tr>
-	    <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
-	    <td valign=top><a href=\"product?[export_url_vars product_id]\">$product_name</a>
-	      <p>$recommendation_text</p>
-	    </td>
-	    <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
-         </tr>"
-}
-if {[string equal $recommendations {<table width="100%">}]} {
-    set recommendations ""
-} else {
-    append recommendations "</table>"
-}
+db_multirow -extend {
+                     product_url price_line thumbnail_url thumbnail_width thumbnail_height
+                    } -cache_key ${cache_key_prefix}-recommendations recommendations get_recommended_products "see xql" {
+                        set price_line [ec_price_line $product_id $user_id $offer_code]
+                        set product_url [export_vars -base product -override { product_id $product_id }]
+
+                        if {[array exists thumbnail_info]} {
+                            unset thumbnail_info
+                        }
+                        array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
+                        if {[array size thumbnail_info]} {
+                            set thumbnail_url $thumbnail_info(url)
+                            set thumbnail_width $thumbnail_info(width)
+                            set thumbnail_height $thumbnail_info(height)
+                        } else {
+                            # must blank them out, otherwise they would still be in scope
+                            set thumbnail_url ""
+                            set thumbnail_width ""
+                            set thumbnail_height ""
+                        }
+                    }
+
 
 #==============================
 # products
@@ -172,16 +175,9 @@ if ![at_bottom_level_p] {
 			and c.${sub}category_id = :${sub}category_id)"
 }
 
-set count 0
-
-# TODO: memoize
-# NOTE: careful if you do cache this since the code block calculates per-user specials, and also change implementation of count
 db_multirow -extend {
-                    thumbnail_url
-                    thumbnail_height
-                    thumbnail_width
-                    price_line
-                    } products get_regular_product_list "sql in db specific xql files" {
+                      thumbnail_url thumbnail_height thumbnail_width price_line
+                    } -cache_key ${cache_key_prefix}-products products get_regular_product_list "sql in db specific xql files" {
 
                         if {[array exists thumbnail_info]} {
                             unset thumbnail_info
@@ -200,7 +196,6 @@ db_multirow -extend {
 
                         set price_line [ec_price_line $product_id $user_id $offer_code]
 
-                        incr count
                     }
 
 # what if start is < how many? shouldn't happen I guess...
@@ -208,7 +203,7 @@ if { $start >= $how_many } {
     set prev_url [export_vars -base [ad_conn url] -override {{start {[expr $start - $how_many]}}} {category_id subsubcategory_id how_many}]
 }
 
-set how_many_more [expr $count - $start - $how_many + 1]
+set how_many_more [expr ${products:rowcount} - $start - $how_many + 1]
 
 if { $how_many_more > 0 } {
     set next_url [export_vars -base [ad_conn url] -override {{start {[expr $start + $how_many]}}} {category_id subsubcategory_id how_many}]
@@ -225,19 +220,12 @@ set end [expr $start + $how_many - 1]
 #==============================
 # subcategories
 
-set subcategories_p 0
 if ![at_bottom_level_p] {
 
-    db_multirow -extend { url name } subcategories get_subcategories "see xql" {
+    db_multirow -extend { url name } -cache_key "ec-${sub}subcategories-${cat_id}" subcategories get_subcategories "see xql" {
         set url [export_vars -base "category-browse-sub${sub}category" {category_id subcategory_id subsubcategory_id}]
-        set name [eval "ident \$sub${sub}category_name"]
+        set name [eval "ident \$sub${sub}category_name"] ; # what is this ident?
     }
-
-    if { ${subcategories:rowcount} > 0 } {
-        set subcategories_p 1
-        # ident? what is this??
-    }
-
 }
 
 set the_category_id   [eval "ident \$${sub}category_id"]

@@ -22,7 +22,8 @@ ad_page_contract {
 
 set user_id [ad_conn user_id]
 if { $user_id != 0 } {
-    set user_name [db_string get_user_name "select first_names || ' ' || last_name from cc_users where user_id=:user_id"]
+    acs_user::get -user_id $user_id -array user_info
+    set user_name "$user_info(first_names) $user_info(last_name)"
 } else {
     set user_name ""
 }
@@ -38,12 +39,18 @@ if { $user_id == 0 } {
 
 set user_session_id [ec_get_user_session_id]
 
-ec_create_new_session_if_necessary "" cookies_are_not_required
+# if for some reason the user id on the session is incorrect, make a new session
+# perhaps the old update was an attempt to fix the lose cart on register? anyway
+# that is solved correctly now
 
-# Log the user as the user_id for this session
-if { $user_is_logged_on && ![string equal $user_session_id "0"]} {
-    db_dml update_session_user_id "update ec_user_sessions set user_id=:user_id where user_session_id = :user_session_id"
+# TODO: test if this can be removed entirely
+if { $user_is_logged_on && $user_session_id ne "0"} {
+    if {[db_string check_session_user_id "select user_id from ec_user_sessions where user_session_id = :user_session_id"] != $user_session_id} {
+        set $user_session_id 0 ; # which will force creation of a new session below
+    }
 }
+
+ec_create_new_session_if_necessary "" cookies_are_not_required
 
 set ec_user_string ""
 set register_url "/register?return_url=[ns_urlencode [ec_url]]"
@@ -52,43 +59,39 @@ set register_url "/register?return_url=[ns_urlencode [ec_url]]"
 # for saving computing SSL resources only when necessary
 set base_url "[ec_insecurelink [ad_conn url]]"
 
-set recommendations_if_there_are_any "<table width=\"100%\">"
-
 if [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
 } else {
     set user_class_approved_p_clause ""
 }
 
-db_foreach get_produc_recs "
-    select p.product_id, p.product_name, p.dirname, r.recommendation_text, o.offer_code
-    from ec_product_recommendations r, ec_products_displayable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
-    where p.product_id=r.product_id
-    and category_id is null 
-    and subcategory_id is null 
-    and subsubcategory_id is null
-    and (r.user_class_id is null or r.user_class_id in (select user_class_id
-							from ec_user_class_user_map 
-							where user_id = :user_id
-							$user_class_approved_p_clause))
-and r.active_p='t'" {
+# must restrict cache per user due to offer pricing
+# TODO: actually, it could be by offer code, which would allow less caching
+set recommendations_cache_key "ec-index-recommendations-${user_id}"
 
-    append recommendations_if_there_are_any "
-	<table width=\"100%\">
-	  <tr>
-	    <td valign=top>[ec_linked_thumbnail_if_it_exists $dirname "f" "t"]</td>
-<td valign=top><a href=\"${base_url}product?[export_url_vars product_id]\">$product_name</a>
-	      <p>$recommendation_text</p>
-	    </td>
-	    <td valign=top align=right>[ec_price_line $product_id $user_id $offer_code]</td>
-         </tr>"
-}
-if {[string equal $recommendations_if_there_are_any "<table width=\"100%\">"]} {
-    set recommendations_if_there_are_any ""
-} else {
-    append recommendations_if_there_are_any "</table>"
-}
+db_multirow -extend {
+                     product_url price_line thumbnail_url thumbnail_width thumbnail_height
+                    } -cache_key $recommendations_cache_key recommendations get_produc_recs "see xql" {
+                        set price_line [ec_price_line $product_id $user_id $offer_code]
+                        set product_url [export_vars -base product -override { product_id $product_id }]
 
+                        if {[array exists thumbnail_info]} {
+                            unset thumbnail_info
+                        }
+                        array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
+                        if {[array size thumbnail_info]} {
+                            set thumbnail_url $thumbnail_info(url)
+                            set thumbnail_width $thumbnail_info(width)
+                            set thumbnail_height $thumbnail_info(height)
+                        } else {
+                            # must blank them out, otherwise they would still be in scope
+                            set thumbnail_url ""
+                            set thumbnail_width ""
+                            set thumbnail_height ""
+                        }
+                    }
+
+# TODO: templatize and cache product list
 set products "<table width=\"100%\">"
 
 set have_how_many_more_p f
