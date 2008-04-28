@@ -34,7 +34,11 @@
 <multiple name="products">
 <if @products.rownum@ ge @start@ and @products.rownum@ le @end@>
 	      <tr valign=top>
-	        <td rowspan=2><a href="product?product_id=@products.product_id@" border="0"><img src="@products.thumbnail_url@" height="@products.thumbnail_height@" width="@products.thumbnail_width@"></a></td>
+	        <td rowspan=2>
+<if @products.thumbnail_url@ not nil>
+<a href="product?product_id=@products.product_id@" border="0"><img src="@products.thumbnail_url@" height="@products.thumbnail_height@" width="@products.thumbnail_width@"></a>
+</if>
+</td>
 	        <td colspan=2><a href="product?product_id=@products.product_id@"><b>@products.product_name@</b></a></td>
 	      </tr>
 	      <tr valign=top>

@@ -182,16 +182,26 @@ db_multirow -extend {
                     thumbnail_width
                     price_line
                     } products get_regular_product_list "sql in db specific xql files" {
-                        
-    array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
-    set thumbnail_url $thumbnail_info(url)
-    set thumbnail_width $thumbnail_info(width)
-    set thumbnail_height $thumbnail_info(height)
 
-    set price_line [ec_price_line $product_id $user_id $offer_code]
+                        if {[array exists thumbnail_info]} {
+                            unset thumbnail_info
+                        }
+                        array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
+                        if {[array size thumbnail_info]} {
+                            set thumbnail_url $thumbnail_info(url)
+                            set thumbnail_width $thumbnail_info(width)
+                            set thumbnail_height $thumbnail_info(height)
+                        } else {
+                            # must blank them out, otherwise they would still be in scope
+                            set thumbnail_url ""
+                            set thumbnail_width ""
+                            set thumbnail_height ""
+                        }
 
-    incr count
-}
+                        set price_line [ec_price_line $product_id $user_id $offer_code]
+
+                        incr count
+                    }
 
 # what if start is < how many? shouldn't happen I guess...
 if { $start >= $how_many } {

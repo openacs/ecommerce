@@ -144,25 +144,35 @@ db_multirow -extend {
                     price_line
                     } products get_regular_product_list "sql in db specific xql files" {
                         
-    array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
-    set thumbnail_url $thumbnail_info(url)
-    set thumbnail_width $thumbnail_info(width)
-    set thumbnail_height $thumbnail_info(height)
+                        if {[array exists thumbnail_info]} {
+                            unset thumbnail_info
+                        }
+                        array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
+                        if {[array size thumbnail_info]} {
+                            set thumbnail_url $thumbnail_info(url)
+                            set thumbnail_width $thumbnail_info(width)
+                            set thumbnail_height $thumbnail_info(height)
+                        } else {
+                            # must blank them out, otherwise they would still be in scope
+                            set thumbnail_url ""
+                            set thumbnail_width ""
+                            set thumbnail_height ""
+                        }
 
-    set price_line [ec_price_line $product_id $user_id $offer_code]
+                        set price_line [ec_price_line $product_id $user_id $offer_code]
 
-    incr count
-}
+                        incr count
+                    }
 
 # what if start is < how many? shouldn't happen I guess...
 if { $start >= $how_many } {
-    set prev_url [export_vars -base [ad_conn url] -override {{start {[expr $start - $how_many]}}} {category_id subsubcategory_id how_many}]
+    set prev_url [export_vars -base [ad_conn url] -override {{start {[expr $start - $how_many]}}} {category_id subcategory_id subsubcategory_id how_many}]
 }
 
 set how_many_more [expr $count - $start - $how_many + 1]
 
 if { $how_many_more > 0 } {
-    set next_url [export_vars -base [ad_conn url] -override {{start {[expr $start + $how_many]}}} {category_id subsubcategory_id how_many}]
+    set next_url [export_vars -base [ad_conn url] -override {{start {[expr $start + $how_many]}}} {category_id subcategory_id subsubcategory_id how_many}]
 
     if { $how_many_more >= $how_many } {
         set how_many_next $how_many
