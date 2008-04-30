@@ -97,7 +97,7 @@ if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
 # since per-user prices are calculated
 # TODO: actually, it could be by offer code, which would allow less caching
 upvar 0 ${sub}category_id cat_id
-set cache_key_prefix "ec-${sub}category-browse-products-${cat_id}-${user_id}"
+set cache_key_prefix "ec-${sub}subcategory-browse-products-${cat_id}-${user_id}"
 ns_log Notice "using cache_key_prefix: $cache_key_prefix"
 
 db_multirow -extend {
@@ -109,6 +109,7 @@ db_multirow -extend {
                         if {[array exists thumbnail_info]} {
                             unset thumbnail_info
                         }
+                        ns_log Notice [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
                         array set thumbnail_info [ecommerce::resource::image_info -type Thumbnail -product_id $product_id -dirname $dirname]
                         if {[array size thumbnail_info]} {
                             set thumbnail_url $thumbnail_info(url)
