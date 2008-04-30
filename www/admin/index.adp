@@ -54,5 +54,6 @@ Documentation: <a href="/doc/ecommerce">/doc/ecommerce</a> or <a href="@ec_url@d
 <li><a href="email-templates/">Email Templates</a></li>
 <li><a href="searches">User Search Terms</a></li>
 <li><a href="audit-tables">Audit @ec_system_name@</a></li>
+<li><a href="?flush_db_cache=1">Flush the database cache</a> (TODO: do this automatically where appropriate)</li>
 
 </ul>

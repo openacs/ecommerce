@@ -7,6 +7,7 @@ ad_page_contract {
   @cvs-id $Id$
   @author ported by Jerry Asher (jerry@theashergroup.com)
 } {
+    {flush_db_cache 0}
 }
 
 set page_title "[ec_system_name] Administration"
@@ -65,3 +66,7 @@ set n_not_yet_approved_plural [ec_decode $n_not_yet_approved 1 "" "s"]
 set multiple_retailers_p [ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce]
 
 set ec_system_name [ec_system_name]
+
+if {$flush_db_cache} {
+    db_flush_cache -cache_key_pattern "ec-*"
+}
