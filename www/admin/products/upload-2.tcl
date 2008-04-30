@@ -54,7 +54,7 @@ if { [string length $delimiter] != 1 && [string eq $file_type "delim"]} {
 
 set legal_field_names {sku product_name one_line_description detailed_description search_keywords price no_shipping_avail_p \
                            shipping shipping_additional weight present_p active_p url template_id stock_status color_list \ 
-                               size_list style_list email_on_purchase_list}
+                               size_list style_list email_on_purchase_list image_fullpathname}
 
 # Check each entry in the datafile for the following required fields.
 # These fields are required so that we can check if a product already
