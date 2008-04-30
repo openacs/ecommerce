@@ -43,10 +43,10 @@ set user_session_id [ec_get_user_session_id]
 # perhaps the old update was an attempt to fix the lose cart on register? anyway
 # that is solved correctly now
 
-# TODO: test if this can be removed entirely
+# TODO: improve session cleanup and add to all pages
 if { $user_is_logged_on && $user_session_id ne "0"} {
-    if {[db_string check_session_user_id "select user_id from ec_user_sessions where user_session_id = :user_session_id"] != $user_session_id} {
-        set $user_session_id 0 ; # which will force creation of a new session below
+    if {[db_string check_session_user_id "select user_id from ec_user_sessions where user_session_id = :user_session_id" -default 0] != $user_id} {
+        set user_session_id 0 ; # which will force creation of a new session below
     }
 }
 
@@ -59,7 +59,7 @@ set register_url "/register?return_url=[ns_urlencode [ec_url]]"
 # for saving computing SSL resources only when necessary
 set base_url "[ec_insecurelink [ad_conn url]]"
 
-if [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] {
+if {[ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] ne ""} {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
 } else {
     set user_class_approved_p_clause ""
