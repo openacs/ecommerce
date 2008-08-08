@@ -39,7 +39,7 @@ Documentation: <a href="/doc/ecommerce">/doc/ecommerce</a> or <a href="@ec_url@d
 
 <li><a href="templates/">Product Templates</a></li>
 
-<if ! @user_classes_reqs_approval@>
+<if !@user_classes_reqs_approval@>
 <li><a href="user-classes/">User Classes</a> <font size=-1>(@n_not_yet_approved@ not yet approved user@n_not_yet_approved_plural@)</font></li>
 </if>
 
