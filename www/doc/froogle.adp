@@ -8,7 +8,7 @@
   <table width="100%">
     <tbody>
       <tr>
-	<td align="left">@context_bar@</td>
+	<td align="left">@context_bar;noquote@</td>
       </tr>
     </tbody>
   </table>
@@ -43,10 +43,11 @@
   href="http://services.google.com/froogle/merchant_email">this
   form</a>.</p>
 
-  <p>There are a few <a
-  href="http://froogle.google.com/froogle/merchants.html#feed">conditions
-  and limitations</a> you should know about if you're thinking of
-  providing a feed to Froogle.</p>
+  <p>There are a few conditions
+  and limitations you should know about if you are thinking of
+  providing a feed to Froogle. (<a
+  href="http://www.google.com/basepages/sellongoogle.html">read more
+  about foogle</a>).</p>
 
   <h2>How to configure ecommerce to provide a data feed</h2>
 
