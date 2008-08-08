@@ -2,11 +2,8 @@ ad_library {
 
     Utilities for the ecommerce module.
 
-    @author Eve Andersson (eveander@arsdigita.com)
-    @creation-date  April, 1999
-    @author ported by Jerry Asher (jerry@theashergroup.com)
-    @author revised by Bart Teeuwisse (bart.teeuwisse@thecodemill.biz)
-    @revision-date March 2002
+    @creation-date April 1999
+    @revision-date August 2008
 
 }
 
@@ -572,10 +569,13 @@ ad_proc ec_formatted_full_date {
 
     regsub -- {(\+|-)[0-9]{2}$} $ugly_date "" ugly_date
 
+    # get rid of decimal seconds or clock scan might choke on it
+    regsub -- {\.[0-9]+$} $ugly_date "" ugly_date
+
     if { [llength [split $ugly_date " "]] == 2 } {
-	return [clock format [clock scan $ugly_date] -format "%B %d, %Y %r" -gmt true]
+        return [clock format [clock scan $ugly_date] -format "%B %d, %Y %r" -gmt true]
     } else {
-	return
+        return
     }
 }
 
@@ -980,19 +980,20 @@ ad_proc ec_assert_directory {
 
 } {
     if { [file exists $dir_path] } {
-
-	# Everything okay
-
-	return 1
+        # Everything okay
+        return 1
     } else {
-
-	# wtem@olywa.net -- 03-12-2001 we need a recursive mkdir but
-	# we will hold off for now create a list of directories each
-	# element in the list must have the full path then run file
-	# exists and ns_mkdir foreach path
-
-	ns_mkdir $dir_path
-	return 1
+        # we are limiting this to only work within acs_root_dir
+        set dir_step [acs_root_dir]
+        set dir_list [split [string range $dir_path [string length $dir_step] end] [file separator]]
+        foreach directory $dir_list {
+            set next_dir_step [file join $dir_step $directory]
+            if { ![file exists $next_dir_step]} {
+                ns_mkdir $next_dir_step
+            }
+            set dir_step $next_dir_step
+        }
+        return 1
     }
 }
 
@@ -1125,6 +1126,50 @@ ad_proc ec_capitalize_words {
     return $entitled_words
 }
 
+ad_proc ec_product_image_if_it_exists { 
+    dirname 
+    {border_p "t"} 
+    {image_title "item view"}
+} { 
+    This looks at dirname to see if image is there and if
+    so returns an html IMG fragment that shows image
+    of the product.
+    Otherwise it returns the empty string.
+
+} {
+
+    set product_image_html ""
+
+    if { $border_p == "f" } {
+	set border_part_of_img_tag "border=\"0\""
+    } else {
+	set border_part_of_img_tag "border=\"1\""
+    }
+
+    # See if there's an image file
+    # Get the directory where dirname is stored
+
+    regsub -all {[a-zA-Z]} $dirname "" product_id
+    set subdirectory [ec_product_file_directory $product_id]
+    set file_path "$subdirectory/$dirname"
+    set product_data_directory "[ec_data_directory][ec_product_directory]"
+
+    set full_dirname "$product_data_directory$file_path"
+
+    # image can be product.jpg or product.gif
+
+    if { [file exists "$full_dirname/product.jpg"] } {
+	set product_image_size [ns_jpegsize "$full_dirname/product.jpg"]
+	set product_image_html "<img src=\"[ec_url]product-file/$file_path/product.jpg\" $border_part_of_img_tag width=[lindex $product_image_size 0] height=[lindex $product_image_size 1] alt=\"$image_title\">"
+    } elseif { [file exists "$full_dirname/product.gif"] } {
+	set product_image_size [ns_gifsize "$full_dirname/product.gif"]
+	set product_image_html "<img src=\"[ec_url]product-file/$file_path/product.gif\" $border_part_of_img_tag width=[lindex $product_image_size 0] height=[lindex $product_image_size 1] alt=\"$image_title\">"
+    } 
+
+    return $product_image_html
+}
+
+
 ad_proc ec_thumbnail_if_it_exists { 
     dirname 
     {border_p "t"} 
@@ -1162,4 +1207,45 @@ ad_proc ec_thumbnail_if_it_exists {
 	
     }
     return $thumbnail
+}
+
+ad_proc ec_stock_status { 
+    {stock_status "q"}
+} { 
+    takes the value of ec_products.stock_status, returns stock status as text for presenting in context of html 
+} {
+    set to_return ""
+    set to_return [ad_parameter -package_id [ec_id] "StockMessage[string toupper $stock_status]" ecommerce]
+
+    return $to_return
+}
+
+ad_proc ec_remove_html_entities { 
+  text_with_entities
+} { 
+    removes html entities from text.  Will substitute the text equivalent in some of the more common cases.
+} {
+    # convert common text substitutions and/or equivalents
+   
+    regsub -all -- {&copy;} ${text_with_entities} {(c)} new_text2
+    regsub -all -- {&reg;} $new_text2 {(r)} new_text
+    regsub -all -- {&trade;} $new_text {(tm)} new_text2
+    regsub -all -- {&amp;} $new_text2 {&} new_text
+    regsub -all -- {&lt;} $new_text {<} new_text2
+    regsub -all -- {&gt;} $new_text2 {>} new_text
+    regsub -all -- {&deg;} $new_text {deg.} new_text2
+    regsub -all -- {&quot;} $new_text2 {\"} new_text
+    regsub -all -- {&nbsp;} $new_text { } new_text2
+    regsub -all -- {&plusmn;} $new_text2 {(+/-)} new_text
+    regsub -all -- {&frac12;} $new_text {1/2} new_text2
+    regsub -all -- {&frac14;} $new_text2 {1/4} new_text
+    regsub -all -- {&frac34;} $new_text {3/4} new_text2
+    regsub -all -- {&Oslash;} $new_text2 {0} new_text
+    regsub -all -- {&apos;} $new_text {'} new_text2
+    regsub -all -- {&ndash;} $new_text2 {-} new_text
+    regsub -all -- {&mdash;} $new_text {--} new_text2
+    # just remove the & and ; for the rest.. not pretty, but removes the entity aspect of each.
+    regsub -all -- {[&]([a-zA-Z][a-zA-Z]*)[;]} $new_text2 {{\1}} new_text
+
+    return ${new_text}
 }
