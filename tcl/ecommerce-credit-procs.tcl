@@ -51,6 +51,7 @@ ad_proc -public ec_creditcard_authorization {
     # PaymentGateway.
 
     if {[empty_string_p $payment_gateway] || ![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
+    ns_log Warning "ec_creditcard_authorization (54):  payment gateway not bound to ecommerce package."
 	set outcome(response_code) "failure"
 	set outcome(transaction_id) "$transaction_id"
 	return [array get outcome]
@@ -101,6 +102,7 @@ ad_proc -public ec_creditcard_authorization {
 	    and c.billing_address = a.address_id"]} {
 	set outcome(response_code) "invalid_input"
 	set outcome(transaction_id) "$transaction_id"
+    ns_log Error "ec_creditcard_authorization (105): no creditcard for transaction_id $transaction_id"
 	return [array get outcome]
     } 
 
@@ -111,13 +113,14 @@ ad_proc -public ec_creditcard_authorization {
 	    select max(transaction_id) 
 	    from ec_financial_transactions 
 	    where order_id = :order_id"]
+        ns_log Notice "ec_creditcard_authorization creating transaction_id ${transaction_id}"
     }
 
     # Convert the one digit creditcard abbreviation to the
     # standardized name of the card.
 
     set card_type [ec_pretty_creditcard_type $creditcard_type]
-
+    ns_log Notice "ec_creditcard_authorization card_type ${card_type} from ${creditcard_type}"
     # Connect to the payment gateway to authorize the transaction.
 
     array set response [acs_sc_call "PaymentGateway" "Authorize" \
@@ -144,6 +147,7 @@ ad_proc -public ec_creditcard_authorization {
     set response_code $response(response_code)
     set reason $response(reason)
     set pgw_transaction_id $response(transaction_id)
+    ns_log Notice "ec_creditcard_authorization(150): response_code: ${response_code}"
 
     # Interpret the response_code.
 
