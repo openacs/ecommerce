@@ -1,7 +1,5 @@
-# /tcl/ecommerce-widgets.tcl
-
 ad_library {
-    Definitions for the ecommerce module
+    Widget definitions for the ecommerce module
     @author Eve Andersson (eveander@arsdigita.com)
     @creation-date April, 1999
     @cvs-id $Id$
@@ -577,10 +575,15 @@ ad_proc ec_country_widget {
 } {
     Just like country_widget, except it's not United States centric.
 } {
-
+    # comparing iso value with locale, we may be able to generalize this:
+    if {[string equal [lang::user::locale] "en_US"] && $default == ""} {
+        set default "US"
+    }
     set widget_value "<select name=\"$select_name\" $size_subtag>\n"
     if { $default == "" } {
         append widget_value "<option value=\"\" selected>Choose a Country</option>\n"
+    } else {
+        append widget_value "<option value=\"\">Choose a Country</option>\n"
     }
     set sql "select default_name, iso from countries order by default_name"
      db_foreach get_countries $sql {
@@ -649,16 +652,16 @@ ad_proc ec_creditcard_expire_2_widget {
     set default_matched_p 0
     set this_year [clock format [clock seconds] -format %Y]
     set this_year_for_db [clock format [clock seconds] -format %y]
-    set this year_for_db [string trimleft $this_year_for_db 0]
+    set this_year_for_db [string trimleft $this_year_for_db 0]
     foreach option [list \
 			[list [format "%02d" $this_year_for_db] $this_year] \
-			[list [format "%02d" [expr $this_year_for_db + 1]] [expr $this_year + 1]] \
-			[list [format "%02d" [expr $this_year_for_db + 2]] [expr $this_year + 2]] \
-			[list [format "%02d" [expr $this_year_for_db + 3]] [expr $this_year + 3]] \
-			[list [format "%02d" [expr $this_year_for_db + 4]] [expr $this_year + 4]] \
-			[list [format "%02d" [expr $this_year_for_db + 5]] [expr $this_year + 5]] \
-			[list [format "%02d" [expr $this_year_for_db + 6]] [expr $this_year + 6]] \
-			[list [format "%02d" [expr $this_year_for_db + 7]] [expr $this_year + 7]]] {
+            [list [format "%02d" [expr { $this_year_for_db + 1 } ]] [expr { $this_year + 1 } ]] \
+            [list [format "%02d" [expr { $this_year_for_db + 2 } ]] [expr { $this_year + 2 } ]] \
+            [list [format "%02d" [expr { $this_year_for_db + 3 } ]] [expr { $this_year + 3 } ]] \
+            [list [format "%02d" [expr { $this_year_for_db + 4 } ]] [expr { $this_year + 4 } ]] \
+            [list [format "%02d" [expr { $this_year_for_db + 5 } ]] [expr { $this_year + 5 } ]] \
+            [list [format "%02d" [expr { $this_year_for_db + 6 } ]] [expr { $this_year + 6 } ]] \
+            [list [format "%02d" [expr { $this_year_for_db + 7 } ]] [expr { $this_year + 7 } ]]] {
 	set year_for_db [lindex $option 0]
 	set year [lindex $option 1]
 	if { [string compare $year $default] == 0 || [string compare $year_for_db $default] == 0 } {
@@ -1133,12 +1136,12 @@ ad_proc ec_interaction_type_widget { {default ""} } { interaction type widget } 
 
 ad_proc ec_report_date_range_widget { start_date end_date } { report date range widget } {
     return "from [ad_dateentrywidget start_date $start_date]
-<INPUT NAME=start%5fdate.time TYPE=hidden value=\"12:00:00\">
-<INPUT NAME=start%5fdate.ampm TYPE=hidden value=\"AM\">
+<INPUT NAME=start%5fdate.time TYPE=\"hidden\" value=\"12:00:00\">
+<INPUT NAME=start%5fdate.ampm TYPE=\"hidden\" value=\"AM\">
 
 through  [ad_dateentrywidget end_date $end_date]
-<INPUT NAME=end%5fdate.time TYPE=hidden value=\"11:59:59\">
-<INPUT NAME=end%5fdate.ampm TYPE=hidden value=\"PM\">
+<INPUT NAME=end%5fdate.time TYPE=\"hidden\" value=\"11:59:59\">
+<INPUT NAME=end%5fdate.ampm TYPE=\"hidden\" value=\"PM\">
 "
 }
 
