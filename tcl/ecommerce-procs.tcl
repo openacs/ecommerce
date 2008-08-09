@@ -1,5 +1,5 @@
 ad_library {
-    Definitions for the ecommerce module
+    Main definitions for the ecommerce module
     Note: Other ecommerce procedures can be found in ecommerce-*.tcl
 
     @cvs-id $Id$
@@ -734,7 +734,7 @@ ad_proc ec_order_summary_for_customer {
     # total cost
 
     # little security check
-
+    set includes_DisplayPriceOfZeroAs_item 0
     set correct_user_id [db_string correct_user_id "
 	select user_id as correct_user_id 
 	from ec_orders 
@@ -765,13 +765,16 @@ ad_proc ec_order_summary_for_customer {
 
     db_foreach order_details_select "
 	select i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice,
-	    p.product_name, p.one_line_description, p.product_id, count(*) as quantity 
+	    p.product_name, p.one_line_description, p.product_id, p.sku, count(*) as quantity 
 	from ec_items i, ec_products p
 	where i.order_id = :order_id
 	and i.product_id = p.product_id
 	group by p.product_name, p.one_line_description, p.product_id, i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice" {
 
 	set option_list [list]
+    if { $price_charged == 0 } {
+        set includes_DisplayPriceOfZeroAs_item 1
+    }
 	if { ![empty_string_p $color_choice] } {
 	    lappend option_list "Color: $color_choice"
 	}
@@ -786,7 +789,7 @@ ad_proc ec_order_summary_for_customer {
 	    set options "$options; "
 	}
 
-	append items_ul "<li>Quantity $quantity: $product_name; $options$price_name: [ec_pretty_price $price_charged [ad_parameter -package_id [ec_id] Currency ecommerce]]"
+	append items_ul "<li>Quantity $quantity: Stock No $sku, $product_name; $options$price_name: [ec_pretty_price $price_charged [ad_parameter -package_id [ec_id] Currency ecommerce]]"
 	if { $show_item_detail_p == "t" } {
 	    append items_ul "<br>
 	    [ec_shipment_summary_sub $product_id $color_choice $size_choice $style_choice $price_charged $price_name $order_id]"
@@ -819,13 +822,18 @@ Items:
 
 <ul>
 $items_ul
-</ul>
+</ul>"
+if { $includes_DisplayPriceOfZeroAs_item == 1 } {
+   # add comment here about meaning of items flagged with parameter DisplayPriceOfZeroAs
+    append to_return "<p> </p>"
+}
 
-<pre>
+append to_return "<pre>
 Ship via: $shipping_method_to_print
 
 $price_summary
 </pre>"
+
     return $to_return
 }
 
@@ -834,19 +842,23 @@ $price_summary
 # (a) it's only used once, and
 # (b) it's extremely simple
 
-ad_proc ec_item_summary_in_confirmed_order { order_id {ul_p "f"}} { item summary in confirmed order } {
-
+ad_proc ec_item_summary_in_confirmed_order { 
+    order_id 
+    {ul_p "f"}
+} { 
+    item summary in confirmed order 
+} {
     set item_list [list]
 
     db_foreach item_summary_info_select {
 	select i.price_charged, i.price_name, i.color_choice, i.size_choice, i.style_choice,
-	       p.product_name, p.one_line_description, p.product_id,
+	       p.product_name, p.one_line_description, p.product_id, p.sku,
 	       count(*) as quantity
 	  from ec_items i,
 	       ec_products p
 	 where i.order_id = :order_id
 	   and i.product_id = p.product_id
-	 group by p.product_name, p.one_line_description, p.product_id,
+	 group by p.sku, p.product_name, p.one_line_description, p.product_id,
 	       i.price_charged, i.price_name, i.color_choice, i.size_choice, i.style_choice
     } {
 
@@ -864,8 +876,14 @@ ad_proc ec_item_summary_in_confirmed_order { order_id {ul_p "f"}} { item summary
 	if { ![empty_string_p $options] } {
 	    set options "$options; "
 	}
+    if {![info exists sku]} {
+        set sku " -"
+    } else {
+        append sku " -"
+    }
 
-	lappend item_list "Quantity $quantity: $product_name; $options$price_name: [ec_pretty_price $price_charged]"
+	lappend item_list "Quantity $quantity: $sku $product_name; $options$price_name: [ec_pretty_price $price_charged]"
+    set sku ""
     }
     if { $ul_p == "f" } {
 	return [join $item_list "\n"]
@@ -988,18 +1006,18 @@ ad_proc ec_price_line {
     set lowest_price_description [lindex $lowest_price_and_price_name 1]
     if {![string equal "" $lowest_price_description]} {
         set price_line "
-	    <table width=180 cellspacing=0 cellpadding=0>
+	    <table width=\"180\" cellspacing=\"0\" cellpadding=\"0\">
 	      <tr>
-	        <td width=140>$lowest_price_description:</td>"
+	                        <td width=\"140\" align=\"right\"> $lowest_price_description:&nbsp;</td>"
     } else {
 	set price_line "
-	    <table width=180 cellspacing=0 cellpadding=0>
-	      <tr>
-	        <td width=140>Our Price:</td>"
+            <table width=\"180\" cellspacing=\"0\" cellpadding=\"0\">
+              <tr>
+                <td width=\"140\" align=\"right\"> Our Price:&nbsp;</td>"
     }
     append price_line "
-	  <td width=40 align=right>
-	    <strong>[ec_pretty_price $lowest_price $currency]</strong>
+          <td width=\"40\" align=\"right\">
+            <strong>[ec_pretty_price $lowest_price $currency]</strong>
 	  </td>
 	</tr>"
 
@@ -1149,10 +1167,13 @@ ad_proc ec_display_product_purchase_combinations { product_id } { display produc
     "
 
     for { set counter 0 } { $counter < 5 } { incr counter } {
-	set product_id [set product_$counter]
-	if { ![empty_string_p $product_id] } {
-    append to_return "<li><a href=\"product?[export_url_vars product_id]\">[db_string product_name_select {select product_name from ec_products where product_id = :product_id}]</a>\n"
-	}
+        set product_id [set product_$counter]
+        if { ![empty_string_p $product_id] } {
+            set item_name [db_string product_name_select {select product_name from ec_products where product_id = :product_id and present_p = 't'} -default ""]
+	    if { ![empty_string_p $item_name] } {
+                append to_return "<li><a href=\"product?[export_url_vars product_id]\">${item_name}</a></li>"
+            }
+        }
     }
     
     append to_return "</ul>

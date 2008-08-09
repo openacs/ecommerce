@@ -57,7 +57,7 @@
     <querytext>
       select product_name 
       from ec_products 
-      where product_id = :product_id
+      where product_id = :product_id and present_p = 't'
     </querytext>
   </fullquery>
 
@@ -235,21 +235,21 @@
 
   <fullquery name="ec_order_summary_for_customer.order_details_select">      
     <querytext>
-      select i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice, p.product_name, p.one_line_description, p.product_id, count(*) as quantity
+      select i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice, p.product_name, p.one_line_description, p.product_id, p.sku, count(*) as quantity
       from ec_items i, ec_products p
       where i.order_id = :order_id
       and i.product_id = p.product_id
-      group by p.product_name, p.one_line_description, p.product_id, i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice
+      group by p.product_name, p.one_line_description, p.product_id, p.sku, i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice
     </querytext>
   </fullquery>
 
   <fullquery name="ec_item_summary_in_confirmed_order.item_summary_info_select">      
     <querytext>
-      select i.price_charged, i.price_name, i.color_choice, i.size_choice, i.style_choice, p.product_name, p.one_line_description, p.product_id, count(*) as quantity
+      select i.price_charged, i.price_name, i.color_choice, i.size_choice, i.style_choice, p.sku, p.product_name, p.one_line_description, p.product_id, count(*) as quantity
       from ec_items i, ec_products p
       where i.order_id = :order_id
       and i.product_id = p.product_id
-      group by p.product_name, p.one_line_description, p.product_id, i.price_charged, i.price_name, i.color_choice, i.size_choice, i.style_choice
+      group by p.sku, p.product_name, p.one_line_description, p.product_id, i.price_charged, i.price_name, i.color_choice, i.size_choice, i.style_choice
     </querytext>
   </fullquery>
 
@@ -293,15 +293,7 @@
     <querytext>
       select product_name 
       from ec_products 
-      where product_id = :product_id
-    </querytext>
-  </fullquery>
-
-  <fullquery name="ec_product_name_internal.product_name_select">      
-    <querytext>
-      select product_name 
-      from ec_products 
-      where product_id = :product_id
+      where product_id = :product_id and present_p = 't'
     </querytext>
   </fullquery>
 
