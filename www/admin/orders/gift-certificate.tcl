@@ -43,7 +43,7 @@ and c.gift_certificate_id=:gift_certificate_id
 doc_body_append "
 <table>
 <tr><td>Gift Certificate ID &nbsp;&nbsp;&nbsp;</td><td>$gift_certificate_id</td></tr>
-<tr><td>Amount Left</td><td>[ec_pretty_price $amount_left] <font size=-1>(out of [ec_pretty_price $amount])</font></td></tr>
+<tr><td>Amount Left</td><td>[ec_pretty_pure_price $amount_left] <font size=-1>(out of [ec_pretty_pure_price $amount])</font></td></tr>
 "
 if { ![empty_string_p $issuer_user_id] } {
     doc_body_append "<tr><td>Issued By</td><td><a href=\"[ec_acs_admin_url]users/one?user_id=$issuer_user_id\">$issuer</a> on [util_AnsiDatetoPrettyDate $issue_date]</td></tr>

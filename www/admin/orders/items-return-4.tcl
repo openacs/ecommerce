@@ -454,13 +454,13 @@ if {$cash_amount_to_refund > 0} {
 	    set refund_status $response(response_code)
 	    set pgw_transaction_id $response(transaction_id)
 	    if { $refund_status == "failure" || $refund_status == "invalid_input" } {
-		set errorstring "Refund transaction $transaction_id  for [ec_pretty_price $transaction_amount] of refund $refund_id at [ad_conn url], resulted in: $refund_status"
+		set errorstring "Refund transaction $transaction_id  for [ec_pretty_pure_price $transaction_amount] of refund $refund_id at [ad_conn url], resulted in: $refund_status"
 		db_dml insert_cc_refund_problem "
 		    insert into ec_problems_log
 		    (problem_id, problem_date, problem_details, order_id)
 		    values
 		    (ec_problem_id_sequence.nextval, sysdate, :errorstring, :order_id)"
-		append results_explanation "<p>Refund transaction $transaction_id  for [ec_pretty_price $transaction_amount] did not occur.
+		append results_explanation "<p>Refund transaction $transaction_id  for [ec_pretty_pure_price $transaction_amount] did not occur.
 		    We have made a record of this in the problems log so that the situation can be corrected manually.</p>"
 	    } elseif { $refund_status == "inconclusive" } {
 
@@ -468,7 +468,7 @@ if {$cash_amount_to_refund > 0} {
 		# procedure ec_unrefunded_transactions will retry the
 		# transaction.
 
-		append results_explanation "<p>The results of refund transaction $transaction_id for [ec_pretty_price $transaction_amount] were inconclusive 
+		append results_explanation "<p>The results of refund transaction $transaction_id for [ec_pretty_pure_price $transaction_amount] were inconclusive 
 		    (perhaps due to a communications failure between us and the payment gateway).
 		    A program will keep trying to complete this refund transaction and the problems log will be updated if it the refund transaction cannot be completed.</p>"
 	    } else {
@@ -479,7 +479,7 @@ if {$cash_amount_to_refund > 0} {
 		    update ec_financial_transactions 
 		    set refunded_date=sysdate 
 		    where transaction_id=:pgw_transaction_id"
-		append results_explanation "<p>Refund transaction $pgw_transaction_id for [ec_pretty_price $transaction_amount] is complete!</p>";# 
+		append results_explanation "<p>Refund transaction $pgw_transaction_id for [ec_pretty_pure_price $transaction_amount] is complete!</p>";# 
 	    }
 	} else {
 
@@ -487,7 +487,7 @@ if {$cash_amount_to_refund > 0} {
 	    # original transaction needs to be settled by the payment
 	    # gateway. 
 
-	    append results_explanation "<p>Refund transaction $transaction_id  for [ec_pretty_price $transaction_amount] is scheduled for a later time. 
+	    append results_explanation "<p>Refund transaction $transaction_id  for [ec_pretty_pure_price $transaction_amount] is scheduled for a later time. 
 		Refunds can not be processed before the transaction charging the credit card has been completed by the gateway. 
 		Transactions are completed with 24 hours after marking. Therefore the refund transaction has been scheduled for $to_be_captured_date</p>"
 

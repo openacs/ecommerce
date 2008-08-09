@@ -327,9 +327,9 @@ if { [exists_and_equal shipping_required "t"] } {
 
 # 4. set total costs for each shipping option
             set total_shipping_price_default $total_reg_shipping_price
-	    set total_reg_shipping_price [ec_pretty_price [expr $total_reg_shipping_price + $shipping_method_standard] $currency "t"]
-	    set total_exp_shipping_price [ec_pretty_price [expr $total_exp_shipping_price + $shipping_method_express] $currency "t"]
-            set shipping_method_pickup [ec_pretty_price 0 $currency "t"]
+	    set total_reg_shipping_price [ec_pretty_pure_price [expr $total_reg_shipping_price + $shipping_method_standard] $currency "t"]
+	    set total_exp_shipping_price [ec_pretty_pure_price [expr $total_exp_shipping_price + $shipping_method_express] $currency "t"]
+            set shipping_method_pickup [ec_pretty_pure_price 0 $currency "t"]
             set shipping_method_no_shipping 0
 
 # 5 prepare shipping options to present to user
@@ -557,7 +557,7 @@ if { [exists_and_equal shipping_required "t"] } {
         set show_creditcard_form_p "f"
     } elseif { $user_gift_certificate_balance > 0 } {
         set gift_certificate_covers_part_of_order 1
-        set certificate_amount [ec_pretty_price $user_gift_certificate_balance]
+        set certificate_amount [ec_pretty_pure_price $user_gift_certificate_balance]
     }
     
     if { $show_creditcard_form_p == "t" } {

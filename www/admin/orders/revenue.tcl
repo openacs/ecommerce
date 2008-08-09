@@ -31,9 +31,9 @@ from ec_fin_transactions_reportable
 group by to_char(inserted_date,'YYYY'), to_char(inserted_date,'Q')
 order by to_char(inserted_date,'YYYY') || to_char(inserted_date,'Q')" {
     set revenue_sum [expr $revenue_sum + $revenue]
-    doc_body_append "<tr><td>$transaction_year Q$transaction_quarter<td align=right>[ec_pretty_price $revenue]</td><td></td></tr>\n"
+    doc_body_append "<tr><td>$transaction_year Q$transaction_quarter<td align=right>[ec_pretty_pure_price $revenue]</td><td></td></tr>\n"
     if { $transaction_quarter == "4" } {
-	doc_body_append "<tr><td>total for $transaction_year<td align=right><font size=+1 color=green>[ec_pretty_price $revenue_sum]</td><td></td></tr>\n"
+	doc_body_append "<tr><td>total for $transaction_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $revenue_sum]</td><td></td></tr>\n"
 	set revenue_sum 0
     }
 }
@@ -70,9 +70,9 @@ order by to_char(shipment_date,'YYYY') || to_char(shipment_date,'Q')" {
     set price_sum [expr $price_sum + $total_price_charged]
     set shipping_sum [expr $shipping_sum + $total_shipping_charged]
     set tax_sum [expr $tax_sum + $total_tax_charged]
-    doc_body_append "<tr><td>$transaction_year Q$transaction_quarter<td align=right>Price: [ec_pretty_price $total_price_charged] | Shipping: [ec_pretty_price $total_shipping_charged] | Tax [ec_pretty_price $total_tax_charged]</td><td></td></tr>\n"
+    doc_body_append "<tr><td>$transaction_year Q$transaction_quarter<td align=right>Price: [ec_pretty_pure_price $total_price_charged] | Shipping: [ec_pretty_pure_price $total_shipping_charged] | Tax [ec_pretty_pure_price $total_tax_charged]</td><td></td></tr>\n"
     if { $transaction_quarter == "4" } {
-	doc_body_append "<tr><td>total for $transaction_year<td align=right><font size=+1 color=green>Price: [ec_pretty_price $price_sum] | Shipping [ec_pretty_price $shipping_sum] | Tax [ec_pretty_price $tax_sum]</td><td></td></tr>\n"
+	doc_body_append "<tr><td>total for $transaction_year<td align=right><font size=+1 color=green>Price: [ec_pretty_pure_price $price_sum] | Shipping [ec_pretty_pure_price $shipping_sum] | Tax [ec_pretty_pure_price $tax_sum]</td><td></td></tr>\n"
 	set price_sum 0
 	set shipping_sum 0
 	set tax_sum 0
@@ -93,9 +93,9 @@ from ec_gift_certificates where gift_certificate_state = 'authorized'
 group by to_char(issue_date,'YYYY'), to_char(issue_date,'Q')
 order by to_char(issue_date,'YYYY') || to_char(issue_date,'Q')" {
     set amount_sum [expr $amount_sum + $amount]
-    doc_body_append "<tr><td>$issue_year Q$issue_quarter<td align=right>[ec_pretty_price $amount]</td><td></td></tr>\n"
+    doc_body_append "<tr><td>$issue_year Q$issue_quarter<td align=right>[ec_pretty_pure_price $amount]</td><td></td></tr>\n"
     if { $issue_quarter == "4" } {
-	doc_body_append "<tr><td>total for $issue_year<td align=right><font size=+1 color=green>[ec_pretty_price $amount_sum]</td><td></td></tr>\n"
+	doc_body_append "<tr><td>total for $issue_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $amount_sum]</td><td></td></tr>\n"
 	set amount_sum 0
     }
 }
@@ -114,9 +114,9 @@ from ec_gift_certificates where gift_certificate_state = 'authorized'
 group by to_char(issue_date,'YYYY'), to_char(issue_date,'Q')
 order by to_char(issue_date,'YYYY') || to_char(issue_date,'Q')" {
     set amount_sum [expr $amount_sum + $amount]
-    doc_body_append "<tr><td>$issue_year Q$issue_quarter<td align=right>[ec_pretty_price $amount]</td><td></td></tr>\n"
+    doc_body_append "<tr><td>$issue_year Q$issue_quarter<td align=right>[ec_pretty_pure_price $amount]</td><td></td></tr>\n"
     if { $issue_quarter == "4" } {
-	doc_body_append "<tr><td>total for $issue_year<td align=right><font size=+1 color=green>[ec_pretty_price $amount_sum]</td><td></td></tr>\n"
+	doc_body_append "<tr><td>total for $issue_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $amount_sum]</td><td></td></tr>\n"
 	set amount_sum 0
     }
 }
@@ -148,9 +148,9 @@ from ec_gift_certificates_approved
 group by to_char(expires,'YYYY'), to_char(expires,'Q')
 order by to_char(expires,'YYYY') || to_char(expires,'Q')" {
     set amount_outstanding_sum [expr $amount_outstanding_sum + $amount_outstanding]
-    doc_body_append "<tr><td>$expires_year Q$expires_quarter<td align=right>[ec_pretty_price $amount_outstanding]</td><td></td></tr>\n"
+    doc_body_append "<tr><td>$expires_year Q$expires_quarter<td align=right>[ec_pretty_pure_price $amount_outstanding]</td><td></td></tr>\n"
     if { $expires_quarter == "4" } {
-	doc_body_append "<tr><td>total for $expires_year<td align=right><font size=+1 color=green>[ec_pretty_price $amount_outstanding_sum]</td><td></td></tr>\n"
+	doc_body_append "<tr><td>total for $expires_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $amount_outstanding_sum]</td><td></td></tr>\n"
 	set amount_sum 0
     }
 }

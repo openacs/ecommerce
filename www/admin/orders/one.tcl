@@ -142,7 +142,7 @@ db_foreach products_select "
     set item_quantity [expr $item_quantity + $quantity]
     set item_description "
 	<a href=\"[ec_url_concat [ec_url] /admin]/products/one?product_id=$product_id\">$product_name</a>; 
-	[ec_decode $options "" "" "$options; "]$price_name: [ec_pretty_price $price_charged]"
+	[ec_decode $options "" "" "$options; "]$price_name: [ec_pretty_pure_price $price_charged]"
     set old_product_color_size_style_price_price_name [list $product_id $color_choice $size_choice $style_choice $price_charged $price_name]
 }
 
@@ -226,7 +226,7 @@ doc_body_append "
       </tr>
       <tr>
         <td align=right><b>Base shipping charged</b></td>
-        <td>[ec_pretty_price $shipping_charged] [ec_decode $shipping_method "pickup" "(Pickup)" "no shipping" "(No Shipping)" ""]</td>
+        <td>[ec_pretty_pure_price $shipping_charged] [ec_decode $shipping_method "pickup" "(Pickup)" "no shipping" "(No Shipping)" ""]</td>
       </tr>
     </table>
     
@@ -265,7 +265,7 @@ db_foreach financial_transactions_select "
 	  <td>$transaction_id</td>
 	  <td>[ec_nbsp_if_null [ec_formatted_full_date $inserted_date]]</td>
 	  <td>$creditcard_last_four</td>
-	  <td>[ec_pretty_price $transaction_amount]</td>
+	  <td>[ec_pretty_pure_price $transaction_amount]</td>
 	  <td>[ec_decode $transaction_type "charge" "authorization to charge" "intent to refund"]</td>
 	  <td>[ec_nbsp_if_null [ec_decode $transaction_type "refund" "Yes" [ec_decode $to_be_captured_p "t" "Yes" "f" "No" ""]]]</td>
 	  <td>[ec_nbsp_if_null [ec_formatted_full_date $authorized_date]]</td>
@@ -356,7 +356,7 @@ db_foreach refunds_select "
 	doc_body_append "
 	    Refund ID: $refund_id<br>
 	    Date: [ec_formatted_full_date $refund_date]<br>
-	    Amount: [ec_pretty_price $refund_amount]<br>
+	    Amount: [ec_pretty_pure_price $refund_amount]<br>
 	    Refunded by: <a href=\"[ec_acs_admin_url]users/one?user_id=$refunded_by\">$first_names $last_name</a><br>
 	    Reason: $refund_reasons
 	    <ul>"

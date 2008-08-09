@@ -45,7 +45,7 @@ set num_non_approved_comments [db_string non_approved_comments_select "select co
 
 
 # recommend products
-set pretty_avg_price [ec_pretty_price $avg_price]
+set pretty_avg_price [ec_pretty_pure_price $avg_price]
 
 
 # links and info mainly related to website administration

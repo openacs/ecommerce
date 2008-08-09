@@ -102,9 +102,9 @@ db_foreach get_return_item_list $sql {
     append items_to_print "
 	<tr>
 	  <td>$product_name</td>
-	   <td><input type=text name=\"price_to_refund.${item_id}\" value=\"[format "%0.2f" $price_charged]\" size=\"5\"> (out of [ec_pretty_price $price_charged])</td>
+	   <td><input type=text name=\"price_to_refund.${item_id}\" value=\"[format "%0.2f" $price_charged]\" size=\"5\"> (out of [ec_pretty_pure_price $price_charged])</td>
  	   <td><input type=text name=\"shipping_to_refund.${item_id}\" value=\"[format "%0.2f" [expr $shipping_charged * $shipping_refund_percent]]\" size=\"5\"> 
-	       (out of [ec_pretty_price $shipping_charged])</td>
+	       (out of [ec_pretty_pure_price $shipping_charged])</td>
 	</tr>"
 }
 
@@ -131,7 +131,7 @@ set base_shipping [db_string base_shipping_select "
 append doc_body "
       <p>Base shipping charge to refund: 
       <input type=text name=base_shipping_to_refund value=\"[format "%0.2f" [expr $base_shipping * $shipping_refund_percent]]\" size=\"5\"> 
-      (out of [ec_pretty_price $base_shipping])</p>
+      (out of [ec_pretty_pure_price $base_shipping])</p>
     </blockquote>
 
     <center><input type=submit value=\"Continue\"></center>

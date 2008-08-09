@@ -128,7 +128,7 @@ db_foreach get_items_to_ship $sql {
     }
     set options [join $option_list ", "]
 
-    append items_to_print "<li> $product_name; [ec_decode $options "" "" "$options; "]$price_name: [ec_pretty_price $price_charged]"
+    append items_to_print "<li> $product_name; [ec_decode $options "" "" "$options; "]$price_name: [ec_pretty_pure_price $price_charged]"
 }
 
 if { [info exists all_items_p] } {

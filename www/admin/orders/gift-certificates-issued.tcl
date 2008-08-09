@@ -137,7 +137,7 @@ db_foreach gift_certificates_select "
 	  <td>[ec_nbsp_if_null [util_AnsiDatetoPrettyDate $issue_date]]</td>
 	  <td>[ec_decode $last_name "" "&nbsp;" "<a href=\"[ec_acs_admin_url]users/one?user_id=$issued_by\">$last_name, $first_names</a>"]</td>
 	  <td>[ec_decode $last_name "" "&nbsp;" "<a href=\"[ec_acs_admin_url]users/one?user_id=$issued_to\">$issued_to_last_name, $issued_to_first_names</a>"]</td>
-	  <td>[ec_pretty_price $amount]</td>"
+	  <td>[ec_pretty_pure_price $amount]</td>"
     incr row_counter
 }
 

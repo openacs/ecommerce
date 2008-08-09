@@ -151,7 +151,7 @@ db_foreach orders_select "
 	      <td>[ec_nbsp_if_null [util_AnsiDatetoPrettyDate $confirmed_date]]</td>
 	      <td>$order_state</td>
 	      <td>[ec_decode $last_name "" "&nbsp;" "<a href=\"[ec_acs_admin_url]users/one?[export_url_vars user_id]\">$last_name, $first_names</a>"]</td>
-	      <td>[ec_nbsp_if_null [ec_pretty_price $price_to_display]]</td>
+	      <td>[ec_nbsp_if_null [ec_pretty_pure_price $price_to_display]]</td>
 	      <td>$n_items</td>
 	    </tr>"
     incr row_counter

@@ -204,28 +204,28 @@ ad_proc ec_shipping_cost_summary { base_shipping_cost default_shipping_per_item 
     if { [empty_string_p $base_shipping_cost] || $base_shipping_cost == 0 } {
 	set shipping_summary "For each order, there is no base cost.  However, "
     } else {
-	set shipping_summary "For each order, there is a base cost of [ec_pretty_price $base_shipping_cost $currency].  In addition,  "
+	set shipping_summary "For each order, there is a base cost of [ec_pretty_pure_price $base_shipping_cost $currency].  In addition,  "
     }
 
     if { ([empty_string_p $weight_shipping_cost] || $weight_shipping_cost == 0) && ([empty_string_p $default_shipping_per_item] || $default_shipping_per_item == 0) } {
 	append shipping_summary "the per-item cost is set using the amount in the \"Shipping Price\" field of each item (or \"Shipping Price - Additional\", if more than one of the same product is ordered).  "
     } elseif { [empty_string_p $weight_shipping_cost] || $weight_shipping_cost == 0 } {
-	append shipping_summary "the per-item cost is [ec_pretty_price $default_shipping_per_item $currency], unless the \"Shipping Price\" has been set for that product. A \"Shipping Price - Additional\" amount is added for each additional unit of the same product ordered).  "
+	append shipping_summary "the per-item cost is [ec_pretty_pure_price $default_shipping_per_item $currency], unless the \"Shipping Price\" has been set for that product. A \"Shipping Price - Additional\" amount is added for each additional unit of the same product ordered).  "
     } else {
-	append shipping_summary "the per-item-cost is equal to [ec_pretty_price $weight_shipping_cost $currency] times its weight in [ad_parameter -package_id [ec_id] WeightUnits ecommerce], unless the \"Shipping Price\" has been set for that product. A \"Shipping Price - Additional\" amount is added for each additional unit of the same product ordered).  "
+	append shipping_summary "the per-item-cost is equal to [ec_pretty_pure_price $weight_shipping_cost $currency] times its weight in [ad_parameter -package_id [ec_id] WeightUnits ecommerce], unless the \"Shipping Price\" has been set for that product. A \"Shipping Price - Additional\" amount is added for each additional unit of the same product ordered).  "
     }
 
     if { ([empty_string_p $add_exp_base_shipping_cost] || $add_exp_base_shipping_cost == 0) && ([empty_string_p $add_exp_amount_per_item] || $add_exp_amount_per_item == 0) && ([empty_string_p $add_exp_amount_by_weight] || $add_exp_amount_by_weight == 0) } {
 	set express_part_of_shipping_summary "There are no additional charges for express shipping.  "
     } else {
 	if { ![empty_string_p $add_exp_base_shipping_cost] && $add_exp_base_shipping_cost != 0 } {
-	    set express_part_of_shipping_summary "Express Shipping adds [ec_pretty_price $add_exp_base_shipping_cost $currency] to the Regular Shipping's base charge.  "
+	    set express_part_of_shipping_summary "Express Shipping adds [ec_pretty_pure_price $add_exp_base_shipping_cost $currency] to the Regular Shipping's base charge.  "
 	}
 	if { ![empty_string_p $add_exp_amount_per_item] && $add_exp_amount_per_item != 0 } {
-	    append express_part_of_shipping_summary "Express Shipping adds [ec_pretty_price $add_exp_amount_per_item $currency] for each item, in addition to the amount charged for Regular Shipping.  "
+	    append express_part_of_shipping_summary "Express Shipping adds [ec_pretty_pure_price $add_exp_amount_per_item $currency] for each item, in addition to the amount charged for Regular Shipping.  "
 	}
 	if { ![empty_string_p $add_exp_amount_by_weight] && $add_exp_amount_by_weight != 0 } {
-	    append express_part_of_shipping_summary "Express Shipping adds [ec_pretty_price $add_exp_amount_by_weight $currency] per [ad_parameter -package_id [ec_id] WeightUnits ecommerce] of each item ordered, in addition to the amount charged for Regular Shipping.  "
+	    append express_part_of_shipping_summary "Express Shipping adds [ec_pretty_pure_price $add_exp_amount_by_weight $currency] per [ad_parameter -package_id [ec_id] WeightUnits ecommerce] of each item ordered, in addition to the amount charged for Regular Shipping.  "
 	}
     }
 
@@ -523,7 +523,7 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
     }
 
     set to_return "<hr>
-    <b><font size=\"+1\">[ad_system_name] Member Reviews:</font></b>
+    <b><font size=\"+1\">[ad_system_name] member reviews:</font></b>
     "
 
     set comments_to_print ""
@@ -1171,22 +1171,22 @@ ad_proc ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order {order_
     set tax [lindex $price_shipping_gift_certificate_and_tax 3]
 
     set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
-    set price_summary_line_1_list [list "Item(s) Subtotal:" [ec_pretty_price $price $currency]]
-    set price_summary_line_2_list [list "Shipping & Handling:" [ec_pretty_price $shipping $currency]]
+    set price_summary_line_1_list [list "Item(s) Subtotal:" [ec_pretty_pure_price $price $currency]]
+    set price_summary_line_2_list [list "Shipping & Handling:" [ec_pretty_pure_price $shipping $currency]]
     set price_summary_line_3_list [list "" "-------"]
-    set price_summary_line_4_list [list "Subtotal:" [ec_pretty_price [expr $price + $shipping] $currency]]
+    set price_summary_line_4_list [list "Subtotal:" [ec_pretty_pure_price [expr $price + $shipping] $currency]]
     if { $gift_certificate > 0 } {
-	set price_summary_line_5_list [list "Tax:" [ec_pretty_price $tax $currency]]
+	set price_summary_line_5_list [list "Tax:" [ec_pretty_pure_price $tax $currency]]
 	set price_summary_line_6_list [list "" "-------"]
-	set price_summary_line_7_list [list "TOTAL:" [ec_pretty_price [expr $price + $shipping + $tax] $currency]]
-	set price_summary_line_8_list [list "Gift Certificate:" "-[ec_pretty_price $gift_certificate $currency]"]
+	set price_summary_line_7_list [list "TOTAL:" [ec_pretty_pure_price [expr $price + $shipping + $tax] $currency]]
+	set price_summary_line_8_list [list "Gift Certificate:" "-[ec_pretty_pure_price $gift_certificate $currency]"]
 	set price_summary_line_9_list [list "" "-------"]
-	set price_summary_line_10_list [list "Balance due:" [ec_pretty_price [expr $price + $shipping + $tax - $gift_certificate] $currency]]
+	set price_summary_line_10_list [list "Balance due:" [ec_pretty_pure_price [expr $price + $shipping + $tax - $gift_certificate] $currency]]
 	set n_lines 10
     } else {
-	set price_summary_line_5_list [list "Tax:" [ec_pretty_price $tax $currency]]
+	set price_summary_line_5_list [list "Tax:" [ec_pretty_pure_price $tax $currency]]
 	set price_summary_line_6_list [list "" "-------"]
-	set price_summary_line_7_list [list "TOTAL:" [ec_pretty_price [expr $price + $shipping + $tax] $currency]]
+	set price_summary_line_7_list [list "TOTAL:" [ec_pretty_pure_price [expr $price + $shipping + $tax] $currency]]
 	set n_lines 7
     }
 

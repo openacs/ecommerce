@@ -70,7 +70,7 @@ db_foreach get_items_for_return "
 	append exception_text "<li>Please enter a purely numeric price to refund for $product_name (no letters or special characters)."
     } elseif { $price_to_refund($item_id) > $price_charged } {
 	incr exception_count
-	append exception_text "<li>Please enter a price to refund for $product_name that is less than or equal to [ec_pretty_price $price_charged]."
+	append exception_text "<li>Please enter a price to refund for $product_name that is less than or equal to [ec_pretty_pure_price $price_charged]."
     } else {
 	set total_price_to_refund [expr $total_price_to_refund + $price_to_refund($item_id)]
 
@@ -94,7 +94,7 @@ db_foreach get_items_for_return "
 	append exception_text "<li>Please enter a purely numeric shipping amount to refund for $product_name (no letters or special characters)."
     } elseif { $shipping_to_refund($item_id) > $shipping_charged } {
 	incr exception_count
-	append exception_text "<li>Please enter a shipping amount to refund for $product_name that is less than or equal to [ec_pretty_price $shipping_charged]."
+	append exception_text "<li>Please enter a shipping amount to refund for $product_name that is less than or equal to [ec_pretty_pure_price $shipping_charged]."
     } else {
 	set total_shipping_to_refund [expr $total_shipping_to_refund + $shipping_to_refund($item_id)]
 
@@ -119,7 +119,7 @@ if { [empty_string_p $base_shipping_to_refund] } {
     append exception_text "<li>Please enter a purely numeric base shipping amount to refund (no letters or special characters)."
 } elseif { $base_shipping_to_refund > $base_shipping } {
     incr exception_count
-    append exception_text "<li>Please enter a base shipping amount to refund that is less than or equal to [ec_pretty_price $base_shipping]."
+    append exception_text "<li>Please enter a base shipping amount to refund that is less than or equal to [ec_pretty_pure_price $base_shipping]."
 } else {
     set total_shipping_to_refund [expr $total_shipping_to_refund + $base_shipping_to_refund]
     set iteration_shipping_tax_to_refund [ec_min $base_shipping_tax [db_string get_base_shipping_it_refund "
@@ -190,10 +190,10 @@ append doc_body "
      [export_entire_form]
      [export_form_vars cash_amount_to_refund certificate_amount_to_reinstate]
      <blockquote>
-       <p>Total refund amount: [ec_pretty_price $total_amount_to_refund] (price: [ec_pretty_price $total_price_to_refund], shipping: [ec_pretty_price $total_shipping_to_refund], tax: [ec_pretty_price $total_tax_to_refund])</p>
+       <p>Total refund amount: [ec_pretty_pure_price $total_amount_to_refund] (price: [ec_pretty_pure_price $total_price_to_refund], shipping: [ec_pretty_pure_price $total_shipping_to_refund], tax: [ec_pretty_pure_price $total_tax_to_refund])</p>
        <ul>
-        <li>[ec_pretty_price $certificate_amount_to_reinstate] will be reinstated in gift certificates.<br>
-        <li>[ec_pretty_price $cash_amount_to_refund] will be refunded to the customer's credit card.<br>
+        <li>[ec_pretty_pure_price $certificate_amount_to_reinstate] will be reinstated in gift certificates.<br>
+        <li>[ec_pretty_pure_price $cash_amount_to_refund] will be refunded to the customer's credit card.<br>
       </ul>"
 
 # Request the credit card number to be re-entered if it is no longer

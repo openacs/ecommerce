@@ -103,7 +103,7 @@ for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
 
 
     # Calculate line subtotal for end users
-    set line_subtotal [ec_pretty_price [expr $quantity * $lowest_price] $currency]
+    set line_subtotal [ec_pretty_pure_price [expr $quantity * $lowest_price] $currency]
     multirow set in_cart $i line_subtotal $line_subtotal
 
     # Add the price of the item to the total price
@@ -115,12 +115,12 @@ for {set i 1} {$i <= [multirow size in_cart]} {incr i} {
     # http://openacs.org/bugtracker/openacs/com/ecommerce/bug?bug%5fnumber=643
     multirow set in_cart $i delete_export_vars $delete_export_vars
 
-    multirow set in_cart $i price "[lindex $lowest_price_and_price_name 1]:&nbsp;&nbsp;[ec_pretty_price [lindex $lowest_price_and_price_name 0] $currency]"
+    multirow set in_cart $i price "[lindex $lowest_price_and_price_name 1]:&nbsp;&nbsp;[ec_pretty_pure_price [lindex $lowest_price_and_price_name 0] $currency]"
 
 }
 
 # Add adjust quantities line if there are products in the cart.
-set pretty_total_price [ec_pretty_price $total_price $currency]
+set pretty_total_price [ec_pretty_pure_price $total_price $currency]
 
 # List the states that get charged tax. Although not 100% accurate
 # as shipping might be taxed too this is better than nothing.

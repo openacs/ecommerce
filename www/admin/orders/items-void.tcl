@@ -90,7 +90,7 @@ if { $n_items == 1 } {
 	and i.product_id = :product_id" {
 	
         doc_body_append "
-	    <p>Please confirm that you want to void $product_name; $price_name: [ec_pretty_price $price_charged] $item_state</p>"
+	    <p>Please confirm that you want to void $product_name; $price_name: [ec_pretty_pure_price $price_charged] $item_state</p>"
     }
 } else {
 
@@ -136,7 +136,7 @@ if { $n_items == 1 } {
 	}
 	doc_body_append "
 		  </td>
-		  <td>$product_name; $price_name: [ec_pretty_price $price_charged]</td><td>$item_state</td>
+		  <td>$product_name; $price_name: [ec_pretty_pure_price $price_charged]</td><td>$item_state</td>
 		</tr>"
     }
     doc_body_append "</table>"
