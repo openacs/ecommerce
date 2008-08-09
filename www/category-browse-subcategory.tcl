@@ -23,15 +23,9 @@ ad_page_contract {
     usca_p:optional
 }
 
-proc ident {x} {return $x}
-proc have {var} { upvar $var x; return [expr {[info exists x] && [string compare $x "0"] != 0}]}
-proc in_subcat    {} {return [uplevel {have subcategory_id}]}
-proc in_subsubcat {} {return [uplevel {have subsubcategory_id}]}
-proc at_bottom_level_p {} {return [uplevel in_subsubcat]}
-
 set sub ""
-if [in_subcat]    {append sub "sub"} else {set subcategory_id 0}
-if [in_subsubcat] {append sub "sub"} else {set subsubcategory_id 0}
+if [ec_in_subcat]    {append sub "sub"} else {set subcategory_id 0}
+if [ec_in_subsubcat] {append sub "sub"} else {set subsubcategory_id 0}
 
 set product_map()       "ec_category_product_map"
 set product_map(sub)    "ec_subcategory_product_map"
@@ -73,12 +67,12 @@ if { [string compare $user_session_id "0"] != 0 } {
 set category_name [db_string -cache_key "ec-category_name-${category_id}"  get_category_name "select category_name from ec_categories where category_id=:category_id"]
 
 set subcategory_name ""
-if { [have subcategory_id] } {
+if { [ec_have subcategory_id] } {
     set subcategory_name [db_string -cache_key "ec-subcategory_name-${subcategory_id}" get_subcat_name "select subcategory_name from ec_subcategories where subcategory_id=:subcategory_id"]
 }
 
 set subsubcategory_name ""
-if { [have subsubcategory_id] } {
+if { [ec_have subsubcategory_id] } {
     set subsubcategory_name [db_string -cache_key "ec-subsubcategory_name-${subsubcategory_id}" get_subsubcat_name "select subsubcategory_name from ec_subsubcategories where subsubcategory_id=:subsubcategory_id"]
 }
 
@@ -129,7 +123,7 @@ db_multirow -extend {
 # All products in the "category" and not in "subcategories"
 
 set exclude_subproducts ""
-if { ![at_bottom_level_p] } {
+if { ![ec_at_bottom_level_p] } {
   set exclude_subproducts "
 and not exists (
 select 'x' from $product_map(sub$sub) s, ec_sub${sub}categories c
@@ -189,11 +183,11 @@ set end [expr $start + $how_many - 1]
 # subcategories
 
 set subcategories ""
-if { ![at_bottom_level_p] } {
+if { ![ec_at_bottom_level_p] } {
 
     db_multirow -extend { url name } -cache_key "ec-${sub}subcategories-${cat_id}" subcategories get_subcategories "see xql" {
         set url [export_vars -base "category-browse-sub${sub}category" {category_id subcategory_id subsubcategory_id}]
-        set name [eval "ident \$sub${sub}category_name"] ; # what is this ident?
+        set name [eval "ec_ident \$sub${sub}category_name"] 
     }
 
 }

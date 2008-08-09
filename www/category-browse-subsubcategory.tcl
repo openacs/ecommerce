@@ -23,15 +23,9 @@ ad_page_contract {
     usca_p:optional
 }
 
-proc ident {x} {return $x}
-proc have {var} { upvar $var x; return [expr {[info exists x] && [string compare $x "0"] != 0}]}
-proc in_subcat    {} {return [uplevel {have subcategory_id}]}
-proc in_subsubcat {} {return [uplevel {have subsubcategory_id}]}
-proc at_bottom_level_p {} {return [uplevel in_subsubcat]}
-
 set sub ""
-if [in_subcat]    {append sub "sub"} else {set subcategory_id 0}
-if [in_subsubcat] {append sub "sub"} else {set subsubcategory_id 0}
+if [ec_in_subcat]    {append sub "sub"} else {set subcategory_id 0}
+if [ec_in_subsubcat] {append sub "sub"} else {set subsubcategory_id 0}
 
 set product_map()       "ec_category_product_map"
 set product_map(sub)    "ec_subcategory_product_map"
@@ -68,12 +62,12 @@ if { [string compare $user_session_id "0"] != 0 } {
 set category_name [db_string get_category_name "select category_name from ec_categories where category_id=:category_id"]
 
 set subcategory_name ""
-if [have subcategory_id] {
+if [ec_have subcategory_id] {
     set subcategory_name [db_string get_subcat_name "select subcategory_name from ec_subcategories where subcategory_id=:subcategory_id"]
 }
 
 set subsubcategory_name ""
-if [have subsubcategory_id] {
+if [ec_have subsubcategory_id] {
     set subsubcategory_name [db_string get_subsubcat_name "select subsubcategory_name from ec_subsubcategories where subsubcategory_id=:subsubcategory_id"]
 }
 
@@ -123,7 +117,7 @@ if {[string equal $recommendations {<table width="100%">}]} {
 # All products in the "category" and not in "subcategories"
 
 set exclude_subproducts ""
-if ![at_bottom_level_p] {
+if ![ec_at_bottom_level_p] {
     set exclude_subproducts "
 and not exists (
 		select 'x' from $product_map(sub$sub) s, ec_sub${sub}categories c
@@ -187,7 +181,7 @@ set end [expr $start + $how_many - 1]
 # subcategories
 
 set subcategories ""
-if ![at_bottom_level_p] {
+if ![ec_at_bottom_level_p] {
     db_foreach get_subcategories "
 SELECT * from ec_sub${sub}categories c
  WHERE ${sub}category_id = :${sub}category_id
@@ -200,12 +194,12 @@ SELECT * from ec_sub${sub}categories c
 " {
 
     
-    append subcategories "<li><a href=category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]>[eval "ident \$sub${sub}category_name"]</a>"
+    append subcategories "<li><a href=category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]>[eval "ec_ident \$sub${sub}category_name"]</a>"
 }
 }
 
 set the_category_id $category_id
-set the_category_name [eval "ident \$${sub}category_name"]
+set the_category_name [eval "ec_ident \$${sub}category_name"]
 set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list [list "category-browse?category_id=$the_category_id" $category_name] [list "category-browse-subcategory?category_id=$the_category_id&amp;subcategory_id=$subcategory_id" $subcategory_name] $the_category_name]]]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles

@@ -1573,3 +1573,55 @@ ad_proc ec_max_of_list {
     }
     return $max
 }
+
+# following adaptions from ecommerce/www/category-browse*.tcl
+# moving here to help speed up their page processing 
+ad_proc -private ec_ident {x} {
+    return $x
+}
+
+ad_proc -private ec_have {
+    var
+} { 
+  from ecommerce/www/category-browse*.tcl
+} {
+    upvar $var x
+    return [expr {[info exists x] && [string compare $x "0"] != 0}]
+}
+
+ad_proc -private ec_in_subcat    {
+} { 
+  from ecommerce/www/category-browse*.tcl
+} {
+    return [uplevel {ec_have subcategory_id}]
+}
+
+ad_proc -private ec_in_subsubcat {
+} { 
+  from ecommerce/www/category-browse*.tcl
+} {
+    return [uplevel {ec_have subsubcategory_id}]
+}
+
+ad_proc -private ec_at_bottom_level_p {
+} { 
+  from ecommerce/www/category-browse*.tcl
+} {
+    return [uplevel ec_in_subsubcat]
+}
+
+ad_proc ec_max_of_list {
+    listofargs
+} {
+    finds max value from a list of values
+} {
+    set args [split $listofargs]
+    set max [lindex $args 0]
+    foreach arg $args {
+        if { $arg > $max } {
+            set max $arg
+        }
+    }
+    return $max
+}
+
