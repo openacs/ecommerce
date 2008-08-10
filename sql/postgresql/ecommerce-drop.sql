@@ -266,4 +266,4 @@ drop view ec_template_id_sequence;
 drop sequence ec_template_id_seq;
 
 \i pl-sql-utilities-drop.sql
-
+\i ecds-drop.sql
