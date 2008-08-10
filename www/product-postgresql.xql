@@ -6,6 +6,15 @@
     <version>7.1</version>
   </rdbms>
 
+  <fullquery name="get_ec_product_info">      
+    <querytext>
+      select *
+      from ec_products p, ec_custom_product_field_values v
+      where p.product_id = :product_id
+      and p.product_id = v.product_id  and present_p = 't'
+    </querytext>
+  </fullquery>
+
   <fullquery name="find_a_good_category">      
     <querytext>
       select * 
