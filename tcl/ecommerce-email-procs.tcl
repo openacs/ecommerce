@@ -52,18 +52,23 @@ ad_proc ec_email_new_order {
     Use this to send out the \"New Order\" email.
 } {
     if {[db_0or1row email_info_select "
-	select u.email, to_char(confirmed_date,'MM/DD/YY') as confirmed_date, shipping_address, u.user_id
+	select u.email, to_char(confirmed_date,'MM/DD/YY') as confirmed_date, shipping_address, shipping_method, u.user_id
 	from ec_orders, cc_users u
 	where ec_orders.user_id = u.user_id
 	and order_id = :order_id"]} {
 
 	set item_summary [ec_item_summary_in_confirmed_order $order_id]
 	
-	if { ![empty_string_p $shipping_address] } {
+	if {![info exists shipping_method]} {
+            set shipping_method ""
+    }
+	if { ![empty_string_p $shipping_address] && ![string equal $shipping_method "pickup"] } {
 	    set address [ec_pretty_mailing_address_from_ec_addresses $shipping_address]
+	} elseif { [string equal $shipping_method "pickup"] } {
+	    set address "no shipping. (Arranging to pickup)"
 	} else {
-	    set address "not deliverable"
-	}
+    	    set address "not deliverable"
+    }
     
 	set price_summary [ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order $order_id]
 	
@@ -91,6 +96,7 @@ ad_proc ec_email_new_order {
 	regsub -all -- "\r" $email_body "" email_body
 
 	regsub -all -- "confirmed_date_here" $email_body $confirmed_date email_body
+	regsub -all -- "order_id_here" $email_body $order_id email_body
 	regsub -all -- "item_summary_here" $email_body $item_summary email_body
 	regsub -all -- "address_here" $email_body $address email_body
 	regsub -all -- "price_summary_here" $email_body $price_summary email_body
@@ -133,8 +139,10 @@ ad_proc ec_email_product_notification {
     This proc sends notifications for any products in the order that
     require it.
 } {
+    # ec_securelink may not work here, because proc may be called outside a connection
+    set order_link "[ad_url][ec_url]admin/orders/one?[export_vars order_id]"
+    regsub {^http:} $order_link "https:" order_link
 
-    set order_link [ec_securelink "[ad_url][ec_url]admin/orders/one?[export_vars order_id]"]
 
     db_foreach notification_select {
 	select ep.email_on_purchase_list, ep.product_name
@@ -273,6 +281,7 @@ ad_proc ec_email_order_shipped {
 	# And get rid of ctrl-M's in the body
 
 	regsub -all -- "\r" $email_body "" email_body
+	regsub -all -- "order_id_here" $email_body $order_id email_body
 	regsub -all -- "shipped_date_here" $email_body $shipped_date email_body
 	regsub -all -- "item_summary_here" $email_body $item_summary email_body
 	regsub -all -- "address_here" $email_body $address email_body
