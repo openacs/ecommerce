@@ -21,4 +21,16 @@
     </querytext>
   </fullquery>
 
+  <fullquery name="get_ec_admin_settings">      
+    <querytext>
+     select coalesce(base_shipping_cost,0) as base_shipping_cost, 
+            coalesce(default_shipping_per_item,0) as default_shipping_per_item, 
+            coalesce(weight_shipping_cost,0) as weight_shipping_cost, 
+            coalesce(add_exp_base_shipping_cost,0) as add_exp_base_shipping_cost, 
+            coalesce(add_exp_amount_per_item,0) as add_exp_amount_per_item, 
+            coalesce(add_exp_amount_by_weight,0) as add_exp_amount_by_weight
+            from ec_admin_settings"
+    </querytext>
+  </fullquery>
+
 </queryset>
