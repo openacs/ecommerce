@@ -1,14 +1,7 @@
 <master>
-<property name="title">@page_title@</property>
-<property name="context_bar">@context_bar;noquote@</property>
-
-<property name="show_toolbar_p">t</property>
-
-<h2>@page_title@</h2>
-
-<hr>
-Documentation: <a href="/doc/ecommerce">/doc/ecommerce</a> or <a href="@ec_url@doc/">@ec_url@doc/</a>
-<hr>
+<property name="title">Administration</property>
+<include src="/packages/ecommerce/lib/toolbar">
+<include src="/packages/ecommerce/lib/searchbar">
 
 <h3>business operations</h3>
 <ul>
@@ -28,7 +21,7 @@ Documentation: <a href="/doc/ecommerce">/doc/ecommerce</a> or <a href="@ec_url@d
 </ul>
 
 <h3>website administration</h3><ul>
-
+<li><a href="../doc/">Documentation</a></li>
 <li><a href="problems/">Potential Problems</a> <font size=-1>(@unresolved_problem_count@ unresolved problem@unresolved_problem_count_plural@)</font></li>
 
 <if @paymentgateway_show@>
@@ -45,10 +38,10 @@ Documentation: <a href="/doc/ecommerce">/doc/ecommerce</a> or <a href="@ec_url@d
 
 <if @multiple_retailers_p@>
 <li><a href="retailers/">Retailers</a></li>
-<else>
+</if><else>
 <li><a href="shipping-costs/">Shipping Costs</a></li>
 <li><a href="sales-tax/">Sales Tax</a></li>
-</if>
+</else>
 
 <li><a href="mailing-lists/">Mailing Lists</a></li>
 <li><a href="email-templates/">Email Templates</a></li>

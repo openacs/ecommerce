@@ -10,9 +10,6 @@ ad_page_contract {
     {flush_db_cache 0}
 }
 
-set page_title "[ec_system_name] Administration"
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar "Administration"]
-
 ad_require_permission [ad_conn package_id] admin
 
 set ec_url [ec_url]
@@ -63,7 +60,7 @@ if { [string length $paymentgateway_key] > 1 } {
 # customer class membership requests
 set n_not_yet_approved_plural [ec_decode $n_not_yet_approved 1 "" "s"]
 
-set multiple_retailers_p [ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce]
+set multiple_retailers_p [parameter::get -parameter MultipleRetailersPerProductP -default f]
 
 set ec_system_name [ec_system_name]
 
