@@ -263,7 +263,9 @@ if {![info exists shipping_gateway]} {
     } else {
 	set order_shipping_cost 0
     }
-
+    # following line allows for adding a cost based modifier to shipping
+    set order_shipping_cost [expr { [ecds_base_shipping_price_from_order_value $total_item_price_tax ] + $order_shipping_cost } ]
+    
     # Add on the extra base cost for express shipping, if appropriate
 
     if { $shipping_method == "express" } {
