@@ -1,8 +1,12 @@
 <master>
-  <property name="title">@package_instance_name@</property>
-  <property name="context_bar">@context_bar;noquote@</property>
+<property name="head">
+  <meta name="description" content="Example OpenACS ecommerce catalog">
+  <meta name="keywords" content="">
+  <meta name="Robots" content="INDEX,FOLLOW">
+</property>
 
-  <property name="show_toolbar_p">t</property>
+<include src="/packages/ecommerce/lib/toolbar">
+<include src="/packages/ecommerce/lib/searchbar">
 
     <blockquote>
       <if @user_is_logged_on@ true>
