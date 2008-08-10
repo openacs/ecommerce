@@ -52,7 +52,7 @@
       select *
       from ec_products p
       left join ec_custom_product_field_values v on (p.product_id = v.product_id)
-      where p.product_id = :product_id
+      where p.product_id = :product_id and  and p.present_p = 't'
     </querytext>
   </fullquery>
 

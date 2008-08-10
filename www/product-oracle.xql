@@ -11,7 +11,7 @@
       select *
       from ec_products p, ec_custom_product_field_values v
       where p.product_id = :product_id
-      and p.product_id = v.product_id(+)
+      and p.product_id = v.product_id(+)  and present_p = 't'
     </querytext>
   </fullquery>
 

@@ -79,12 +79,13 @@ if { [db_0or1row get_ec_product_info "
     select *
     from ec_products p, ec_custom_product_field_values v
     where p.product_id = :product_id
-    and p.product_id = v.product_id(+)"] == 0 } {
+    and p.product_id = v.product_id(+) and present_p = 't'"] == 0 } {
 
-    doc_return  200 text/html "
+    doc_return  404 text/html "
 	[ad_header "Product Not Found"]
-	<p>The product you have requested was not found in the database.</p>
-	<p>Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
+	<p>The product you have requested was not found in the system.</p>
+	<p>Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> if you think this is an error.</p>
+    <p><a href=\"index\">Continue browsing</a>.</p>"
     ns_log Warning "product.tcl,line88: product_id $product_id_temp requested, not found."
     return
 }
