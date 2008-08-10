@@ -7,3 +7,4 @@
  <if @current_location@ ne "your-account"> 
     [&nbsp;<a href="@ec_account_link@" title="View your @ec_system_name@ account">your @ec_system_name@ account</a>&nbsp;]
  </if>
+<include src="contextbar">
