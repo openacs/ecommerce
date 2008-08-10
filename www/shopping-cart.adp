@@ -8,7 +8,7 @@
 
 <if @user_id@ ne 0>
   for @first_names@ @last_name@ (if you're not @first_names@ @last_name@, 
-  <a href=/register/>click here</a>).
+  <a href="/register/">click here</a>).
 </if>
 
 <blockquote>
@@ -28,7 +28,7 @@
     </if>
     <tr>
       <td>
-        <a href="product?product_id=@in_cart.product_id@">@in_cart.product_name@</a>
+        <a href="product?product_id=@in_cart.product_id@">@in_cart.product_name;noquote@</a>
       </td>
       <td>
         <if @in_cart.color_choice@ not nil>
@@ -57,22 +57,79 @@
   
   <if @product_counter@ ne 0>
     <tr bgcolor="#cccccc">
-      <td colspan="2" align="right">Total:</td>
+      <td colspan="2" align="right">
+Total:</td>
       <td>@product_counter@</td>
 <if @product_counter@ gt 1><td bgcolor="#cccccc">&nbsp;</td>
 </if>
-      <td align="right">@pretty_total_price@</td>
+      <td align="right" nowrap>
+<if @includes_display_zero_as_items@ true>
+**
+</if>
+@pretty_total_price@</td>
       <td><input type=submit value="update"></td>
     </tr>
+<if @shipping_gateway_in_use@ false>
+  <if @no_shipping_options@ false>
+      <tr>
+      <if @product_counter@ gt 1>
+          <td colspan="4" align="right">
+      </if>
+      <else>
+          <td colspan="3" align="right">
+      </else>
+           @shipping_options@</td>
+      <td align="right">@total_reg_shipping_price@</td><td>standard</td>
+      </tr>
+
+      <if @offer_express_shipping_p@ true>
+        <tr>
+        <if @product_counter@ gt 1>
+            <td colspan="4">
+        </if>
+        <else>
+            <td colspan="3">
+        </else>
+            &nbsp;</td>
+        <td align="right">@total_exp_shipping_price@</td><td>express</td>
+        </tr>
+      </if>
+
+      <if @offer_pickup_option_p@ true>
+        <tr>
+        <if @product_counter@ gt 1>
+            <td colspan="4">
+        </if>
+        <else>
+            <td colspan="3">
+        </else>
+            &nbsp;
+        </td>
+        <td align="right">$0.00 <!-- @shipping_method_pickup@ --></td><td>pickup</td>
+        </tr>
+      </if>
+  </if>
+</if>
+
+<if @includes_display_zero_as_items@ true>
+<tr><td colspan="5">
+<p>** - Special message for items marked as @display_price_of_zero_as@</p>
+</td></tr>
+</if>
+
     <multiple name="tax_entries">
       <tr>
         <td colspan="5">
-	  Residents of @tax_entries.state@, please add @tax_entries.pretty_tax@ tax.
+	 <p> Residents of @tax_entries.state@, @tax_entries.pretty_tax@ sales tax will be added to your order on checkout.*</p>
 	</td>
       </tr>
     </multiple>
+
     </table>
 
+<if @shipping_gateway_in_use@ true>
+    @shipping_options;noquote@
+</if>
     </form>
 
     <center>
@@ -106,3 +163,5 @@
     </if>
   </ul>
 </blockquote>
+
+ 
