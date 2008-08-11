@@ -118,6 +118,7 @@ set user_last_name_with_quotes_escaped [ad_quotehtml $last_name]
 set user_first_names_with_quotes_escaped [ad_quotehtml $first_names]
 
 set user_name_with_quotes_escaped [ad_quotehtml $attn]
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set title "Completing Your Order"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles

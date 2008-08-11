@@ -229,7 +229,8 @@ if { $show_creditcard_form_p == "t" } {
 
 set gift_certificate_p [ad_parameter -package_id [ec_id] SellGiftCertificatesP ecommerce]
 
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set title "Completing Your Order: Payment information"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template

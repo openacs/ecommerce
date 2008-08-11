@@ -1,5 +1,7 @@
 <master>
-  <property name="title">Product search @category_name@</property>
+  <property name="doc(title)">@title;noquote@</property>
+  <property name="context">@context;noquote@</property>
+
   <property name="current_location">Product Search</property>
   <property name="search_text">@search_text@</property>
   <property name="category_id">@category_id@</property>

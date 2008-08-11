@@ -1,4 +1,6 @@
 <master>
+  <property name="doc(title)">@title;noquote@</property>
+  <property name="context">@title;noquote@</property>
 <property name="head">
   <meta name="description" content="Example OpenACS ecommerce catalog">
   <meta name="keywords" content="">

@@ -109,7 +109,7 @@ set mailing_lists "
       $mailing_lists
     </ul>"
 
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Your Account"]]]
 set ec_system_owner [ec_system_owner]
-
+set title "Your Account"
+set context [list $title]
 db_release_unused_handles

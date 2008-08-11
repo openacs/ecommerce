@@ -173,7 +173,8 @@ if { $search_count == 0 } {
     }
     append search_results "${search_string}${prev_link}${separator}${next_link}"
 }
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "[ec_system_name] search results"]]]
+set title "${category_name}"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles
@@ -185,7 +186,7 @@ if { $search_count == 0 } {
 } else {
     set search_results "<p> $search_count [ec_decode $search_count "1" "item found." "items found, most relevant first."]</p>$search_string"
 }
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "[ec_system_name] search results"]]]
+
 set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles

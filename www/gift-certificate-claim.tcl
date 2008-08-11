@@ -38,5 +38,6 @@ if { [empty_string_p $order_id] } {
     ad_script_abort
 }
 
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Claim a Gift Certificate"]]]
+set title "Claim a Gift Certificate"
+set context [list $title]
 set ec_system_owner [ec_system_owner]

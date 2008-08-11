@@ -157,6 +157,8 @@ if {[exists_and_equal referer "checkout-one-form-2"]} {
 }
 
 set order_summary [ec_order_summary_for_customer $order_id $user_id]
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set title "Completing Your Order : verify and complete your order"
+set context [list $title]
+
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles

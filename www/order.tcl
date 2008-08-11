@@ -30,7 +30,8 @@ if {$user_id == 0} {
 set user_session_id [ec_get_user_session_id]
 ec_create_new_session_if_necessary [export_url_vars order_id]
 ec_log_user_as_user_id_for_this_session
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Your Order"]]]
+set title "Your Order"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 
 set order_summary "

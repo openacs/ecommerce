@@ -86,6 +86,12 @@ for {set i 0} {$i < [ns_set size $form_set]} {incr i} {
     append hidden_form_vars "[export_form_vars [ns_set key $form_set $i]]"
 }
 
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set title "Completing Your Order"
+if { $address_type eq "shipping" } {
+    append title ": your shipping address"
+} else {
+    append title ": your billing address"
+}
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles

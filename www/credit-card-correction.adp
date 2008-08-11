@@ -1,6 +1,6 @@
 <master>
-  <property name="title">Completing Your Order: Verifying credit card</property>
-  <property name="context_bar">@context_bar;noquote@</property>
+  <property name="doc(title)">@title;noquote@</property>
+  <property name="context">@context;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
   <include src="checkout-progress" step="6">

@@ -38,7 +38,8 @@ if {$user_id == 0} {
 set ec_creditcard_widget [ec_creditcard_widget]
 set ec_expires_widget "[ec_creditcard_expire_1_widget] [ec_creditcard_expire_2_widget]"
 set hidden_form_variables [export_form_vars address_id certificate_to certificate_from certificate_message amount recipient_email]
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Payment Info"]]]
+set title "Payment Info"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles

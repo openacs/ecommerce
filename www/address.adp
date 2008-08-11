@@ -1,16 +1,17 @@
 <master>
-  <property name="context_bar">@context_bar;noquote@</property>
+
+  <property name="context">@context;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
 <if @address_type@ eq "shipping">
-  <property name="title">Completing Your Order: Shipping Address</property>
+  <property name="doc(title)">Completing Your Order: Shipping Address</property>
 
   <include src="checkout-progress" step="1">
 
   <h2>Your shipping address</h2>
 </if>
 <else>
-  <property name="title">Completing Your Order: Billing Address</property>
+  <property name="doc(title)">Completing Your Order: Billing Address</property>
   <if @referer@ ne "gift-certificate-billing">
     <include src="checkout-progress" step="4">
   </if>

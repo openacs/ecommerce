@@ -1,10 +1,12 @@
 <master>
-  <property name="title">Save Shopping Cart</property>
-  <property name="context_bar">@context_bar;noquote@</property>
+  <property name="doc(title)">@title@</property>
+  <property name="context">@context;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <property name="show_toolbar_p">t</property>
   <property name="current_location">your-account</property>
+
+<include src="/packages/ecommerce/lib/toolbar">
+<include src="/packages/ecommerce/lib/searchbar">
 
 <blockquote>
   <p>We think that you are @user_name@.  If not, please <a

@@ -1,9 +1,12 @@
 <master>
-  <property name="title">Write Your Own Review of @product_name;noquote@</property>
-  <property name="context_bar">@context_bar;noquote@</property>
+  <property name="doc(title)">@title;noquote@</property>
+  <property name="context">@context;noquote@</property>
+
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <property name="show_toolbar_p">t</property>
+<include src="/packages/ecommerce/lib/toolbar">
+<include src="/packages/ecommerce/lib/searchbar">
+
 
 <form method="post" action="review-submit-2">
   <input type="hidden" name="product_id" value="@product_id@">

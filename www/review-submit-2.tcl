@@ -65,7 +65,8 @@ rated this product
 [ec_display_rating $rating] on <i>$current_date</i> and wrote:<br>"
 
 set system_name [ad_system_name]
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Check Your Review"]]]
+set title "Check Your Review"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles

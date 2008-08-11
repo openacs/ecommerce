@@ -143,7 +143,7 @@ if {[string equal $products "<table width=\"100%\">"]} {
 }
 
 set start_row_current $start_row
-ns_log Notice $start_row $how_many
+
 if { $start_row_current >= $how_many } {
     set start_row [expr { $start_row_current - $how_many } ]
     set prev_link "<a href=\"[export_vars -base index -url {category_id subcategory_id subsubcategory_id how_many start_row} ]\">Previous $how_many</a>"
@@ -169,6 +169,7 @@ if { [string length $next_link] == 0 || [string length $prev_link] == 0 } {
 } else {
     set separator "|"
 }
-
+set title "Store"
+set context [list $title]
 db_release_unused_handles
 ad_return_template

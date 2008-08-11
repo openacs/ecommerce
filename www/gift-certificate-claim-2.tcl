@@ -67,7 +67,7 @@ if { [empty_string_p $gift_certificate_id] } {
 # now check whether it's already been claimed
 # and, if so, whether it was claimed by this user
 
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+se title "Completing Your Order"
 set ec_system_owner [ec_system_owner]
 
 db_1row get_gc_user_id "
@@ -106,3 +106,4 @@ if { [empty_string_p $gift_certificate_user_id ] } {
     set certificate_added_p "false"
     db_release_unused_handles
 }
+set context [list $title]

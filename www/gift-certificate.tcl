@@ -73,7 +73,8 @@ if { [db_0or1row get_gc_info "select purchased_by, amount, recipient_email, cert
     }
 }
 
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Your Gift Certificate"]]]
+set title "Your Gift Certificate"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template

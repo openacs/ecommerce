@@ -148,6 +148,7 @@ if { ![empty_string_p $certificate_message] } {
 
 set formatted_amount [ec_pretty_price $amount]
 set zero_in_the_correct_currency [ec_pretty_price 0]
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Please Confirm Your Gift Certificate Order"]]]
+set title "Please Confirm Your Gift Certificate Order"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles

@@ -1,8 +1,8 @@
 <master>
+  <property name="doc(title)">@title;noquote@</property>
+  <property name="context">@context;noquote@</property>
 
 <!-- following from billing.adp -->
-
-  <property name="title">Completing Your Order</property>
 
   <p>To complete your order, submit this form, and confirm the information
     on the following page.</p>

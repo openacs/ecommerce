@@ -131,7 +131,8 @@ if { $submit == "View" } {
 	incr product_counter
     }
 
-    set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
+set title $page_title
+set context [list $title]
 
     db_release_unused_handles
     ad_return_template
@@ -216,7 +217,8 @@ if { $submit == "View" } {
 	set page_title "Merge or Replace Your Current Shopping Cart?"
 	set page_function "retrieve"
 	set hidden_form_variables [export_form_vars order_id]
-	set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
+    set title $page_title
+set context [list $title]
 	set ec_system_owner [ec_system_owner]
 
 	ad_return_template
@@ -376,10 +378,11 @@ if { $submit == "View" } {
     # Otherwise I have to give them a confirmation page
 
     set page_title "Discard Your Saved Shopping Cart?"
+    set context [list $title]
     set page_function "discard"
     set hidden_form_variables "[export_form_vars order_id]
     [ec_hidden_input discard_confirmed_p "t"]"
-    set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list $page_title]]]
+    set title $page_title
     set ec_system_owner [ec_system_owner]
 
     ad_return_template

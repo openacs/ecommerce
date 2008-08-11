@@ -13,7 +13,8 @@ ad_page_contract {
 }
 
 set home_page "[ec_insecure_location][ec_url]index"
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Thank You For Your Gift Certificate Order"]]]
+set title "Thank You For Your Gift Certificate Order"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 
 ad_return_template

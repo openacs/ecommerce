@@ -1,9 +1,11 @@
 <master>
-  <property name="title">@title@</property>
-  <property name="context_bar">@context_bar;noquote@</property>
+  <property name="doc(title)">@title;noquote@</property>
+  <property name="context">@context;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <property name="show_toolbar_p">t</property>
+<include src="/packages/ecommerce/lib/toolbar">
+<include src="/packages/ecommerce/lib/searchbar">
+
 
 <blockquote>
   <p>To re-add yourself anytime, go to @re_add_link;noquote@ mailing list.</p>

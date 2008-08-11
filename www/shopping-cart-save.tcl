@@ -24,7 +24,8 @@ set user_name [db_string get_full_name "
     from cc_users 
     where user_id=:user_id"]
 set register_link "/register?[export_url_vars return_url]"
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Save Shopping Cart"]]]
+set title "Save Shopping Cart"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles

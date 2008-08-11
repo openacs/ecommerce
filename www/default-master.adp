@@ -7,13 +7,10 @@
   <if @doc_type@ not nil><property name="doc_type">@doc_type;noquote@</property></if>
 
 <if @is_not_in_ecommerce_p@ true>
-   <include src="/packages/ecommerce/www/toolbar" />
+   <include src="/packages/ecommerce/lib/toolbar">
+<include src="/packages/ecommerce/lib/searchbar">
+
 </if>
-<else>
-   <if @show_toolbar_p@ not nil>
-   <include src="/packages/ecommerce/www/toolbar" combocategory_id=@combocategory_id@ category_id=@category_id@ subcategory_id=@subcategory_id@ search_text=@search_text@ />
-    </if>
-</else>
     
 <div id="page-body">
   <if @title@ not nil>

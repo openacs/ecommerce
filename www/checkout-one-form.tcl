@@ -654,4 +654,6 @@ if { [exists_and_equal shipping_required "t"] } {
 #    cannot quote ship_to_state_widget [ad_quotehtml $ship_to_state_widget]
 }
     append hidden_vars [export_form_vars billing_address_id shipping_address_id]
+set title "Completing Your Order"
+set context [list $title]
 db_release_unused_handles

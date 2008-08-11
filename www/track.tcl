@@ -73,7 +73,8 @@ if { $carrier == "FedEx" } {
     } 
 }
 
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Your Shipment"]]]
+set title "Your Shipment"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template

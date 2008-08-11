@@ -788,7 +788,7 @@ db_transaction {
         where order_id=:order_id"
     }
 }
-
+set context [list $title]
 db_release_unused_handles
 rp_form_put referer checkout-one-form-2
 rp_internal_redirect checkout-3.tcl

@@ -188,7 +188,8 @@ if { [ad_parameter -package_id [ec_id] OfferTaxExemptStatusP ecommerce 0] } {
 	<input type=radio name=tax_exempt_p value=\"f\" checked>No"
 }
 
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Completing Your Order"]]]
+set title "Completing Your Order : verify shopping cart contents"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template

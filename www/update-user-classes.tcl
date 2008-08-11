@@ -29,7 +29,8 @@ set user_class_select_list [ec_user_class_select_widget [db_list get_user_class_
     select user_class_id 
     from ec_user_class_user_map 
     where user_id = :user_id"]]
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list "Your Account"]]]
+set title "Your Account"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 
 db_release_unused_handles

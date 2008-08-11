@@ -200,7 +200,8 @@ SELECT * from ec_sub${sub}categories c
 
 set the_category_id $category_id
 set the_category_name [eval "ec_ident \$${sub}category_name"]
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition [list [list "category-browse?category_id=$the_category_id" $category_name] [list "category-browse-subcategory?category_id=$the_category_id&amp;subcategory_id=$subcategory_id" $subcategory_name] $the_category_name]]]
+set title "$category_name &gt; $subcategory_name &gt; $the_category_name"
+set context [list $title]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template
