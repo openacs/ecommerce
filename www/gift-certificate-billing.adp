@@ -20,26 +20,26 @@
 	  <tr bgcolor="#eeeeee">
 	</else>
 	<td>
-	  @addresses.formatted@
+	  @addresses.formatted;noquote@
 	</td>
 	<td>
 	  <table>
 	    <tr>
 	      <td>
 		<form method="post" action="gift-certificate-order-3">
-		  @addresses.use@
+		  @addresses.use;noquote@
 		  <input type="submit" value="Use"></input>
 		</form>
 	      </td>
 	      <td>
 		<form method="post" action="address">
-		  @addresses.edit@
+		  @addresses.edit;noquote@
 		  <input type="submit" value="Edit"></input>
 		</form>
 	      </td>
 	      <td>
 		<form method="post" action="delete-address">
-		  @addresses.delete@
+		  @addresses.delete;noquote@
 		  <input type="submit" value="Delete"></input>
 		</form>
 	      </td>
@@ -60,7 +60,7 @@
     <tr>
       <td>
 	<form method="post" action="address">
-	  @hidden_form_vars@
+	  @hidden_form_vars;noquote@
 	  <input type="submit" value="Enter a new U.S. address">
 	</form>
       </td>
@@ -69,7 +69,7 @@
       </td>
       <td>
 	<form method="post" action="address">
-	  @hidden_form_vars@
+	  @hidden_form_vars;noquote@
 	  <input type="submit" value="Enter a new INTERNATIONAL address">
 	</form>
       </td>

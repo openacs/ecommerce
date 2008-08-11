@@ -8,7 +8,7 @@
 
 <blockquote>
   <form method="post" action="gift-certificate-finalize-order">
-    @hidden_form_variables@
+    @hidden_form_variables;noquote@
     <b>Push Submit to send us your order!</b> <input type="submit" value="Submit">
       <blockquote>
 	<table>
@@ -25,9 +25,9 @@
 	      <font size="+1">Your Gift Certificate Order:</font>
 	    </td>
 	  </tr>
-	  @to_row@
-	  @from_row@
-	  @message_row@
+	  @to_row;noquote@
+	  @from_row;noquote@
+	  @message_row;noquote@
 	  <tr>
 	    <td valign="top">
 	      <b>Will be sent to:</b>
@@ -41,7 +41,7 @@
 	      <b>Subtotal:</b>
 	    </td>
 	    <td>
-	      @formatted_amount@
+	      @formatted_amount;noquote@
 	    </td>
 	  </tr>
 	  <tr>
@@ -49,7 +49,7 @@
 	      <b>Shipping:</b>
 	    </td>
 	    <td>
-	      @zero_in_the_correct_currency@
+	      @zero_in_the_correct_currency;noquote@
 	    </td>
 	  </tr>
 	  <tr>
@@ -57,7 +57,7 @@
 	      <b>Tax:</b>
 	    </td>
 	    <td>
-	      @zero_in_the_correct_currency@
+	      @zero_in_the_correct_currency;noquote@
 	    </td>
 	  </tr>
 	  <tr>
@@ -73,7 +73,7 @@
 	      <b>Total Due:</b>
 	    </td>
 	    <td>
-	      @formatted_amount@
+	      @formatted_amount;noquote@
 	    </td>
 	  </tr>
 	</table>
