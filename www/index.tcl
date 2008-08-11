@@ -16,6 +16,9 @@ ad_page_contract {
     usca_p:optional
     {how_many:naturalnum {[parameter::get -parameter ProductsToDisplayPerPage -default 10]}}
     {start_row "0"}
+    {category_id:optional}
+    {subcategory_id:optional}
+    {subsubcategory_id:optional}
 }
 
 # see if they're logged in
@@ -38,6 +41,7 @@ if { $user_id == 0 } {
 # user session tracking
 
 set user_session_id [ec_get_user_session_id]
+ec_create_new_session_if_necessary "" cookies_are_not_required
 
 # if for some reason the user id on the session is incorrect, make a new session
 # perhaps the old update was an attempt to fix the lose cart on register? anyway
@@ -50,7 +54,7 @@ if { $user_is_logged_on && $user_session_id ne "0"} {
     }
 }
 
-ec_create_new_session_if_necessary "" cookies_are_not_required
+#ec_create_new_session_if_necessary "" cookies_are_not_required
 
 set ec_user_string ""
 set register_url "/register?return_url=[ns_urlencode [ec_url]]"
@@ -114,7 +118,7 @@ db_foreach get_tl_products "
     append products "
           <tr valign=top>
             <td>[expr $count + 1]</td>
-            <td colspan=2><a href=\"${base_url}product?product_id=$product_id\"><b>$product_name</b></a></td>
+            <td colspan=2><a href=\"[export_vars -base product -override { product_id }]\"><b>$product_name</b></a></td>
           </tr>
           <tr valign=top>
     	<td></td>
@@ -142,19 +146,19 @@ set start_row_current $start_row
 ns_log Notice $start_row $how_many
 if { $start_row_current >= $how_many } {
     set start_row [expr { $start_row_current - $how_many } ]
-    set prev_link "<a href=\"${base_url}?[export_vars -url {category_id subcategory_id subsubcategory_id how_many start_row} ]\">Previous $how_many</a>"
+    set prev_link "<a href=\"[export_vars -base index -url {category_id subcategory_id subsubcategory_id how_many start_row} ]\">Previous $how_many</a>"
 } else {
     set prev_link ""
 }
 
 if { $have_how_many_more_p eq "t" } {
     set start_row [expr { $start_row_current + $how_many } ]
-    set next_link "<a href=\"${base_url}?[export_vars -url {category_id subcategory_id subsubcategory_id how_many start_row}]\">Next $how_many</a>"
+    set next_link "<a href=\"[export_vars -base index -url {category_id subcategory_id subsubcategory_id how_many start_row}] \">Next $how_many</a>"
 } else {
     set number_of_remaining_products [expr { $product_count - $start_row_current - $how_many } ]
     if { $number_of_remaining_products > 0 } {
         set start_row [expr { $start_row_current + $how_many } ]
-        set next_link "<a href=\"${base_url}?[export_vars -url category_id subcategory_id subsubcategory_id how_many start_row]\">Next $number_of_remaining_products</a>"
+        set next_link "<a href=\"[export_vars -base index -url {category_id subcategory_id subsubcategory_id how_many start_row}]\">Next $number_of_remaining_products</a>"
     } else {
         set next_link ""
     }
