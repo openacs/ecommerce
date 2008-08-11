@@ -8,7 +8,7 @@
 
   <fullquery name="get_recommended_products">      
     <querytext>
-      select p.product_id, p.product_name, p.dirname, r.recommendation_text, o.offer_code
+      select p.product_id, p.product_name, p.dirname, p.sku, r.recommendation_text, o.offer_code
       from ec_product_recommendations r, ec_products_displayable p left outer join ec_user_session_offer_codes o on 
 	(p.product_id = o.product_id and user_session_id = :user_session_id)
       where p.product_id = r.product_id
@@ -22,15 +22,26 @@
     </querytext>
   </fullquery>
 
-  <fullquery name="get_regular_product_list">      
+  <fullquery name="get_regular_product_count">      
     <querytext>
-      select p.product_id, p.dirname, p.product_name, p.one_line_description, o.offer_code
+      select count(*) as product_count
       from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on
 	(p.product_id = o.product_id and user_session_id = :user_session_id)
       where p.product_id = m.product_id
       and m.${sub}category_id = :${sub}category_id
       $exclude_subproducts
-      order by p.product_name
+    </querytext>
+  </fullquery>
+
+  <fullquery name="get_regular_product_list">      
+    <querytext>
+      select p.product_id, p.dirname, p.product_name, p.one_line_description, p.sku, o.offer_code
+      from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on
+	(p.product_id = o.product_id and user_session_id = :user_session_id)
+      where p.product_id = m.product_id
+      and m.${sub}category_id = :${sub}category_id
+      $exclude_subproducts
+      order by p.product_name limit :how_many offset :start_row
     </querytext>
   </fullquery>
 
