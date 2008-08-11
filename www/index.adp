@@ -40,7 +40,7 @@
       <if @products@>
 	<h4>Products:</h4>
 	@products;noquote@
-      </if>
 
       @prev_link;noquote@ @separator@ @next_link;noquote@
+      </if>
     </blockquote>
