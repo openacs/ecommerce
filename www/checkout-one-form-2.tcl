@@ -128,8 +128,8 @@ set exception_text ""
 
 foreach possible_exception $possible_exception_list {
     if { ![info exists [lindex $possible_exception 0]] || [empty_string_p [set [lindex $possible_exception 0]]] } {
-	incr exception_count
-	append exception_text "<li>A [lindex $possible_exception 1] is required.</li>"
+    incr exception_count
+    append exception_text "<li>A [lindex $possible_exception 1] is required.</li>"
     }
 }
 
@@ -181,14 +181,14 @@ if { [value_if_exists billing_address_id] > 0} {
 
     # retrieve a saved address 
     set billing_address_exists [db_0or1row select_address "
-    	select attn, line1, line2, city, usps_abbrev, zip_code, phone, country_code, full_state_name, phone_time 
-    	from ec_addresses 
-    	where address_id=:address_id
+        select attn, line1, line2, city, usps_abbrev, zip_code, phone, country_code, full_state_name, phone_time 
+        from ec_addresses 
+        where address_id=:address_id
         and user_id=:user_id"]
     
     if { $billing_address_exists == 0 } {
-	# They probably got here by playing with the billing_address_id number
-	# have them login again, to make sure they should even have access to current session
+    # They probably got here by playing with the billing_address_id number
+    # have them login again, to make sure they should even have access to current session
 
         ec_user_session_logout      
         ns_log Notice "checkout-one-form-2.tcl,ref(193): billing_address_id mismatch. logging out user $user_id."   
@@ -235,8 +235,8 @@ if { [string equal $new_address "t"] } {
     set phone_time $bill_to_phone_time
     set address_id [db_nextval ec_address_id_sequence]
     db_transaction {
-	db_dml insert_new_address "
-	insert into ec_addresses
+    db_dml insert_new_address "
+    insert into ec_addresses
         (address_id, user_id, address_type, attn, line1, line2, city, usps_abbrev, full_state_name, zip_code, country_code, phone, phone_time)
         values
         (:address_id, :user_id, :address_type, :attn,:line1,:line2,:city,:usps_abbrev,:full_state_name,:zip_code,:country_code,:phone,:phone_time)"
@@ -295,14 +295,14 @@ if { [string equal $shipping_required "t"] } {
 
         # retrieve a saved address 
         set shipping_address_exists [db_0or1row select_address "
-    	select attn, line1, line2, city, usps_abbrev, zip_code, phone, country_code, full_state_name, phone_time 
-    	from ec_addresses 
-    	where address_id=:address_id
+        select attn, line1, line2, city, usps_abbrev, zip_code, phone, country_code, full_state_name, phone_time 
+        from ec_addresses 
+        where address_id=:address_id
         and user_id=:user_id"]
     
         if { $shipping_address_exists == 0 } {
-	    # They probably got here by playing with the shipping_address_id number
-	    # have them login again, to make sure they should even have access to current session
+        # They probably got here by playing with the shipping_address_id number
+        # have them login again, to make sure they should even have access to current session
             ns_log Notice "checkout-one-form-2.tcl,ref(305). shipping_address_id is 0 which should never happen. logging out user $user_id"
             ec_user_session_logout         
         }
@@ -364,7 +364,7 @@ if { [string equal $shipping_required "t"] } {
         set phone_time $ship_to_phone_time
         set address_id [db_nextval ec_address_id_sequence]
         db_transaction {
-	    db_dml insert_new_address "
+        db_dml insert_new_address "
             insert into ec_addresses
             (address_id, user_id, address_type, attn, line1, line2, city, usps_abbrev, full_state_name, zip_code, country_code, phone, phone_time)
             values
@@ -375,9 +375,9 @@ if { [string equal $shipping_required "t"] } {
     # Update the shipping address of the order
 
     db_dml set_shipping_on_order "
-	update ec_orders 
-	set shipping_address = :address_id 
-	where order_id = :order_id"
+    update ec_orders 
+    set shipping_address = :address_id 
+    where order_id = :order_id"
 }
 
 # See if there's a gift certificate with a claim check
@@ -389,17 +389,17 @@ if {[info exists claim_check] && ![empty_string_p $claim_check]} {
     where claim_check=:claim_check" -default ""]
     if { [empty_string_p $gift_certificate_id] } {
         ad_return_complaint 1 "
-	<p>The claim check you have entered is invalid.  Please re-check it.</p>
-	<p>The claim check is case sensitive; enter it exactly as shown on your gift certificate.</p>"
+    <p>The claim check you have entered is invalid.  Please re-check it.</p>
+    <p>The claim check is case sensitive; enter it exactly as shown on your gift certificate.</p>"
         set prob_details "
-	Incorrect gift certificate claim check entered at [ad_conn url].
-	Claim check entered: $claim_check by user ID: $user_id.
-	They may have just made a typo but if this happens repeatedly from the same IP address ([ns_conn peeraddr]) you may wish to look into this."
+    Incorrect gift certificate claim check entered at [ad_conn url].
+    Claim check entered: $claim_check by user ID: $user_id.
+    They may have just made a typo but if this happens repeatedly from the same IP address ([ns_conn peeraddr]) you may wish to look into this."
         db_dml insert_error_failed_gc_claim "
-	insert into ec_problems_log
-    	(problem_id, problem_date, problem_details)
-    	values
-    	(ec_problem_id_sequence.nextval, sysdate,:prob_details )"
+    insert into ec_problems_log
+        (problem_id, problem_date, problem_details)
+        values
+        (ec_problem_id_sequence.nextval, sysdate,:prob_details )"
         ad_script_abort
     }
 
@@ -417,9 +417,9 @@ if {[info exists claim_check] && ![empty_string_p $claim_check]} {
         # Then no one has claimed it, so go ahead and assign it to them
 
         db_dml update_ec_cert_set_user "
-	update ec_gift_certificates 
-	set user_id=:user_id, claimed_date = sysdate 
-	where gift_certificate_id = :gift_certificate_id"
+    update ec_gift_certificates 
+    set user_id=:user_id, claimed_date = sysdate 
+    where gift_certificate_id = :gift_certificate_id"
         set title "Gift Certificate Claimed"
         set certificate_added_p "true"
     } else {
@@ -429,14 +429,14 @@ if {[info exists claim_check] && ![empty_string_p $claim_check]} {
 
         if { $user_id != $gift_certificate_user_id } {
 
-	    set prob_details "
-	    User ID $user_id tried to claim gift certificate $gift_certificate_id at [ad_conn url], but it had already been claimed by User ID $gift_certificate_id."
-	
-	    db_dml insert_other_claim_prob "
-	    insert into ec_problems_log
-	    (problem_id, problem_date, gift_certificate_id, problem_details)
-	    values
-	    (ec_problem_id_sequence.nextval, sysdate, :gift_certificate_id, :prob_details)"
+        set prob_details "
+        User ID $user_id tried to claim gift certificate $gift_certificate_id at [ad_conn url], but it had already been claimed by User ID $gift_certificate_id."
+    
+        db_dml insert_other_claim_prob "
+        insert into ec_problems_log
+        (problem_id, problem_date, gift_certificate_id, problem_details)
+        values
+        (ec_problem_id_sequence.nextval, sysdate, :gift_certificate_id, :prob_details)"
         }
 
         set title "Gift Certificate Already Claimed"
@@ -513,14 +513,14 @@ if {[info exists shipping_gateway] && [string equal $shipping_gateway "true"]} {
         db_1row get_shipping_per_item "
         select default_shipping_per_item, weight_shipping_cost
         from ec_admin_settings"
-	db_1row get_exp_amt_peritem "
+    db_1row get_exp_amt_peritem "
         select add_exp_amount_per_item, add_exp_amount_by_weight 
         from ec_admin_settings"
     } else {
-	set default_shipping_per_item 0
-	set weight_shipping_cost 0
-	set add_exp_amount_per_item 0
-	set add_exp_amount_by_weight 0
+    set default_shipping_per_item 0
+    set weight_shipping_cost 0
+    set add_exp_amount_per_item 0
+    set add_exp_amount_by_weight 0
     }
 }
 set usps_abbrev [db_string get_usps_abbrev "
@@ -529,11 +529,11 @@ set usps_abbrev [db_string get_usps_abbrev "
     where address_id = :address_id" -default ""]
 if { ![empty_string_p $usps_abbrev] && [string equal $tax_exempt_p "f"] } {
     if { [db_0or1row get_tax_rate "
-	select tax_rate, shipping_p
-	from ec_sales_tax_by_state
-	where usps_abbrev = :usps_abbrev"] == 0 } {
-	set tax_rate 0
-	set shipping_p f
+    select tax_rate, shipping_p
+    from ec_sales_tax_by_state
+    where usps_abbrev = :usps_abbrev"] == 0 } {
+    set tax_rate 0
+    set shipping_p f
     }
 } else {
     set tax_rate 0
@@ -544,6 +544,7 @@ if { ![empty_string_p $usps_abbrev] && [string equal $tax_exempt_p "f"] } {
 
 set total_item_shipping_tax 0
 set total_item_price_tax 0
+set bom_price 0
 
 db_foreach get_items_in_cart "
     select i.item_id, i.product_id, u.offer_code
@@ -563,12 +564,17 @@ db_foreach get_items_in_cart "
     set tax_charged [lindex $everything 3]
     set shipping_tax [lindex $everything 4]
 
+    set bom_price [expr { $bom_price + $price_charged } ]
+
     db_dml update_ec_items "
     update ec_items 
     set price_charged = round(:price_charged,2), price_name = :price_name, shipping_charged = round(:shipping_charged,2), 
     price_tax_charged = round(:tax_charged,2), shipping_tax_charged = round(:shipping_tax,2) 
     where item_id = :item_id"
+ns_log Notice "checkout-one-form-2.tcl ref571 total_item_price_tax $total_item_price_tax, bom_price $bom_price"
 }
+
+ns_log Notice "checkout-one-form-2.tcl ref572 total_item_price_tax $total_item_price_tax, bom_price $bom_price"
 
 # 3. Determine base shipping cost & put it into ec_orders
 
@@ -580,20 +586,23 @@ if {![info exists shipping_gateway]} {
     }
 
     if { $shipping_method != "pickup" && $shipping_method != "no shipping" } {
-	set order_shipping_cost [db_string get_base_ship_cost "
-	select nvl(base_shipping_cost,0) 
-	from ec_admin_settings"]
+        set order_shipping_cost [db_string get_base_ship_cost "
+    select nvl(base_shipping_cost,0) 
+    from ec_admin_settings"]
+        # adding cost based shipping fee
+        set order_shipping_cost [expr { [ecds_base_shipping_price_from_order_value $bom_price ] + $order_shipping_cost } ] 
+ ns_log Notice "checkout-one-form-2.tcl(ref587) total_item_price_tax $total_item_price_tax, order_shipping_cost $order_shipping_cost"
     } else {
-	set order_shipping_cost 0
+        set order_shipping_cost 0
     }
 
     # Add on the extra base cost for express shipping, if appropriate
 
     if { [string equal $shipping_method "express"] } {
-	set add_exp_base_shipping_cost [db_string get_exp_base_cost "
+        set add_exp_base_shipping_cost [db_string get_exp_base_cost "
         select nvl(add_exp_base_shipping_cost,0) 
-	from ec_admin_settings"]
-	set order_shipping_cost [expr $order_shipping_cost + $add_exp_base_shipping_cost]
+    from ec_admin_settings"]
+        set order_shipping_cost [expr $order_shipping_cost + $add_exp_base_shipping_cost]
     }
 }
 
@@ -639,94 +648,94 @@ if { [info exists creditcard_number] } {
 if { [string equal $gift_certificate_covers_cost_p "f"] } {
     
     if { ![info exists creditcard_id] || ([info exists creditcard_number] && ![empty_string_p $creditcard_number]) } {
-	if { ![info exists creditcard_number] || [empty_string_p $creditcard_number] } {
+    if { ![info exists creditcard_number] || [empty_string_p $creditcard_number] } {
 
-	    # Then they haven't selected a previous credit card nor
-	    # have they entered new credit card info
+        # Then they haven't selected a previous credit card nor
+        # have they entered new credit card info
 
-	    ad_return_complaint 1 "<li> A credit card is required to complete this order."
+        ad_return_complaint 1 "<li> A credit card is required to complete this order."
             ad_script_abort
-	} else {
-
-	    # Then they are using a new credit card and we just have
-	    # to check that they got it all right
-	    
-	    set exception_count 0
-	    set exception_text ""
-	    
-	    if { [regexp {[^0-9]} $creditcard_number] } {
-
-		# I've already removed spaces and dashes, so only
-		# numbers should remain
-
-		incr exception_count
-		append exception_text "<li> The credit card number contains invalid characters."
-	    }
-	    	    
-	    if { ![info exists creditcard_type] || [empty_string_p $creditcard_type] } {
-		incr exception_count
-		append exception_text "<li> The credit card type is unknown."
-	    }
-	    
-	    # make sure the credit card type is right & that it has
-	    # the right number of digits
-
-	    set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type]
-	    set exception_count [expr $exception_count + [lindex $additional_count_and_text 0]]
-	    append exception_text [lindex $additional_count_and_text 1]
-	    
-	    if { ![info exists creditcard_expire_1] || [empty_string_p $creditcard_expire_1] || ![info exists creditcard_expire_2] || [empty_string_p $creditcard_expire_2] } {
-		incr exception_count
-		append exception_text "<li> A full credit card expiration date (month and year) is required."
-	    }
-	    
-	    if { $exception_count > 0 } {
-                ns_log Notice "checkout-one-form-2.tcl,ref(683): $exception_count form input exception(s) for user $user_id"
-		ad_return_complaint $exception_count $exception_text
-                ad_script_abort
-	    }
-
-	    # A valid credit card number has been provided and thus a
-	    # billing address must exist.
-
-	    if {![info exists billing_address_id] || ([info exists billing_address_id] && [empty_string_p $billing_address_id])} {
-		ad_return_complaint 1 "<li> A billing address is required.</li>"
-                ad_script_abort
-	    }
-	}
     } else {
 
-	# they're using an old credit card, although we should make
-	# sure they didn't submit to us someone else's creditcard_id
-	# or a blank creditcard_id
+        # Then they are using a new credit card and we just have
+        # to check that they got it all right
+        
+        set exception_count 0
+        set exception_text ""
+        
+        if { [regexp {[^0-9]} $creditcard_number] } {
 
-	if { [empty_string_p $creditcard_id] } {
+        # I've already removed spaces and dashes, so only
+        # numbers should remain
 
-	    # Probably form surgery
+        incr exception_count
+        append exception_text "<li> The credit card number contains invalid characters."
+        }
+                
+        if { ![info exists creditcard_type] || [empty_string_p $creditcard_type] } {
+        incr exception_count
+        append exception_text "<li> The credit card type is unknown."
+        }
+        
+        # make sure the credit card type is right & that it has
+        # the right number of digits
 
-	    rp_internal_redirect checkout-2
+        set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type]
+        set exception_count [expr $exception_count + [lindex $additional_count_and_text 0]]
+        append exception_text [lindex $additional_count_and_text 1]
+        
+        if { ![info exists creditcard_expire_1] || [empty_string_p $creditcard_expire_1] || ![info exists creditcard_expire_2] || [empty_string_p $creditcard_expire_2] } {
+        incr exception_count
+        append exception_text "<li> A full credit card expiration date (month and year) is required."
+        }
+        
+        if { $exception_count > 0 } {
+                ns_log Notice "checkout-one-form-2.tcl,ref(683): $exception_count form input exception(s) for user $user_id"
+        ad_return_complaint $exception_count $exception_text
+                ad_script_abort
+        }
+
+        # A valid credit card number has been provided and thus a
+        # billing address must exist.
+
+        if {![info exists billing_address_id] || ([info exists billing_address_id] && [empty_string_p $billing_address_id])} {
+        ad_return_complaint 1 "<li> A billing address is required.</li>"
+                ad_script_abort
+        }
+    }
+    } else {
+
+    # they're using an old credit card, although we should make
+    # sure they didn't submit to us someone else's creditcard_id
+    # or a blank creditcard_id
+
+    if { [empty_string_p $creditcard_id] } {
+
+        # Probably form surgery
+
+        rp_internal_redirect checkout-2
             ad_script_abort
-	}
+    }
 
-	set creditcard_owner [db_string get_cc_owner "
-	    select user_id 
-	    from ec_creditcards 
-	    where creditcard_id=:creditcard_id" -default ""]
-	if { $user_id != $creditcard_owner } {
+    set creditcard_owner [db_string get_cc_owner "
+        select user_id 
+        from ec_creditcards 
+        where creditcard_id=:creditcard_id" -default ""]
+    if { $user_id != $creditcard_owner } {
 
-	    # Probably form surgery
+        # Probably form surgery
 
-	    rp_internal_redirect checkout-2
+        rp_internal_redirect checkout-2
             ad_script_abort
-	}
+    }
 
-	# A valid credit card number has been provided and thus a
-	# billing address must exist.
+    # A valid credit card number has been provided and thus a
+    # billing address must exist.
 
-	if {![info exists billing_address_id] || ([info exists billing_address_id] && [empty_string_p $billing_address_id])} {
-	    ad_return_complaint 1 "<li> A billing address is required.</li>"
+    if {![info exists billing_address_id] || ([info exists billing_address_id] && [empty_string_p $billing_address_id])} {
+        ad_return_complaint 1 "<li> A billing address is required.</li>"
             ad_script_abort
-	}
+    }
 
     }
 }
@@ -739,47 +748,47 @@ db_transaction {
     # If gift_certificate doesn't cover cost, either insert or update
     # credit card
     if { [string equal $gift_certificate_covers_cost_p "f"] } {
-	if { ![info exists creditcard_number] || [empty_string_p $creditcard_number] } {
+    if { ![info exists creditcard_number] || [empty_string_p $creditcard_number] } {
 
-	    # Using pre-existing credit card
+        # Using pre-existing credit card
 
-	    db_dml use_existing_cc_for_order "
-		update ec_orders 
-		set creditcard_id=:creditcard_id 
-		where order_id=:order_id"
-	    db_dml update_cc_address "
-		update ec_creditcards
-		set billing_address = :billing_address_id
-		where creditcard_id = :creditcard_id"
-	} else {
-
-	    # Using new credit card
-
-	    set creditcard_id [db_nextval ec_creditcard_id_sequence]
-	    set cc_no [string range $creditcard_number [expr [string length $creditcard_number] -4] [expr [string length $creditcard_number] -1]]
-	    set expiry "$creditcard_expire_1/$creditcard_expire_2"
-	    db_dml insert_new_cc "
-	    	insert into ec_creditcards
-	    	(creditcard_id, user_id, creditcard_number, creditcard_last_four, creditcard_type, creditcard_expire, billing_address)
-	    	values
-	    	(:creditcard_id, :user_id, :creditcard_number, :cc_no , :creditcard_type, :expiry, :billing_address_id)"
-	    db_dml update_order_set_cc "
-	    	update ec_orders 
-            	set creditcard_id=:creditcard_id 
-            	where order_id=:order_id"
-	}
+        db_dml use_existing_cc_for_order "
+        update ec_orders 
+        set creditcard_id=:creditcard_id 
+        where order_id=:order_id"
+        db_dml update_cc_address "
+        update ec_creditcards
+        set billing_address = :billing_address_id
+        where creditcard_id = :creditcard_id"
     } else {
 
-	# Make creditcard_id be null (which it might not be if this isn't
-	# their first time along this path)
+        # Using new credit card
 
-	db_dml set_null_cc_in_order "
- 	    update ec_orders
-	    set creditcard_id=null 
-	    where order_id=:order_id"
+        set creditcard_id [db_nextval ec_creditcard_id_sequence]
+        set cc_no [string range $creditcard_number [expr [string length $creditcard_number] -4] [expr [string length $creditcard_number] -1]]
+        set expiry "$creditcard_expire_1/$creditcard_expire_2"
+        db_dml insert_new_cc "
+            insert into ec_creditcards
+            (creditcard_id, user_id, creditcard_number, creditcard_last_four, creditcard_type, creditcard_expire, billing_address)
+            values
+            (:creditcard_id, :user_id, :creditcard_number, :cc_no , :creditcard_type, :expiry, :billing_address_id)"
+        db_dml update_order_set_cc "
+            update ec_orders 
+                set creditcard_id=:creditcard_id 
+                where order_id=:order_id"
+    }
+    } else {
+
+    # Make creditcard_id be null (which it might not be if this isn't
+    # their first time along this path)
+
+    db_dml set_null_cc_in_order "
+         update ec_orders
+        set creditcard_id=null 
+        where order_id=:order_id"
     }
 }
 
 db_release_unused_handles
-rp_form_put url checkout-one-form-2
+rp_form_put referer checkout-one-form-2
 rp_internal_redirect checkout-3.tcl
