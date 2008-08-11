@@ -45,7 +45,7 @@
 
   <fullquery name="get_shipping_data">      
     <querytext>
-      select p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id,
+      select p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id, p.sku,
       count(*) as quantity,
       u.offer_code,
       i.color_choice, i.size_choice, i.style_choice
@@ -56,7 +56,7 @@
           from ec_user_session_offer_codes usoc
           where usoc.user_session_id=:user_session_id) u on (p.product_id = u.product_id)
       where o.user_session_id=:user_session_id and o.order_state='in_basket'
-      group by p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice
+      group by p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id, p.sku, u.offer_code, i.color_choice, i.size_choice, i.style_choice
     </querytext>
   </fullquery>
 
