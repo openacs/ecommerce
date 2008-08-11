@@ -50,7 +50,7 @@
 	    </tr>
 	    <tr>
 	      <td>Type:</td>
-	      <td>@ec_creditcard_widget@</td>
+	      <td>@ec_creditcard_widget;noquote@</td>
 	      <td>
 		<center>
 		  <input type="submit" value="Submit">
@@ -59,7 +59,7 @@
 	    </tr>
 	    <tr>
 	      <td>Expires:</td>
-	      <td>@ec_expires_widget@</td>
+	      <td>@ec_expires_widget;noquote@</td>
 	    </tr>
 	  </table>
 	</form>
