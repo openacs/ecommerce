@@ -22,11 +22,11 @@
 
   <fullquery name="ec_order_summary_for_customer.order_details_select">      
     <querytext>
-      select i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice, p.product_name, p.one_line_description, p.product_id, count(*) as quantity
+      select i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice, p.product_name, p.one_line_description, p.product_id, p.sku, count(*) as quantity
       from ec_items i, ec_products p
       where i.order_id = :order_id
       and i.product_id = p.product_id
-      group by p.product_name, p.one_line_description, p.product_id, i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice
+      group by p.product_name, p.sku, p.one_line_description, p.product_id, i.price_name, i.price_charged, i.color_choice, i.size_choice, i.style_choice
     </querytext>
   </fullquery>
 
@@ -84,9 +84,9 @@
 
   <fullquery name="select_address">      
     <querytext>
-    	select attn, line1, line2, city, usps_abbrev, zip_code, phone, country_code, full_state_name, phone_time 
-    	from ec_addresses 
-    	where address_id=:address_id
+        select attn, line1, line2, city, usps_abbrev, zip_code, phone, country_code, full_state_name, phone_time 
+        from ec_addresses 
+        where address_id=:address_id
     </querytext>
   </fullquery>
 
@@ -129,6 +129,14 @@
         from ec_addresses
         where user_id=:user_id
         and address_type = 'shipping'
+    </querytext>
+  </fullquery>
+
+  <fullquery name="get_shipping_info">      
+    <querytext>
+        select shipping, shipping_additional, weight, no_shipping_avail_p
+        from ec_products
+        where product_id=:product_id
     </querytext>
   </fullquery>
 
