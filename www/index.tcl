@@ -4,7 +4,7 @@ ad_page_contract {
 
     @param usca_p
     @param how_many
-    @param start
+    @param start_row
 
     @author
     @creation-date
@@ -14,8 +14,8 @@ ad_page_contract {
 
 } {
     usca_p:optional
-    {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
-    {start "0"}
+    {how_many:naturalnum {[parameter::get -parameter ProductsToDisplayPerPage -default 10]}}
+    {start_row "0"}
 }
 
 # see if they're logged in
@@ -59,7 +59,7 @@ set register_url "/register?return_url=[ns_urlencode [ec_url]]"
 # for saving computing SSL resources only when necessary
 set base_url "[ec_insecurelink [ad_conn url]]"
 
-if {[ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] ne ""} {
+if {[parameter::get -parameter UserClassApproveP] ne ""} {
     set user_class_approved_p_clause "and user_class_approved_p = 't'"
 } else {
     set user_class_approved_p_clause ""
@@ -98,65 +98,73 @@ set have_how_many_more_p f
 set count 0
 
 # find all top-level products (those that are uncategorized)
+db_1row get_tl_product_count "
+      select count(*) as product_count
+      from ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
+      where not exists (select 1 
+          from ec_category_product_map m
+          where p.product_id = m.product_id)"
 
 db_foreach get_tl_products "
     select p.product_id, p.product_name, p.one_line_description, o.offer_code
     from ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
     where not exists (select 1 from ec_category_product_map m where p.product_id = m.product_id)
-    order by p.product_name" {
+    order by p.product_name limit :how_many offset :start_row" {
 
+    append products "
+          <tr valign=top>
+            <td>[expr $count + 1]</td>
+            <td colspan=2><a href=\"${base_url}product?product_id=$product_id\"><b>$product_name</b></a></td>
+          </tr>
+          <tr valign=top>
+    	<td></td>
+    	<td>$one_line_description</td>
+    	<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
+          </tr>"
 
-    if { $count >= $start && [expr $count - $start] < $how_many } {
-
-	append products "
-	      <tr valign=top>
-	        <td>[expr $count + 1]</td>
-	        <td colspan=2><a href=\"${base_url}product?product_id=$product_id\"><b>$product_name</b></a></td>
-	      </tr>
-	      <tr valign=top>
-		<td></td>
-		<td>$one_line_description</td>
-		<td align=right>[ec_price_line $product_id $user_id $offer_code]</td>
-	      </tr>"
-    }
     incr count
-    if { $count > [expr $start + (2 * $how_many)] } {
-	# we know there are at least how_many more items to display next time
-	set have_how_many_more_p t
-	break
-    } else {
-	set have_how_many_more_p f
-    }
 }
+
+if { $product_count > [expr $start_row + (2 * $how_many)] } {
+    # we know there are at least how_many more items to display next time
+    set have_how_many_more_p t
+} else {
+    set have_how_many_more_p f
+}
+
 if {[string equal $products "<table width=\"100%\">"]} {
     set products ""
 } else {
     append products "</table>"
 }
 
-if { $start >= $how_many } {
-    set prev_link "<a href=${base_url}?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start - $how_many]>Previous $how_many</a>"
+set start_row_current $start_row
+ns_log Notice $start_row $how_many
+if { $start_row_current >= $how_many } {
+    set start_row [expr { $start_row_current - $how_many } ]
+    set prev_link "<a href=\"${base_url}?[export_vars -url {category_id subcategory_id subsubcategory_id how_many start_row} ]\">Previous $how_many</a>"
 } else {
     set prev_link ""
 }
 
-if { $have_how_many_more_p == "t" } {
-    set next_link "<a href=${base_url}?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $how_many</a>"
+if { $have_how_many_more_p eq "t" } {
+    set start_row [expr { $start_row_current + $how_many } ]
+    set next_link "<a href=\"${base_url}?[export_vars -url {category_id subcategory_id subsubcategory_id how_many start_row}]\">Next $how_many</a>"
 } else {
-    set number_of_remaining_products [expr $count - $start - $how_many]
+    set number_of_remaining_products [expr { $product_count - $start_row_current - $how_many } ]
     if { $number_of_remaining_products > 0 } {
-	set next_link "<a href=${base_url}?[export_url_vars category_id subcategory_id subsubcategory_id how_many]&start=[expr $start + $how_many]>Next $number_of_remaining_products</a>"
+        set start_row [expr { $start_row_current + $how_many } ]
+        set next_link "<a href=\"${base_url}?[export_vars -url category_id subcategory_id subsubcategory_id how_many start_row]\">Next $number_of_remaining_products</a>"
     } else {
-	set next_link ""
+        set next_link ""
     }
 }
 
-if { [empty_string_p $next_link] || [empty_string_p $prev_link] } {
+if { [string length $next_link] == 0 || [string length $prev_link] == 0 } {
     set separator ""
 } else {
     set separator "|"
 }
-set package_instance_name [apm_instance_name_from_id [apm_package_id_from_key ecommerce]]
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar ""]
+
 db_release_unused_handles
 ad_return_template
