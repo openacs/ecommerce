@@ -70,20 +70,20 @@ if { [empty_string_p $order_id] } {
     # Find their most recently confirmed order
 
     set most_recently_confirmed_order [db_string get_mrc_order "
-	select order_id 
+    select order_id 
         from ec_orders
-	where user_id=:user_id
-	and confirmed_date is not null
-	and order_id = (select max(o2.order_id)
-			from ec_orders o2
+    where user_id=:user_id
+    and confirmed_date is not null
+    and order_id = (select max(o2.order_id)
+            from ec_orders o2
                         where o2.user_id=:user_id
-			and o2.confirmed_date is not null)" -default ""]
+            and o2.confirmed_date is not null)" -default ""]
 
     if { [empty_string_p $most_recently_confirmed_order] } {
-	rp_internal_redirect index
+    rp_internal_redirect index
         ns_log Notice "finalize-order.tcl ref(84): no confirmed order for user $user_id. Redirecting user."
     } else {
-	rp_internal_redirect thank-you
+    rp_internal_redirect thank-you
     }
     ad_script_abort
 }
@@ -129,13 +129,13 @@ if { [empty_string_p $address_id] } {
     # goods not requiring shipping.
 
     if {[db_0or1row shipping_avail "
-	select p.no_shipping_avail_p, count (*)
-	from ec_items i, ec_products p
-	where i.product_id = p.product_id
-	and p.no_shipping_avail_p = 'f' 
-	and i.order_id = :order_id
-	group by no_shipping_avail_p"]} {
-	ad_returnredirect [ec_securelink [ec_url]checkout]
+    select p.no_shipping_avail_p, count (*)
+    from ec_items i, ec_products p
+    where i.product_id = p.product_id
+    and p.no_shipping_avail_p = 'f' 
+    and i.order_id = :order_id
+    group by no_shipping_avail_p"]} {
+    ad_returnredirect [ec_securelink [ec_url]checkout]
         ad_script_abort
     }
 }
@@ -158,12 +158,12 @@ if { [empty_string_p $creditcard_id] } {
     set price_shipping_gift_certificate_and_tax [ec_price_shipping_gift_certificate_and_tax_in_an_order $order_id]
     set order_total_price_pre_gift_certificate [expr [lindex $price_shipping_gift_certificate_and_tax 0] + [lindex $price_shipping_gift_certificate_and_tax 1]]
     set gift_certificate_balance [db_string get_gc_balance "
-	select ec_gift_certificate_balance(:user_id) 
-	from dual"]
+    select ec_gift_certificate_balance(:user_id) 
+    from dual"]
     if { $gift_certificate_balance < $order_total_price_pre_gift_certificate } {
-	set gift_certificate_covers_cost_p "f"
+    set gift_certificate_covers_cost_p "f"
     } else {
-	set gift_certificate_covers_cost_p "t"
+    set gift_certificate_covers_cost_p "t"
     }
 }
 
@@ -183,7 +183,7 @@ if { [empty_string_p $shipping_method] || ([empty_string_p $creditcard_id] && (!
 db_transaction {
     ec_update_state_to_confirmed $order_id
 }
-
+ns_log Notice "finalize-order.tcl,ref(186) order_id $order_id now in confirmed state."
 # (2) Try to authorize the user's credit card info and either
 #     (a) send them email & redirect them to a thank you page, or
 #     (b) redirect them to a "please fix your credit card info" page
@@ -224,604 +224,610 @@ if {$hard_goods_cost > 0} {
     # The order contains hard goods that come at a cost.
 
     if {$soft_goods_cost > 0} {
-	
-	# The order contains both hard and soft goods that come at a
-	# cost.
+    
+    # The order contains both hard and soft goods that come at a
+    # cost.
 
-	if {$applied_certificate_amount >= [expr $soft_goods_cost + $soft_goods_tax]} {
+    if {$applied_certificate_amount >= [expr $soft_goods_cost + $soft_goods_tax]} {
 
-	    # The applied certificates cover the cost of the soft
-	    # goods. 
+        # The applied certificates cover the cost of the soft
+        # goods. 
 
-	    if {[expr $applied_certificate_amount - $soft_goods_cost - $soft_goods_tax] >= [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + \
-												$order_shipping + $order_shipping_tax]} {
+        if {[expr $applied_certificate_amount - $soft_goods_cost - $soft_goods_tax] >= [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + \
+                                                $order_shipping + $order_shipping_tax]} {
 
-		# The applied certificates cover the cost of the soft
-		# goods as well as the hard goods. No financial
-		# transactions required. Mail the confirmation e-mail
-		# to the user.
+        # The applied certificates cover the cost of the soft
+        # goods as well as the hard goods. No financial
+        # transactions required. Mail the confirmation e-mail
+        # to the user.
 
-		ec_email_new_order $order_id
+        ec_email_new_order $order_id
 
-		# Change the order state from 'confirmed' to
-		# 'authorized'.
+        # Change the order state from 'confirmed' to
+        # 'authorized'.
 
-		ec_update_state_to_authorized $order_id 
-		rp_internal_redirect thank-you
+        ec_update_state_to_authorized $order_id 
+        rp_internal_redirect thank-you
 
-	    } else {
+        } else {
 
-		# The applied certificates cover the cost of the soft
-		# goods but not of the hard goods. Create a new
-		# financial transaction
+        # The applied certificates cover the cost of the soft
+        # goods but not of the hard goods. Create a new
+        # financial transaction
 
-		set transaction_id [db_nextval ec_transaction_id_sequence]
-		set transaction_amount [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + $order_shipping + $order_shipping_tax - \
-					    [expr $applied_certificate_amount - $soft_goods_cost - $soft_goods_tax]]
-		db_dml insert_financial_transaction "
-		    insert into ec_financial_transactions
-		    (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
-		    values
-		    (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
+        set transaction_id [db_nextval ec_transaction_id_sequence]
+        set transaction_amount [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + $order_shipping + $order_shipping_tax - \
+                        [expr $applied_certificate_amount - $soft_goods_cost - $soft_goods_tax]]
+        db_dml insert_financial_transaction "
+            insert into ec_financial_transactions
+            (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
+            values
+            (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
 
-		array set response [ec_creditcard_authorization $order_id $transaction_id]
-		set result $response(response_code)
-		set transaction_id $response(transaction_id)
-		if { [string equal $result "authorized"] } {
-		    ec_email_new_order $order_id
+        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        set result $response(response_code)
+        set transaction_id $response(transaction_id)
+        if { [string equal $result "authorized"] } {
+            ec_email_new_order $order_id
 
-		    # Change the order state from 'confirmed' to
-		    # 'authorized'.
+            # Change the order state from 'confirmed' to
+            # 'authorized'.
 
-		    ec_update_state_to_authorized $order_id 
+            ec_update_state_to_authorized $order_id 
 
-		    # Record the date & time of the authorization.
+            # Record the date & time of the authorization.
 
-		    db_dml update_authorized_date "
-			update ec_financial_transactions 
-			set authorized_date = sysdate
-			where transaction_id = :transaction_id"
-		}
+            db_dml update_authorized_date "
+            update ec_financial_transactions 
+            set authorized_date = sysdate
+            where transaction_id = :transaction_id"
+        }
 
-		if { [string equal $result "authorized"] || [string equal $result "no_recommendation"] } {
-		    rp_internal_redirect thank-you
+        if { [string equal $result "authorized"] || [string equal $result "no_recommendation"] } {
+            rp_internal_redirect thank-you
                     ad_script_abort
-		} elseif { [string equal $result "failed_authorization"] } {
+        } elseif { [string equal $result "failed_authorization"] } {
 
-		    # Updates everything that needs to be updated if a
-		    # confirmed order fails
+            # Updates everything that needs to be updated if a
+            # confirmed order fails
 
-		    ec_update_state_to_in_basket $order_id
+            ec_update_state_to_in_basket $order_id
 
                     # authorization error is not necessarily the fault of the user's card, so log it for identifying pattern for diagnostics
                     ns_log Notice "finalize-order.tcl ref(295): failed_authorization for order_id: $order_id. Redirecting user to credit-card-correction."
 
-		    rp_internal_redirect credit-card-correction
+            rp_internal_redirect credit-card-correction
                     ad_script_abort
-		} else {
+        } else {
 
-		    # Then result is probably "invalid_input".  This should never
-		    # occur
+            # Then result is probably "invalid_input".  This should never
+            # occur
 
-		    ns_log Notice "Order $order_id received a result of $result"
-		    ad_return_error "Sorry" "
-			<p>There has been an error in the processing of your credit card information.
-			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
+            ns_log Notice "Order $order_id received a result of $result"
+            ad_return_error "Sorry" "
+            <p>There has been an error in the processing of your credit card information.
+               Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
                     ad_script_abort
-		}
-	    }
-	} else {
-
-	    # The applied certificates do no cover the cost of the
-	    # soft goods.
-
-	    if {$applied_certificate_amount >= [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + \
-						    $order_shipping + $order_shipping_tax]} {
-
-		# The applied certificates cover the cost of the hard
-		# goods but not the soft goods. Create a new financial
-		# transaction.
-
-		set transaction_id [db_nextval ec_transaction_id_sequence]
-		set transaction_amount [expr $soft_goods_cost + $soft_goods_tax - \
-					    [expr $applied_certificate_amount - [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + \
-										     $order_shipping + $order_shipping_tax]]] 
-		db_dml insert_financial_transaction "
-		    insert into ec_financial_transactions
-		    (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
-		    values
-		    (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
-
-		array set response [ec_creditcard_authorization $order_id $transaction_id]
-		set result $response(response_code)
-		set transaction_id $response(transaction_id)
-		if { [string equal $result "authorized"] } {
-		    ec_email_new_order $order_id
-
-		    # Change the order state from 'confirmed' to
-		    # 'authorized'.
-
-		    ec_update_state_to_authorized $order_id 
-		    
-		    # Record the date & time of the authorization and
-		    # schedule the transaction for settlement.
-
-		    db_dml schedule_settlement "
-			update ec_financial_transactions 
-			set authorized_date = sysdate, to_be_captured_p = 't', to_be_captured_date = sysdate
-			where transaction_id = :transaction_id"
-
-		    # Mark the transaction now, rather than waiting
-		    # for the scheduled procedures to mark the
-		    # transaction.
-
-		    array set response [ec_creditcard_marking $transaction_id]
-		    set mark_result $response(response_code)
-		    set pgw_transaction_id $response(transaction_id)
-		    if { [string equal $mark_result "invalid_input"]} {
-			set problem_details "
-			    When trying to mark the transaction for the items that don't require shipment (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
-			db_dml record_marking_problem "
-			    insert into ec_problems_log
-			    (problem_id, problem_date, problem_details, order_id)
-			    values
-			    (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
-		    } elseif {[string equal $mark_result "success"]} {
-			db_dml update_marked_date "
-			    update ec_financial_transactions 
-			    set marked_date = sysdate
-			    where transaction_id = :pgw_transaction_id"
-		    }
-
- 		    rp_internal_redirect thank-you
-
-		} elseif { [string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
-
-		    # If the gateway returns no recommendation then
-		    # possibility remains that the card is invalid and
-		    # that soft goods have been 'shipped' because the
-		    # gateway was down and could not verify the soft
-		    # goods transaction. The store owner then depends
-		    # on the honesty of visitor to obtain a new valid
-		    # credit card for the 'shipped' products.
-
-		    if {[string equal $result "no_recommendation"] } {
-
-			# Therefor reject the transaction and ask for
-			# (a new credit card and ask) the visitor to
-			# retry. Most credit card gateways have
-			# uptimes close to 99% so this scenario should
-			# not happen often. Another reason for
-			# rejecting transactions without
-			# recommendation is that the scheduled
-			# procedures can't authorize soft goods
-			# transactions properly.
-
-			db_dml set_transaction_failed "
-			    update ec_financial_transactions
-			    set failed_p = 't'
-			    where transaction_id = :transaction_id"
-
-		    }
-
-		    # Updates everything that needs to be updated if a
-		    # confirmed order fails
-
-		    ec_update_state_to_in_basket $order_id
-                    ns_log Notice "finalize-order.tcl ref(411): updated creditcard check failed for order_id $order_id. Redirecting to credit-card-correction"
-		    rp_internal_redirect credit-card-correction
-                    ad_script_abort
-		} else {
-
-		    # Then result is probably "invalid_input".  This should never
-		    # occur
-
-		    ns_log Notice "Order $order_id received a result of $result"
-		    ad_return_error "Sorry" "
-			<p>There has been an error in the processing of your credit card information.
-			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
-		}
-	    } else {
-
-		# The applied certificates cover neither the cost of
-		# the hard goods nor the soft goods. Create separate
-		# transactions for the soft goods and the hard goods.
-
-		set transaction_id [db_nextval ec_transaction_id_sequence]
-		set transaction_amount [expr $soft_goods_cost + $soft_goods_tax - $applied_certificate_amount]
-		db_dml insert_financial_transaction "
-		    insert into ec_financial_transactions
-		    (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
-		    values
-		    (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
-
-		array set response [ec_creditcard_authorization $order_id $transaction_id]
-		set result $response(response_code)
-		set soft_goods_transaction_id $response(transaction_id)
-		if { [string equal $result "authorized"] } {
-		    ec_email_new_order $order_id
-
-		    # Record the date & time of the soft goods
-		    # authorization.
-
-		    set transaction_id $soft_goods_transaction_id
-		    db_dml update_authorized_date "
-			update ec_financial_transactions 
-			set authorized_date = sysdate
-			where transaction_id = :transaction_id"
-		    
-		    # Calculate the transaction amount for the hard
-		    # goods.
-
-		    set transaction_amount [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + $order_shipping + $order_shipping_tax + \
-						$soft_goods_cost + $soft_goods_tax - $transaction_amount]
-		    set transaction_id [db_nextval ec_transaction_id_sequence]
-		    db_dml insert_financial_transaction "
-			insert into ec_financial_transactions
-			(transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
-			values
-			(:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
-
-		    array set response [ec_creditcard_authorization $order_id $transaction_id]
-		    set result $response(response_code)
-		    set hard_goods_transaction_id $response(transaction_id)
-		    if { [string equal $result "authorized"] } {
-
-			# Both transactions are approved. Change the
-			# order state from 'confirmed' to
-			# 'authorized'.
-
-			ec_update_state_to_authorized $order_id 
-
-			# Schedule the soft goods transaction for
-			# settlement.
-
-			set transaction_id $soft_goods_transaction_id
-			db_dml schedule_settlement_soft_goods "
-			    update ec_financial_transactions 
-			    set to_be_captured_p = 't', to_be_captured_date = sysdate
-			    where transaction_id = :transaction_id"
-
-			# Mark the transaction now, rather than
-			# waiting for the scheduled procedures to mark
-			# the transaction.
-
-			array set response [ec_creditcard_marking $transaction_id]
-			set mark_result $response(response_code)
-			set pgw_transaction_id $response(transaction_id)
-			if { [string equal $mark_result "invalid_input"]} {
-			    set problem_details "
-				When trying to mark the transaction for the items that don't require shipment (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
-			    db_dml record_marking_problem "
-				insert into ec_problems_log
-				(problem_id, problem_date, problem_details, order_id)
-				values
-				(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
-			} elseif {[string equal $mark_result "success"]} {
-			    db_dml update_marked_date "
-				update ec_financial_transactions 
-				set marked_date = sysdate
-				where transaction_id = :pgw_transaction_id"
-			}
-
-			# Record the date & time of the hard goods
-			# authorization.
-			
-			set transaction_id $hard_goods_transaction_id
-			db_dml update_authorized_date "
-			    update ec_financial_transactions 
-			    set authorized_date = sysdate
-			    where transaction_id = :transaction_id"
-			
-			rp_internal_redirect thank-you
-			
-		    } elseif {[string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
-
-			# Record both transactions as failed and ask
-			# for a new credit card number. The second
-			# transaction could have failed because it
-			# maxed out the card. Both transactions need
-			# to failed as the user might choose to use a
-			# different card and this procedure doesn't
-			# check for prior authorized transactions.
-
-			set transaction_id $soft_goods_transaction_id
-			db_dml set_transaction_failed "
-			    update ec_financial_transactions
-			    set failed_p = 't'
-			    where transaction_id = :transaction_id"
-
-			set transaction_id $hard_goods_transaction_id
-			db_dml set_transaction_failed "
-			    update ec_financial_transactions
-			    set failed_p = 't'
-			    where transaction_id = :transaction_id"
-
-			# Updates everything that needs to be updated if a
-			# confirmed order fails
-
-			ec_update_state_to_in_basket $order_id
-                        ns_log Notice "finalize-order.tcl ref(544): creditcard check failed. Redirecting user to credit-card-correction."
-			rp_internal_redirect credit-card-correction
-
-		    } else {
-
-			# Then result is probably
-			# "invalid_input". This should never occur
-
-			ns_log Notice "Order $order_id received a result of $result"
-			ad_return_error "Sorry" "
-			    <p>There has been an error in the processing of your credit card information.
-			       Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
-		    }
-		} elseif { [string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
-		    
-		    set transaction_id $soft_goods_transaction_id
-		    db_dml set_transaction_failed "
-			update ec_financial_transactions
-			set failed_p = 't'
-			where transaction_id = :transaction_id"
-
-		    # Updates everything that needs to be updated if a
-		    # confirmed order fails
-
-		    ec_update_state_to_in_basket $order_id
-
-		    rp_internal_redirect credit-card-correction
-                    ad_script_abort
-		} else {
-
-		    # Then result is probably "invalid_input".  This should never
-		    # occur
-
-		    ns_log Notice "Order $order_id received a result of $result"
-		    ad_return_error "Sorry" "
-			<p>There has been an error in the processing of your credit card information.
-			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
-		}
-	    }
-	}
+        }
+        }
     } else {
 
-	# The order contains only hard goods that come at a cost.
+        # The applied certificates do no cover the cost of the
+        # soft goods.
 
-	if {$applied_certificate_amount >= [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping  + $hard_goods_shipping_tax + $order_shipping + $order_shipping_tax]} {
+        if {$applied_certificate_amount >= [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + \
+                            $order_shipping + $order_shipping_tax]} {
 
-	    # The applied certificates cover the cost of the hard
-	    # goods. No financial transaction required.
+        # The applied certificates cover the cost of the hard
+        # goods but not the soft goods. Create a new financial
+        # transaction.
 
-	    # Mail the confirmation e-mail to the user.
+        set transaction_id [db_nextval ec_transaction_id_sequence]
+        set transaction_amount [expr $soft_goods_cost + $soft_goods_tax - \
+                        [expr $applied_certificate_amount - [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + \
+                                             $order_shipping + $order_shipping_tax]]] 
+        db_dml insert_financial_transaction "
+            insert into ec_financial_transactions
+            (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
+            values
+            (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
 
-	    ec_email_new_order $order_id
+        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        set result $response(response_code)
+        set transaction_id $response(transaction_id)
+        if { [string equal $result "authorized"] } {
+            ec_email_new_order $order_id
 
-	    # Change the order state from 'confirmed' to
-	    # 'authorized'.
+            # Change the order state from 'confirmed' to
+            # 'authorized'.
 
-	    ec_update_state_to_authorized $order_id 
-	    rp_internal_redirect thank-you
+            ec_update_state_to_authorized $order_id 
+            
+            # Record the date & time of the authorization and
+            # schedule the transaction for settlement.
 
-	} else {
+            db_dml schedule_settlement "
+            update ec_financial_transactions 
+            set authorized_date = sysdate, to_be_captured_p = 't', to_be_captured_date = sysdate
+            where transaction_id = :transaction_id"
 
-	    # The applied certificates only partially covered the cost
-	    # of the hard goods. Create a new financial transaction.
+            # Mark the transaction now, rather than waiting
+            # for the scheduled procedures to mark the
+            # transaction.
 
-	    set transaction_id [db_nextval ec_transaction_id_sequence]
-	    set transaction_amount [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping  + $hard_goods_shipping_tax + $order_shipping + $order_shipping_tax - \
-					[expr $applied_certificate_amount - $soft_goods_cost - $soft_goods_tax]]
-	    db_dml insert_financial_transaction "
-		insert into ec_financial_transactions
-		(transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
-		values
-		(:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
+            array set response [ec_creditcard_marking $transaction_id]
+            set mark_result $response(response_code)
+            set pgw_transaction_id $response(transaction_id)
+            if { [string equal $mark_result "invalid_input"]} {
+            set problem_details "
+                When trying to mark the transaction for the items that don't require shipment (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
+            db_dml record_marking_problem "
+                insert into ec_problems_log
+                (problem_id, problem_date, problem_details, order_id)
+                values
+                (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+            } elseif {[string equal $mark_result "success"]} {
+            db_dml update_marked_date "
+                update ec_financial_transactions 
+                set marked_date = sysdate
+                where transaction_id = :pgw_transaction_id"
+            }
 
-	    array set response [ec_creditcard_authorization $order_id $transaction_id]
-	    set result $response(response_code)
-	    set transaction_id $response(transaction_id)
-	    if { [string equal $result "authorized"] } {
-		ec_email_new_order $order_id
+             rp_internal_redirect thank-you
 
-		# Change the order state from 'confirmed' to
-		# 'authorized'.
+        } elseif { [string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
 
-		ec_update_state_to_authorized $order_id 
+            # If the gateway returns no recommendation then
+            # possibility remains that the card is invalid and
+            # that soft goods have been 'shipped' because the
+            # gateway was down and could not verify the soft
+            # goods transaction. The store owner then depends
+            # on the honesty of visitor to obtain a new valid
+            # credit card for the 'shipped' products.
 
-		# Record the date & time of the authorization.
+            if {[string equal $result "no_recommendation"] } {
 
-		db_dml update_authorized_date "
-		    update ec_financial_transactions 
-		    set authorized_date = sysdate
-		    where transaction_id = :transaction_id"
-	    }
+            # Therefor reject the transaction and ask for
+            # (a new credit card and ask) the visitor to
+            # retry. Most credit card gateways have
+            # uptimes close to 99% so this scenario should
+            # not happen often. Another reason for
+            # rejecting transactions without
+            # recommendation is that the scheduled
+            # procedures can't authorize soft goods
+            # transactions properly.
 
-	    if { [string equal $result "authorized"] || [string equal $result "no_recommendation"] } {
-		rp_internal_redirect thank-you
-                ad_script_abort
-	    } elseif { [string equal $result "failed_authorization"] } {
+            db_dml set_transaction_failed "
+                update ec_financial_transactions
+                set failed_p = 't'
+                where transaction_id = :transaction_id"
 
-		# If the gateway returns no recommendation then
-		# possibility remains that the card is invalid and
-		# that soft goods have been 'shipped' because the
-		# gateway was down and could not verify the soft goods
-		# transaction. The store owner then depends on the
-		# honesty of visitor to obtain a new valid credit card
-		# for the 'shipped' products.
+            }
 
-		if {[string equal $result "no_recommendation"] } {
+            # Updates everything that needs to be updated if a
+            # confirmed order fails
 
-		    # Therefor reject the transaction and ask for (a
-		    # new credit card and ask) the visitor to
-		    # retry. Most credit card gateways have uptimes
-		    # close to 99% so this scenario should not happen
-		    # often. Another reason for rejecting transactions
-		    # without recommendation is that the scheduled
-		    # procedures can't authorize soft goods
-		    # transactions properly.
+            ec_update_state_to_in_basket $order_id
+                    ns_log Notice "finalize-order.tcl ref(411): updated creditcard check failed for order_id $order_id. Redirecting to credit-card-correction"
+                    ns_log Notice "finalize-order.tcl ref(412): result = '$result'"
+            rp_internal_redirect credit-card-correction
+                    ad_script_abort
+        } else {
 
-		    db_dml set_transaction_failed "
-			update ec_financial_transactions
-			set failed_p = 't'
-			where transaction_id = :transaction_id"
+            # Then result is probably "invalid_input".  This should never
+            # occur
 
-		}
+            ns_log Notice "Order $order_id received a result of $result"
+            ad_return_error "Sorry" "
+            <p>There has been an error in the processing of your credit card information.
+               Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
+        }
+        } else {
 
-		# Updates everything that needs to be updated if a
-		# confirmed order fails
+        # The applied certificates cover neither the cost of
+        # the hard goods nor the soft goods. Create separate
+        # transactions for the soft goods and the hard goods.
 
-		ec_update_state_to_in_basket $order_id
+        set transaction_id [db_nextval ec_transaction_id_sequence]
+        set transaction_amount [expr $soft_goods_cost + $soft_goods_tax - $applied_certificate_amount]
+        db_dml insert_financial_transaction "
+            insert into ec_financial_transactions
+            (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
+            values
+            (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
+
+        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        set result $response(response_code)
+        set soft_goods_transaction_id $response(transaction_id)
+        if { [string equal $result "authorized"] } {
+            ec_email_new_order $order_id
+
+            # Record the date & time of the soft goods
+            # authorization.
+
+            set transaction_id $soft_goods_transaction_id
+            db_dml update_authorized_date "
+            update ec_financial_transactions 
+            set authorized_date = sysdate
+            where transaction_id = :transaction_id"
+            
+            # Calculate the transaction amount for the hard
+            # goods.
+
+            set transaction_amount [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping + $hard_goods_shipping_tax + $order_shipping + $order_shipping_tax + \
+                        $soft_goods_cost + $soft_goods_tax - $transaction_amount]
+            set transaction_id [db_nextval ec_transaction_id_sequence]
+            db_dml insert_financial_transaction "
+            insert into ec_financial_transactions
+            (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
+            values
+            (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
+
+            array set response [ec_creditcard_authorization $order_id $transaction_id]
+            set result $response(response_code)
+            set hard_goods_transaction_id $response(transaction_id)
+            if { [string equal $result "authorized"] } {
+
+            # Both transactions are approved. Change the
+            # order state from 'confirmed' to
+            # 'authorized'.
+
+            ec_update_state_to_authorized $order_id 
+            ns_log Notice "finalize-order.tcl, ref(476), order state changed from confirmed to authorized."
+
+            # Schedule the soft goods transaction for
+            # settlement.
+
+            set transaction_id $soft_goods_transaction_id
+            db_dml schedule_settlement_soft_goods "
+                update ec_financial_transactions 
+                set to_be_captured_p = 't', to_be_captured_date = sysdate
+                where transaction_id = :transaction_id"
+
+            # Mark the transaction now, rather than
+            # waiting for the scheduled procedures to mark
+            # the transaction.
+
+            array set response [ec_creditcard_marking $transaction_id]
+            set mark_result $response(response_code)
+            set pgw_transaction_id $response(transaction_id)
+            if { [string equal $mark_result "invalid_input"]} {
+                set problem_details "
+                When trying to mark the transaction for the items that don't require shipment (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
+                db_dml record_marking_problem "
+                insert into ec_problems_log
+                (problem_id, problem_date, problem_details, order_id)
+                values
+                (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+            } elseif {[string equal $mark_result "success"]} {
+                db_dml update_marked_date "
+                update ec_financial_transactions 
+                set marked_date = sysdate
+                where transaction_id = :pgw_transaction_id"
+            }
+
+            # Record the date & time of the hard goods
+            # authorization.
+            
+            set transaction_id $hard_goods_transaction_id
+            db_dml update_authorized_date "
+                update ec_financial_transactions 
+                set authorized_date = sysdate
+                where transaction_id = :transaction_id"
+            
+            rp_internal_redirect thank-you
+            
+            } elseif {[string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
+
+            ns_log Notice "finalize-order.tcl, ref(522): result = '$result'"
+            # Record both transactions as failed and ask
+            # for a new credit card number. The second
+            # transaction could have failed because it
+            # maxed out the card. Both transactions need
+            # to failed as the user might choose to use a
+            # different card and this procedure doesn't
+            # check for prior authorized transactions.
+
+            set transaction_id $soft_goods_transaction_id
+            db_dml set_transaction_failed "
+                update ec_financial_transactions
+                set failed_p = 't'
+                where transaction_id = :transaction_id"
+
+            set transaction_id $hard_goods_transaction_id
+            db_dml set_transaction_failed "
+                update ec_financial_transactions
+                set failed_p = 't'
+                where transaction_id = :transaction_id"
+
+            # Updates everything that needs to be updated if a
+            # confirmed order fails
+
+            ec_update_state_to_in_basket $order_id
+                        ns_log Notice "finalize-order.tcl ref(544): creditcard check failed. Redirecting user to credit-card-correction."
+            rp_internal_redirect credit-card-correction
+
+            } else {
+
+            # Then result is probably
+            # "invalid_input". This should never occur
+
+            ns_log Notice "Order $order_id received a result of $result"
+            ad_return_error "Sorry" "
+                <p>There has been an error in the processing of your credit card information.
+                   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
+            }
+        } elseif { [string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
+            
+            set transaction_id $soft_goods_transaction_id
+            db_dml set_transaction_failed "
+            update ec_financial_transactions
+            set failed_p = 't'
+            where transaction_id = :transaction_id"
+
+            # Updates everything that needs to be updated if a
+            # confirmed order fails
+
+            ec_update_state_to_in_basket $order_id
+
+            rp_internal_redirect credit-card-correction
+                    ad_script_abort
+        } else {
+
+            # Then result is probably "invalid_input".  This should never
+            # occur
+
+            ns_log Notice "Order $order_id received a result of $result"
+            ad_return_error "Sorry" "
+            <p>There has been an error in the processing of your credit card information.
+               Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
+        }
+        }
+    }
+    } else {
+
+    # The order contains only hard goods that come at a cost.
+
+    if {$applied_certificate_amount >= [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping  + $hard_goods_shipping_tax + $order_shipping + $order_shipping_tax]} {
+
+        # The applied certificates cover the cost of the hard
+        # goods. No financial transaction required.
+        ns_log Notice "finalize-order.tcl, ref(595): no financial transaction required for hard goods, order_id $order_id."
+        # Mail the confirmation e-mail to the user.
+
+        ec_email_new_order $order_id
+
+        # Change the order state from 'confirmed' to
+        # 'authorized'.
+
+        ec_update_state_to_authorized $order_id 
+        rp_internal_redirect thank-you
+
+    } else {
+
+        # The applied certificates only partially covered the cost
+        # of the hard goods. Create a new financial transaction.
+
+        set transaction_id [db_nextval ec_transaction_id_sequence]
+        set transaction_amount [expr $hard_goods_cost + $hard_goods_tax + $hard_goods_shipping  + $hard_goods_shipping_tax + $order_shipping + $order_shipping_tax - \
+                    [expr $applied_certificate_amount - $soft_goods_cost - $soft_goods_tax]]
+        db_dml insert_financial_transaction "
+        insert into ec_financial_transactions
+        (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
+        values
+        (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
+
+        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        set result $response(response_code)
+        set transaction_id $response(transaction_id)
+        #ns_log Notice "finalize-order.tcl, ref(623): order_id=$order_id,result=$result,transaction_id=${transaction_id}"
+        if { [string equal $result "authorized"] } {
+        ec_email_new_order $order_id
+
+        # Change the order state from 'confirmed' to
+        # 'authorized'.
+
+        ec_update_state_to_authorized $order_id 
+
+        # Record the date & time of the authorization.
+
+        db_dml update_authorized_date "
+            update ec_financial_transactions 
+            set authorized_date = sysdate
+            where transaction_id = :transaction_id"
+        }
+
+        if { [string equal $result "authorized"] || [string equal $result "no_recommendation"] } {
+            rp_internal_redirect thank-you
+            #ns_log Notice "finalize-order.tcl(ref638): result = '${result}'"
+            ad_script_abort
+        } elseif { [string equal $result "failed_authorization"] } {
+
+        # If the gateway returns no recommendation then
+        # possibility remains that the card is invalid and
+        # that soft goods have been 'shipped' because the
+        # gateway was down and could not verify the soft goods
+        # transaction. The store owner then depends on the
+        # honesty of visitor to obtain a new valid credit card
+        # for the 'shipped' products.
+
+        if {[string equal $result "no_recommendation"] } {
+
+            # Therefor reject the transaction and ask for (a
+            # new credit card and ask) the visitor to
+            # retry. Most credit card gateways have uptimes
+            # close to 99% so this scenario should not happen
+            # often. Another reason for rejecting transactions
+            # without recommendation is that the scheduled
+            # procedures can't authorize soft goods
+            # transactions properly.
+
+            ns_log Notice "finalize-order.tcl,ref(665): attempting to mark ec_financial_transactions.failed_p as true for transaction_id ${transaction_id}"
+            db_dml set_transaction_failed "
+            update ec_financial_transactions
+            set failed_p = 't'
+            where transaction_id = :transaction_id"
+
+        }
+
+        # Updates everything that needs to be updated if a
+        # confirmed order fails
+
+        ec_update_state_to_in_basket $order_id
 
                 # log this just in case this is a symptom of an extended gateway downtime
                 ns_log Notice "finalize-order.tcl, ref(671): creditcard check failed for order_id $order_id. Redirecting to credit-card-correction"
-
-		rp_internal_redirect credit-card-correction
+ns_log Notice "finalize-order.tcl, ref(672): result = '$result'"
+        rp_internal_redirect credit-card-correction
                 ad_script_abort
-	    } else {
+        } else {
 
-		# Then result is probably "invalid_input".  This should never
-		# occur
+        # Then result is probably "invalid_input".  This should never
+        # occur
 
-		ns_log Notice "Order $order_id received a result of $result"
-		ad_return_error "Sorry" "
-		    <p>There has been an error in the processing of your credit card information.
-		    Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
-	    }
-	}
+        ns_log Notice "Order $order_id received a result of $result"
+        ad_return_error "Sorry" "
+            <p>There has been an error in the processing of your credit card information.
+            Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
+        }
+    }
     }
 } else {
     
     # The order does not contain any hard goods that come at a cost.
     
     if {$soft_goods_cost > 0} {
-	
-	# The order contains only soft goods that come at a cost.
+    
+    # The order contains only soft goods that come at a cost.
 
-	if {$applied_certificate_amount >= [expr $soft_goods_cost + $soft_goods_tax]} {
+    if {$applied_certificate_amount >= [expr $soft_goods_cost + $soft_goods_tax]} {
 
-	    # The gift certificates cover the cost of the soft
-	    # goods. No financial transaction required. Mail a
-	    # confirmation e-mail to the user.
+        # The gift certificates cover the cost of the soft
+        # goods. No financial transaction required. Mail a
+        # confirmation e-mail to the user.
 
-	    ec_email_new_order $order_id
+        ec_email_new_order $order_id
 
-	    # Change the order state from 'confirmed' to
-	    # 'authorized'.
+        # Change the order state from 'confirmed' to
+        # 'authorized'.
 
-	    ec_update_state_to_authorized $order_id 
-	    rp_internal_redirect thank-you
+        ec_update_state_to_authorized $order_id 
+        rp_internal_redirect thank-you
 
-	} else {
-
-	    # The certificates only partially cover the cost of the
-	    # soft goods. Create a new financial transaction
-
-	    set transaction_id [db_nextval ec_transaction_id_sequence]
-	    set transaction_amount [expr $soft_goods_cost + $soft_goods_tax - $applied_certificate_amount]
-	    db_dml insert_financial_transaction "
-		insert into ec_financial_transactions
-		(transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
-		values
-		(:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
-
-	    array set response [ec_creditcard_authorization $order_id $transaction_id]
-	    set result $response(response_code)
-	    set transaction_id $response(transaction_id)
-	    if { [string equal $result "authorized"] } {
-		ec_email_new_order $order_id
-
-		# Change the order state from 'confirmed' to
-		# 'authorized'.
-
-		ec_update_state_to_authorized $order_id 
-
-		# Record the date & time of the authorization and
-		# schedule the transaction for settlement.
-
-		db_dml schedule_settlement "
-			update ec_financial_transactions 
-			set authorized_date = sysdate, to_be_captured_p = 't', to_be_captured_date = sysdate
-			where transaction_id = :transaction_id"
-
-		# Mark the transaction now, rather than waiting for
-		# the scheduled procedures to mark the transaction.
-
-		array set response [ec_creditcard_marking $transaction_id]
-		set mark_result $response(response_code)
-		set pgw_transaction_id $response(transaction_id)
-		if { [string equal $mark_result "invalid_input"]} {
-		    set problem_details "
-			When trying to mark the transaction for the items that don't require shipment (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
-		    db_dml record_marking_problem "
-			insert into ec_problems_log
-			(problem_id, problem_date, problem_details, order_id)
-			values
-			(ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
-		} elseif {[string equal $mark_result "success"]} {
-		    db_dml update_marked_date "
-			update ec_financial_transactions 
-			set marked_date = sysdate
-			where transaction_id = :pgw_transaction_id"
-		}
-		rp_internal_redirect thank-you
-	    }
-
-	    if {[string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
-
-		# If the gateway returns no recommendation then the
-		# possibility remains that the card is invalid and
-		# that soft goods have been 'shipped' because the
-		# gateway was down and could not verify the soft goods
-		# transaction. The store owner then depends on the
-		# honesty of visitor to obtain a new valid credit card
-		# for the 'shipped' products.
-
-		if {[string equal $result "no_recommendation"] } {
-
-		    # Therefor reject the transaction and ask for (a
-		    # new credit card and ask) the visitor to
-		    # retry. Most credit card gateways have uptimes
-		    # close to 99% so this scenario should not happen
-		    # often. Another reason for rejecting transactions
-		    # without recommendation is that the scheduled
-		    # procedures can't authorize soft goods
-		    # transactions properly.
-
-		    db_dml set_transaction_failed "
-			update ec_financial_transactions
-			set failed_p = 't'
-			where transaction_id = :transaction_id"
-
-		}
-		
-		# Updates everything that needs to be updated if a
-		# confirmed order fails
-		
-		ec_update_state_to_in_basket $order_id
-                ns_log Notice "finalize-order.tcl ref(789): creditcard check failed. Redirecting to credit-card-correction"		
-		rp_internal_redirect credit-card-correction
-                ad_script_abort
-
-	    } else {
-		
-		# Then result is probably "invalid_input".  This should never
-		# occur
-
-		ns_log Notice "Order $order_id received a result of $result"
-		ad_return_error "Sorry" "
-			<p>There has been an error in the processing of your credit card information.
-			   Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
-	    }
-	}
     } else {
 
-	# The order contains neither hard nor soft goods that come at
-	# a cost. No financial transactions required. Mail the
-	# confirmation e-mail to the user.
+        # The certificates only partially cover the cost of the
+        # soft goods. Create a new financial transaction
 
-	ec_email_new_order $order_id
+        set transaction_id [db_nextval ec_transaction_id_sequence]
+        set transaction_amount [expr $soft_goods_cost + $soft_goods_tax - $applied_certificate_amount]
+        db_dml insert_financial_transaction "
+        insert into ec_financial_transactions
+        (transaction_id, order_id, transaction_amount, transaction_type, inserted_date)
+        values
+        (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
 
-	# Change the order state from 'confirmed' to
-	# 'authorized'.
+        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        set result $response(response_code)
+        set transaction_id $response(transaction_id)
+        if { [string equal $result "authorized"] } {
+        ec_email_new_order $order_id
 
-	ec_update_state_to_authorized $order_id 
-	rp_internal_redirect thank-you
+        # Change the order state from 'confirmed' to
+        # 'authorized'.
+
+        ec_update_state_to_authorized $order_id 
+
+        # Record the date & time of the authorization and
+        # schedule the transaction for settlement.
+
+        db_dml schedule_settlement "
+            update ec_financial_transactions 
+            set authorized_date = sysdate, to_be_captured_p = 't', to_be_captured_date = sysdate
+            where transaction_id = :transaction_id"
+
+        # Mark the transaction now, rather than waiting for
+        # the scheduled procedures to mark the transaction.
+
+        array set response [ec_creditcard_marking $transaction_id]
+        set mark_result $response(response_code)
+        set pgw_transaction_id $response(transaction_id)
+        if { [string equal $mark_result "invalid_input"]} {
+            set problem_details "
+            When trying to mark the transaction for the items that don't require shipment (transaction $transaction_id) at [ad_conn url], the following result occurred: $mark_result"
+            db_dml record_marking_problem "
+            insert into ec_problems_log
+            (problem_id, problem_date, problem_details, order_id)
+            values
+            (ec_problem_id_sequence.nextval, sysdate, :problem_details, :order_id)"
+        } elseif {[string equal $mark_result "success"]} {
+            db_dml update_marked_date "
+            update ec_financial_transactions 
+            set marked_date = sysdate
+            where transaction_id = :pgw_transaction_id"
+        }
+        rp_internal_redirect thank-you
+        }
+
+        if {[string equal $result "failed_authorization"] || [string equal $result "no_recommendation"] } {
+
+        # If the gateway returns no recommendation then the
+        # possibility remains that the card is invalid and
+        # that soft goods have been 'shipped' because the
+        # gateway was down and could not verify the soft goods
+        # transaction. The store owner then depends on the
+        # honesty of visitor to obtain a new valid credit card
+        # for the 'shipped' products.
+
+        if {[string equal $result "no_recommendation"] } {
+
+            # Therefor reject the transaction and ask for (a
+            # new credit card and ask) the visitor to
+            # retry. Most credit card gateways have uptimes
+            # close to 99% so this scenario should not happen
+            # often. Another reason for rejecting transactions
+            # without recommendation is that the scheduled
+            # procedures can't authorize soft goods
+            # transactions properly.
+
+            db_dml set_transaction_failed "
+            update ec_financial_transactions
+            set failed_p = 't'
+            where transaction_id = :transaction_id"
+
+        }
+        
+        # Updates everything that needs to be updated if a
+        # confirmed order fails
+        
+        ec_update_state_to_in_basket $order_id
+                ns_log Notice "finalize-order.tcl ref(789): creditcard check failed. Redirecting to credit-card-correction"        
+        rp_internal_redirect credit-card-correction
+                ad_script_abort
+
+        } else {
+        
+        # Then result is probably "invalid_input".  This should never
+        # occur
+
+        ns_log Notice "Order $order_id received a result of $result"
+        ad_return_error "Sorry" "
+            <p>There has been an error in the processing of your credit card information.
+               Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to report the error.</p>"
+        }
+    }
+    } else {
+
+    # The order contains neither hard nor soft goods that come at
+    # a cost. No financial transactions required. Mail the
+    # confirmation e-mail to the user.
+
+    ec_email_new_order $order_id
+
+    # Change the order state from 'confirmed' to
+    # 'authorized'.
+
+    ec_update_state_to_authorized $order_id 
+    rp_internal_redirect thank-you
     }
 }
