@@ -32,7 +32,7 @@ if {![info exists category_id] || ([info exists category_id] && [empty_string_p 
 }
 
 set sub ""
-if {[ec_insubcat]} {
+if {[ec_in_subcat]} {
     append sub "sub"
 } else {
     set subcategory_id 0
