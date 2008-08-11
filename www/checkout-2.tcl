@@ -139,7 +139,7 @@ set rows_of_items ""
 set shipping_avail_p 1
 
 db_foreach get_shipping_data "
-    select p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice
+    select p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id, p.sku, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice
     from ec_orders o, ec_items i, ec_products p, (select offer_code, product_id
 						  from ec_user_session_offer_codes usoc
 						  where usoc.user_session_id=:user_session_id) u
@@ -147,7 +147,7 @@ db_foreach get_shipping_data "
     and o.order_id=i.order_id
     and p.product_id= u.product_id(+)
     and o.user_session_id=:user_session_id and o.order_state='in_basket'
-    group by p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice" {
+    group by p.no_shipping_avail_p, p.product_name, p.one_line_description, p.product_id, p.sku, u.offer_code, i.color_choice, i.size_choice, i.style_choice" {
 
     if { [string compare $no_shipping_avail_p "t"] == 0 } {
         set shipping_avail_p 0
@@ -168,11 +168,13 @@ db_foreach get_shipping_data "
     # Trying out the fancy new . arrays. It would be much better to
     # rework this for a 2D array,multiple setup, but I don't have time
     # to think about it now...
-
+    if { ![info exists sku] } { 
+        set sku ""
+    }
     append rows_of_items "
 	<tr>
-	  <td valign=\"top\"><input type=text name=\"quantity.[list $product_id $color_choice $size_choice $style_choice]\" value=\"$quantity\" size=4 maxlength=4></td>
-	  <td valign=\"top\"><a href=\"product?product_id=$product_id\">$product_name</a>[ec_decode $options "" "" ", $options"]<br>
+	  <td valign=\"top\"><input type=\"text\" name=\"quantity.[list $product_id $color_choice $size_choice $style_choice]\" value=\"$quantity\" size=\"4\" maxlength=\"4\"></td>
+	  <td valign=\"top\">$sku <a href=\"product?product_id=$product_id\">$product_name</a>[ec_decode $options "" "" ", $options"]<br>
 	    [ec_price_line $product_id $user_id $offer_code]</td>
 	</tr>"
 }
