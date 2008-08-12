@@ -859,13 +859,35 @@ ad_proc -private ecds_reverse_context_bar_as_text {
 
 ad_proc -private ecds_abbreviate {
     phrase
+    {max_length {}}
 } {
-    abbreviates a pretty title or phrase to first word
+    abbreviates a pretty title or phrase to first word, or to max_length characters if max_length is a number > 0
 } {
-    regsub -all { .*$} $phrase {..} abbrev1
-    regsub -all {\-.*$} $abbrev1 {..} abbrev
-    regsub -all {\,.*$} $abbrev {..} abbrev1
-    return $abbrev1
+    set suffix ".."
+    set suffix_len [string length $suffix]
+
+    if { [ad_var_type_check_number_p $max_length] && $max_length > 0 } {
+        set phrase_len_limit [expr { $max_length - $suffix_len } ]
+        regsub -all -- { / } $phrase {/} phrase
+        if { [string length $phrase] > $max_length } {
+            set cat_end [expr { [string last " " [string range $phrase 0 $max_length] ] - 1 } ]
+            if { $cat_end < 0 } {
+                set cat_end $phrase_len_limit
+            }
+            set phrase [string range $phrase 0 $cat_end ]
+        append phrase $suffix
+            regsub {[^a-zA-Z0-9]+\.\.} $phrase $suffix phrase
+        }
+        regsub -all -- { } $phrase {\&nbsp;} phrase
+        set abbrev_phrase $phrase
+
+    } else {
+        regsub -all { .*$} $phrase $suffix abbrev1
+        regsub -all {\-.*$} $abbrev1 $suffix abbrev
+        regsub -all {\,.*$} $abbrev $suffix abbrev1
+        set abbrev_phrase $abbrev1
+    }
+    return $abbrev_phrase
 }
 
 ad_proc -private ecds_thumbnail_dimensions {
