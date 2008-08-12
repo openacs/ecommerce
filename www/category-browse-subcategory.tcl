@@ -6,7 +6,7 @@ ad_page_contract {
     @param subcategory_id The ID of the subcategory
     @param subsubcategory_id The possible ID of any subsubcategory
     @param how_many How many products to display on the page
-    @param start Where to begin from
+    @param start_row Where to begin from
     @param usca_p User session begun or not
 
     @author
@@ -19,7 +19,7 @@ ad_page_contract {
     subcategory_id:optional,naturalnum
     subsubcategory_id:optional,naturalnum
     {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
-    {start:naturalnum "1"}
+    {start_row:naturalnum "1"}
     usca_p:optional
 }
 
@@ -53,7 +53,7 @@ if { $user_id != 0 } {
 #        want their offer price
 # 4. Log this category_id into the user session
 
-ec_create_new_session_if_necessary [export_url_vars category_id subcategory_id subsubcategory_id how_many start] cookies_are_not_required
+ec_create_new_session_if_necessary [export_url_vars category_id subcategory_id subsubcategory_id how_many start_row] cookies_are_not_required
 # type4
 
 # this is expensive - do we really need to log this every time? can we write to a file for batched reading later?
@@ -160,15 +160,15 @@ db_multirow -extend {
 
                     }
 
-# what if start is < how many? shouldn't happen I guess...
-if { $start >= $how_many } {
-    set prev_url [export_vars -base [ad_conn url] -override {{start {[expr $start - $how_many]}}} {category_id subsubcategory_id subcategory_id how_many}]
+# what if start_row is < how many? shouldn't happen I guess...
+if { $start_row >= $how_many } {
+    set prev_url [export_vars -base [ad_conn url] -override {{start_row {[expr $start_row - $how_many]}}} {category_id subsubcategory_id subcategory_id how_many}]
 }
 
-set how_many_more [expr ${products:rowcount} - $start - $how_many + 1]
+set how_many_more [expr ${products:rowcount} - $start_row - $how_many + 1]
 
 if { $how_many_more > 0 } {
-    set next_url [export_vars -base [ad_conn url] -override {{start {[expr $start + $how_many]}}} {category_id subsubcategory_id subcategory_id how_many}]
+    set next_url [export_vars -base [ad_conn url] -override {{start_row {[expr $start_row + $how_many]}}} {category_id subsubcategory_id subcategory_id how_many}]
 
     if { $how_many_more >= $how_many } {
         set how_many_next $how_many
@@ -177,7 +177,7 @@ if { $how_many_more > 0 } {
     }
 }
 
-set end [expr $start + $how_many - 1]
+set end [expr $start_row + $how_many - 1]
 
 #==============================
 # subcategories
@@ -193,10 +193,10 @@ if { ![ec_at_bottom_level_p] } {
 }
 
 set the_category_id   $category_id
-set the_category_name [eval "ident \$${sub}category_name"]
+set the_category_name [eval "ec_ident \$${sub}category_name"]
 set category_url "category-browse?category_id=${the_category_id}"
-set title "$category_name &gt; $subcategory_name"
-set context [list $title]
+set title "$category_name : $subcategory_name"
+set context [list [list $category_url $category_name] $subcategory_name]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template

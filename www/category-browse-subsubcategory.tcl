@@ -6,7 +6,7 @@ ad_page_contract {
     @param subcategory_id The ID of the subcategory
     @param subsubcategory_id The ID of the subsubcategory
     @param how_many How many products to show on a page
-    @param start Which product to start at
+    @param start_row Which product to start at
     @param usca_p User session begun or not
 
     @author
@@ -19,7 +19,7 @@ ad_page_contract {
     subcategory_id:optional,naturalnum
     subsubcategory_id:optional,naturalnum
     {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
-    {start:naturalnum "0"}
+    {start_row:naturalnum "0"}
     usca_p:optional
 }
 
@@ -52,7 +52,7 @@ if { $user_id != 0 } {
 #        want their offer price
 # 4. Log this category_id into the user session
 
-ec_create_new_session_if_necessary [export_url_vars category_id subcategory_id subsubcategory_id how_many start] cookies_are_not_required
+ec_create_new_session_if_necessary [export_url_vars category_id subcategory_id subsubcategory_id how_many start_row] cookies_are_not_required
 # type4
 
 if { [string compare $user_session_id "0"] != 0 } {
@@ -158,15 +158,15 @@ db_multirow -extend {
                         incr count
                     }
 
-# what if start is < how many? shouldn't happen I guess...
-if { $start >= $how_many } {
-    set prev_url [export_vars -base [ad_conn url] -override {{start {[expr $start - $how_many]}}} {category_id subcategory_id subsubcategory_id how_many}]
+# if start_row < how_many, then we can assume it is the first page and so no Previous link.
+if { $start_row >= $how_many } {
+    set prev_url [export_vars -base [ad_conn url] -override {{start_row {[expr $start_row - $how_many]}}} {category_id subcategory_id subsubcategory_id how_many}]
 }
 
-set how_many_more [expr $count - $start - $how_many + 1]
+set how_many_more [expr $count - $start_row - $how_many + 1]
 
 if { $how_many_more > 0 } {
-    set next_url [export_vars -base [ad_conn url] -override {{start {[expr $start + $how_many]}}} {category_id subcategory_id subsubcategory_id how_many}]
+    set next_url [export_vars -base [ad_conn url] -override {{start_row {[expr $start_row + $how_many]}}} {category_id subcategory_id subsubcategory_id how_many}]
 
     if { $how_many_more >= $how_many } {
         set how_many_next $how_many
@@ -175,7 +175,7 @@ if { $how_many_more > 0 } {
     }
 }
 
-set end [expr $start + $how_many - 1]
+set end [expr $start_row + $how_many - 1]
 
 #==============================
 # subcategories
