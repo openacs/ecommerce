@@ -12,3 +12,5 @@
 <include src="/packages/ecommerce/lib/searchbar"/>
 
   <% eval $product_code %>
+
+<include src="/packages/ecommerce/lib/product-files-list" product_id="@product_id@">
