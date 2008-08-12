@@ -11,6 +11,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-set page_title "Upload Utilities"
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition "Upload Utilities"]]
+set title "Upload Utilities"
+set context [list $title]
+
 

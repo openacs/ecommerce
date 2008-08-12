@@ -11,8 +11,8 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-set page_title "Product Administration"
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar [list context_addition "Product Administration"]]
+set title "Product Administration"
+set context [list $title]
 
 # For Audit tables
 set table_names_and_id_column [list ec_products ec_products_audit product_id]

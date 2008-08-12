@@ -22,8 +22,8 @@ if { [empty_string_p $csv_file] } {
 set user_id [ad_get_user_id]
 set ip [ns_conn peeraddr]
 
-set page_title "Uploading Category Mappings"
-set context_bar [template::adp_parse [acs_root_dir]/packages/[ad_conn package_key]/www/contextbar "Uploading Category Mappings"]
+set title "Uploading Category Mappings"
+set context [list $title]
 
 
 # Get the name of the transfered data file

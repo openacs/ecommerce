@@ -1,10 +1,10 @@
 <master>
-<property name="title">@page_title@</property>
-<property name="context_bar">@context_bar;noquote@</property>
+  <property name="doc(title)">@title;noquote@</property>
+  <property name="context">@context;noquote@</property>
 
 <property name="show_toolbar_p">t</property>
 
-<h2>@page_title@</h2>
+<h2>@title@</h2>
 
 <blockquote>
 
