@@ -25,12 +25,13 @@ if { ![info exists col_width] } {
 set current_row 1
 set current_col 1
 set category_list_box ""
+set subsubcategory_id 0
 
 foreach {subcategory } $subcategory_list {
     set subcategory_name [ecds_abbreviate [lindex $subcategory 0] $col_width]
     set subcategory_id [lindex $subcategory 1]
 
-    append category_list_box "<li><a href=\"/products/category-browse-subcategory?category_id=${category_id}&subcategory_id=${subcategory_id}&subsubcategory=0\">${subcategory_name}</a></li>\n"
+    append category_list_box "<li><a href=\"[export_var -base "[ec_url]category-browse-subcategory" -override {category_id subcategory_id}]\">${subcategory_name}</a></li>\n"
 
 
     if { $current_row >= $max_per_col } {
