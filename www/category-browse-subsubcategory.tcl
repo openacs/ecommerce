@@ -200,8 +200,10 @@ SELECT * from ec_sub${sub}categories c
 
 set the_category_id $category_id
 set the_category_name [eval "ec_ident \$${sub}category_name"]
-set title "$category_name &gt; $subcategory_name &gt; $the_category_name"
-set context [list $title]
+set category_url "category-browse?category_id=${category_id}"
+set subcategory_url "category-browse-subcategory?category_id=${category_id}&subcategory_id=${subcategory_id}"
+set title "$category_name : $subcategory_name : $the_category_name"
+set context [list [list $category_url $category_name] [list $subcategory_url $subcategory_name] $the_category_name]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template
