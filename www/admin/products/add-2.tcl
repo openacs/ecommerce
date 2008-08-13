@@ -71,6 +71,9 @@ ad_page_contract {
     }
 }
 
+set title "Add A Product continued"
+set context [list $title]
+
 ad_require_permission [ad_conn package_id] admin
 
 # set_the_usual_form_variables
@@ -140,7 +143,7 @@ set product_id [db_nextval acs_object_id_seq]
 
 set thumbnail ""
 
-if { [info exists upload_file] && ![string compare $upload_file ""] == 0 } {
+if { [info exists upload_file] && [string length $upload_file] > 4 } {
     
     # tmp file will be deleted when the thread ends
     set tmp_filename ${upload_file.tmpfile}
@@ -163,48 +166,21 @@ set linked_thumbnail [ecommerce::resource::image_tag -type Thumbnail -product_id
 
 # Need to let them select template based on category
 
-doc_body_append "[ad_admin_header "Add a Product, Continued"]
-
-<h2>Add a Product, Continued</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] "Add Product"]
-
-<hr>
-<form method=post action=add-3>
-[export_form_vars product_name sku category_id_list subcategory_id_list subsubcategory_id_list one_line_description detailed_description color_list size_list style_list email_on_purchase_list search_keywords url price no_shipping_avail_p present_p shipping shipping_additional weight linked_thumbnail product_id stock_status dirname]
-<input type=hidden name=available_date value=\"$available_date(date)\">
-"
+set export_form_vars_html [export_form_vars product_name sku category_id_list subcategory_id_list subsubcategory_id_list one_line_description detailed_description color_list size_list style_list email_on_purchase_list search_keywords url price no_shipping_avail_p present_p shipping shipping_additional weight linked_thumbnail product_id stock_status dirname]
 
 # also need to export custom field values
 db_foreach custom_fields_select "select field_identifier from ec_custom_product_fields where active_p='t'" {
   if { [info exists ec_custom_fields($field_identifier)] } {
-    doc_body_append "<input type=hidden name=\"ec_custom_fields.$field_identifier\" value=\"[ad_quotehtml $ec_custom_fields($field_identifier)]\">\n"
+    append export_form_vars_html "<input type=hidden name=\"ec_custom_fields.$field_identifier\" value=\"[ad_quotehtml $ec_custom_fields($field_identifier)]\">\n"
   }
 }
 
 foreach user_class_id [db_list user_class_select "select user_class_id from ec_user_classes"] {
-  doc_body_append "<input type=hidden name=\"user_class_prices.$user_class_id\" value=\"$user_class_prices($user_class_id)\">\n"
+  append export_form_vars_html "<input type=hidden name=\"user_class_prices.$user_class_id\" value=\"$user_class_prices($user_class_id)\">\n"
 }
 
 # create the template drop-down list
 
-doc_body_append "
+set template_html [ec_template_widget $category_id_list]
 
-<h3>Select a template to use when displaying this product.</h3>
 
-<p>
-
-If none is
-selected, the product will be displayed with the system default template.<br>
-<blockquote>
-[ec_template_widget $category_id_list]
-</blockquote>
-<p>
-
-<center>
-<input type=submit value=\"Submit\">
-</center>
-</form>
-
-[ad_admin_footer]
-"
