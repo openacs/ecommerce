@@ -257,7 +257,7 @@ ad_proc -private ecommerce::resource::image_tag {
 
     array set info [ecommerce::resource::image_info -type $type -product_id $product_id -product_name $product_name]
 
-    if {[lindex $info 0] ne ""} {
+    if {[array size info] eq 3 } {
         set html "<img width=\"$info(width)\" height=\"$info(height)\" src=\"$info(url)\" alt=\"Product thumbnail\">"
     }
 
