@@ -24,7 +24,7 @@ set exception_text ""
 
 if { [empty_string_p $field_identifier] } {
     incr exception_count
-    append exception_text "<li>You forgot to enter a unique identifier.</li>"
+    append exception_text "<li>The form requires a unique identifier.</li>"
 } elseif { [regexp {[^a-z]} $field_identifier] } {
     incr exception_count
     append exception_text "<li>The unique identifier can only contain lowercase letters; no other characters are allowed.</li>"
@@ -44,12 +44,12 @@ if { [empty_string_p $field_identifier] } {
 
 if { [empty_string_p $field_name] } {
     incr exception_count
-    append exception_text "<li>You forgot to enter a field name.</li>"
+    append exception_text "<li>Form requires a field name.</li>"
 }
 
 if { [empty_string_p $column_type] } {
     incr exception_count
-    append exception_text "<li>You forgot to enter the kind of information.</li>"
+    append exception_text "<li>Form requires identifying the field type (kind of information).</li>"
 }
 
 if { $exception_count > 0 } {
@@ -57,42 +57,9 @@ if { $exception_count > 0 } {
     return
 }
 
-doc_body_append "
-    [ad_admin_header "Confirm Custom Field"]
+set title "Confirm Custom Field"
+set context [list [list index Products] $title]
 
-    <h2>Confirm Custom Field</h2>
+set column_type_html [ec_pretty_column_type $column_type]
 
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "custom-fields.tcl" "Custom Fields"] "Confirm New Custom Field"]
-
-    <hr>
-
-    <table noborder>
-      <tr>
-        <td>Unique Identifier:</td>
-        <td>$field_identifier</td>
-      </tr>
-      <tr>
-        <td>Field Name:</td>
-        <td>$field_name</td>
-      </tr>
-      <tr>
-        <td>Default Value:</td>
-        <td>$default_value</td>
-      </tr>
-      <tr>
-        <td>Kind of Information:</td>
-        <td>[ec_pretty_column_type $column_type]</td>
-      </tr>
-    </table>
-    
-    <p>Please note that you can never remove a custom field, although
-      you can deactivate it.  Furthermore, the Unique Identifier cannot
-      be changed and, in most cases, neither can Kind of Information.</p>
-    
-    <form method=post action=custom-field-add-3>
-      [export_form_vars field_identifier field_name default_value column_type]
-      <center>
-        <input type=submit value=\"Confirm\">
-      </center>
-    </form>
-    [ad_admin_footer]"
+set export_form_vars_html [export_form_vars field_identifier field_name default_value column_type]

@@ -21,46 +21,8 @@ db_1row custom_field_select "
 
 set old_column_type $column_type
 
-doc_body_append "
-    [ad_admin_header "Edit $field_name"]
+set title "Edit $field_name"
+set context [list [list index Products] $title]
 
-    <h2>Edit $field_name</h2>
-
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Products"] [list "custom-fields" "Custom Fields"] "Edit Custom Field"]
-
-    <hr>
-
-    <form method=post action=custom-field-edit-2>
-    [export_form_vars old_column_type field_identifier]
-    
-    <table noborder>
-      <tr>
-        <td>Unique Identifier:</td>
-        <td><code>$field_identifier</code></td>
-        <td>This can't be changed.</td>
-      </tr>
-      <tr>
-        <td>Field Name:</td>
-        <td><input type=text name=field_name value=\"[ad_quotehtml $field_name]\" size=25 maxlength=100></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>Default Value:</td>
-        <td><input type=text name=default_value value=\"[ad_quotehtml $default_value]\" size=15 maxlength=100></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>Kind of Information:</td>
-        <td>[ec_column_type_widget $column_type]</td>
-        <td>We might not be able to change this, depending on what it
-          is, what you're trying to change it to, and what values are
-          already in the database for this field (you can always try it
-          &amp; find out).</td>
-      </tr>
-    </table>
-    
-    <center>
-      <input type=submit value=\"Submit Changes\">
-    </center>
-    </form>
-    [ad_admin_footer]"
+set export_vars_html [export_form_vars old_column_type field_identifier]
+set column_type_html [ec_column_type_widget $column_type]
