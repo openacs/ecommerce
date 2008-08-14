@@ -11,19 +11,11 @@ ad_page_contract {
 }
 
 ad_require_permission [ad_conn package_id] admin
-
-doc_body_append "[ad_admin_header "Products by Category"]
-
-<h2>Products by category</h2>
-
-[ad_context_bar [list "[ec_url_concat [ec_url] /admin]/" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "by Category"]
-
-<hr>
-
-<ul>
-"
+set title "Products by Category"
+set context [list [list index Products] $title]
 
 set items ""
+set category_list_html ""
 
 db_foreach product_categories_select "
 select cats.category_id, cats.sort_key, cats.category_name, count(cat_view.product_id) as n_products, sum(cat_view.n_sold) as total_sold_in_category
@@ -42,15 +34,9 @@ order by cats.sort_key" {
 }
 
 if ![empty_string_p $items] {
-    doc_body_append $items
+    append category_list_html $items
 } else {
-    doc_body_append "apparently products aren't being put into categories"
+    append category_list_html "apparently products aren't being put into categories"
 }
 
-doc_body_append "
-
-</ul>
-
-[ad_admin_footer]
-"
 
