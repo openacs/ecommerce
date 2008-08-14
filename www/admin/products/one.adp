@@ -155,7 +155,7 @@
     Display this product when user does a search?
   </td>
   <td>
-    @present_p_html@
+    @present_p_html@ (<a href="toggle-present-p?@export_product_id_var;noquote@">toggle</a>)
   </td>
 </tr>
 
