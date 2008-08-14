@@ -52,7 +52,7 @@ ad_require_permission [ad_conn package_id] admin
 # and price$user_class_id for all the user classes
 # category_id_list, subcategory_id_list, subsubcategory_id_list
 set title "Confirm New Product"
-set context [list $title]
+set context [list [list index Products] $title]
 
 
 set currency [parameter::get -package_id [ec_id] -parameter Currency]

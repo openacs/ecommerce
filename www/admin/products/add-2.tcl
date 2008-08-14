@@ -72,7 +72,7 @@ ad_page_contract {
 }
 
 set title "Add A Product continued"
-set context [list $title]
+set context [list [list index Products] $title]
 
 ad_require_permission [ad_conn package_id] admin
 

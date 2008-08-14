@@ -153,7 +153,7 @@ set dirname [ecommerce::resource::dirname -product_id $product_id -product_name 
 set linked_thumbnail [ec_linked_thumbnail_if_it_exists $dirname]
 
 set title "Confirm Product Changes"
-set context [list $title]
+set context [list [list index Products] $title]
 
 set currency [parameter::get -package_id [ec_id] -parameter Currency]
 set multiple_retailers_p [ad_parameter -package_id [ec_id] MultipleRetailersPerProductP ecommerce]

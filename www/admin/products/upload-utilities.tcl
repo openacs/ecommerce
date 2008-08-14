@@ -12,6 +12,6 @@ ad_page_contract {
 ad_require_permission [ad_conn package_id] admin
 
 set title "Upload Utilities"
-set context [list $title]
+set context [list [list index Products] $title]
 
 

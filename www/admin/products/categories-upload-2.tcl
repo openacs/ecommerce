@@ -23,7 +23,7 @@ set user_id [ad_get_user_id]
 set ip [ns_conn peeraddr]
 
 set title "Uploading Category Mappings"
-set context [list $title]
+set context [list [list index Products] $title]
 
 
 # Get the name of the transfered data file

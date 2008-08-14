@@ -20,7 +20,7 @@ ad_require_permission [ad_conn package_id] admin
 set product_name [ec_product_name $product_id]
 
 set title "Edit $product_name"
-set context [list $title]
+set context [list [list index Products] $title]
 
 set multiple_retailers_p [parameter::get -package_id [ec_id] -parameter MultipleRetailersPerProductP]
 

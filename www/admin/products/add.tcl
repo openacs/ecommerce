@@ -15,7 +15,7 @@ ad_page_contract {
 ad_require_permission [ad_conn package_id] admin
 
 set title "Add a Product"
-set context [list $title]
+set context [list [list index Products] $title]
 
 set currency [parameter::get -package_id [ec_id] -parameter Currency]
 set multiple_retailers_p [parameter::get -package_id [ec_id] -parameter MultipleRetailersPerProductP -default 0]
