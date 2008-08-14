@@ -16,7 +16,7 @@
     <blockquote>
 <if @active_p@ false>
 <p><b>This product is discontinued.</b></p>
-</if><else>
+</if>
 
 @linked_thumbnail_html;noquote@
 
@@ -207,5 +207,5 @@
     <li><a href="@audit_url_html;noquote@">Audit Trail</a></li>    
     <li><a href="delete?@export_product_id_name_var;noquote@">Delete</a></li>
 </ul>
-</else>
+
 
