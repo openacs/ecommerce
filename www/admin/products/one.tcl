@@ -134,179 +134,19 @@ if [empty_string_p $dirname] {
     set dirname_cell "$dirname (<a href=\"supporting-files-upload?[export_url_vars product_id]\">Supporting Files</a>)"
 }
 
-doc_body_append "
-    [ad_admin_header "$product_name"]
+set title $product_name
+set context [list $title]
 
-    <h2>$product_name</h2>
-    
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "One Product"]
+set export_product_id_var [export_url_vars product_id]
 
-    <hr>
+set linked_thumbnail_html [ec_linked_thumbnail_if_it_exists $dirname]
 
-    <ul>
-      <li>Professional Reviews:  <a href=\"reviews?[export_url_vars product_id]\">$product_review_anchor</a></Li>
-      <li>Customer Reviews: $customer_reviews_link</li>
-       <li>Cross-selling Links:  <a href=\"link?[export_url_vars product_id]\">$n_links_to to; $n_links_from from</a></li>
-    </ul>
-
-    <h3>Complete Record</h3>
-       <a href=\"edit?[export_url_vars product_id]\">Edit This Item</a>
-
-    <blockquote>"
-
-if { $active_p == "f" } {
-    doc_body_append "<p><b>This product is discontinued.</b></p>"
-}
-
-doc_body_append "
-    [ec_linked_thumbnail_if_it_exists $dirname]
-    <table noborder>
-	<tr>
-	  <td>
-	    Product ID:
-	  </td>
-	  <td>
-	    $product_id
-	  </td>
-	</tr>
-	<tr>
-	  <td>
-	    Product Name:
-	  </td>
-	  <td>
-	    $product_name
-	  </td>
-	</tr>
-	<tr>
-	  <td>
-	    SKU:
-	  </td>
-	  <td>
-	    [ec_message_if_null $sku]
-	  </td>
-	</tr>
-    $price_row
-    $no_shipping_avail_p_row
-    $active_p_row
-    <tr>
-      <td>
-	Categorization:
-      </td>
-      <td>
-	[ec_category_subcategory_and_subsubcategory_display $category_list $subcategory_list $subsubcategory_list]
-      </td>
-    </tr>"
 
 if { !$multiple_retailers_p } {
-    doc_body_append "
-	<tr>
-	  <td>Stock Status:</td>
-	  <td>"
     if { ![empty_string_p $stock_status] } {
-        doc_body_append [util_memoize "ad_parameter -package_id [ec_id] \"StockMessage[string toupper $stock_status]\"" [ec_cache_refresh]]
-    } else {
-	doc_body_append [ec_message_if_null $stock_status]
+        set stock_status_html [util_memoize "ad_parameter -package_id [ec_id] \"StockMessage[string toupper $stock_status]\"" [ec_cache_refresh]]
     }
-    
-    doc_body_append "
-          </td>
-    	</tr>"
-}
-
-doc_body_append "
-     <tr>
-  <td>
-    One-Line Description:
-  </td>
-  <td>
-    [ec_message_if_null $one_line_description]
-  </td>
-</tr>
-<tr>
-  <td>
-    Additional Descriptive Text:
-  </td>
-  <td>
-    [ec_display_as_html [ec_message_if_null $detailed_description]]
-  </td>
-</tr>
-<tr>
-  <td>
-    Search Keywords:
-  </td>
-  <td>
-    [ec_message_if_null $search_keywords]
-  </td>
-</tr>
-<tr>
-  <td>
-    Color Choices:
-  </td>
-  <td>
-    [ec_message_if_null $color_list]
-  </td>
-</tr>
-<tr>
-  <td>
-    Size Choices:
-  </td>
-  <td>
-    [ec_message_if_null $size_list]
-  </td>
-</tr>
-<tr>
-  <td>
-    Style Choices:
-  </td>
-  <td>
-    [ec_message_if_null $style_list]
-  </td>
-</tr>
-<tr>
-  <td>
-    Email on Purchase:
-  </td>
-  <td>
-    [ec_message_if_null $email_on_purchase_list]
-  </td>
-</tr>
-<tr>
-  <td>
-    URL:
-  </td>
-  <td>
-    [ec_message_if_null $url]
-  </td>
-</tr>
-<tr>
-  <td>
-    Display this product when user does a search?
-  </td>
-  <td>
-    [ec_message_if_null [ec_PrettyBoolean $present_p]]
-  </td>
-</tr>"
-
-if { !$multiple_retailers_p } {
-    doc_body_append "
-	<tr>
-	  <td>Shipping Price:</td>
-	  <td>[ec_message_if_null [ec_pretty_price $shipping $currency]]</td>
-	</tr>
-	<tr>
-	   <td>Shipping - Additional:</td>
-	  <td>[ec_message_if_null [ec_pretty_price $shipping_additional $currency]]</td>
-	</tr>"
-}
-
-doc_body_append "
-    <tr>
-      <td>Weight:</td>
-      <td>[ec_message_if_null $weight] [ec_decode $weight "" "" [ad_parameter -package_id [ec_id] WeightUnits ecommerce]]</td>
-    </tr>"
-
-if { !$multiple_retailers_p } {
-
+    set user_class_select_html ""
     db_foreach user_class_select "
 	select user_class_id, user_class_name 
 	from ec_user_classes
@@ -318,87 +158,59 @@ if { !$multiple_retailers_p } {
 		where product_id = :product_id
 		and user_class_id = :user_class_id" -default ""]
 	
-	    doc_body_append "
+	    append user_class_select_html "
 		<tr>
 		   <td>$user_class_name Price:</td>
 		   <td>[ec_message_if_null [ec_pretty_price $temp_price $currency]]</td>
 		</tr>"
     }
-}
 
+} else {
+
+    set stock_status_html [ec_message_if_null $stock_status]
+
+}
+set export_product_id_name_var [export_url_vars product_id product_name]
+set custom_fields_iteration_html ""
 db_foreach custom_fields_iteration "
     select field_identifier, field_name, column_type
     from ec_custom_product_fields
     where active_p = 't'" {
 
     if { [info exists $field_identifier] } {
-	doc_body_append "
+        append custom_fields_iteration_html "
 	    <tr>
 	      <td>$field_name:</td>
 	      <td>"
 
-	if { $column_type == "char(1)" } {
-	    doc_body_append "[ec_message_if_null [ec_PrettyBoolean [set $field_identifier]]]\n"
-	} elseif { $column_type == "date" } {
-	    doc_body_append "[ec_message_if_null [util_AnsiDatetoPrettyDate [set $field_identifier]]]\n"
-	} else {
-	    doc_body_append "[ec_display_as_html [ec_message_if_null [set $field_identifier]]]\n"
-	}
-	doc_body_append "
-	      </td>
-	    </tr>"
+        if { $column_type == "char(1)" } {
+            append custom_fields_iteration_html "[ec_message_if_null [ec_PrettyBoolean [set $field_identifier]]]\n"
+        } elseif { $column_type == "date" } {
+            append custom_fields_iteration_html "[ec_message_if_null [util_AnsiDatetoPrettyDate [set $field_identifier]]]\n"
+        } else {
+            append custom_fields_iteration_html "[ec_display_as_html [ec_message_if_null [set $field_identifier]]]\n"
+        }
+        append custom_fields_iteration_html "</td></tr>"
     }
 }
 
-doc_body_append "
-    <tr>
-  <td>
-    Template:
-  </td>
-  <td>
-    [ec_message_if_null [db_string template_name_select "select template_name from ec_templates where template_id=:template_id" -default "" ]]
-  </td>
-</tr>
-<tr>
-  <td>
-    Date Added:
-  </td>
-  <td>
-    [util_AnsiDatetoPrettyDate $creation_date]
-  </td>
-</tr>
-<tr>
-  <td>
-    Date Available:
-  </td>
-  <td>
-    [util_AnsiDatetoPrettyDate $available_date]
-  </td>
-</tr>
-<tr>
-  <td>
-    Directory Name (where image &amp; other product info is kept):
-  </td>
-  <td>
-    $dirname_cell
-  </td>
-</tr>
-</table>
-(<a href=\"edit?[export_url_vars product_id]\">Edit</a>)
-</blockquote>
-
-<h3>Miscellaneous</h3>
-
-<ul>"
-
-if { $multiple_retailers_p } {
-    doc_body_append "<li><a href=\"offers?[export_url_vars product_id product_name]\">Retailer Offers</a></li>"
-}
-
-doc_body_append "
-    <p></p>
-    <li><a href=\"delete?[export_url_vars product_id product_name]\">Delete</a></li>
-    <p></p>"
+set sku_html [ec_message_if_null $sku]
+set categorization_html [ec_category_subcategory_and_subsubcategory_display $category_list $subcategory_list $subsubcategory_list]
+set shipping_html [ec_message_if_null [ec_pretty_price $shipping $currency]]
+set shipping_additional_html [ec_message_if_null [ec_pretty_price $shipping_additional $currency]]
+set one_line_description_html [ec_message_if_null $one_line_description]
+set detailed_description_html [ec_display_as_html [ec_message_if_null $detailed_description]]
+set search_keywords_html [ec_message_if_null $search_keywords]
+set color_list_html [ec_message_if_null $color_list]
+set size_list_html [ec_message_if_null $size_list]
+set style_list_html [ec_message_if_null $style_list]
+set email_on_purchase_list_html [ec_message_if_null $email_on_purchase_list]
+set url_html [ec_message_if_null $url]
+set present_p_html [ec_message_if_null [ec_PrettyBoolean $present_p]]
+set weight_html "[ec_message_if_null $weight] [ec_decode $weight "" "" [ad_parameter -package_id [ec_id] WeightUnits ecommerce]]"
+set template_html [ec_message_if_null [db_string template_name_select "select template_name from ec_templates where template_id=:template_id" -default "" ]]
+set date_added_html [util_AnsiDatetoPrettyDate $creation_date]
+set date_available_html [util_AnsiDatetoPrettyDate $available_date]
 
 # Set audit variables audit_name, audit_id, audit_id_column,
 # return_url, audit_tables, main_tables
@@ -410,8 +222,4 @@ set return_url "[ad_conn url]?[export_url_vars product_id]"
 set audit_tables [list ec_products_audit ec_custom_p_field_values_audit ec_category_product_map_audit ec_subcat_prod_map_audit ec_subsubcat_prod_map_audit]
 set main_tables [list ec_products ec_custom_product_field_values ec_category_product_map ec_subcategory_product_map ec_subsubcategory_product_map]
 
-doc_body_append "
-    <li><a href=\"[ec_url_concat [ec_url] /admin]/audit?[export_url_vars audit_name audit_id audit_id_column return_url audit_tables main_tables]\">Audit Trail</a></li>
-
-    </ul>
-    [ad_admin_footer]"
+set audit_url_html "[ec_url_concat [ec_url] /admin]/audit?[export_url_vars audit_name audit_id audit_id_column return_url audit_tables main_tables]"
