@@ -135,13 +135,13 @@ if [empty_string_p $dirname] {
 }
 
 set title $product_name
-set context [list $title]
+set context [list [list index Products] $title]
 
 set export_product_id_var [export_url_vars product_id]
 
 set linked_thumbnail_html [ec_linked_thumbnail_if_it_exists $dirname]
 
-
+set stock_status_html ""
 if { !$multiple_retailers_p } {
     if { ![empty_string_p $stock_status] } {
         set stock_status_html [util_memoize "ad_parameter -package_id [ec_id] \"StockMessage[string toupper $stock_status]\"" [ec_cache_refresh]]
