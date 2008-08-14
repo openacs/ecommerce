@@ -32,5 +32,5 @@
 
 <p>
 
-<li><a href="[ec_url_concat [ec_url] /admin]/audit-tables?[export_url_vars table_names_and_id_column]">Audit all Products</a>
+<li><a href="@audit_html;noquote@">Audit all Products</a>
 </ul>

@@ -16,7 +16,7 @@ set context [list $title]
 
 # For Audit tables
 set table_names_and_id_column [list ec_products ec_products_audit product_id]
-
+set audit_html "[ec_url_concat [ec_url] /admin]/audit-tables?[export_url_vars table_names_and_id_column]"
 
 
 db_1row products_select "select count(*) as n_products, round(avg(price),2) as avg_price from ec_products_displayable"
