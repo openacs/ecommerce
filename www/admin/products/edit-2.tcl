@@ -160,9 +160,10 @@ set multiple_retailers_p [ad_parameter -package_id [ec_id] MultipleRetailersPerP
 
 set categorization_html [ec_category_subcategory_and_subsubcategory_display $category_id_list $subcategory_id_list $subsubcategory_id_list]
 
+    set stock_status_html [ec_message_if_null $stock_status]
 if { $multiple_retailers_p } {
-    [ec_message_if_null $stock_status]
 
+    
 } else {
     if { ![empty_string_p $stock_status] } {
         set stock_status_html [util_memoize "ad_parameter -package_id [ec_id] \"StockMessage[string toupper $stock_status]\"" [ec_cache_refresh]]
