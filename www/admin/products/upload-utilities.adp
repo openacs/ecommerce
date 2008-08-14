@@ -40,6 +40,10 @@ These utilities help you load catalog data into the database:
  to upload a file that maps product <tt>sku</tt> to the location of the product images
  <tt>full_imagepathname</tt>.
 </p></li>
+<li><p>
+<a href=\"upload-vendor-imports\">Upload Vendor Imports</a> imports
+products from a vendor website according to previously defined procedures: ecds_vendor_procs.
+</p></li>
 
 </ul>
 
