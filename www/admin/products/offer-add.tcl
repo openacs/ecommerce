@@ -108,72 +108,29 @@ and (($to_date_offer_begins >= offer_begins and $to_date_offer_begins <= offer_e
 
 # error checking done
 
-doc_body_append "[ad_admin_header "Confirm Retailer Offer on $product_name"]
+set title "Confirm Retailer Offer on $product_name"
+set context [list [list index Products] $title]
 
-<h2>Confirm Retailer Offer on $product_name</h2>
+set currency [parameter::get -package_id [ec_id] -parameter Currency -default "USD"]
+set retailer_name_select_html [db_string retailer_name_select "select retailer_name || ' (' || decode(reach,'web',url,city || ', ' || usps_abbrev) || ')'  from ec_retailers where retailer_id=:retailer_id"]
+set price_html [ec_pretty_price $price $currency]
 
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Confirm Retailer Offer"]
-
-<hr>
-"
-
-set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
-
-doc_body_append "<table>
-<tr>
-<td>Retailer:</td>
-<td>[db_string retailer_name_select "select retailer_name || ' (' || decode(reach,'web',url,city || ', ' || usps_abbrev) || ')'  from ec_retailers where retailer_id=:retailer_id"]</td>
-</tr>
-<tr>
-<td>Price:</td>
-<td>[ec_pretty_price $price $currency]</td>
-</tr>
-<tr>
-<td>Shipping:</td>
-"
-if { [info exists shipping_unavailable_p] } {
-    doc_body_append "<td>Pick Up</td>\n"
+if { [info exists shipping_unavailable_p && shipping_unavailable_p eq "t"] } {
+    set shipping_price_html "Pick Up"
 } else {
-    doc_body_append "<td>[ec_pretty_price $shipping $currency]</td>\n"
+    set shipping_unavailable_p "f"
+    set shipping_price_html [ec_pretty_price $shipping $currency]
 }
 
-doc_body_append "</tr>
-<tr>
-<td>Stock Status:</td>
-<td>
-"    
 if { ![empty_string_p $stock_status] } {
-    doc_body_append [util_memoize "ad_parameter -package_id [ec_id] \"StockMessage[string toupper $stock_status]\"" [ec_cache_refresh]]
+    set stock_status_html [util_memoize "parameter::get -package_id [ec_id] -parameter \"StockMessage[string toupper $stock_status]\"" [ec_cache_refresh]]
 } else {
-    doc_body_append [ec_message_if_null $stock_status]
+    set stock_status_html [ec_message_if_null $stock_status]
 }
-doc_body_append "</td>
-</tr>
-<tr>
-<td>Offer Begins</td>
-<td>[util_AnsiDatetoPrettyDate [ec_date_with_time_stripped $offer_begins]]</td>
-</tr>
-<tr>
-<td>Offer Expires</td>
-<td>[util_AnsiDatetoPrettyDate [ec_date_with_time_stripped $offer_ends]]</td>
-</tr>
-"
-
-if { $special_offer_p == "t" } {
-    doc_body_append "<tr><td>Special Offer:</td><td>$special_offer_html</td></tr>\n"
-}
-
-doc_body_append "</table>
-"
+set offer_begins_html "[util_AnsiDatetoPrettyDate [ec_date_with_time_stripped $offer_begins]]"
+set offer_expires_html "[util_AnsiDatetoPrettyDate [ec_date_with_time_stripped $offer_ends]]"
 
 set offer_id [db_nextval ec_offer_sequence]
 
-doc_body_append "<form method=post action=offer-add-2>
-[export_form_vars offer_id product_id retailer_id price shipping stock_status shipping_unavailable_p offer_begins offer_ends special_offer_p special_offer_html]
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-</form>
+set export_offer_add_2_html [export_form_vars offer_id product_id retailer_id price shipping stock_status shipping_unavailable_p offer_begins offer_ends special_offer_p special_offer_html]
 
-[ad_admin_footer]
-"
