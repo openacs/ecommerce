@@ -16,29 +16,7 @@ ad_require_permission [ad_conn package_id] admin
 set product_name [ec_product_name $product_id]
 set link_product_name [ec_product_name $link_product_id]
 
-doc_body_append "[ad_admin_header "Create New Link, Cont."]
+set title "Create New Link, Cont."
+set context [list [list index Products] $title]
 
-<h2>Create New Link, Cont.</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "New Link, Cont."]
-
-<hr>
-
-Please choose an action:
-
-<ul>
-
-<li><a href=\"link-add-3?action=from&[export_url_vars product_id link_product_id]\">Link <i>to</i> $link_product_name <i>from</i> $product_name</a>
-
-<p>
-
-<li><a href=\"link-add-3?action=to&[export_url_vars product_id link_product_id]\">Link <i>to</i> $product_name <i>from</i> $link_product_name</a>
-
-<p>
-
-<li><a href=\"link-add-3?action=both&[export_url_vars product_id link_product_id]\">Link <i>to</i> $product_name <i>from</i> $link_product_name <i>and</i> vice versa</a>
-
-</ul>
-
-[ad_admin_footer]
-"
+set export_product_and_link_ids_html [export_url_vars product_id link_product_id]

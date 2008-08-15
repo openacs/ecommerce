@@ -15,16 +15,8 @@ ad_require_permission [ad_conn package_id] admin
 
 set product_name [ec_product_name $product_id]
 
-doc_body_append "[ad_admin_header "Create New Link"]
-
-<h2>Create New Link</h2>
-
-[ad_context_bar [list ../ "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "New Link"]
-
-<hr>
-Please select the product you wish to link to or from:
-<ul>
-"
+set title "Create New Products Link"
+set context [list [list index Products] $title]
 
 if { [info exists link_product_sku] } {
     set additional_query_part "sku=:link_product_sku"
@@ -32,14 +24,11 @@ if { [info exists link_product_sku] } {
     set additional_query_part "upper(product_name) like '%' || upper(:link_product_name) || '%'"
 }
 
+set doc_body ""
+set no_rows 0
 
 db_foreach product_search_select "select product_id as link_product_id, product_name as link_product_name from ec_products where $additional_query_part" {
-    doc_body_append "<li><a href=\"link-add-2?[export_url_vars product_id link_product_id]\">$link_product_name</a>\n"
+    append doc_body "<li><a href=\"link-add-2?[export_url_vars product_id link_product_id]\">$link_product_name</a>\n"
 } if_no_rows {
-    doc_body_append "No matching products were found.\n"
+    set no_rows 1
 }
-
-doc_body_append "</ul>
-
-[ad_admin_footer]
-"
