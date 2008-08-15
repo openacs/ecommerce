@@ -20,31 +20,24 @@ set peeraddr [ns_conn peeraddr]
 # Grab package_id as context_id
 
 set context_id [ad_conn package_id]
+set serious_errors 0
+set doc_body ""
 
-doc_body_append "[ad_admin_header "Uploading Products"]
-
-<h2>Bulk Import Product Images</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Bulk Import Product Images"]
-
-<hr>
-
-"
+set title "Bulk Import Product Images"
+set context [list [list index Products] $title]
 
 # Get the name of the transfered data file
-
 set unix_file_name ${csv_file.tmpfile}
 
 # Check that the file is readable.
-
 if { ![file readable $unix_file_name] } {
-    doc_body_append "Cannot read file $unix_file_name"
-    return
+    append doc_body "Cannot read file $unix_file_name"
+    set serious_errors 1
 }
 # Check that delimiter is one character, if used
 if { [string length $delimiter] != 1 && [string eq $file_type "delim"]} {
-    doc_body_append "Delimiter is not one character long."
-    return
+    append doc_body "Delimiter is not one character long."
+    set serious_errors 1
 }
 
 # Accept (ignore) all field names, require sku and image_fullpathname
@@ -64,8 +57,7 @@ set count 0
 set errors 0
 set success_count 0
 
-# Continue reading the file till the end but stop when an error
-# occured.
+# Continue reading the file till the end but stop when an error occurs.
 
 # read line, depending  on file type
 if {[string eq $file_type "csv"]} {
@@ -132,9 +124,9 @@ while { $line_status != -1 && !$errors} {
                                  -product_id $product_id \
                                  -tmp_filename $image_fullpathname} errmsg ] } {
 
-                    doc_body_append "<p><font color=red>Error!</font>Image update of <i>$sku</i> failed with error:<\p><p>$errmsg</p>"
+                    append doc_body "<p><font color=red>Error!</font>Image update of <i>$sku</i> failed with error:<\p><p>$errmsg</p>"
                 } else {
-                    doc_body_append "<p>Imported images for product: $sku</p>"
+                    append doc_body "<p>Imported images for product: $sku</p>"
                     # A product row has been successfully processed, increase counter
                     incr success_count
                 }
@@ -142,7 +134,7 @@ while { $line_status != -1 && !$errors} {
             } else {
 
                 # Let them know this sku is not in the catalog
-                doc_body_append "<font color=red>FAILURE!</font>Could not import image for sku: <i>$sku</i>, because sku was not found in catalog.</p>"
+                append doc_body "<font color=red>FAILURE!</font>Could not import image for sku: <i>$sku</i>, because sku was not found in catalog.</p>"
             }
         } 
     } 
@@ -166,8 +158,4 @@ if { $success_count == 1 } {
 } else {
     set product_string "product images and thumbnails"
 }
-
-doc_body_append "<p>Successfully imported $success_count $product_string out of [ec_decode $count "0" "0" [expr $count -1]].
-
-[ad_admin_footer]
-"
+set count_html [ec_decode $count "0" "0" [expr $count -1]]
