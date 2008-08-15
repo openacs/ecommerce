@@ -19,18 +19,8 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "[ad_admin_header "Products in $category_name: $subcategory_name"]
-
-<h2>Products in $category_name: $subcategory_name</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Products in $category_name: $subcategory_name"]
-
-<hr>
-
-<ul>
-"
-
-
+set title "Products in $category_name: $subcategory_name"
+set context [list [list index Products] $title]
 
 set sql "select m.product_id, p.product_name
 from ec_subcategory_product_map m, ec_products p
@@ -38,21 +28,13 @@ where m.product_id = p.product_id
 and m.subcategory_id=:subcategory_id
 order by product_name"
 
+set get_product_infos_html ""
 set product_counter 0
 db_foreach get_product_infos $sql {
     incr product_counter
-    
-    doc_body_append "<li><a href=\"one?[export_url_vars product_id]\">$product_name</a>\n"
+    append get_product_infos_html "<li><a href=\"one?[export_url_vars product_id]\">$product_name</a></li>\n"
 }
 
-if { $product_counter == 0 } {
-    doc_body_append "There are no products in this subcategory.\n"
-}
-
-doc_body_append "</ul>
-
-[ad_admin_footer]
-"
 
 
 
