@@ -15,47 +15,47 @@ set product_name [ec_product_name $product_id]
 
 proc ec_write_out_one_offer {} {
     uplevel {
-	doc_body_append "<li><a href=\"retailer?retailer_id=$retailer_id\">$retailer_name</a><br>
+	append doc_body "<li><a href=\"retailer?retailer_id=$retailer_id\">$retailer_name</a><br>
 	Price: [ec_message_if_null [ec_pretty_price $price $currency]]<br>
 	Shipping: 
 	"
 	if { $shipping_unavailable_p != "t" } {
-	    doc_body_append "[ec_message_if_null [ec_pretty_price $shipping $currency]]<br>"
+	    append doc_body "[ec_message_if_null [ec_pretty_price $shipping $currency]]<br>"
 	} else {
-	    doc_body_append "Pick Up<br>"
+	    append doc_body "Pick Up<br>"
 	}
-	doc_body_append "Stock Status: "
+	append doc_body "Stock Status: "
 	if { ![empty_string_p $stock_status] } {
-            doc_body_append [util_memoize "ad_parameter -package_id [ec_id] \"StockMessage[string toupper $stock_status]\"" [ec_cache_refresh]]
+            append doc_body [util_memoize "ad_parameter -package_id [ec_id] \"StockMessage[string toupper $stock_status]\"" [ec_cache_refresh]]
 	} else {
-	    doc_body_append "[ec_message_if_null $stock_status]<br>\n"
+	    append doc_body "[ec_message_if_null $stock_status]<br>\n"
 	}
-	doc_body_append "Offer Begins: [util_AnsiDatetoPrettyDate $offer_begins]<br>
+	append doc_body "Offer Begins: [util_AnsiDatetoPrettyDate $offer_begins]<br>
 	Offer Expires: [util_AnsiDatetoPrettyDate $offer_ends]<br>
 	"
 	if { $special_offer_p == "t" } {
-	    doc_body_append "Special Offer: $special_offer_html<br>\n"
+	    append doc_body "Special Offer: $special_offer_html<br>\n"
 	}
 
 	if { $deleted_p == "t" } {
-	    doc_body_append "<b>This offer is deleted.</b><br>\n"
+	    append doc_body "<b>This offer is deleted.</b><br>\n"
 	} elseif { !$offer_begun_p } {
-	    doc_body_append "<b>This offer has not yet begun.</b><br>\n"
+	    append doc_body "<b>This offer has not yet begun.</b><br>\n"
 	} elseif { $offer_expired_p } {
-	    doc_body_append "<b>This offer has expired.</b><br>\n"
+	    append doc_body "<b>This offer has expired.</b><br>\n"
 	}
 
-	doc_body_append "\[<a href=\"offer-edit?[export_url_vars offer_id product_id product_name retailer_id]\">edit</a> | <a href=\"offer-delete?deleted_p="
+	append doc_body "\[<a href=\"offer-edit?[export_url_vars offer_id product_id product_name retailer_id]\">edit</a> | <a href=\"offer-delete?deleted_p="
 	if { $deleted_p == "t" } {
-	    doc_body_append "f"
+	    append doc_body "f"
 	} else {
-	    doc_body_append "t"
+	    append doc_body "t"
 	}
 
-	doc_body_append "&[export_url_vars product_id product_name retailer_id]\">"
+	append doc_body "&[export_url_vars product_id product_name retailer_id]\">"
 	
 	if { $deleted_p == "t" } {
-	    doc_body_append "un"
+	    append doc_body "un"
 	}
 
 	# Set audit variables
@@ -67,24 +67,20 @@ proc ec_write_out_one_offer {} {
 	set audit_tables [list ec_offers_audit]	
 	set main_tables [list ec_offers]
 
-	doc_body_append "delete</a> | <a href=\"audit?[export_url_vars audit_name id id_column return_url audit_tables main_tables]\">audit trail</a>\]
+	append doc_body "delete</a> | <a href=\"audit?[export_url_vars audit_name id id_column return_url audit_tables main_tables]\">audit trail</a>\]
 	<p>
 	"
     }
+return $doc_body
 }
 
-doc_body_append "[ad_admin_header "Retailer Offers on $product_name"]
+set title "Retailer Offers on $product_name"
+set context [list [list index Products] $title]
 
-<h2>Retailer Offers on $product_name</h2>
+set currency [parameter::get -package_id [ec_id] -parameter Currency -default "USD"]
 
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Retailer Offers"]
-
-<hr>
-<h3>Current Offers</h3>
-<ul>
-"
-set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
-
+set no_offers 0
+set offers_select_html ""
 db_foreach offers_select "
 select o.offer_id, o.retailer_id, r.retailer_name, price, shipping,
        stock_status, special_offer_p, special_offer_html,
@@ -94,90 +90,25 @@ select o.offer_id, o.retailer_id, r.retailer_name, price, shipping,
 from ec_offers_current o, ec_retailers r
 where o.retailer_id=r.retailer_id
 and o.product_id=:product_id
-order by o.last_modified desc
-" {
-    ec_write_out_one_offer
+order by o.last_modified desc" {
+    append offers_select_html ec_write_out_one_offer
 } if_no_rows {
-    doc_body_append "There are no current offers.\n"
+     set no_offers 1
 }
 
-doc_body_append "</ul>
+set export_product_id_html [export_form_vars product_id]
 
-<p>
-
-<h3>Add an Offer</h3>
-
-<form method=post action=offer-add>
-[export_form_vars product_id]
-
-<table>
-<tr>
-<td>
-Retailer
-</td>
-<td>
-<select name=retailer_id>
-<option value=\"\">Pick One
-"
+set retailer_select_html ""
 db_foreach retailer_select "select retailer_name, retailer_id, decode(reach,'web',url,city || ', ' || usps_abbrev) as location from ec_retailers order by retailer_name" {
-    doc_body_append "<option value=$retailer_id>$retailer_name ($location)\n"
+    append retailer_select_html "<option value=$retailer_id>$retailer_name ($location)\n"
 }
 
-doc_body_append "</select>
-</td>
-</tr>
-<tr>
-<td>Price</td>
-<td><input type=text name=price size=6> (in $currency)</td>
-</tr>
-<tr>
-<td>Shipping</td>
-<td><input type=text name=shipping size=6> (in $currency) 
-&nbsp;&nbsp;<b>or</b>&nbsp;&nbsp;
-<input type=checkbox name=shipping_unavailable_p value=\"t\">
-Pick Up only
-</td>
-</tr>
-<tr>
-<td>Stock Status</td>
-<td>[ec_stock_status_widget]</td>
-</tr>
-<tr>
-<td>Offer Begins</td>
-<td>[ad_dateentrywidget offer_begins]</td>
-</tr>
-<tr>
-<td>Offer Expires</td>
-<td>[ad_dateentrywidget offer_ends now]</td>
-</tr> 
-<tr>
-<td colspan=2>Is this a Special Offer?
-<input type=radio name=special_offer_p value=\"t\">Yes &nbsp; 
-<input type=radio name=special_offer_p value=\"f\" checked>No
-</td>
-</tr>
-<tr>
-<td>If yes, elaborate:</td>
-<td><textarea wrap name=special_offer_html rows=2 cols=40></textarea></td>
-</tr>
-</table>
+set stock_status_html [ec_stock_status_widget]
+set offer_begins_html [ad_dateentrywidget offer_begins]
+set offer_expires_html [ad_dateentrywidget offer_ends now]
 
-<p>
-
-<center>
-<input type=submit value=\"Add\">
-</center>
-
-</form>
-
-<p>
-
-<h3>Non-Current or Deleted Offers</h3>
-
-<ul>
-"
-set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
-
+set non_current_offers_select_html ""
+set no_non_current_offers 0
 db_foreach non_current_offers_select "
 select o.offer_id, o.retailer_id, retailer_name, price, shipping,
        stock_status, special_offer_p, special_offer_html,
@@ -189,14 +120,9 @@ where o.retailer_id=r.retailer_id
     and o.product_id=:product_id
     and (o.deleted_p='t' or o.offer_begins - sysdate > 0 or o.offer_ends - sysdate < 0)
 order by o.last_modified desc" {
-    ec_write_out_one_offer
+    append non_current_offers_select_html ec_write_out_one_offer
 } if_no_rows {
-    doc_body_append "There are no non-current or deleted offers.\n"
+    set no_non_current_offers 1
 }
 
 db_release_unused_handles
-
-doc_body_append "</ul>
-
-[ad_admin_footer]
-"

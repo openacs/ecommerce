@@ -23,24 +23,7 @@ if { $deleted_p == "t" } {
     set delete_or_undelete "Undelete"
     set deletion_or_undeletion "Undeletion"
 }
+set title "Confirm $deletion_or_undeletion of Retailer Offer on $product_name"
+set context [list [list index Products] $title]
 
-doc_body_append "[ad_admin_header "Confirm $deletion_or_undeletion of Retailer Offer on $product_name"]
-
-<h2>Confirm $deletion_or_undeletion of Retailer Offer on $product_name</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "$delete_or_undelete Retailer Offer"]
-
-<hr>
-"
-
-doc_body_append "<form method=post action=offer-delete-2>
-[export_form_vars deleted_p product_id retailer_id]
-
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"
+set export_form_vars_html [export_form_vars deleted_p product_id retailer_id]
