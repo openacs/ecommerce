@@ -13,49 +13,29 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "
-    [ad_admin_header "Orders / Shipments / Refunds"]
-    
-    <h2>Orders / Shipments / Refunds</h2>
+set title "Orders / Shipments / Refunds"
+set context [list $title]
 
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] "Orders / Shipments / Refunds"]
-
-    <hr>"
-
-db_1row recent_orders_select "
-    select sum(one_if_within_n_days(confirmed_date,1)) as n_o_in_last_24_hours, sum(one_if_within_n_days(confirmed_date,7)) as n_o_in_last_7_days
+db_1row recent_orders_select "select sum(one_if_within_n_days(confirmed_date,1)) as n_o_in_last_24_hours, sum(one_if_within_n_days(confirmed_date,7)) as n_o_in_last_7_days
     from ec_orders_reportable"
 
-db_1row recent_baskets_select "
-    select sum(one_if_within_n_days(in_basket_date,1)) as s_b_in_last_24_hours, sum(one_if_within_n_days(in_basket_date,7)) as s_b_in_last_7_days
+db_1row recent_baskets_select "select sum(one_if_within_n_days(in_basket_date,1)) as s_b_in_last_24_hours, sum(one_if_within_n_days(in_basket_date,7)) as s_b_in_last_7_days
     from ec_orders"
 
-db_1row recent_gift_certificates_purchased_select "
-    select sum(one_if_within_n_days(issue_date,1)) as n_g_in_last_24_hours, sum(one_if_within_n_days(issue_date,7)) as n_g_in_last_7_days
+db_1row recent_gift_certificates_purchased_select "select sum(one_if_within_n_days(issue_date,1)) as n_g_in_last_24_hours, sum(one_if_within_n_days(issue_date,7)) as n_g_in_last_7_days
     from ec_gift_certificates_purchased"
 
-db_1row recent_gift_certificates_issued_select "
-    select sum(one_if_within_n_days(issue_date,1)) as n_gi_in_last_24_hours, sum(one_if_within_n_days(issue_date,7)) as n_gi_in_last_7_days
+db_1row recent_gift_certificates_issued_select "select sum(one_if_within_n_days(issue_date,1)) as n_gi_in_last_24_hours, sum(one_if_within_n_days(issue_date,7)) as n_gi_in_last_7_days
     from ec_gift_certificates_issued"
 
-db_1row recent_shipments_select "
-    select sum(one_if_within_n_days(shipment_date,1)) as n_s_in_last_24_hours, sum(one_if_within_n_days(shipment_date,7)) as n_s_in_last_7_days
+db_1row recent_shipments_select "select sum(one_if_within_n_days(shipment_date,1)) as n_s_in_last_24_hours, sum(one_if_within_n_days(shipment_date,7)) as n_s_in_last_7_days
     from ec_shipments"
 
-db_1row recent_refunds_select "
-    select sum(one_if_within_n_days(refund_date,1)) as n_r_in_last_24_hours, sum(one_if_within_n_days(refund_date,7)) as n_r_in_last_7_days
+db_1row recent_refunds_select "select sum(one_if_within_n_days(refund_date,1)) as n_r_in_last_24_hours, sum(one_if_within_n_days(refund_date,7)) as n_r_in_last_7_days
     from ec_refunds"
 
-doc_body_append "
-    <ul>
-      <li><p><a href=\"by-order-state-and-time\">Orders</a> 
-        <font size=-1>($n_o_in_last_24_hours in last 24 hours; $n_o_in_last_7_days in last 7 days)</font></p></li>
-      <li><p><a href=\"by-state-and-time\">Shopping Basket Activity</a>
-        <font size=-1>($s_b_in_last_24_hours in last 24 hours; $s_b_in_last_7_days in last 7 days)</font></p></li>
-      <li><p><a href=\"fulfillment\">Order Fulfillment</a> 
-        <font size=-1>"
-
 set count 0
+set shipping_method_counts_html ""
 db_foreach shipping_method_counts "
     select shipping_method, coalesce(count(*), 0) as shipping_method_count
     from ec_orders_shippable
@@ -65,41 +45,20 @@ db_foreach shipping_method_counts "
 
     incr count
     if {$count == 1} {
-	doc_body_append "("
+        append shipping_method_counts_html "("
     }
-    doc_body_append "$shipping_method_count to be shipped via $shipping_method"
+    append shipping_method_counts_html "$shipping_method_count to be shipped via $shipping_method"
     if {$count < [db_resultrows]} {
-	doc_body_append ", "
+        append shipping_method_counts_html ", "
     } else {
-	doc_body_append ")"
+        append shipping_method_counts_html ")"
     }
 }
 
-doc_body_append "</font></p></li>
-      <li><p><a href=\"gift-certificates\">Gift Certificate Purchases</a> 
-        <font size=-1>($n_g_in_last_24_hours in last 24 hours; $n_g_in_last_7_days in last 7 days)</font></p></li>
-      <li><p><a href=\"gift-certificates-issued\">Gift Certificates Issued</a> 
-        <font size=-1>($n_gi_in_last_24_hours in last 24 hours; $n_gi_in_last_7_days in last 7 days)</font></p></li>
-      <li><p><a href=\"shipments\">Shipments</a> 
-       <font size=-1>($n_s_in_last_24_hours in last 24 hours; $n_s_in_last_7_days in last 7 days)</font></p></li>
-      <li><p><a href=\"refunds\">Refunds</a> 
-        <font size=-1>($n_r_in_last_24_hours in last 24 hours; $n_r_in_last_7_days in last 7 days)</font></p></li>
-      <li><p><a href=\"revenue\">Financial Reports</a>
-      <li><p>Search for an order:</p>
-        <blockquote>
-          <form method=post action=search>
-            <p>By Order ID: <input type=text name=order_id_query_string size=10></p>
-          </form>
-          <form method=post action=search>
-            <p>By Product SKU: <input type=text name=product_sku_query_string size=10></p>
-          </form>
-          <form method=post action=search>
-            <p>By Product Name: <input type=text name=product_name_query_string size=10></p>
-          </form>
-          <form method=post action=search>
-            <p>By Customer Last Name: <input type=text name=customer_last_name_query_string size=10></p>
-          </form>
-        </blockquote>
-      </li>
-    </ul>
-    [ad_admin_footer]"
+# show a zero instead of blank for values of zero
+foreach date_range { n_o_in_last_24_hours n_o_in_last_7_days s_b_in_last_24_hours s_b_in_last_7_days n_g_in_last_24_hours n_g_in_last_7_days n_gi_in_last_24_hours n_gi_in_last_7_days n_s_in_last_24_hours n_s_in_last_7_days n_r_in_last_24_hours n_r_in_last_7_days } {
+    set var_value [string trim [expr "$$date_range" ]]
+    if { [string length $var_value] eq 0 } {
+        set $date_range 0
+    }
+}
