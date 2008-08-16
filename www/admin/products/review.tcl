@@ -15,102 +15,17 @@ set review_date [clock format [clock scan $review_date] -format "%Y-%m-%d" -gmt 
 
 set product_name [ec_product_name $product_id]
 
-doc_body_append "[ad_admin_header "Professional Review of $product_name"]
+set title "Professional Review of $product_name"
+set context [list [list index Products] $title]
 
-<h2>Professional Review of $product_name</h2>
+set summary_review "[ec_product_review_summary $author_name $publication $review_date]"
+set display_p_html [util_PrettyBoolean $display_p]
 
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] [list "reviews.tcl?[export_url_vars product_id]" "Professional Reviews"] "One Review"]
+set export_form_vars_html "[export_form_vars review_id product_id]"
 
-<hr>
-<h3>The Review</h3>
-<blockquote>
-<table>
-<tr>
-<td>Summary</td>
-<td>[ec_product_review_summary $author_name $publication $review_date]</td>
-</tr>
-<tr>
-<td>Display on web site?</td>
-<td>[util_PrettyBoolean $display_p]</td>
-</tr>
-<tr>
-<td>Review</td>
-<td>$review</td>
-</tr>
-</table>
-</blockquote>
-
-<p>
-
-<h3>Edit this Review</h3>
-
-<blockquote>
-
-<form method=post action=review-edit>
-[export_form_vars review_id product_id]
-
-<table>
-<tr>
-<td>
-Publication
-</td>
-<td>
-<input type=text name=publication size=20 value=\"[ad_quotehtml $publication]\">
-</td>
-</tr>
-<tr>
-<td>
-Reviewed By
-</td>
-<td>
-<input type=text name=author_name size=20 value=\"[ad_quotehtml $author_name]\">
-</td>
-</tr>
-<tr>
-<td>
-Reviewed On
-</td>
-<td>
-[ad_dateentrywidget review_date $review_date]
-</td>
-</tr>
-<tr>
-<td>
-Display on web site?
-</td>
-<td>
-<input type=radio name=display_p value=\"t\" 
-[ec_decode $display_p "t" "checked" ""]>Yes &nbsp;
-<input type=radio name=display_p value=\"f\"
-[ec_decode $display_p "f" "checked" ""]>No
-</td>
-</tr>
-<tr>
-<td>
-Review<br>
-(HTML format)
-</td>
-<td>
-<textarea name=review rows=10 cols=50 wrap>$review</textarea>
-</td>
-</tr>
-</table>
-
-<p>
-
-<center>
-<input type=submit value=\"Edit\">
-</center>
-
-</form>
-
-</blockquote>
-
-<h3>Audit Review</h3>
-
-<blockquote>
-<ul>
-"
+set review_date_html "[ad_dateentrywidget review_date $review_date]"
+set display_p_input_html "<input type=radio name=display_p value=\"t\" [ec_decode $display_p "t" "checked" ""]>Yes &nbsp; \
+  <input type=radio name=display_p value=\"f\" [ec_decode $display_p "f" "checked" ""]>No"
 
 # Set audit variables
 # audit_name, audit_id, audit_id_column, return_url, audit_tables, main_tables
@@ -120,11 +35,4 @@ set audit_id_column "review_id"
 set return_url "[ad_conn url]?[export_url_vars review_id]"
 set audit_tables [list ec_product_reviews_audit]
 set main_tables [list ec_product_reviews]
-
-doc_body_append "<li><a href=\"[ec_url_concat [ec_url] /admin]/audit?[export_url_vars audit_name audit_id audit_id_column return_url audit_tables main_tables]\">audit trail</a>
-
-</ul>
-</blockquote>
-
-[ad_admin_footer]
-"
+set audit_url_html "[ec_url_concat [ec_url] /admin]/audit?[export_url_vars audit_name audit_id audit_id_column return_url audit_tables main_tables]"
