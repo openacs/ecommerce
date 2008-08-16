@@ -46,16 +46,13 @@ products from a vendor website according to previously defined procedures: ecds_
 </p></li>
 
 </ul>
-
-<p>
-  <b>Note:</b> Products need to be loaded and their extra fields need to be defined before 
-  loading product extras.
-</p>
-<p>
-  <b>Note:</b> Categories and subcategories need to be created before using 
-  a Product Category Map Loader.
-</p>
-<p>
-  <b>Note: </b>There may be a peak load condition on the server for an extended period 
+<p>Note:</p>
+<ul>
+<li>Products need to be loaded and their extra fields need to be defined before 
+  loading product extras.</li>
+<li>Categories and subcategories need to be created before using 
+  a Product Category Map Loader.</li>
+<li>There may be a peak load condition on the server for an extended period 
   when bulk loading of product images create product thumbnails (optional feature).
-</p>
+</li></ul>
+
