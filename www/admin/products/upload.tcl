@@ -45,78 +45,26 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "[ad_admin_header "Upload Products"]
-
-<h2>Upload Products</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Upload Products"]
-
-<hr>
-
-<blockquote>
-
-<form enctype=\"multipart/form-data\" action=\"upload-2\" method=\"post\">
-Data Filename <input name=\"csv_file\" type=\"file\">
-<br>
-<input type=\"radio\" name=\"file_type\" value=\"csv\" checked>CSV format<br>
-<input type=\"radio\" name=\"file_type\" value=\"tab\">Tab Delimited format<br>
-<input type=\"radio\" name=\"file_type\" value=\"delim\">Delimited by: <input name=\"delimiter\" value=\" \" type=\"text\"> (single character).<br>
- <br>
-<center>
-<input type=\"submit\" value=\"Upload\">
-</center>
-</form>
-
-<p>
-
-<b>Notes:</b>
-
-<blockquote>
-<p>
-
-This page uploads a data file containing product information into the database.  The file format should be:
-<p>
-<blockquote>
-<code>field_name_1, field_name_2, ... field_name_n<br>
-value_1, value_2, ... value_n</code>
-</blockquote>
-<p>
-where the first line contains the actual names of the columns in ec_products and the remaining lines contain
-the values for the specified fields, one line per product.
-<p>
-Legal values for field names are the columns in ec_products:
-<p>
-<blockquote>
-<pre>
-"
+set title "Upload Products"
+set context [list [list index Products] $title]
 
 set undesirable_cols [list "product_id" "dirname" "creation_date" "available_date" "last_modified" "last_modifying_user" "modified_ip_address"]
-set required_cols [list "sku" "product_name"]
 
+set required_cols [list "sku" "product_name"]
 
 db_with_handle db {
   for {set i 0} {$i < [ns_column count $db ec_products]} {incr i} {
     set col_to_print [ns_column name $db ec_products $i]
     if { [lsearch -exact $undesirable_cols $col_to_print] == -1 } {
-      doc_body_append "$col_to_print"
+      append doc_body "$col_to_print"
       if { [lsearch -exact $required_cols $col_to_print] != -1 } {
-	doc_body_append " (required)"
+          append doc_body " (required)"
       }
-      doc_body_append "\n"
+      append doc_body "\n"
     }
   }
 }
 
-doc_body_append "</pre>
-</blockquote>
-<p>
-Note: <code>[join $undesirable_cols ", "]</code> are set 
-automatically and should not appear in the data file.
+set undesirable_cols_html [join $undesirable_cols ", "]
 
-</blockquote>
-</blockquote>
-<p>About search_keywords: Data from product_name, one_line_description, and detailed_description 
-are automatically included in product searches. No need to repeat that information in search_keywords.</p>
-[ad_admin_footer]
 
-"

@@ -19,34 +19,25 @@ set user_id [ad_get_user_id]
 set peeraddr [ns_conn peeraddr]
 
 # Grab package_id as context_id
-
 set context_id [ad_conn package_id]
 
-doc_body_append "[ad_admin_header "Uploading Products"]
+set serious_errors 0
 
-<h2>Uploading Products</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Uploading Products"]
-
-<hr>
-
-<blockquote>
-"
+set title "Uploading Products"
+set context [list [list index Products] $title]
 
 # Get the name of the transfered data file
-
 set unix_file_name ${csv_file.tmpfile}
 
 # Check that the file is readable.
-
 if { ![file readable $unix_file_name] } {
-    doc_body_append "Cannot read file $unix_file_name"
-    return
+    append error_message "Cannot read file ${unix_file_name}. "
+    set serious_errors 1
 }
 # Check that delimiter is one character, if used
 if { [string length $delimiter] != 1 && [string eq $file_type "delim"]} {
-    doc_body_append "Delimiter is not one character long."
-    return
+    append error_message "Delimiter is not one character long."
+    set serious_errors 1
 }
 
 # Accept only field names that exist in the ec_product table and are
@@ -59,26 +50,21 @@ set legal_field_names {sku product_name one_line_description detailed_descriptio
 # Check each entry in the datafile for the following required fields.
 # These fields are required so that we can check if a product already
 # in the products table and should be update rather than created.
-
 set required_field_names {sku product_name}
 
 # Initialize each legal field name as the datafile might not mention
 # each and every one of them.
-
 foreach legal_field_name $legal_field_names {
     set $legal_field_name ""
 }
 
 # Start reading.
 # use file_type to determine which proc to delimit data
-
 set datafilefp [open $unix_file_name]
 set count 0
-set errors 0
+set errors $serious_errors
 set success_count 0
-
-# Continue reading the file till the end but stop when an error
-# occured.
+set doc_body ""
 
 # read line, depending  on file type
 if {[string eq $file_type "csv"]} {
@@ -92,21 +78,20 @@ if {[string eq $file_type "csv"]} {
     set line_status -1
 }
 
+# Continue reading the file till the end but stop when an error occured.
 while { $line_status != -1 && !$errors} {
     incr count
     if { $count == 1 } {
 
         # First row, grab the field names and their number.
-
         set field_names $elements
         set number_of_fields [llength $elements]
 
         # Check the field names against the list of legal names
-
         foreach field_name $field_names {
             if {[lsearch -exact $legal_field_names $field_name] == -1} {
                 incr errors
-                doc_body_append "<p><font color=red>FAILURE!</font> $field_name is not an allowed field name.</p>"
+                append doc_body "<p><font color=red>FAILURE!</font> $field_name is not an allowed field name.</p>"
             }
         }
     } else {
@@ -162,7 +147,6 @@ while { $line_status != -1 && !$errors} {
 
                 # We found a product_id for the given sku, let's
                 # update the product.
-
                 if { [catch {db_dml product_update "
                     update ec_products set
                     user_id = :user_id,
@@ -187,20 +171,18 @@ while { $line_status != -1 && !$errors} {
                     template_id = :template_id
                     where product_id = :product_id;
                 "} errmsg] } {
-                    doc_body_append "<p><font color=red>FAILURE!</font> Product update of <i>$product_name</i> failed with error:<\p><p>$errmsg</p>"
+                    append doc_body "<p><font color=red>FAILURE!</font> Product update of <i>$product_name</i> failed with error:<\p><p>$errmsg</p>"
                 } else {
-                    doc_body_append "<p>Updated $product_name</p>"
+                    append doc_body "<p>Updated $product_name</p>"
                 }
             } else {
 
                 # Generate a product_id
-
                 set product_id [db_nextval acs_object_id_seq]
 
                 # Dirname will be the first four letters (lowercase)
                 # of the product_name followed by the product_id (for
                 # uniqueness)
-                
                 regsub -all {[^a-zA-Z]} $product_name "" letters_in_product_name 
                 set letters_in_product_name [string tolower $letters_in_product_name]
                 if [catch {set dirname "[string range $letters_in_product_name 0 3]$product_id"}] {
@@ -238,16 +220,14 @@ while { $line_status != -1 && !$errors} {
                         :size_list,
                         :peeraddr
                     )"} errmsg] } {
-                        doc_body_append "<font color=red>FAILURE!</font> Product creation of <i>$product_name</i> failed with error:<\p><p>$errmsg</p>"
+                        append doc_body "<font color=red>FAILURE!</font> Product creation of <i>$product_name</i> failed with error:<\p><p>$errmsg</p>"
                     } else {
-                        doc_body_append "<p>Created $product_name</p>"
+                        append doc_body "<p>Created $product_name</p>"
 
                         # we have to also write a row into ec_custom_product_field_values
                         # for consistency with add*.tcl (added 1999-08-08, inadvertently removed 20020504)
-
-
                         if { [catch {db_dml custom_product_field_insert "insert into ec_custom_product_field_values (product_id, last_modified, last_modifying_user, modified_ip_address) values (:product_id, now(), :user_id, :peeraddr)" } errmsg] } {
-                        doc_body_append "<font color=red>FAILURE!</font> Insert into ec_custom_product_field_values failed for product_id=$product_id with error: $errmsg<br>\n"
+                        append doc_body "<font color=red>FAILURE!</font> Insert into ec_custom_product_field_values failed for product_id=$product_id with error: $errmsg<br>\n"
                         }
                     }
                 }
@@ -265,13 +245,10 @@ while { $line_status != -1 && !$errors} {
                     template_id = :template_id
                     where product_id = :product_id;
                 "} errmsg] } {
-                    doc_body_append "<font color=red>FAILURE!</font> Product update of new product <i>$product_name</i> failed with error:<\p><p>$errmsg</p>"
+                    append doc_body "<font color=red>FAILURE!</font> Product update of new product <i>$product_name</i> failed with error:<\p><p>$errmsg</p>"
                 }
-
             }
-
             # Product line is completed, increase counter
-
             incr success_count
 
         } 
@@ -289,7 +266,6 @@ while { $line_status != -1 && !$errors} {
     set line_status -1
     }
 
-
 }
 
 if { $success_count == 1 } {
@@ -298,9 +274,7 @@ if { $success_count == 1 } {
     set product_string "products"
 }
 
-doc_body_append "</blockquote>
+set total_lines "[ec_decode $count "0" "0" [expr $count -1]]"
 
-<p>Successfully loaded $success_count $product_string out of [ec_decode $count "0" "0" [expr $count -1]].
 
-[ad_admin_footer]
-"
+
