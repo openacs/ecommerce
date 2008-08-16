@@ -19,41 +19,11 @@ ad_require_permission [ad_conn package_id] admin
 
 set product_name [ec_product_name $product_id]
 
-doc_body_append "[ad_admin_header "Confirm Review of $product_name"]
-
-<h2>Confirm Review of $product_name</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] [list "reviews.tcl?[export_url_vars product_id product_name]" "Professional Reviews"] "Confirm Review"]
-
-<hr>
-
-<table>
-<tr>
-<td>Summary</td>
-<td>[ec_product_review_summary $author_name $publication [ec_date_text review_date]]</td>
-</tr>
-<tr>
-<td>Display on web site?</td>
-<td>[util_PrettyBoolean $display_p]</td>
-</tr>
-<tr>
-<td>Review</td>
-<td>$review</td>
-</tr>
-</table>
-"
-
+set title "Confirm Review of $product_name"
+set context [list [list index Products] $title]
 
 set review_id [db_nextval ec_product_review_id_sequence]
-
-doc_body_append "<form method=post action=review-add-2>
-[export_form_vars product_id publication display_p review review_id author_name]
-<input type=hidden name=review_date value=\"[ec_date_text review_date]\">
-
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-</form>
-
-[ad_admin_footer]
-"
+set review_summary_html [ec_product_review_summary $author_name $publication [ec_date_text review_date]]
+set export_form_review_html [export_form_vars product_id publication display_p review review_id author_name]
+set display_p_html [util_PrettyBoolean $display_p]
+set review_date_html [ec_date_text review_date]
