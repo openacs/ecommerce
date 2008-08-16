@@ -79,50 +79,18 @@ if { ![info exists offer_code] } {
 
 set product_name [ec_product_name $product_id]
 
-doc_body_append "[ad_admin_header "Confirm Sale Price for $product_name"]
+set title "Confirm Sale Price for $product_name"
+set context [list [list index Products] $title]
 
-<h2>Confirm Sale Price for $product_name</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Confirm Sale Price"]
-
-<hr>
-"
-
-set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
+set currency [parameter::get -package_id [ec_id] -parameter Currency -default "USD"]
 
 set sale_price_id [db_nextval ec_sale_price_id_sequence]
 
-doc_body_append "<table>
-<tr>
-<td>Sale Price</td>
-<td>[ec_pretty_price $sale_price $currency]</td>
-</tr>
-<tr>
-<td>Name</td>
-<td>$sale_name</td>
-</tr>
-<tr>
-<td>Sale Begins</td>
-<td>[util_AnsiDatetoPrettyDate [ec_date_text sale_begins]] [ec_time_text sale_begins]</td>
-</tr>
-<tr>
-<td>Sale Ends</td>
-<td>[util_AnsiDatetoPrettyDate [ec_date_text sale_ends]] [ec_time_text sale_ends]</td>
-</tr>
-<tr>
-<td>Offer Code</td>
-<td>[ec_decode $offer_code "" "None Needed" $offer_code]</td>
-</tr>
-</table>
+set sale_price_html [ec_pretty_price $sale_price $currency]
+set sale_begins_html "[util_AnsiDatetoPrettyDate [ec_date_text sale_begins]] [ec_time_text sale_begins]"
+set sale_ends_html "[util_AnsiDatetoPrettyDate [ec_date_text sale_ends]] [ec_time_text sale_ends]"
+set offer_code_html [ec_decode $offer_code "" "None Needed" $offer_code]
+set export_form_vars_html [export_form_vars sale_price_id product_id product_name sale_price sale_name offer_code]
 
-<form method=post action=sale-price-add-2>
-[export_form_vars sale_price_id product_id product_name sale_price sale_name offer_code]
-<input type=hidden name=sale_begins value=\"[ec_datetime_text sale_begins]\">
-<input type=hidden name=sale_ends value=\"[ec_datetime_text sale_ends]\">
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-
-</form>
-[ad_admin_footer]
-"
+set form_sale_begins_html [ec_datetime_text sale_begins]
+set form_sale_ends_html [ec_datetime_text sale_ends]

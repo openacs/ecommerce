@@ -1,7 +1,3 @@
-
-set exception_count 0
-set exception_text ""
-
 ad_page_contract {
 
     Update a sale price.
@@ -22,19 +18,21 @@ ad_page_contract {
     sale_begins:array,date
     sale_ends:array,date
     offer_code_needed
-    offer_code:optional
+    {offer_code {}}
 } -validate {
     sale_begins_ok {
 	set errmsg [ec_time_widget_validate sale_begins]
+    set exception_count 0
+    set exception_text ""
 	if { $errmsg ne "" } {
-	    append exception_text "<li>$errmsg.\n"
+	    append exception_text "<li>$errmsg.</li>\n"
 	    incr exception_count
 	}
     }
     sale_ends_ok { 
 	set errmsg [ec_time_widget_validate sale_ends]
 	if { $errmsg ne "" } {
-	    append exception_text "<li>$errmsg.\n"
+	    append exception_text "<li>$errmsg.</li>\n"
 	    incr exception_count
 	}
     }
@@ -49,7 +47,7 @@ if {![regexp {^[0-9|.]+$} $sale_price ]} {
 
 if { $offer_code_needed == "yes_supplied" && (![info exists offer_code] || [empty_string_p $offer_code]) } {
     incr exception_count
-    append exception_text "<li>You forgot to specify an offer code.\n"
+    append exception_text "<li>You forgot to specify an offer code.</li>\n"
 }
 
 if { $exception_count > 0 } {
@@ -60,6 +58,8 @@ if { $exception_count > 0 } {
 # Error checking done
 
 set product_name [ec_product_name $product_id]
+set title "Confirm Sale Price for $product_name"
+set context [list [list index Products] $title]
 
 # If offer_code_needed is yes_generate, I need to generate a
 # offer_code
@@ -68,53 +68,12 @@ if { $offer_code_needed == "yes_generate" } {
     set offer_code [ec_generate_random_string 8]
 }
 
-# For the case where no offer code is required to get the sale price
+set currency [parameter::get -package_id [ec_id] -parameter Currency -default "USD"]
 
-if { ![info exists offer_code] } {
-    set offer_code ""
-}
-
-doc_body_append "
-    [ad_admin_header "Confirm Sale Price for $product_name"]
-
-    <h2>Confirm Sale Price for $product_name</h2>
-
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Confirm Sale Price"]
-
-    <hr>"
-
-set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
-
-doc_body_append "
-    <table>
-	<tr>
-	  <td>Sale Price</td>
-	  <td>[ec_pretty_price $sale_price $currency]</td>
-	</tr>
-	<tr>
-	  <td>Name</td>
-	  <td>$sale_name</td>
-	</tr>
-	<tr>
-	  <td>Sale Begins</td>
-	  <td>[util_AnsiDatetoPrettyDate [ec_date_text sale_begins]] [ec_time_text sale_begins]</td>
-	</tr>
-	<tr>
-	  <td>Sale Ends</td>
-	  <td>[util_AnsiDatetoPrettyDate [ec_date_text sale_ends]] [ec_time_text sale_ends]</td>
-	</tr>
-	<tr>
-	  <td>Offer Code</td>
-	  <td>[ec_decode $offer_code "" "None Needed" $offer_code]</td>
-	</tr>
-    </table>
-
-    <form method=post action=sale-price-edit-3>
-      [export_form_vars sale_price_id product_id product_name sale_price sale_name offer_code]
-      <input type=hidden name=sale_begins value=\"[ec_datetime_text sale_begins]\">
-      <input type=hidden name=sale_ends value=\"[ec_datetime_text sale_ends]\">
-      <center>
-	<input type=submit value=\"Confirm\">
-      </center>
-    </form>
-    [ad_admin_footer]"
+set sale_price_html [ec_pretty_price $sale_price $currency]
+set sale_begins_html "[util_AnsiDatetoPrettyDate [ec_date_text sale_begins]] [ec_time_text sale_begins]"
+set sale_ends_html "[util_AnsiDatetoPrettyDate [ec_date_text sale_ends]] [ec_time_text sale_ends]"
+set offer_code_html [ec_decode $offer_code "" "None Needed" $offer_code]
+set export_form_vars_html "[export_form_vars sale_price_id product_id product_name sale_price sale_name offer_code]"
+set sale_begins_text [ec_datetime_text sale_begins]
+set sale_ends_text [ec_datetime_text sale_ends]
