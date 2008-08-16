@@ -15,27 +15,7 @@ ad_require_permission [ad_conn package_id] admin
 
 set product_name [ec_product_name $product_id]
 
-doc_body_append "[ad_admin_header "Expire Sale Price for $product_name"]
+set title "Expire Sale Price for $product_name"
+set context [list [list index Products] $title]
 
-<h2>Expire Sale Price for $product_name</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "one.tcl?[export_url_vars product_id]" $product_name] "Expire Sale Price"]
-
-<hr>
-
-Please confirm that you want to end the sale price right now.
-
-<form method=post action=sale-price-expire-2>
-
-[export_form_vars product_id sale_price_id]
-
-<p>
-
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"
+set export_form_vars_html [export_form_vars product_id sale_price_id]
