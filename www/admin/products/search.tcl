@@ -23,28 +23,14 @@ if { [info exists sku] } {
     set description "Products whose name includes \"$product_name\":"
 }
 
-doc_body_append "[ad_admin_header "Product Search"]
-
-<h2>Product Search</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] "Product Search"]
-
-<hr>
-
-$description
-
-<ul>
-"
+set title "Product Search"
+set context [list [list index Products] $title]
 
 set product_counter 0
+set product_search_select_html ""
 db_foreach product_search_select "select product_id, product_name from ec_products where $additional_query_part" {
     incr product_counter
-    doc_body_append "<li><a href=\"one?[export_url_vars product_id]\">$product_name</a>\n"
+    append product_search_select_html "<li><a href=\"one?[export_url_vars product_id]\" target=\"_blank\">$product_name</a></li>\n"
 } if_no_rows {
-    doc_body_append "No matching products were found.\n"
+   # do nothing
 }
-
-doc_body_append "</ul>
-
-[ad_admin_footer]
-"
