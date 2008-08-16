@@ -17,13 +17,15 @@ doc_body_append "[ad_admin_header "Order Fulfillment"]
 
 [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Fulfillment"]
 
-<hr>
-(these <a href=\"fulfillment-items-needed\">items</a> are needed in order to fulfill all outstanding orders)
-<p>
+<hr><p>
+These <a href=\"fulfillment-items-needed\">items</a> are needed in order to fulfill all outstanding orders.
+Orders over 28 days old cannot be fulfilled through shopping cart, because gateways usually drop the transaction_id associated with the order.
+</p><p>
 "
 
 set old_order_state ""
 set old_shipping_method ""
+set pre_auth_stale_date [clock format [clock scan "4 weeks ago"] -format "%Y-%m-%d"]
 
 db_foreach orders_select "
     select o.order_id, o.confirmed_date, o.order_state, o.shipping_method,
@@ -52,9 +54,13 @@ db_foreach orders_select "
     }
 
     doc_body_append "<li>"
-    doc_body_append "[ec_order_summary_for_admin $order_id $first_names $last_name $confirmed_date $order_state $user_id]"
-    doc_body_append " \[<a href=\"fulfill?order_id=$order_id\">Fulfill</a>\]\n"
-
+    if { $pre_auth_stale_date > $confirmed_date } { 
+        doc_body_append "[ec_order_summary_for_admin $order_id $first_names $last_name $confirmed_date $order_state $user_id]"
+        doc_body_append "<b>Stale order<b>. (You can either contact sitewide admin to extract credit card info when ready to fulfill, or void this order because it is stale, or something completely different."
+    } else {
+        doc_body_append "[ec_order_summary_for_admin $order_id $first_names $last_name $confirmed_date $order_state $user_id]"
+        doc_body_append " \[<a href=\"fulfill?order_id=$order_id\">Fulfill</a>\]\n"
+}
     set old_shipping_method $shipping_method
     set old_order_state $order_state
 }
