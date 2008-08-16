@@ -26,6 +26,15 @@ db_1row num_orders_select "
       sum(one_if_within_n_days(confirmed_date,7)) as n_in_last_7_days
     from ec_orders_reportable"
 
+# show a zero instead of blank for values of zero
+foreach date_range { n_in_last_24_hours n_in_last_7_days } {
+    set var_value [string trim [expr "$$date_range" ]]
+    if { [string length $var_value] eq 0 } {
+        set $date_range 0
+    }
+}
+
+
 db_1row num_products_select "select count(*) as n_products, coalesce(round(avg(price),2), 0) as avg_price from ec_products_displayable"
 
 # links and info mainly related to business operations
