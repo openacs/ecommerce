@@ -237,6 +237,8 @@ while { $refund_amount > 0 } {
 	# thus it is safe to assume that transactions are settled within
 	# 24 hours after they have been marked for settlement.
 
+  # make sure date does not choke on decimal times
+    regsub -- {\.[0-9]+$} $marked_date "" marked_date
 	set 24hr [expr 24 * 60 * 60]
 	set time_since_marking [expr [clock seconds] - [clock scan $marked_date]]
 	if { $time_since_marking > $24hr } {
