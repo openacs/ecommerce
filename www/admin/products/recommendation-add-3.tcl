@@ -23,73 +23,32 @@ set subcategory_list [list]
 set subsubcategory_list [list]
 for { set counter 0 } { $counter < [llength $categorization] } {incr counter} {
     if { $counter == 0 } {
-	lappend category_list [lindex $categorization 0]
+        lappend category_list [lindex $categorization 0]
     }
     if { $counter == 1 } {
-	lappend subcategory_list [lindex $categorization 1]
+        lappend subcategory_list [lindex $categorization 1]
     }
     if { $counter == 2 } {
-	lappend subsubcategory_list [lindex $categorization 2]
+        lappend subsubcategory_list [lindex $categorization 2]
     }
 }
-
 
 set recommendation_id [db_nextval ec_recommendation_id_sequence]
 
-doc_body_append "[ad_admin_header "Confirm Product Recommendation"]
+set title "Confirm Product Recommendation"
+set context [list [list index Products] $title]
 
-<h2>Confirm Product Recommendation</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "recommendations.tcl" "Recommendations"] "Add One"]
-
-<hr>
-
-Please confirm your product recommendation:
-
-<blockquote>
-
-<table cellpadding=10>
-<tr>
-<td>Product:</td>
-<td>$product_name</td>
-</tr>
-<tr>
-<td>Recommended For:</td>
-"
 if { ![empty_string_p $user_class_id] } {
-    doc_body_append "<td>[db_string user_class_select "select user_class_name from ec_user_classes where user_class_id=:user_class_id"]</td>
-    "
+    set user_class_html "[db_string user_class_select "select user_class_name from ec_user_classes where user_class_id=:user_class_id"]"
 } else {
-    doc_body_append "<td>All Users</td>
-    "
+    set user_class_html "All Users"
 }
-doc_body_append "</tr>
-<tr>
-<td>Display Recommendation In:</td>
-"
+
 if { [empty_string_p $categorization] } {
-    doc_body_append "<td>Top Level</td>"
+    set categorization_html "Top Level"
 } else {
-    doc_body_append "<td>[ec_category_subcategory_and_subsubcategory_display $category_list $subcategory_list $subsubcategory_list]</td>"
+    set categorization_html "[ec_category_subcategory_and_subsubcategory_display $category_list $subcategory_list $subsubcategory_list]"
 }
 
-doc_body_append "</tr>
-<tr>
-<td>Accompanying Text<br>(HTML format):</td>
-<td>$recommendation_text</td>
-</tr>
-</table>
+set export_form_vars_html [export_form_vars product_id product_name user_class_id recommendation_text recommendation_id categorization]
 
-</blockquote>
-
-<form method=post action=\"recommendation-add-4\">
-[export_form_vars product_id product_name user_class_id recommendation_text recommendation_id categorization]
-
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"

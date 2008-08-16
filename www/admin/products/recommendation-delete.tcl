@@ -12,35 +12,19 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
+set title "Really Delete Product Recommendation?"
+set context [list [list index Products] $title]
+
 db_1row recommendation_select "select r.*, p.product_name
 from ec_product_recommendations r, ec_products p
 where recommendation_id=:recommendation_id
 and r.product_id=p.product_id"
 
 if { ![empty_string_p $user_class_id] } {
-    set user_class_description "to [db_string user_class_name_select "select user_class_name from ec_user_classes where user_class_id=:user_class_id"]"
+    set user_class_description "[db_string user_class_name_select "select user_class_name from ec_user_classes where user_class_id=:user_class_id"]"
 } else {
-    set user_class_description "to all users"
+    set user_class_description "all users"
 }
 
+set export_form_vars_html [export_form_vars recommendation_id]
 
-doc_return  200 text/html "[ad_admin_header "Really Delete Product Recommendation?"]
-
-<h2>Confirm</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "recommendations.tcl" "Recommendations"] [list "recommendation.tcl?[export_url_vars recommendation_id]" "One"] "Confirm Deletion"]
-
-<hr>
-
-Are you sure that you want to delete this recommendation of 
-$product_name ($user_class_description)?
-
-<center>
-<form method=GET action=\"recommendation-delete-2\">
-[export_form_vars recommendation_id]
-<input type=submit value=\"Yes, I'm sure\">
-</form>
-</center>
-
-[ad_admin_footer]
-"

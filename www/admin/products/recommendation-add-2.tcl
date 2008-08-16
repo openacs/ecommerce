@@ -14,41 +14,9 @@ ad_require_permission [ad_conn package_id] admin
 
 set product_name [ec_product_name $product_id]
 
-doc_body_append "[ad_admin_header "Add a Product Recommendation"]
+set title "Add a Product Recommendation"
+set context [list [list index Products] $title]
 
-<h2>Add a Product Recommendation</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Products"] [list "recommendations.tcl" "Recommendations"] "Add One"]
-
-<hr>
-
-<form method=post action=\"recommendation-add-3\">
-[export_form_vars product_id]
-
-<table>
-<tr>
-<td>Product:</td>
-<td>$product_name</td>
-</tr>
-<tr>
-<td>Recommended For:</td>
-<td>[ec_user_class_widget]</td>
-</tr>
-<tr>
-<td>Display Recommendation In:</td>
-<td>[ec_category_widget "f" "" "t"]</td>
-</tr>
-<tr>
-<td>Accompanying Text<br>(HTML format):</td>
-<td><textarea wrap name=recommendation_text rows=6 cols=40></textarea></td>
-</tr>
-</table>
-
-<center>
-<input type=submit value=\"Submit\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"
+set export_form_vars_html [export_form_vars product_id]
+set recommended_for_html [ec_user_class_widget]
+set display_in_html [ec_category_widget "f" "" "t"]
