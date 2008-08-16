@@ -14,15 +14,21 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
+
+
 db_1row order_select "
     select o.order_state, o.creditcard_id, o.confirmed_date, o.cs_comments,
         o.shipping_method, o.shipping_address, o.in_basket_date,
         o.authorized_date, o.shipping_charged, o.voided_by, o.voided_date,
-        o.reason_for_void, u.user_id, u.first_names, u.last_name, c.billing_address
+        o.reason_for_void, u.user_id, u.first_names, u.last_name, , u.email, c.billing_address
     from ec_orders o, cc_users u, ec_creditcards
     where order_id=:order_id
     and o.user_id = u.user_id(+)
     and o.creditcard_id = c.creditcard_id(+)"
+
+set email "no email"
+db_0or1row user_info_select "
+    select email from cc_users where user_id = :user_id"
 
 doc_body_append "
     [ad_admin_header "One Order"]
@@ -43,7 +49,12 @@ doc_body_append "
       </tr>
       <tr>
         <td align=right><b>Ordered by</td>
-        <td><a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$first_names $last_name</a></td>
+        <td>$first_names $last_name<br>${email}"
+
+if { ![string equal $email "no email"] } {
+    doc_body_append " (<a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">user admin page</a>)"
+}
+doc_body_append "</td>
       </tr>
       <tr>
         <td align=right><b>Confirmed date</td>
