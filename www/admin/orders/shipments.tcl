@@ -14,28 +14,15 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "
-    [ad_admin_header "Shipment History"]
-
-    <h2>Shipment History</h2>
-
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Shipment History"]
-
-    <hr>
-
-    <table border=0 cellspacing=0 cellpadding=0 width=100%>
-    <tr bgcolor=ececec>
-      <td align=center><b>Carrier</b></td>
-      <td align=center><b>Shipment Date</b></td>
-    </tr>
-    <tr>
-      <td align=center>"
+set title "Shipment History"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
 set carrier_list [db_list get_carrier_list "
     select unique carrier
     from ec_shipments 
     where carrier is not null
     order by carrier"]
+
 set carrier_list [concat "all" $carrier_list]
 
 set linked_carrier_list [list]
@@ -48,10 +35,7 @@ foreach carrier $carrier_list {
     }
 }
 
-doc_body_append "
-    \[ [join $linked_carrier_list " | "] \]
-    </td>
-    <td align=center>"
+set linked_carrier_list_html "\[ [join $linked_carrier_list " | "] \]"
 
 set shipment_date_list [list [list last_24 "last 24 hrs"] [list last_week "last week"] [list last_month "last month"] [list all all]]
 
@@ -65,14 +49,7 @@ foreach shipment_date $shipment_date_list {
     }
 }
 
-doc_body_append "
-          \[ [join $linked_shipment_date_list " | "] \]
-        </td>
-      </tr>
-    </table>
-
-    </form>
-    <blockquote>"
+set linked_shipment_date_list_html "\[ [join $linked_shipment_date_list " | "] \]"
 
 if { $view_carrier == "all" } {
     set carrier_query_bit ""
@@ -113,9 +90,7 @@ set order_by_clause [ec_decode $order_by \
 			 "n_items" "n_items" \
 			 "full_or_partial" "full_or_partial"]
 
-set table_header "
-    <table>
-    <tr>
+set table_header "<tr>
       <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "shipment_id"]\">Shipment ID</a></b></td>
       <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "shipment_date"]\">Date Shipped</a></b></td>
       <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "order_id"]\">Order ID</a></b></td>
@@ -123,11 +98,9 @@ set table_header "
       <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "n_items"]\"># of Items</a></b></td>
       <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "full_or_partial"]\">Full / Partial</a></b></td>
     </tr>"
-
 set row_counter 0
-
-db_foreach shipments_select "
-    select s.shipment_id, s.shipment_date, s.order_id, s.carrier, 
+set shipments_select_html ""
+db_foreach shipments_select "select s.shipment_id, s.shipment_date, s.order_id, s.carrier, 
        decode(nvl((select count(*) from ec_items where order_id=s.order_id),0),nvl((select count(*) from ec_items where shipment_id=s.shipment_id),0),'Full','Partial') as full_or_partial,
        nvl((select count(*) from ec_items where shipment_id=s.shipment_id),0) as n_items
     from ec_shipments s
@@ -135,18 +108,17 @@ db_foreach shipments_select "
     order by $order_by_clause" {
 
     if { $row_counter == 0 } {
-	doc_body_append $table_header
+        append shipments_select_html $table_header
     }
 
     # Even rows are white, odd are grey
 
     if { [expr floor($row_counter/2.)] == [expr $row_counter/2.] } {
-	set bgcolor "white"
+        set bgcolor "#ffffff"
     } else {
-	set bgcolor "ececec"
+        set bgcolor "#ececec"
     }
-    doc_body_append "
-	<tr bgcolor=\"$bgcolor\">
+    append shipments_select_html "<tr bgcolor=\"$bgcolor\">
   	  <td>$shipment_id</td>
   	  <td>[ec_nbsp_if_null [util_AnsiDatetoPrettyDate $shipment_date]]</td>
   	  <td><a href=\"one?[export_url_vars order_id]\">$order_id</a></td>
@@ -156,13 +128,3 @@ db_foreach shipments_select "
     incr row_counter
 }
 
-if { $row_counter != 0 } {
-    doc_body_append "</table>"
-} else {
-    doc_body_append "<center>None Found</center>"
-}
-
-doc_body_append "
-    </blockquote>
-
-    [ad_admin_footer]"
