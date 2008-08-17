@@ -12,31 +12,11 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "[ad_admin_header "Comments"]
+set title "Comments"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-<h2>Comments</h2>
+set export_form_vars_html [export_form_vars order_id]
 
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One Order"] "Comments"]
+set previous_comments [db_string comments_select "select cs_comments from ec_orders where order_id=:order_id"]
 
-<hr>
 
-<form method=post action=comments-edit>
-[export_form_vars order_id]
-
-Please add or edit comments below:
-
-<br>
-
-<blockquote>
-<textarea name=cs_comments rows=15 cols=50 wrap>[db_string comments_select "select cs_comments from ec_orders where order_id=:order_id"]</textarea>
-</blockquote>
-
-<p>
-<center>
-<input type=submit value=\"Submit\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"
