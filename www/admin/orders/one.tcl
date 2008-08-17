@@ -14,8 +14,6 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-
-
 db_1row order_select "
     select o.order_state, o.creditcard_id, o.confirmed_date, o.cs_comments,
         o.shipping_method, o.shipping_address, o.in_basket_date,
@@ -30,63 +28,25 @@ set email "no email"
 db_0or1row user_info_select "
     select email from cc_users where user_id = :user_id"
 
-doc_body_append "
-    [ad_admin_header "One Order"]
+set title "One Order"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-    <h2>One Order</h2>
+set order_state_table_html  [ec_decode $order_state "void" "<table>" "<table width=90%>"]
+set order_state_gc_html [ec_decode $order_state "void" "" "<pre>[ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order $order_id]</pre>"]
 
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "One Order"]
-
-    <hr>
-
-    <h3>Overview</h3>
-
-    [ec_decode $order_state "void" "<table>" "<table width=90%>"]
-      <tr>
-        <td align=right><b>Order ID</td>
-        <td>$order_id</td>
-        <td rowspan=4 align=right valign=top>[ec_decode $order_state "void" "" "<pre>[ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order $order_id]</pre>"]</td>
-      </tr>
-      <tr>
-        <td align=right><b>Ordered by</td>
-        <td>$first_names $last_name<br>${email}"
-
-if { ![string equal $email "no email"] } {
-    doc_body_append " (<a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">user admin page</a>)"
-}
-doc_body_append "</td>
-      </tr>
-      <tr>
-        <td align=right><b>Confirmed date</td>
-        <td>[ec_formatted_full_date $confirmed_date]</td>
-      </tr>
-      <tr>
-        <td align=right><b>Order state</td>
-        <td>[ec_decode $order_state "void" "<font color=red>void</font>" $order_state]</td>
-      </tr>
-    </table>"
+set user_admin_page_html "(<a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">user admin page</a>)"
+set confirmed_date_html "[ec_formatted_full_date $confirmed_date]"
+set order_state_void_html [ec_decode $order_state "void" "<font color=red>void</font>" $order_state]
 
 if { $order_state == "void" } {
-    doc_body_append "
-	<h3>Details of Void</h3>
-
-	<blockquote>
-	  Voided by: <a href=\"[ec_acs_admin_url]users/one?user_id=$voided_by\">[db_string voided_by_name_select "
-	      select first_names || ' ' || last_name from cc_users where user_id = :voided_by" -default ""]</a><br>
-	  Date: [ec_formatted_full_date $voided_date]<br>
-	  [ec_decode $reason_for_void "" "" "Reason: [ec_display_as_html $reason_for_void]"]
-	</blockquote>"
+    set details_of_void_html "<a href=\"[ec_acs_admin_url]users/one?user_id=$voided_by\">[db_string voided_by_name_select "
+    select first_names || ' ' || last_name from cc_users where user_id = :voided_by" -default ""]</a><br>
+	Date: [ec_formatted_full_date $voided_date]<br>
+	[ec_decode $reason_for_void "" "" "Reason: [ec_display_as_html $reason_for_void]"]"
 }
 
-doc_body_append "
-    [ec_decode $cs_comments "" "" "<h3>Comments</h3>\n<blockquote>[ec_display_as_html $cs_comments]</blockquote>"]
-
-    <ul>
-      <li><a href=\"comments?[export_url_vars order_id]\">Add/Edit Comments</a></li>
-    </ul>
-
-    <h3>Items</h3>
-    <ul>"
+set comments_html "[ec_decode $cs_comments "" "" "<h3>Comments</h3>\n<blockquote>[ec_display_as_html $cs_comments]</blockquote>"]
+    <ul><li><a href=\"comments?[export_url_vars order_id]\">Add/Edit Comments</a></li></ul>"
 
 set items_ul ""
 
@@ -120,8 +80,7 @@ db_foreach products_select "
     }
     set options [join $option_list ", "]
 
-    # It's OK to compare tcl lists with != because lists are really
-    # strings in tcl
+    # It's OK to compare tcl lists with != because lists are really strings in tcl
     
     if { $product_color_size_style_price_price_name != $old_product_color_size_style_price_price_name && [llength $old_product_color_size_style_price_price_name] != 0 } {
 	append items_ul "
@@ -179,40 +138,27 @@ if { [llength $old_product_color_size_style_price_price_name] != 0 } {
 	</li>"
 }
 
-doc_body_append "$items_ul"
 
 if { $order_state == "authorized" || $order_state == "partially_fulfilled" } {
-    doc_body_append "
+    append items_ul "
 	<li><a href=\"fulfill?[export_url_vars order_id]\">Record a Shipment</a></li>
 	<li><a href=\"items-add?[export_url_vars order_id]\">Add Items</a></li>"
 }
 if { $order_state == "fulfilled" || $order_state == "partially_fulfilled" } {
-    doc_body_append "
+    append items_ul "
 	<li><a href=\"items-return?[export_url_vars order_id]\">Mark Items Returned</a></li>"
 }
 
-doc_body_append "
-    </ul>
-
-    <h3>Details</h3>
-    
-    <table>
-      <tr>
+set order_details_html "
         <td align=right valign=top><b>[ec_decode $shipping_method "pickup" "Address" "no shipping" "Address" "Ship to"]</b></td>
         <td>[ec_display_as_html [ec_pretty_mailing_address_from_ec_addresses $shipping_address]]<br>"
 
 if { $order_state == "confirmed" || $order_state == "authorized" || $order_state == "partially_fulfilled" } {
-    doc_body_append "
-	(<a href=\"address-add?[export_url_vars order_id]\">modify</a>)"
+    append order_details_html "(<a href=\"address-add?[export_url_vars order_id]\">modify</a>)"
 }
 
-doc_body_append "
-      </td>
-    </tr>"
-
 if { ![empty_string_p $creditcard_id] } {
-    doc_body_append "
-	<tr>
+    append order_details_html "<tr>
 	  <td align=right valign=top><b>Bill to</b></td>
 	  <td>[ec_display_as_html [ec_pretty_mailing_address_from_ec_addresses $billing_address]]<br>
 	    (<a href=\"address-add?[export_url_vars order_id creditcard_id]\">modify</a>)</td>
@@ -222,8 +168,7 @@ if { ![empty_string_p $creditcard_id] } {
 	</tr>"
 }
 
-doc_body_append "
-      <tr>
+append order_details_html "<tr>
         <td align=right><b>In basket date</b></td>
         <td>[ec_formatted_full_date $in_basket_date]</td>
       </tr>
@@ -238,13 +183,9 @@ doc_body_append "
       <tr>
         <td align=right><b>Base shipping charged</b></td>
         <td>[ec_pretty_pure_price $shipping_charged] [ec_decode $shipping_method "pickup" "(Pickup)" "no shipping" "(No Shipping)" ""]</td>
-      </tr>
-    </table>
-    
-    <h3>Financial Transactions</h3>"
+      </tr>"
 
-set table_header "
-    <table border>
+set table_header "table border>
       <tr>
         <th>ID</th>
         <th>Date</th>
@@ -259,7 +200,7 @@ set table_header "
      </tr>"
 
 set transaction_counter 0
-
+set financial_transaction_html ""
 db_foreach financial_transactions_select "
     select t.transaction_id, t.inserted_date, t.transaction_amount, t.transaction_type, t.to_be_captured_p, t.authorized_date, 
         t.marked_date, t.refunded_date, t.failed_p, c.creditcard_last_four
@@ -269,10 +210,9 @@ db_foreach financial_transactions_select "
     order by transaction_id" {
  
     if { $transaction_counter == 0 } {
-	doc_body_append $table_header
+        append financial_transaction_html $table_header
     }
-    doc_body_append "
-	<tr>
+    append financial_transaction_html "<tr>
 	  <td>$transaction_id</td>
 	  <td>[ec_nbsp_if_null [ec_formatted_full_date $inserted_date]]</td>
 	  <td>$creditcard_last_four</td>
@@ -286,19 +226,15 @@ db_foreach financial_transactions_select "
 	</tr>"
     incr transaction_counter
 }	  
-	  
+
 if { $transaction_counter != 0 } {
-    doc_body_append "</table>"
+    append financial_transaction_html "</table>"
 } else {
-    doc_body_append "<blockquote>None Found</blockquote>"
+    append financial_transaction_html "<blockquote>None Found</blockquote>"
 }
 
-doc_body_append "
-    <h3>Shipments</h3>
-    <blockquote>"
-
 set old_shipment_id 0
-
+set shipments_html ""
 db_foreach shipments_items_products_select "
     select s.shipment_id, s.address_id, s.shipment_date, s.expected_arrival_date, s.carrier, s.tracking_number, s.actual_arrival_date, s.actual_arrival_detail, 
         p.product_name, p.product_id, i.price_name, i.price_charged, count(*) as quantity
@@ -310,18 +246,17 @@ db_foreach shipments_items_products_select "
         p.product_name, p.product_id, i.price_name, i.price_charged
     order by s.shipment_id" {
     if { $shipment_id != $old_shipment_id } {
-	if { $old_shipment_id != 0 } {
-	    doc_body_append "</ul>"
-	}
-	doc_body_append " 
-	    <table width=90%>
+        if { $old_shipment_id != 0 } {
+            append shipments_html "</ul>"
+        }
+	append shipments_html "<table width=90%>
 	      <tr>
 	        <td width=50% valign=top>
 	          Shipment ID: $shipment_id<br>
 	          Date: [util_AnsiDatetoPrettyDate $shipment_date]<br>
 	          [ec_decode $expected_arrival_date "" "" "Expected Arrival: [util_AnsiDatetoPrettyDate $expected_arrival_date]<br>"]
 	          [ec_decode $carrier "" "" "Carrier: $carrier<br>"]
-	          [ec_decode $tracking_number "" "" "Tracking #: $tracking_number<br>"]
+	          [ec_decode $tracking_number "" "" "Tracking \#: $tracking_number<br>"]
 	          [ec_decode $actual_arrival_date "" "" "Actual Arrival Date: [util_AnsiDatetoPrettyDate $actual_arrival_date]<br>"]
 	          [ec_decode $actual_arrival_detail "" "" "Actual Arrival Detail: $actual_arrival_detail<br>"]
 	          (<a href=\"track?shipment_id=$shipment_id\">track</a>)
@@ -333,25 +268,18 @@ db_foreach shipments_items_products_select "
 	    </table>
 	    <ul>"
     }
-    doc_body_append "<li>Quantity $quantity: $product_name</li>"
+    append shipments_html "<li>Quantity $quantity: $product_name</li>"
     set old_shipment_id $shipment_id
 }
 
 if { $old_shipment_id == 0 } {
-    doc_body_append "No Shipments Have Been Made"
+    append shipments_html "No Shipments Have Been Made"
 } else {
-    doc_body_append "</ul>"
+    append shipments_html "</ul>"
 }
 
-doc_body_append "
-      </blockquote>
-
-    <h3>Returns</h3>
-
-    <blockquote>"
-
 set old_refund_id 0
-
+set refunds_html ""
 db_foreach refunds_select "
     select r.refund_id, r.refund_date, r.refunded_by, r.refund_reasons, r.refund_amount, u.first_names, u.last_name, p.product_name, p.product_id, i.price_name, i.price_charged, count(*) as quantity
     from ec_refunds r, cc_users u, ec_items i, ec_products p
@@ -361,10 +289,10 @@ db_foreach refunds_select "
     and p.product_id=i.product_id
     group by r.refund_id, r.refund_date, r.refunded_by, r.refund_reasons, r.refund_amount, u.first_names, u.last_name, p.product_name, p.product_id, i.price_name, i.price_charged" {
     if { $refund_id != $old_refund_id } {
-	if { $old_refund_id != 0 } {
-	    doc_body_append "</ul>"
-	}
-	doc_body_append "
+        if { $old_refund_id != 0 } {
+            append refunds_html "</ul>"
+        }
+        append refunds_html "
 	    Refund ID: $refund_id<br>
 	    Date: [ec_formatted_full_date $refund_date]<br>
 	    Amount: [ec_pretty_pure_price $refund_amount]<br>
@@ -372,23 +300,16 @@ db_foreach refunds_select "
 	    Reason: $refund_reasons
 	    <ul>"
     }
-    doc_body_append "<li>Quantity $quantity: $product_name</li>"
+    append refunds_html "<li>Quantity $quantity: $product_name</li>"
     set old_refund_id $refund_id
 }
 
 if { $old_refund_id == 0 } {
-    doc_body_append "No Returns Have Been Made"
+    append refunds_html "No Returns Have Been Made"
 } else {
-    doc_body_append "</ul>"
+    append refunds_html "</ul>"
 }
-
-doc_body_append "</blockquote>"
 
 if { $order_state != "void" } {
-    doc_body_append "
-	<h3>Actions</h3>
-	<ul>
-	  <li><a href=\"void?[export_url_vars order_id]\">Void Order</a></li>"
+    set actions_html "<li><a href=\"void?[export_url_vars order_id]\">Void Order</a></li>"
 }
-doc_body_append "</ul>
-[ad_admin_footer]"
