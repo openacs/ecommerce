@@ -15,16 +15,8 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "[ad_admin_header "Search Results"]
-
-<h2>Search Results</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Search Results"]
-
-<hr>
-<blockquote>
-"
-
+set title "Search Results"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
 if { [info exists order_id_query_string] } {
     set product_header ""
@@ -110,24 +102,25 @@ $product_header
 </tr>"
 
 set row_counter 0
+set order_search_query_html ""
 db_foreach order_search_query $query {
     if { $row_counter == 0 } {
-        doc_body_append $table_header
+        append order_search_query_html $table_header
     }
     # even rows are white, odd are grey
     if { [expr floor($row_counter/2.)] == [expr $row_counter/2.] } {
-        set bgcolor "white"
+        set bgcolor "#ffffff"
     } else {
-        set bgcolor "ececec"
+        set bgcolor "#ececec"
     }
 
     if {![string equal "" $product_name]} {
         set product_column "<td>$product_name</td>"
     } else {
-	set product_column ""
+        set product_column ""
     }
 
-    doc_body_append "<tr bgcolor=$bgcolor>
+    append order_search_query_html "<tr bgcolor=$bgcolor>
 <td><a href=\"one?[export_url_vars order_id]\">$order_id</a></td>
 <td>[ec_nbsp_if_null [util_AnsiDatetoPrettyDate $confirmed_date]]</td>
 <td>$order_state</td>
@@ -135,18 +128,12 @@ db_foreach order_search_query $query {
 <td>[ec_nbsp_if_null [ec_pretty_pure_price $price_to_display]]</td>
 <td>$n_items</td>
 $product_column
-</tr>
-    "
+</tr>"
     incr row_counter
 }
 
 if { $row_counter != 0 } {
-    doc_body_append "</table>"
+    append order_search_query_html "</table>"
 } else {
-    doc_body_append "<center>None Found</center>"
+    append order_search_query_html "<center>None Found</center>"
 }
-
-doc_body_append "</blockquote>
-
-[ad_admin_footer]
-"
