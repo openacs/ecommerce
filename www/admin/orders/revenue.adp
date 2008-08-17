@@ -4,24 +4,21 @@
 <h2>@title@</h2>
 
 <table border=0 cellspacing=0 cellpadding=10>
-<tr><td><b>Period</b><td colspan=2><b>Revenue</b> <sup>1</sup></td></tr>
+<tr><td><b>Period</b></td><td colspan=2><b>Revenue</b> <sup>1</sup></td></tr>
 @reportable_transactions_select_html;noquote@
 <tr><td>&nbsp;</td><td></td><td></td></tr>
-<tr><td><b>Period<td colspan=2><b>Product Sales</b> <sup>2</sup></tr>
+<tr><td><b>Period</b></td><td colspan=2><b>Product Sales</b> <sup>2</sup></td></tr>
 @money_select_html;noquote@
 <tr><td>&nbsp;</td><td></td><td></td></tr>
 
-<tr><td><b>Period<td colspan=2><b>Gift Certificate Sales</b>
-<sup>3</sup></tr>
+<tr><td><b>Period</b></td><td colspan=2><b>Gift Certificate Sales</b><sup>3</sup></td></tr>
 @gift_certificates_sales_html;noquote@
 <tr><td>&nbsp;</td><td></td><td></td></tr>
 
-<tr><td><b>Period<td colspan=2><b>Gift Certificates Issued</b>
-<sup>4</sup></td></tr>
+<tr><td><b>Period</b></td><td colspan=2><b>Gift Certificates Issued</b><sup>4</sup></td></tr>
 @gift_certificates_issued_html;noquote@
 <tr><td>&nbsp;</td><td></td><td></td></tr>
-
-<tr><td><b>Expires<td colspan=2><b>Gift Certificates Outstanding</b> <sup>5</sup></tr>
+<tr><td><b>Expires</b></td><td colspan=2><b>Gift Certificates Outstanding</b> <sup>5</sup></td></tr>
 @gift_certificates_approved_html;noquote@
 </table>
 
