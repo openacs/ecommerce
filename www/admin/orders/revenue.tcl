@@ -13,35 +13,22 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "[ad_admin_header "Financial Reports"]
-
-<h2>Financial Reports</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Financial Reports"]
-
-<hr>
-
-<table border=0 cellspacing=0 cellpadding=10>
-<tr><td><b>Period</b><td colspan=2><b>Revenue</b> <sup>1</sup></td></tr>
-"
+set title "Financial Reports"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
 set revenue_sum 0
+set reportable_transactions_select_html ""
 db_foreach reportable_transactions_select "select to_char(inserted_date,'YYYY') as transaction_year, to_char(inserted_date,'Q') as transaction_quarter, sum(decode(transaction_type,'charge',transaction_amount,-1*transaction_amount)) as revenue
 from ec_fin_transactions_reportable
 group by to_char(inserted_date,'YYYY'), to_char(inserted_date,'Q')
 order by to_char(inserted_date,'YYYY') || to_char(inserted_date,'Q')" {
     set revenue_sum [expr $revenue_sum + $revenue]
-    doc_body_append "<tr><td>$transaction_year Q$transaction_quarter<td align=right>[ec_pretty_pure_price $revenue]</td><td></td></tr>\n"
+    append reportable_tranactions_select_html "<tr><td>$transaction_year Q$transaction_quarter<td align=right>[ec_pretty_pure_price $revenue]</td><td></td></tr>\n"
     if { $transaction_quarter == "4" } {
-	doc_body_append "<tr><td>total for $transaction_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $revenue_sum]</td><td></td></tr>\n"
-	set revenue_sum 0
+        append reportable_transactions_select_html "<tr><td>total for $transaction_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $revenue_sum]</td><td></td></tr>\n"
+        set revenue_sum 0
     }
 }
-
-doc_body_append "<tr><td>&nbsp;</td><td></td><td></td></tr>
-
-<tr><td><b>Period<td colspan=2><b>Product Sales</b> <sup>2</sup></tr>
-"
 
 # This slightly strange-looking query says:
 # Give me the total price, shipping, and tax charged for the items in
@@ -58,7 +45,7 @@ doc_body_append "<tr><td>&nbsp;</td><td></td><td></td></tr>
 set price_sum 0
 set shipping_sum 0
 set tax_sum 0
-
+set money_select_html ""
 db_foreach money_select "select to_char(shipment_date,'YYYY') as shipment_year,
 to_char(shipment_date,'Q') as shipment_quarter,
 nvl(sum(bal_price_charged),0) as total_price_charged,
@@ -70,22 +57,17 @@ order by to_char(shipment_date,'YYYY') || to_char(shipment_date,'Q')" {
     set price_sum [expr $price_sum + $total_price_charged]
     set shipping_sum [expr $shipping_sum + $total_shipping_charged]
     set tax_sum [expr $tax_sum + $total_tax_charged]
-    doc_body_append "<tr><td>$transaction_year Q$transaction_quarter<td align=right>Price: [ec_pretty_pure_price $total_price_charged] | Shipping: [ec_pretty_pure_price $total_shipping_charged] | Tax [ec_pretty_pure_price $total_tax_charged]</td><td></td></tr>\n"
+    append money_select_html "<tr><td>$transaction_year Q$transaction_quarter<td align=right>Price: [ec_pretty_pure_price $total_price_charged] | Shipping: [ec_pretty_pure_price $total_shipping_charged] | Tax [ec_pretty_pure_price $total_tax_charged]</td><td></td></tr>\n"
     if { $transaction_quarter == "4" } {
-	doc_body_append "<tr><td>total for $transaction_year<td align=right><font size=+1 color=green>Price: [ec_pretty_pure_price $price_sum] | Shipping [ec_pretty_pure_price $shipping_sum] | Tax [ec_pretty_pure_price $tax_sum]</td><td></td></tr>\n"
-	set price_sum 0
-	set shipping_sum 0
-	set tax_sum 0
+        append money_select_html "<tr><td>total for $transaction_year<td align=right><font size=+1 color=green>Price: [ec_pretty_pure_price $price_sum] | Shipping [ec_pretty_pure_price $shipping_sum] | Tax [ec_pretty_pure_price $tax_sum]</td><td></td></tr>\n"
+        set price_sum 0
+        set shipping_sum 0
+        set tax_sum 0
     }
 }
 
-doc_body_append "<tr><td>&nbsp;</td><td></td><td></td></tr>
-
-<tr><td><b>Period<td colspan=2><b>Gift Certificate Sales</b> <sup>3</sup></tr>
-"
-
 set amount_sum 0
-
+set gift_certificates_sales_html ""
 db_foreach gift_certificates_select "select to_char(issue_date,'YYYY') as issue_year,
 to_char(issue_date,'Q') as issue_quarter,
 nvl(sum(amount),0) as amount
@@ -93,20 +75,15 @@ from ec_gift_certificates where gift_certificate_state = 'authorized'
 group by to_char(issue_date,'YYYY'), to_char(issue_date,'Q')
 order by to_char(issue_date,'YYYY') || to_char(issue_date,'Q')" {
     set amount_sum [expr $amount_sum + $amount]
-    doc_body_append "<tr><td>$issue_year Q$issue_quarter<td align=right>[ec_pretty_pure_price $amount]</td><td></td></tr>\n"
+    append gift_certificates_sales_html "<tr><td>$issue_year Q$issue_quarter<td align=right>[ec_pretty_pure_price $amount]</td><td></td></tr>\n"
     if { $issue_quarter == "4" } {
-	doc_body_append "<tr><td>total for $issue_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $amount_sum]</td><td></td></tr>\n"
-	set amount_sum 0
+        append gift_certificates_sales_html "<tr><td>total for $issue_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $amount_sum]</td><td></td></tr>\n"
+        set amount_sum 0
     }
 }
 
-doc_body_append "<tr><td>&nbsp;</td><td></td><td></td></tr>
-
-<tr><td><b>Period<td colspan=2><b>Gift Certificates Issued</b> <sup>4</sup></td></tr>
-"
-
 set amount_sum 0
-
+set gift_certificates_issued_html ""
 db_foreach gift_certificates_select "select to_char(issue_date,'YYYY') as issue_year,
 to_char(issue_date,'Q') as issue_quarter,
 nvl(sum(amount),0) as amount
@@ -114,17 +91,12 @@ from ec_gift_certificates where gift_certificate_state = 'authorized'
 group by to_char(issue_date,'YYYY'), to_char(issue_date,'Q')
 order by to_char(issue_date,'YYYY') || to_char(issue_date,'Q')" {
     set amount_sum [expr $amount_sum + $amount]
-    doc_body_append "<tr><td>$issue_year Q$issue_quarter<td align=right>[ec_pretty_pure_price $amount]</td><td></td></tr>\n"
+    append gift_certificates_issued_html "<tr><td>$issue_year Q$issue_quarter<td align=right>[ec_pretty_pure_price $amount]</td><td></td></tr>\n"
     if { $issue_quarter == "4" } {
-	doc_body_append "<tr><td>total for $issue_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $amount_sum]</td><td></td></tr>\n"
-	set amount_sum 0
+        append gift_certificates_issued_html "<tr><td>total for $issue_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $amount_sum]</td><td></td></tr>\n"
+        set amount_sum 0
     }
 }
-
-doc_body_append "<tr><td>&nbsp;</td><td></td><td></td></tr>
-
-<tr><td><b>Expires<td colspan=2><b>Gift Certificates Outstanding</b> <sup>5</sup></tr>
-"
 
 # Even if a gift certificate is tied to items that have been ordered, it is still
 # considered outstanding until it is actually applied to shipped items.
@@ -140,7 +112,7 @@ doc_body_append "<tr><td>&nbsp;</td><td></td><td></td></tr>
 # unable to be shipped)
 
 set amount_outstanding_sum 0
-
+set gift_certificates_approved_html ""
 db_foreach gift_certificates_approved_select "select to_char(expires,'YYYY') as expires_year,
 to_char(expires,'Q') as expires_quarter,
 nvl(sum(gift_certificate_amount_left(gift_certificate_id)),0) + nvl(sum(ec_gift_cert_unshipped_amount(gift_certificate_id)),0) as amount_outstanding
@@ -148,26 +120,9 @@ from ec_gift_certificates_approved
 group by to_char(expires,'YYYY'), to_char(expires,'Q')
 order by to_char(expires,'YYYY') || to_char(expires,'Q')" {
     set amount_outstanding_sum [expr $amount_outstanding_sum + $amount_outstanding]
-    doc_body_append "<tr><td>$expires_year Q$expires_quarter<td align=right>[ec_pretty_pure_price $amount_outstanding]</td><td></td></tr>\n"
+    append gift_certificates_approved_html "<tr><td>$expires_year Q$expires_quarter<td align=right>[ec_pretty_pure_price $amount_outstanding]</td><td></td></tr>\n"
     if { $expires_quarter == "4" } {
-	doc_body_append "<tr><td>total for $expires_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $amount_outstanding_sum]</td><td></td></tr>\n"
-	set amount_sum 0
+        append gift_certificates_approved_html "<tr><td>total for $expires_year<td align=right><font size=+1 color=green>[ec_pretty_pure_price $amount_outstanding_sum]</td><td></td></tr>\n"
+        set amount_sum 0
     }
 }
-
-doc_body_append "</table>
-
-<p>
-<br>
-<sup>1</sup> <b>Revenue</b>: the actual amount of credit card charges minus the amount of credit card refunds.
-<p>
-<sup>2</sup> <b>Sales</b>: the price charged, the shipping charged, and the tax charged (minus the amounts refunded) for shipped items (most companies recognize revenue when items are shipped so that they don't risk double counting an account receivable and an item in inventory; see the <a href=\"http://www.arsdigita.com/books/panda/ecommerce.html\">ecommerce chapter of Philip &amp; Alex's Guide to Web Publishing</a>).  Note that this is different from revenue because revenue includes sales of gift certificates.  Additionally, some products were paid for using gift certificates.
-<p>
-<sup>3</sup> <b>Gift Certificate Sales</b>: the amount of gift certificates purchased (recognized on date of purchase).
-<p>
-<sup>4</sup> <b>Gift Certificates Issued</b>: the amount of gift certificates issued to customers free of charge by web site administrators.
-<p>
-<sup>5</sup> <b>Gift Certificates Outstanding</b>: gift certificates which have not yet been applied to shipped items (therefore they are 
-														       considered a liability).
-[ad_admin_footer]
-"
