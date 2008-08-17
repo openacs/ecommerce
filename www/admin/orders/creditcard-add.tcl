@@ -14,20 +14,8 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "
-    [ad_admin_header "New Credit Card"]
-
-    <h2>New Credit Card</h2>
-
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One Order"] "New Credit Card"]
-
-    <hr>
-    <p>Entering a new credit card will cause all future transactions
-    involving this order to use this credit card.  However, it will
-    not have any effect on transactions that are currently
-    underway (e.g., if a transaction has already been authorized
-    with a different credit card, that credit card will be used to
-    complete the transaction). </p>"
+set title "New Credit Card"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
 db_0or1row select_billing_address "
       select c.billing_address, a.country_code
@@ -37,42 +25,8 @@ db_0or1row select_billing_address "
       and o.order_id = :order_id
       limit 1"
 
-doc_body_append "
-  <table>
-    <tr>
-      <td>
-	[ec_display_as_html [ec_pretty_mailing_address_from_ec_addresses $billing_address]]
-      </td>
-      <td>"
-doc_body_append "
-      </td>
-      <td width=\"20%\">
-      </td>
-      <td valign=\"top\">
-	<form method=\"post\" action=\"creditcard-add-2\">
-	  <input type=\"hidden\" name=\"address_id\" value=\"$billing_address\"></input>
-          [export_form_vars order_id]
-	  <table>
-	    <tr>
-	      <td>Credit card number:</td>
-	      <td><input type=\"text\" name=\"creditcard_number\" size=\"21\"></td>
-	    </tr>
-	    <tr>
-	      <td>Type:</td>
-	      <td>[ec_creditcard_widget]</td>
-	      <td>
-		<center>
-		  <input type=\"submit\" value=\"Submit\">
-		</center>
-	      </td>
-	    </tr>
-	    <tr>
-	      <td>Expires:</td>
-	      <td>[ec_creditcard_expire_1_widget] [ec_creditcard_expire_2_widget]</td>
-	    </tr>
-	  </table>
-	</form>
-      </td>
-    </tr>
-  </table>
-    [ad_admin_footer]"
+set billing_address_html "[ec_display_as_html [ec_pretty_mailing_address_from_ec_addresses $billing_address]]"
+
+set export_form_vars_html [export_form_vars order_id]
+set credit_card_type_html [ec_creditcard_widget]
+set credit_card_exp_html "[ec_creditcard_expire_1_widget] [ec_creditcard_expire_2_widget]"
