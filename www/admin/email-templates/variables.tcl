@@ -1,5 +1,4 @@
 # variables.tcl
-
 ad_page_contract {
     @author
     @creation-date
@@ -10,42 +9,10 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-append doc_body "[ad_admin_header "Note on Variables"]
+set title "Note on Variables"
+set context [list [list index "Email Templates"] $title]
 
-<h2>Note on Variables</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Email Templates"] "Note on Variables"]
-
-<hr>
-
-We ask you to list the variables you're using so that programmers will know what things they should substitute for in the body of the email.  Variable names should be descriptive so that it's obvious to the programmers what each one means.
-
-<p>
-
-An example:
-
-<p>
-
-<table border=0 cellspacing=0 cellpadding=15>
-<tr>
-<td valign=top align=right><b>Title</td>
-<td valign=top>New Order</td>
-</tr>
-<tr>
-<td valign=top align=right><b>Variables</td>
-<td valign=top>confirmed_date_here, address_here, order_summary_here, price_here, shipping_here, tax_here, total_here</td>
-</tr>
-<tr>
-<td valign=top align=right><b>When Sent</td>
-<td valign=top>This email will automatically be sent out after an order has been authorized</td>
-</tr>
-<tr>
-<td valign=top align=right><b>Subject Line</td>
-<td valign=top>Your Order</td>
-</tr>
-<tr>
-<td valign=top align=right><b>Message</td>
-<td valign=top>[ec_display_as_html "Thank you for your order.  We received your order on 
+set example_email [ec_display_as_html "Thank you for your order.  We received your order on 
 confirmed_date_here.
 
 To view the status of your order at any time, please log in to 
@@ -70,19 +37,4 @@ Thank you.
 Sincerely,
 Customer Service
 info@whatever.com
-http://www.whatever.com"]</td>
-</tr>
-<tr>
-<td valign=top align=right><b>Issue Type</td>
-<td valign=top>new order</td>
-</tr>
-</table>
-
-[ad_admin_footer]
-"
-
-
-doc_return  200 text/html $doc_body
-
-
-
+http://www.whatever.com"]
