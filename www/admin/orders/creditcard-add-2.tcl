@@ -61,29 +61,8 @@ if { $exception_count > 0 } {
     return
 }
 
-doc_body_append "
-    [ad_admin_header "Confirm Credit Card"]
+set title "Confirm Credit Card"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-    <h2>Confirm Credit Card</h2>
-
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One Order"] "Confirm Credit Card"]
-
-    <hr>
-
-    <p>Please confirm that this is correct:</p>
-
-    <blockquote>
-      <pre>
-[ec_pretty_creditcard_type $creditcard_type]
-$creditcard_number
-exp: $creditcard_expire_1/$creditcard_expire_2
-      </pre>
-    </blockquote>
-
-    <form method=\"post\" action=\"creditcard-add-3\">
-      [export_entire_form]
-      <center>
-        <input type=submit value=\"Confirm\">
-      </center>
-    </form>
-    [ad_admin_footer]"
+set creditcard_type_html [ec_pretty_creditcard_type $creditcard_type]
+set export_form_vars_html [export_entire_form]
