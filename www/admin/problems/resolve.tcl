@@ -17,30 +17,9 @@ db_1row problem_select "select problem_details, problem_date from ec_problems_lo
 
 db_release_unused_handles
 
-doc_return  200 text/html "[ad_admin_header "Confirm the Problem is Resolved"]
+set title "Confirm the Problem is Resolved"
+set context [list [list index "Potential Problems"] $title]
 
-<h2>Confirm that Problem is Resolved</h2>
+set export_form_vars_html [export_form_vars problem_id]
+set problem_date_html [util_AnsiDatetoPrettyDate $problem_date]
 
-[ad_context_bar [list "[ec_url_concat [ec_url] /admin]/" Ecommerce([ec_system_name])] [list "index.tcl" "Potential Problems"] "Confirm Resolve Problem"]
-
-<hr>
-
-<form method=post action=\"resolve-2\">
-[export_form_vars problem_id]
-<blockquote>
-
-<p>
-<blockquote>
-[util_AnsiDatetoPrettyDate $problem_date]
-<p>
-$problem_details
-</blockquote>
-<center>
-<input type=submit value=\"Yes, it is resolved\">
-</center>
-
-</blockquote>
-</form>
-
-[ad_admin_footer]
-"
