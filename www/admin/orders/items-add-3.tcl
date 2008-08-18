@@ -18,14 +18,8 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "
-    [ad_admin_header "Add Items, Cont."]
-
-    <h2>Add Items, Cont.</h2>
-
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?order_id=$order_id" "One Order"] "Add Items, Cont."]
-
-    <hr>"
+set title "Add Items, continued"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
 set item_id [db_nextval ec_item_id_sequence]
 set user_id [db_string user_id_select "
@@ -34,18 +28,7 @@ set user_id [db_string user_id_select "
     where order_id=:order_id"]
 set lowest_price_and_price_name [ec_lowest_price_and_price_name_for_an_item $product_id $user_id ""]
 
-doc_body_append "
-    <form method=post action=items-add-4>
-      [export_form_vars order_id product_id color_choice size_choice style_choice item_id]
-      <blockquote>
-        <p>This is the price that this user would normally receive for this product. Make modifications as needed:</p>
-        <blockquote>
-    	  <input type=text name=price_name value=\"[ad_quotehtml [lindex $lowest_price_and_price_name 1]]\" size=15>
-	  <input type=text name=price_charged value=\"[format "%0.2f" [lindex $lowest_price_and_price_name 0]]\" size=4> ([ad_parameter -package_id [ec_id] Currency ecommerce])
-    	</blockquote>
-      </blockquote>
-      <center>
-	<input type=submit value=\"Add the Item\">
-      </center>
-    </form>
-    [ad_admin_footer]"
+set price_name [lindex $lowest_price_and_price_name 1]
+set price_charged [format "%0.2f" [lindex $lowest_price_and_price_name 0]]
+set currency [parameter::get -package_id [ec_id] -parameter Currency -default "USD"]
+set export_form_vars_html [export_form_vars order_id product_id color_choice size_choice style_choice item_id]

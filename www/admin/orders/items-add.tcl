@@ -14,28 +14,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "
-    [ad_admin_header "Add Items"]
+set title "Add Items"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-    <h2>Add Items</h2>
-
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?order_id=$order_id" "One Order"] "Add Items"]
-
-    <hr>
-    <blockquote>
-    <p>Search for a product to add:</p>
-      <form method=post action=items-add-2>
-        [export_form_vars order_id]
-        <ul>
-          <li>By Name: <input type=text name=product_name size=20> <input type=submit value=\"Search\"></li>
-        </ul>
-      </form>
-      <form method=post action=items-add-2>
-        [export_form_vars order_id]
-        <ul>    
-          <li>By SKU: <input type=text name=sku size=3> <input type=submit value=\"Search\"></li>
-        </ul>
-      </form>
-    </blockquote>
-    [ad_admin_footer]"
-
+set export_form_vars_html [export_form_vars order_id]
