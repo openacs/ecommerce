@@ -11,66 +11,43 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "[ad_admin_header "Order Fulfillment"]
-
-<h2>Order Fulfillment</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Fulfillment"]
-
-<hr><p>
-These <a href=\"fulfillment-items-needed\">items</a> are needed in order to fulfill all outstanding orders.
-Orders over 28 days old cannot be fulfilled through shopping cart, because gateways usually drop the transaction_id associated with the order.
-</p><p>
-"
+set title "Order Fulfillment"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
 set old_order_state ""
 set old_shipping_method ""
 set pre_auth_stale_date [clock format [clock scan "4 weeks ago"] -format "%Y-%m-%d"]
 
-db_foreach orders_select "
-    select o.order_id, o.confirmed_date, o.order_state, o.shipping_method,
+set orders_select_html ""
+db_foreach orders_select "select o.order_id, o.confirmed_date, o.order_state, o.shipping_method,
            u.first_names, u.last_name, u.user_id
       from ec_orders_shippable o, cc_users u
      where o.user_id=u.user_id
-  order by o.shipping_method, o.order_state, o.order_id
-" {
+  order by o.shipping_method, o.order_state, o.order_id" {
     if { $shipping_method != $old_shipping_method } {
-	if { $old_shipping_method != "" } {
-	    doc_body_append "</ul>
-	    </blockquote>"
-	}
-
-	doc_body_append "<h3>[string toupper "$shipping_method shipping"]</h3>
-	<blockquote>"
+        if { $old_shipping_method != "" } {
+            append orders_select_html "</ul>"
+        }
+        append orders_select_html "<h3>[string toupper "$shipping_method shipping"]</h3>"
     }
-
     if { $order_state != $old_order_state || $shipping_method != $old_shipping_method } {
-	if { $shipping_method == $old_shipping_method } {
-	    doc_body_append "</ul>"
-	}
-	doc_body_append "<b>Orders in state '$order_state'</b>
-	<ul>
-	"
+        if { $shipping_method == $old_shipping_method } {
+            append orders_select_html "</ul>"
+        }
+        append orders_select_html "<p><b>Orders in state '$order_state'</b></p><ul>"
     }
-
-    doc_body_append "<li>"
+    append orders_select_html "<li>"
     if { $pre_auth_stale_date > $confirmed_date } { 
-        doc_body_append "[ec_order_summary_for_admin $order_id $first_names $last_name $confirmed_date $order_state $user_id]"
-        doc_body_append "<b>Stale order<b>. (You can either contact sitewide admin to extract credit card info when ready to fulfill, or void this order because it is stale, or something completely different."
+        append orders_select_html "[ec_order_summary_for_admin $order_id $first_names $last_name $confirmed_date $order_state $user_id]"
+        append orders_select_html "<b>Stale order<b>. (Contact sitewide admin to extract credit card info when ready to fulfill, or void this order, or do something completely different.)"
     } else {
-        doc_body_append "[ec_order_summary_for_admin $order_id $first_names $last_name $confirmed_date $order_state $user_id]"
-        doc_body_append " \[<a href=\"fulfill?order_id=$order_id\">Fulfill</a>\]\n"
-}
+        append orders_select_html "[ec_order_summary_for_admin $order_id $first_names $last_name $confirmed_date $order_state $user_id]"
+        append orders_select_html " \[<a href=\"fulfill?order_id=$order_id\">Fulfill</a>\]\n"
+    }
     set old_shipping_method $shipping_method
     set old_order_state $order_state
 }
 
 if { $old_shipping_method != "" } {
-    doc_body_append "
-    </ul>
-    </blockquote>
-    "
+    append orders_select_html "</ul>"
 }
-
-doc_body_append "[ad_admin_footer]
-"
