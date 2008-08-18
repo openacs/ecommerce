@@ -13,27 +13,8 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-set page_title "Void Gift Certificate"
-doc_body_append "[ad_admin_header $page_title]
-<h2>$page_title</h2>
+set title "Void Gift Certificate"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-[ad_context_bar [list "../index" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "gift-certificates" "Gift Certificates"] "Void One"]
+set export_form_vars_html [export_form_vars gift_certificate_id]
 
-<hr>
-Please explain why you are voiding this gift certificate:
-
-<form method=post action=gift-certificate-void-2>
-[export_form_vars gift_certificate_id]
-
-<blockquote>
-<textarea wrap name=reason_for_void rows=3 cols=50></textarea>
-</blockquote>
-
-<center>
-<input type=submit value=\"Continue\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"

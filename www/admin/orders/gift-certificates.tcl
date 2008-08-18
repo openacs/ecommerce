@@ -16,64 +16,37 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "
-    [ad_admin_header "Gift Certificate Purchase History"]
+set title "Gift Certificate Purchase History"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-    <h2>Gift Certificate Purchase History</h2>
-
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] "Gift Certificate Purchase History"]
-
-    <hr>
-
-    <form method=post action=gift-certificates>
-    [export_form_vars view_issue_date order_by]
-
-    <table border=0 cellspacing=0 cellpadding=0 width=100%>
-      <tr bgcolor=ececec>
-        <td align=center><b>Gift Certificate State</b></td>
-        <td align=center><b>Issue Date</b></td>
-      </tr>
-      <tr>
-        <td align=center><select name=view_gift_certificate_state>"
+set export_form_vars_html [export_form_vars view_issue_date order_by]
 
 set gift_certificate_state_list [list \
 				     [list confirmed confirmed] \
 				     [list authorized authorized] \
 				     [list failed_authorization failed_authorization]]
 
+set gift_certificate_state_list_html ""
 foreach gift_certificate_state $gift_certificate_state_list {
     if {[lindex $gift_certificate_state 0] == $view_gift_certificate_state} {
-	doc_body_append "<option value=\"[lindex $gift_certificate_state 0]\" selected>[lindex $gift_certificate_state 1]"
+        append gift_certificate_state_list_html "<option value=\"[lindex $gift_certificate_state 0]\" selected>[lindex $gift_certificate_state 1]</option>"
     } else {
-	doc_body_append "<option value=\"[lindex $gift_certificate_state 0]\">[lindex $gift_certificate_state 1]"
+        append gift_certificate_state_list_html "<option value=\"[lindex $gift_certificate_state 0]\">[lindex $gift_certificate_state 1]</option>"
     }
 }
-
-doc_body_append "
-        </select>
-      <input type=submit value=\"Change\">
-    </td>
-    <td align=center>"
 
 set issue_date_list [list [list last_24 "last 24 hrs"] [list last_week "last week"] [list last_month "last month"] [list all all]]
 
 set linked_issue_date_list [list]
-
 foreach issue_date $issue_date_list {
     if {$view_issue_date == [lindex $issue_date 0]} {
-	lappend linked_issue_date_list "<b>[lindex $issue_date 1]</b>"
+        lappend linked_issue_date_list "<b>[lindex $issue_date 1]</b>"
     } else {
-	lappend linked_issue_date_list "<a href=\"gift-certificates?[export_url_vars view_gift_certificate_state order_by]&view_issue_date=[lindex $issue_date 0]\">[lindex $issue_date 1]</a>"
+        lappend linked_issue_date_list "<a href=\"gift-certificates?[export_url_vars view_gift_certificate_state order_by]&view_issue_date=[lindex $issue_date 0]\">[lindex $issue_date 1]</a>"
     }
 }
 
-doc_body_append "
-    	    \[ [join $linked_issue_date_list " | "] \]
-          </td>
-        </tr>
-      </table>
-    </form>
-    <blockquote>"
+set linked_issue_date_list_html "\[ [join $linked_issue_date_list " | "] \]"
 
 set gift_certificate_state_query_bit "and g.gift_certificate_state=:view_gift_certificate_state"
 
@@ -97,18 +70,15 @@ set order_by_clause [ec_decode $order_by \
 			 "recipient_email" "g.recipient_email" \
 			 "amount" "g.amount"]
 
-set table_header "
-    <table>
-      <tr>
-        <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "gift_certificate_id"]\">ID</a></b></td>
+set table_header_html "<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "gift_certificate_id"]\">ID</a></b></td>
         <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "issue_date"]\">Date Issued</a></b></td>
         <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "gift_certificate_state"]\">Gift Certificate State</a></b></td>
         <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "name"]\">Purchased By</a></b></td>
         <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "recipient_email"]\">Recipient</a></b></td>
-        <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "amount"]\">Amount</a></b></td>
-      </tr>"
+        <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "amount"]\">Amount</a></b></td>"
 
 set row_counter 0
+set gift_certificates_select_html ""
 db_foreach gift_certificates_select "
     select g.gift_certificate_id, g.issue_date, g.gift_certificate_state, g.recipient_email, g.purchased_by, g.amount, u.first_names, u.last_name
     from ec_gift_certificates g, cc_users u
@@ -116,35 +86,18 @@ db_foreach gift_certificates_select "
     $issue_date_query_bit $gift_certificate_state_query_bit
     order by $order_by_clause" {
 
-    if { $row_counter == 0 } {
-	doc_body_append $table_header
-    }
-
     # Even rows are white, odd are grey
-
     if { [expr floor($row_counter/2.)] == [expr $row_counter/2.] } {
-	set bgcolor "white"
+        set bgcolor "#ffffff"
     } else {
-	set bgcolor "ececec"
+        set bgcolor "#ececec"
     }
-    doc_body_append "
-	<tr bgcolor=$bgcolor>
+    append gift_certificates_select_html "<tr bgcolor=$bgcolor>
 	  <td><a href=\"gift-certificate?[export_url_vars gift_certificate_id]\">$gift_certificate_id</a></td>
 	  <td>[ec_nbsp_if_null [util_AnsiDatetoPrettyDate $issue_date]]</td>
 	  <td>$gift_certificate_state</td>
 	  <td>[ec_decode $last_name "" "&nbsp;" "<a href=\"[ec_acs_admin_url]users/one?user_id=$purchased_by\">$last_name, $first_names</a>"]</td>
 	  <td>$recipient_email</td>
-	  <td>[ec_pretty_pure_price $amount]</td>"
+	  <td>[ec_pretty_pure_price $amount]</td></tr>"
     incr row_counter
 }
-
-if { $row_counter != 0 } {
-    doc_body_append "</table>"
-} else {
-    doc_body_append "<center>None Found</center>"
-}
-
-doc_body_append "
-    </blockquote>
-
-    [ad_admin_footer]"
