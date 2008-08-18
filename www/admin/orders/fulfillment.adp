@@ -4,7 +4,7 @@
 <h2>@title@</h2>
 
 <p>
-These <a href=\"fulfillment-items-needed\">items</a> are needed in
+These <a href="fulfillment-items-needed">items</a> are needed in
 order to fulfill all outstanding orders.
 </p><p>
 Note: Orders over 28 days old cannot be fulfilled through shopping cart, because gateways usually drop the transaction_id associated with the order.
