@@ -19,87 +19,25 @@ select user_id
   from ec_orders
  where order_id=:order_id"]
 
-doc_body_append "<head>
-<title>Order Fulfillment</title>
-</head>
-<body bgcolor=white text=black>
+set title "Order Fulfillment"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-<h2>Order Fulfillment</h2>
+set export_form_vars_html [export_form_vars order_id]
 
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "fulfillment" "Fulfillment"] "One Order"]
-
-<hr>
-
-<form name=fulfillment_form method=post action=fulfill-2>
-[export_form_vars order_id]
-"
-
-set shipping_method [db_string shipping_method_select "
-select shipping_method
+set shipping_method [db_string shipping_method_select "select shipping_method
   from ec_orders
- where order_id=:order_id
-"]
+ where order_id=:order_id"]
 
-doc_body_append "
-[ec_decode $shipping_method "no shipping" "Check off the items that have been fulfilled" "Check off the shipped items"]:
+set shipping_method_html "[ec_decode $shipping_method "no shipping" "Check off the items that have been fulfilled" "Check off the shipped items"]:"
 
-<blockquote>
-[ec_items_for_fulfillment_or_return $order_id "t"]
-</blockquote>
-"
+set items_for_fulfillment [ec_items_for_fulfillment_or_return $order_id "t"]
 
-if { $shipping_method != "no shipping" } {
 
-    doc_body_append "<p>
-<br>
-Enter the following if relevant:
+set shipping_time_html "[ad_dateentrywidget shipment_date] [ec_timeentrywidget shipment_time]"
 
-<blockquote>
-<table>
-<tr>
-<td>Shipment date (required):</td>
-<td>[ad_dateentrywidget shipment_date] [ec_timeentrywidget shipment_time]</td>
-</tr>
-<tr>
-<td>Expected arrival date:</td>
-<td>[ad_dateentrywidget expected_arrival_date ""] [ec_timeentrywidget expected_arrival_time ""]</td>
-</tr>
-<tr>
-<td>Carrier</td>
-<td>
-<!-- the reason these are hardcoded is that we need carrier names to be exactly what we have here if we're going to be able to construct the package tracking pages -->
-<select name=carrier>
-<option value=\"\">select one
-<option value=\"FedEx\">FedEx
-<option value=\"UPS Ground\">UPS Ground
-<option value=\"UPS Air\">UPS Air
-<option value=\"US Priority\">US Priority
-<option value=\"USPS\">USPS
-</select>
+if { ![string equal $shipping_method "no shipping" } {
 
-Other:
-<input type=text name=carrier_other size=10>
-</td>
-</tr>
-<tr>
-<td>Tracking Number</td>
-<td><input type=text name=tracking_number size=20></td>
-</tr>
-</table>
-</blockquote>
-"
-} else {
-    doc_body_append "Fulfillment date (required):
-[ad_dateentrywidget shipment_date] [ec_timeentrywidget shipment_time]
-<p>
-"
+    set expected_arrival_time "[ad_dateentrywidget expected_arrival_date ""] [ec_timeentrywidget expected_arrival_time ""]"
+    # carrier list is hardcoded because we need carrier names to be exactly what we have here for connecting to package tracking pages
+
 }
-
-doc_body_append "<center>
-<input type=submit value=\"Continue\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"
