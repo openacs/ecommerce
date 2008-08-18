@@ -15,5 +15,5 @@ looked at.</p>
 
   <ul>
     @approved_reviews_html;noquote@
-    <li><a href=\"@audit_url;noquote@\">Audit All Customer Reviews</a></li>
+    <li><a href="@audit_url;noquote@">Audit All Customer Reviews</a></li>
   </ul>
