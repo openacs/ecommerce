@@ -26,7 +26,6 @@ if { [exists_and_not_null received_back_time(time)] } {
 }
 
 # The customer service rep must be logged on
-
 set customer_service_rep [ad_get_user_id]
 if {$customer_service_rep == 0} {
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
@@ -35,7 +34,6 @@ if {$customer_service_rep == 0} {
 }
 
 # Make sure they haven't already inserted this refund
-
 if { [db_string get_refund_count "
     select count(*) 
     from ec_refunds 
@@ -51,7 +49,6 @@ set exception_text ""
 # They must have either checked "All items" and none of the rest, or
 # at least one of the rest and not "All items". They also need to have
 # shipment_date filled in
-
 if { [info exists all_items_p] && [info exists item_id] } {
     incr exception_count
     append exception_text "<li>Please either check off \"All items\" or check off some of the items, but not both."
@@ -66,16 +63,10 @@ if { $exception_count > 0 } {
     ad_script_abort
 }
 
-append doc_body "
-    [ad_admin_header "Specify refund amount"]
+set title "Specify refund amount"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-    <h2>Specify refund amount</h2>
-
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One"] "Mark Items Returned"]
-    <hr>"
-
-set shipping_refund_percent [ad_parameter -package_id [ec_id] ShippingRefundPercent ecommerce]
-
+set shipping_refund_percent [parameter -package_id [ec_id] -parameter ShippingRefundPercent]
 if { ![info exists all_items_p] } {
     set item_id_list $item_id
     set sql [db_map all_items_select]
@@ -88,54 +79,30 @@ if { ![info exists all_items_p] } {
 # added to the order, thereby causing the query for all items to
 # return one more item), only the items that they confirm here should
 # be recorded as part of this return.
-
 if { [info exists all_items_p] } {
     set item_id_list [list]
 }
 
 set items_to_print ""
 db_foreach get_return_item_list $sql {
-    
     if { [info exists all_items_p] } {
-	lappend item_id_list $item_id
+        lappend item_id_list $item_id
     }
-    append items_to_print "
-	<tr>
-	  <td>$product_name</td>
+    append items_to_print "<tr><td>$product_name</td>
 	   <td><input type=text name=\"price_to_refund.${item_id}\" value=\"[format "%0.2f" $price_charged]\" size=\"5\"> (out of [ec_pretty_pure_price $price_charged])</td>
  	   <td><input type=text name=\"shipping_to_refund.${item_id}\" value=\"[format "%0.2f" [expr $shipping_charged * $shipping_refund_percent]]\" size=\"5\"> 
-	       (out of [ec_pretty_pure_price $shipping_charged])</td>
-	</tr>"
+	       (out of [ec_pretty_pure_price $shipping_charged])</td></tr>"
 }
 
-append doc_body "
-    <form method=post action=items-return-3>
-      [export_form_vars refund_id order_id item_id_list received_back_datetime reason_for_return]
-      <blockquote>
-        <table border=0 cellspacing=0 cellpadding=10>
-          <tr>
-            <th>Item</th><th>Price to Refund</th><th>Shipping to Refund</th>
-         </tr>
-         $items_to_print
-       </table>"
+set export_form_vars_html [export_form_vars refund_id order_id item_id_list received_back_datetime reason_for_return]
 
 # Although only one refund may be done on an item, multiple refunds
 # may be done on the base shipping cost, so show shipping_charged -
 # shipping_refunded.
-
-set base_shipping [db_string base_shipping_select "
-    select nvl(shipping_charged,0) - nvl(shipping_refunded,0) 
+set base_shipping [db_string base_shipping_select "select nvl(shipping_charged,0) - nvl(shipping_refunded,0) 
     from ec_orders 
     where order_id=:order_id"]
 
-append doc_body "
-      <p>Base shipping charge to refund: 
-      <input type=text name=base_shipping_to_refund value=\"[format "%0.2f" [expr $base_shipping * $shipping_refund_percent]]\" size=\"5\"> 
-      (out of [ec_pretty_pure_price $base_shipping])</p>
-    </blockquote>
+set base_shipping_to_refund [format "%0.2f" [expr $base_shipping * $shipping_refund_percent]]
 
-    <center><input type=submit value=\"Continue\"></center>
-
-    [ad_admin_footer]"
-
-doc_return  200 text/html $doc_body
+set base_shipping_html [ec_pretty_pure_price $base_shipping]

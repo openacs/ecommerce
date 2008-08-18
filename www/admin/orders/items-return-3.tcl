@@ -178,70 +178,27 @@ if {![db_0or1row get_billing_info "
     set billing_country ""
 }
 
-append doc_body "
-    [ad_admin_header "Refund Totals"]
+set title "Refund Totals"
+set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-    <h2>Refund Totals</h2>
+set export_form_vars_html "[export_entire_form] [export_form_vars cash_amount_to_refund certificate_amount_to_reinstate]"
 
-    [ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Orders"] [list "one?[export_url_vars order_id]" "One"] "Refund Totals"]
+set total_amount_to_refund_html [ec_pretty_pure_price $total_amount_to_refund]
+set total_price_to_refund_html [ec_pretty_pure_price $total_price_to_refund]
+set total_shipping_to_refund_html [ec_pretty_pure_price $total_shipping_to_refund]
+set total_tax_to_refund_html [ec_pretty_pure_price $total_tax_to_refund]
 
-    <hr>
-    <form method=post action=items-return-4>
-     [export_entire_form]
-     [export_form_vars cash_amount_to_refund certificate_amount_to_reinstate]
-     <blockquote>
-       <p>Total refund amount: [ec_pretty_pure_price $total_amount_to_refund] (price: [ec_pretty_pure_price $total_price_to_refund], shipping: [ec_pretty_pure_price $total_shipping_to_refund], tax: [ec_pretty_pure_price $total_tax_to_refund])</p>
-       <ul>
-        <li>[ec_pretty_pure_price $certificate_amount_to_reinstate] will be reinstated in gift certificates.<br>
-        <li>[ec_pretty_pure_price $cash_amount_to_refund] will be refunded to the customer's credit card.<br>
-      </ul>"
+set certificate_amount_to_reinstate_html [ec_pretty_pure_price $certificate_amount_to_reinstate]
+set cash_amount_to_refund_html [ec_pretty_pure_price $cash_amount_to_refund]
 
 # Request the credit card number to be re-entered if it is no longer
 # on file, yet there is money to refund.
-
-if { [empty_string_p $creditcard_number] && $cash_amount_to_refund > 0 } {
-    append doc_body "
-    <p>Please re-enter the credit card number of the card used for this order:</p>
-    <table border=0 cellspacing=0 cellpadding=10>
-    <tr>
-      <td>
-       <table>
-       <tr>
-         <td><input type=\"hidden\" name=\"creditcard_id\" value=\"$creditcard_id\">
-	     [ec_creditcard_widget $creditcard_type disabled]</td>
-         <td><input type=\"text\" name=\"creditcard_number\" size=\"21\" maxlength=\"17\"></td>
-       </tr>
-	<tr>
-	  <td>Ending in:</td>
-	  <td>xxxxxxxxxxxx$creditcard_last_four</td>
-       <tr>
-         <td>Expires:</td>
-         <td>$card_expiration</td>
-       <tr>
-         <td valign=\"top\">Billing address:</td>
-         <td>$billing_street<br>
-	     $billing_city, $billing_state $billing_zip<br>
-	     $billing_country</td>
-       </tr>
-       </table>
-      </td>
-    </tr>
-    </table>"
+set request_creditcard [expr { [empty_string_p $creditcard_number] && $cash_amount_to_refund > 0 } ] 
+if { $request_credit_card } {
+    set creditcard_widget_html [ec_creditcard_widget $creditcard_type disabled]
 } else {
-    append doc_body "
-      	[export_form_vars creditcard_id creditcard_number]"
+    set export_form_vars_2_html [export_form_vars creditcard_id creditcard_number]
 }
-append doc_body "
-      	[export_form_vars creditcard_type]"
 
-append doc_body "
-    <br>
-  </blockquote>
-  [export_form_vars creditcard_last_four]
-  <center>
-    <input type=submit value=\"Complete the Refund\">
-  </center>
-</form>
-[ad_admin_footer]"
-
-doc_return 200 text/html $doc_body
+set export_form_vars_cc_type_html [export_form_vars creditcard_type]
+set export_form_vars_last_4_html [export_form_vars creditcard_last_four]
