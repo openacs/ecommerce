@@ -125,7 +125,7 @@ if { ![info exists c_user_identification_id] } {
     <p>
     Here's what we could determine about the customer given the information you typed
     into the previous form:
-    <ul>
+    </p><ul>
     "
     
     set positively_identified_p 0
@@ -135,7 +135,7 @@ if { ![info exists c_user_identification_id] } {
     set location [ec_location_based_on_zip_code $postal_code]
 
     if { ![empty_string_p $location] } {
-	append doc_body "<li>They live in $location.\n"
+	append doc_body "<li>They live in $location.</li>"
     }
 
     
@@ -256,7 +256,7 @@ if { ![info exists c_user_identification_id] } {
 append doc_body "<h3>One issue</h3><p>A customer may discuss several issues during the course of one interaction.  Please
 enter the information about only one issue below:</p>
 
-<form method=post action=interaction-add-3>
+<form method=\"post\" action=\"interaction-add-3\">
 [export_form_vars interaction_id c_user_identification_id action_id open_date_str interaction_type interaction_type_other interaction_originator first_names last_name email postal_code other_id_info return_to_issue insert_id]
 
 <table cellspacing=\"1\" cellpadding=\"2\">"
@@ -278,7 +278,7 @@ if { [info exists c_user_identification_id] } {
 if { ![info exists issue_id] } {
     append doc_body "<tr>
     <td bgcolor=\"\#cccccc\" valign=\"top\" align=\"right\">Previous Issue ID:</td>
-    <td bgcolor=\"\#cccccc\" valign=\"top\"><input type=text size=4 name=issue_id>
+    <td bgcolor=\"\#cccccc\" valign=\"top\"><input type=\"text\" size=\"4\" name=\"issue_id\">
     If this is a new issue, please leave this blank (a new Issue ID will be generated)</td>
     </tr>
     <tr>
@@ -287,7 +287,7 @@ if { ![info exists issue_id] } {
     </tr>
     <tr>
     <td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\">Order ID:</td>
-    <td bgcolor=\"\#99ccff\" valign=\"top\"><input type=text size=7 name=order_id>
+    <td bgcolor=\"\#99ccff\" valign=\"top\"><input type=\"text\" size=\"7\" name=\"order_id\">
     Fill this in if this inquiry is about a specific order.
     </td>
     </tr>
@@ -312,7 +312,7 @@ if { ![info exists issue_id] } {
 }
 append doc_body "<tr>
 <td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\">Issue details:<br>(action_details)</td>
-<td bgcolor=\"\#99ccff\" valign=\"top\"><textarea wrap name=action_details rows=6 cols=45></textarea></td>
+<td bgcolor=\"\#99ccff\" valign=\"top\"><textarea wrap name=\"action_details\" rows=\"6\" cols=\"45\"></textarea></td>
 </tr>
 <tr>
 <td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\">Resources used:</td>
@@ -322,23 +322,23 @@ append doc_body "<tr>
 <td bgcolor=\"\#99ccff\" valign=\"top\" align=\"right\" rowspan=\"2\">Requires follow-up?</td>
 <td bgcolor=\"\#99ccff\" valign=\"top\">
 <input type=radio name=close_issue_p value=\"f\" checked>yes <b>requires follow-up</b><br>
-&nbsp;&nbsp;&nbsp;&nbsp;Please elaborate:<textarea wrap name=follow_up_required rows=2 cols=45></textarea>
+&nbsp;&nbsp;&nbsp;&nbsp;Please elaborate:<textarea wrap name=\"follow_up_required\" rows=\"2\" cols=\"45\"></textarea>
 
 </td>
 </tr>
 <tr>
 
-<td bgcolor=\"\#99ccff\" valign=\"top\"><input type=radio name=close_issue_p value=\"t\">no (resolved)</td>
+<td bgcolor=\"\#99ccff\" valign=\"top\"><input type=\"radio\" name=\"close_issue_p\" value=\"t\">no (resolved)</td>
 </tr>
 </table>
 "
 
 
 append doc_body "<center>Customer 
-<input type=submit name=submit value=\"Interaction complete\">
-<input type=submit name=submit value=\"Add another issue as part of this interaction\">
+<input type=\"submit\" name=\"submit\" value=\"Interaction complete\">
+<input type=\"submit\" name=\"submit\" value=\"Add another issue as part of this interaction\">
 </center>
-
+</form>
 [ad_admin_footer]
 "
 doc_return  200 text/html $doc_body

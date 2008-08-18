@@ -135,7 +135,7 @@ if { [value_if_exists issue_id] > 0 } {
     where u.user_identification_id = i.user_identification_id
     and i.issue_id=:issue_id"]==0 } {
 
-	ad_return_complaint 1 "<li>The Issue ID that you specified is invalid.  Please go back and check the Issue ID you entered.  If this is a new issue, please leave the issue ID blank.\n"
+	ad_return_complaint 1 "<li>The Issue ID that you specified is invalid.  Please go back and check the Issue ID you entered.  If this is a new issue, please leave the issue ID blank.</li>"
         ad_script_abort
     }
     
@@ -153,19 +153,19 @@ if { [value_if_exists issue_id] > 0 } {
 		<hr>
 		Issue ID $issue_id belongs to the registered user <a href=\"[ec_acs_admin_url]users/one?user_id=$issue_user_id\">[db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:issue_user_id"]</a>.
 		
-		<p>
+		</p><p>
 		
 		However, you haven't selected that user as the customer involved in this interaction.
 		
-		<p>
+		</p><p>
 		
 		Would you like to make this user be the owner of this interaction?  (If not, push Back and fix the issue ID.)
-		
-		<form method=post action=interaction-add-3>
+		</p>
+		<form method=\"post\" action=\"interaction-add-3\">
 		[ec_hidden_input "d_user_id" $issue_user_id]
 		[ec_export_entire_form_except d_user_id d_user_identification_id]
 		<center>
-		<input type=submit value=\"Yes\">
+		<input type=\"submit\" value=\"Yes\">
 		</center>
 		</form>
 		
@@ -183,21 +183,21 @@ if { [value_if_exists issue_id] > 0 } {
 	    [ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
 	    
 	    <hr>
-	    Issue ID $issue_id belongs to the the non-registered person who has had a previous interaction with us: [ec_user_identification_summary $issue_user_identification_id]
+ 	    <p>Issue ID $issue_id belongs to the the non-registered person who has had a previous interaction with us: [ec_user_identification_summary $issue_user_identification_id]
 	    
-	    <p>
+	    </p><p>
 	    
 	    However, you haven't selected that user as the customer involved in this interaction.
 	    
-	    <p>
+	    </p><p>
 	    
 	    Would you like to make this user be the owner of this interaction?  (If not, push Back and fix the issue ID.)
-	    
-	    <form method=post action=interaction-add-3>
+	    </p>
+	    <form method=\"post\" action=\"interaction-add-3\">
 	    [ec_hidden_input "d_user_identification_id" $issue_user_identification_id]
 	    [ec_export_entire_form_except d_user_id d_user_identification_id]
 	    <center>
-	    <input type=submit value=\"Yes\">
+	    <input type=\"submit\" value=\"Yes\">
 	    </center>
 	    </form>
 	    
@@ -235,7 +235,7 @@ if { [info exists order_id] && ![empty_string_p $order_id] } {
     # see who the order belongs to
     set row_exists_p [db_0or1row get_order_owner "select user_id as order_user_id from ec_orders where order_id=:order_id"]
     if { $row_exists_p==0 } {
-	ad_return_complaint 1 "<li>The shopping cart Order ID that you specified is invalid.  Please go back and check the order ID you entered.  If this issue is not about a specific online order, please leave the Order ID blank.\n"
+	ad_return_complaint 1 "<li>The shopping cart Order ID that you specified is invalid.  Please go back and check the order ID you entered.  If this issue is not about a specific online order, please leave the Order ID blank.</li>"
         ad_script_abort
     }
     
@@ -251,21 +251,21 @@ if { [info exists order_id] && ![empty_string_p $order_id] } {
 		[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
 		
 		<hr>
-		Order ID $order_id belongs to the registered user <a href=\"[ec_acs_admin_url]users/one?user_id=$order_user_id\">[db_string get_user_name "select first_names || ' ' || last_name from cc_users where user_id=:order_user_id"]</a>.
-		
+		<p>Order ID $order_id belongs to the registered user <a href=\"[ec_acs_admin_url]users/one?user_id=$order_user_id\">[db_string get_user_name "select first_names || ' ' || last_name from cc_users where user_id=:order_user_id"]</a>.
+		</p>
 		<p>
 		
 		However, you haven't selected that user as the customer involved in this interaction.
-		
+		</p>
 		<p>
 		
 		Would you like to make this user be the owner of this interaction?  (If not, push Back and fix the order ID.)
-		
-		<form method=post action=interaction-add-3>
+		</p>
+		<form method=\"post\" action=\"interaction-add-3\">
 		[ec_hidden_input "d_user_id" $order_user_id]
 		[ec_export_entire_form_except d_user_id d_user_identification_id]
 		<center>
-		<input type=submit value=\"Yes\">
+		<input type=\"submit\" value=\"Yes\">
 		</center>
 		</form>
 		
@@ -394,7 +394,7 @@ if { $create_new_interaction_p == "t" } {
 #     F. closed_by (=null if close_issue_p=f, =customer_service_rep if close_issue_p=t)
 #   2. Have to insert into ec_cs_issue_type_map:
 #     issue_id & issue_type for each issue_type in issue_type_list
-
+#ns_log Notice "issue_type [value_if_exists issue_type], create_new_issue_p $create_new_issue_p "
 if { $create_new_issue_p == "t" } {
     if { $close_issue_p == "t" } {
 	set customer_service_rep_bit :customer_service_rep
@@ -408,7 +408,8 @@ if { $create_new_issue_p == "t" } {
     values
     (:issue_id, :uiid_to_insert, :order_id, $date_string, $close_date, $customer_service_rep_bit)
     "
-    
+    set issue_type_list [concat $issue_type_list $issue_type]
+
     foreach issue_type $issue_type_list {
 	db_dml insert_into_issue_tm "insert into ec_cs_issue_type_map
 	(issue_id, issue_type)

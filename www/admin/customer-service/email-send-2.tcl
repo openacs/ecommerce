@@ -19,7 +19,7 @@ ad_page_contract {
     action_id
     issue_id
     customer_service_rep
-    email_to_use
+    email_to_use:notnull
     cc_to
     bcc_to
     subject
