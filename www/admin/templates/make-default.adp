@@ -3,13 +3,12 @@
   <property name="context">@context;noquote@</property>
 <h2>@title@</h2>
 
-<form method=post action=add-3>
+<p>
+Please confirm that you want this to become the default template that products will be displayed with
+if no template has been specifically assigned to them.
+</p>
+<form method=post action=make-default-2>
 @export_form_vars_html;noquote@
- <p>Name: <tt>@template_name@</tt></p>
- <p>ADP template: 
-<pre>
-@template@ 
-</pre>
 <center>
   <input type=submit value="Confirm">
 </center>
