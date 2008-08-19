@@ -12,33 +12,9 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-set page_html "[ad_admin_header "Confirm New User Class"]
-
-<h2>Confirm New User Class</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "User Classes"] "Confirm New User Class"]
-
-<hr>
-
-Add the following new user class?
-
-<blockquote>
-<code>$user_class_name</code>
-</blockquote>
-"
-
+set title  "Confirm New User Class"
+set context [list [list index "User Classes"] $title]
 
 set user_class_id [db_nextval ec_user_class_id_sequence]
 
-append page_html "<form method=post action=add-2>
-[export_form_vars user_class_name user_class_id]
-<center>
-<input type=submit value=\"Yes\">
-</center>
-</form>
-
-[ad_admin_footer]
-"
-
-
-doc_return  200 text/html $page_html
+set export_form_vars_html [export_form_vars user_class_name user_class_id]

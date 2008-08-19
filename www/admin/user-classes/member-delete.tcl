@@ -15,24 +15,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-set page_html "[ad_admin_header "Remove Member from $user_class_name"]
+set title "Remove Member from $user_class_name"
+set context [list [list index "User Classes"] $title]
 
-<h2>Remove Member from $user_class_name</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "User Classes"] [list "one.tcl?[export_url_vars user_class_id user_class_name]" $user_class_name] "Members" ] 
-
-<hr>
-
-Please confirm that you wish to remove this member from $user_class_name.
-
-<center>
-<form method=post action=member-delete-2>
-[export_form_vars user_class_id user_class_name user_id]
-<input type=submit value=\"Confirm\">
-</form>
-</center>
-
-[ad_admin_footer]
-"
-
-doc_return  200 text/html $page_html
+set export_form_vars_html [export_form_vars user_class_id user_class_name user_id]

@@ -13,53 +13,31 @@ ad_require_permission [ad_conn package_id] admin
 
 set user_class_name [db_string get_uc_name "select user_class_name from ec_user_classes where user_class_id = :user_class_id"]
 
-set page_html "[ad_admin_header "Members of $user_class_name"]
+set title "Members of $user_class_name"
+set context [list [list index "User Classes"] $title]
 
-<h2>Members of $user_class_name</h2>
+set requires_approval_p [parameter::get -package_id [ec_id] -parameter UserClassApproveP -default 1]
 
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "User Classes"] [list "one.tcl?[export_url_vars user_class_id user_class_name]" "One Class"] "Members" ] 
-
-<hr>
-
-<ul>
-"
-
+set users_count 0
+set users_in_ec_user_class_html ""
 db_foreach get_users_in_ec_user_class "select 
 cc.user_id, first_names, last_name, email,
 m.user_class_approved_p
 from cc_users cc, ec_user_class_user_map m
 where cc.user_id = m.user_id
 and m.user_class_id=:user_class_id" {
-
-    append page_html "<li><a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$first_names $last_name</a> ($email) "
-
-    if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
-	append page_html "<font size=-1>[ec_decode $user_class_approved_p "t" "" "un"]approved</font> "
+    incr users_count
+    append users_in_ec_user_class_html "<li><a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$first_names $last_name</a> ($email) "
+    if { $requires_approval_p } {
+	    append users_in_ec_user_class_html "[ec_decode $user_class_approved_p "t" "" "un"]approved "
     }
-
-    append page_html "(<a href=\"member-delete?[export_url_vars user_class_name user_class_id user_id]\">remove</a>"
-
-    if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
-	if { $user_class_approved_p == "t" } {
-	    append page_html " | <a href=\"approve-toggle?[export_url_vars user_class_id user_id user_class_approved_p]\">unapprove</a>"
-	} else {
-	    append page_html " | <a href=\"approve-toggle?[export_url_vars user_class_id user_id user_class_approved_p]\">approve</a>"
-	}
+    append users_in_ec_user_class_html "(<a href=\"member-delete?[export_url_vars user_class_name user_class_id user_id]\">remove</a>"
+    if { $requires_approval_p } {
+	    if { $user_class_approved_p == "t" } {
+	        append users_in_ec_user_class_html " | <a href=\"approve-toggle?[export_url_vars user_class_id user_id user_class_approved_p]\">unapprove</a>"
+	    } else {
+	        append users_in_ec_user_class_html " | <a href=\"approve-toggle?[export_url_vars user_class_id user_id user_class_approved_p]\">approve</a>"
+	    }
     }
-
-    append page_html ")\n"
-
-} if_no_rows {
-
-    append page_html "There are no users in this user class."
-}
-
-append page_html "</ul>
-
-[ad_admin_footer]
-"
-
-
-
-doc_return  200 text/html $page_html
-
+    append users_in_ec_user_class_html ")</li>\n"
+} 
