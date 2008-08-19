@@ -12,41 +12,11 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-set page_html "[ad_admin_header "Add a Template"]
-
-<h2>Add a Template</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] "Add a Template"]
-
-<hr>
-"
+set title  "Add a Template"
+set context [list [list index "Product Templates"] $title]
 
 if { [info exists based_on] && ![empty_string_p $based_on] } {
-    
     set template [db_string get_template "select template from ec_templates where template_id=:based_on"]
 } else {
     set template ""
 }
-
-append page_html "<form method=post action=add-2>
-
-Name: <input type=text name=template_name size=30>
-
-<p>
-
-ADP template:<br>
-<textarea name=template rows=10 cols=60>$template</textarea>
-
-<p>
-
-<center>
-<input type=submit value=\"Submit\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"
-
-
-doc_return  200 text/html $page_html
