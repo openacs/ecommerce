@@ -35,6 +35,5 @@ set audit_tables [list ec_email_templates_audit]
 set main_tables [list ec_email_templates]
 set audit_name "Email Template: $title"
 set audit_id $email_template_id
-
-append doc_body "[ec_url_concat [ec_url] /admin]/audit?[export_url_vars audit_name audit_id audit_id_column return_url audit_tables main_tables]"
+set audit_url_html "[ec_url_concat [ec_url] /admin]/audit?[export_url_vars audit_name audit_id audit_id_column return_url audit_tables main_tables]"
 
