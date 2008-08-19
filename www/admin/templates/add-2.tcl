@@ -10,7 +10,6 @@ ad_page_contract {
 } {
     template_name
     template:allhtml
-
 }
 
 ad_require_permission [ad_conn package_id] admin
@@ -18,20 +17,17 @@ ad_require_permission [ad_conn package_id] admin
 set exception_count 0
 set exception_text ""
 
-
 if { ![info exists template] || [empty_string_p $template] } {
     incr exception_count
-    append exception_text "<li>You forgot to enter anything into the ADP template box.\n"
+    append exception_text "<li>The ADP template is empty. Backup and try again.</li>"
 }
 
 set f [ec_adp_function_p $template]
 if {$f != 0} {
     incr exception_count
-    append exception_text "
-    <li>We're sorry, but templates added here cannot
-    have functions in them for security reasons. Only HTML and 
-    <%= \$variable %> style code may be used.  We found <tt>$function</tt> in this template"
-
+    append exception_text "<li>We found <tt>$function</tt> in this template.  
+    For security reasons, the templates added here cannot
+    have functions in them. Only HTML and <%= \$variable %> style code may be used.</li>"
 }
 
 if { $exception_count > 0 } {
@@ -39,50 +35,11 @@ if { $exception_count > 0 } {
     return
 }
 
-set page_html "[ad_admin_header "Confirm Template"]
-
-<h2>Confirm Template</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] "Confirm Template"]
-
-<hr>
-"
-
+set title "Confirm Template"
+set context [list [list index "Product Templates"] $title]
 
 set template_id [db_nextval ec_template_id_sequence]
 
-append page_html "<form method=post action=add-3>
-[export_form_vars template_id template_name template]
+set export_form_vars_html [export_form_vars template_id template_name template]
 
-Name: 
-
-<p>
-
-<blockquote>
-<pre>$template_name</pre>
-</blockquote>
-
-<p>
-
-ADP template:
-
-<p>
-
-<blockquote>
-<pre>
-[ns_quotehtml $template]
-</pre>
-</blockquote>
-
-<p>
-
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"
 db_release_unused_handles
-doc_return 200 text/html $page_html

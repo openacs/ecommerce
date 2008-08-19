@@ -13,34 +13,10 @@ ad_require_permission [ad_conn package_id] admin
 
 db_1row get_template_info "select template_name, template from ec_templates where template_id=:template_id"
 
+set title  "Edit Template"
+set context [list [list index "Product Templates"] $title]
 
-set page_html "[ad_admin_header "Edit Template"]
+set export_form_vars_html [export_form_vars template_id]
 
-<h2>Edit Template</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Product Templates"] [list "one.tcl?template_id=$template_id" "$template_name"] "Edit Template"]
-
-<hr>
-
-<form method=post action=edit-2>
-[export_form_vars template_id]
-
-Name: <input type=text name=template_name size=30 value=\"[ad_quotehtml $template_name]\">
-
-<p>
-
-ADP template:<br>
-<textarea name=template rows=30 cols=60>$template</textarea>
-
-<p>
-
-<center>
-<input type=submit value=\"Submit Changes\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"
 db_release_unused_handles
-doc_return  200 text/html $page_html
+
