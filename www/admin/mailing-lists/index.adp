@@ -9,5 +9,5 @@
 <h3>All Mailing Lists</h3>
 <form method=post action=one>
   @category_widget_html;noquote@
-  <input type=submit value=\"Go\">
+  <input type=submit value="Go">
 </form>

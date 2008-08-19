@@ -5,11 +5,11 @@
 
 <h3>Members</h3>
 <if @users_count@ gt 0>
-<ul>
-  @user_info_html;noquote@
-</ul>
+  <ul>
+   @user_info_html;noquote@
+  </ul>
 </if><else>
-<p>None.</p>
+ <p>None.</p>
 </else>
 <br>
 <h3>Add a Member</h3>
