@@ -1,5 +1,4 @@
 # member-remove.tcl
-
 ad_page_contract {  
     @param category_id
     @param subcategory_id:optional
@@ -19,28 +18,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-append doc_body "[ad_admin_header "Confirm Removal"]
+set title "Confirm Removal"
+set context [list [list index "Mailing Lists"] $title]
 
-<h2>Confirm Removal</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Mailing Lists"] "Confirm Removal"]
-
-<hr>
-
-Please confirm that you wish to remove this user from this mailing list.
-
-<form method=post action=member-remove-2>
-[export_form_vars category_id subcategory_id subsubcategory_id user_id]
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-</form>
-
-[ad_admin_footer]
-"
-
-
-
-doc_return  200 text/html $doc_body
-
-
+set export_form_vars_html [export_form_vars category_id subcategory_id subsubcategory_id user_id]

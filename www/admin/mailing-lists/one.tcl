@@ -1,5 +1,4 @@
 # one.tcl
-
 ad_page_contract {
     @author
     @creation-date
@@ -33,25 +32,14 @@ if { ![info exists subsubcategory_id] } {
     set subsubcategory_id ""
 }
 
-
 set mailing_list_name [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id]
 
-
-append doc_body "[ad_admin_header "$mailing_list_name"]
-
-<h2>$mailing_list_name</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index.tcl" "Mailing Lists"] "One Mailing List"]
-
-<hr>
-<h3>Members</h3>
-<ul>
-"
+set title "List ${mailing_list_name}"
+set context [list [list index "Mailing Lists"] $title]
 
 set user_query "select u.user_id, first_names, last_name
     from cc_users u, ec_cat_mailing_lists m
-    where u.user_id=m.user_id
-    "
+    where u.user_id=m.user_id"
 
 if { ![empty_string_p $subsubcategory_id] } {
     append user_query "and m.subsubcategory_id=$subsubcategory_id"
@@ -66,36 +54,12 @@ if { ![empty_string_p $subsubcategory_id] } {
 }
 
 set sql $user_query
-
+set users_count 0
+set user_info_html
 db_foreach get_user_info $sql {
-    
-    append doc_body "<li><a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$first_names $last_name</a> \[<a href=\"member-remove?[export_url_vars category_id subcategory_id subsubcategory_id user_id]\">remove</a>\]"
-} if_no_rows {
-    append doc_body "None"
-}
+    incr users_count
+    append user_info_html "<li><a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$first_names $last_name</a> \[<a href=\"member-remove?[export_url_vars category_id subcategory_id subsubcategory_id user_id]\">remove</a>\]</li>"
+} 
 
+set export_form_vars_html [export_form_vars category_id subcategory_id subsubcategory_id]
 db_release_unused_handles
-
-append doc_body "</ul>
-
-<h3>Add a Member</h3>
-
-<form method=post action=member-add>
-[export_form_vars category_id subcategory_id subsubcategory_id]
-By last name: <input type=text name=last_name size=30>
-<input type=submit value=\"Search\">
-</form>
-
-<form method=post action=member-add>
-[export_form_vars category_id subcategory_id subsubcategory_id]
-By email address: <input type=text name=email size=30>
-<input type=submit value=\"Search\">
-</form>
-
-[ad_admin_footer]
-"
-
-
-
-doc_return  200 text/html $doc_body
-
