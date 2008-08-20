@@ -31,54 +31,25 @@ if { ![info exists order_by] } {
     set order_by "a.action_id"
 }
 
+set title  "Actions"
+set context [list [list index "Customer Service"] $title]
 
+set export_form_vars_html [export_form_vars view_interaction_date]
 
-append doc_body "[ad_admin_header "Customer Service Actions"]
-
-<h2>Customer Service Actions</h2>
-
-[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Actions"]
-
-<hr>
-
-<form method=post action=actions>
-[export_form_vars view_interaction_date]
-
-<table border=0 cellspacing=0 cellpadding=0 width=100%>
-<tr bgcolor=ececec>
-<td align=center><b>Info Used</b></td>
-<td align=center><b>Rep</b></td>
-<td align=center><b>Interaction Date</b></td>
-</tr>
-<tr>
-<td align=center><select name=view_info_used>
-"
-
-
-
-set important_info_used_list [db_list get_picklist_items "
-  select picklist_item
+set important_info_used_list [db_list get_picklist_items "select picklist_item
     from ec_picklist_items
-   where picklist_name='info_used'
-order by sort_key
-"]
+   where picklist_name='info_used' order by sort_key"]
 
 set info_used_list [concat [list "none"] $important_info_used_list [list "all others"]]
 
+set info_used_list_html ""
 foreach info_used $info_used_list {
     if { $info_used == $view_info_used } {
-	append doc_body "<option value=\"$info_used\" selected>$info_used"
+        append info_used_list_html "<option value=\"${info_used}\" selected>${info_used}</option>"
     } else {
-	append doc_body "<option value=\"$info_used\">$info_used"
+        append info_used_list_html "<option value=\"${info_used}\">${info_used}</option>"
     }
 }
-
-append doc_body "</select>
-<input type=submit value=\"Change\">
-</td>
-<td align=center><select name=view_rep>
-<option value=\"all\">All
-"
 
 set sql [db_map get_customer_service_data_sql]
 #set sql "
@@ -89,39 +60,27 @@ set sql [db_map get_customer_service_data_sql]
 #order by u.last_name, u.first_names
 #"
 
+set customer_service_data_html ""
 db_foreach get_customer_service_data $sql {
-    
     if { $view_rep == $rep } {
-	append doc_body "<option value=$rep selected>$rep_last_name, $rep_first_names\n"
+        append customer_service_data_html "<option value=$rep selected>${rep_last_name}, ${rep_first_names}</option>\n"
     } else {
-	append doc_body "<option value=$rep>$rep_last_name, $rep_first_names\n"
+        append customer_service_data_html "<option value=$rep>${rep_last_name}, ${rep_first_names}</option>\n"
     }
 }
-
-append doc_body "</select>
-<input type=submit value=\"Change\">
-</td>
-<td align=center>"
 
 set interaction_date_list [list [list last_24 "last 24 hrs"] [list last_week "last week"] [list last_month "last month"] [list all all]]
 
 set linked_interaction_date_list [list]
-
 foreach interaction_date $interaction_date_list {
     if {$view_interaction_date == [lindex $interaction_date 0]} {
-	lappend linked_interaction_date_list "<b>[lindex $interaction_date 1]</b>"
+        lappend linked_interaction_date_list "<b>[lindex $interaction_date 1]</b>"
     } else {
-	lappend linked_interaction_date_list "<a href=\"actions?[export_url_vars view_info_used view_rep order_by]&view_interaction_date=[lindex $interaction_date 0]\">[lindex $interaction_date 1]</a>"
+        lappend linked_interaction_date_list "<a href=\"actions?[export_url_vars view_info_used view_rep order_by]&view_interaction_date=[lindex $interaction_date 0]\">[lindex $interaction_date 1]</a>"
     }
 }
 
-append doc_body "\[ [join $linked_interaction_date_list " | "] \]
-
-</td></tr></table>
-
-</form>
-<blockquote>
-"
+set set interaction_date_list_html "\[ [join $linked_interaction_date_list " | "] \]"
 
 if { $view_rep == "all" } {
     set rep_query_bit ""
@@ -164,10 +123,10 @@ if { $view_info_used == "none" } {
 #    "
 } elseif { $view_info_used == "all others" } {
     if { [llength $important_info_used_list] > 0 } {
-	set safe_important_info_used_list [DoubleApos $important_info_used_list]
-	set info_used_query_bit "and map.info_used not in ('[join $safe_important_info_used_list "', '"]')"
+        set safe_important_info_used_list [DoubleApos $important_info_used_list]
+        set info_used_query_bit "and map.info_used not in ('[join $safe_important_info_used_list "', '"]')"
     } else {
-	set info_used_query_bit ""
+        set info_used_query_bit ""
     }
 
     set sql_query [db_map all_others_sql]
@@ -215,8 +174,7 @@ if { $view_info_used == "none" } {
 
 set link_beginning "actions.tcl?[export_url_vars view_info_used view_rep view_interaction_date]"
 
-set table_header "<table>
-<tr>
+set table_header "<tr>
 <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "a.action_id"]\">Action ID</a></b></td>
 <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "a.interaction_id"]\">Interaction ID</a></b></td>
 <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "a.issue_id"]\">Issue ID</a></b></td>
@@ -225,64 +183,36 @@ set table_header "<table>
 <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "rep_last_name, rep_first_names"]\">Rep</a></b></td>
 <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_originator"]\">Originator</a></b></td>
 <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_type"]\">Interaction Type</a></b></td>
-</tr>
-"
+</tr>"
 
 set sql $sql_query
-
 set row_counter 0
+set interaction_info_maybe_rep_html ""
 db_foreach get_interaction_info_maybe_rep $sql {
-    
     if { $row_counter == 0 } {
-	append doc_body $table_header
+        append interaction_info_maybe_rep_html $table_header
     } elseif { $row_counter == 20 } {
-	append doc_body "</table>
-	<p>
-	$table_header
-	"
-	set row_counter 1
+        append interaction_info_maybe_rep_html "</table><br><table>${table_header}"
+        set row_counter 1
     }
     # even rows are white, odd are grey
     if { [expr floor($row_counter/2.)] == [expr $row_counter/2.] } {
-	set bgcolor "white"
+        set bgcolor "#ffffff"
     } else {
-	set bgcolor "ececec"
+        set bgcolor "#ececec"
     }
-
-    append doc_body "<tr bgcolor=\"$bgcolor\"><td>$action_id</td>
-    <td><a href=\"interaction?[export_url_vars interaction_id]\">$interaction_id</a></td>
-    <td><a href=\"issue?[export_url_vars issue_id]\">$issue_id</a></td>
-    <td>[ec_formatted_full_date $full_interaction_date]</td>
-    "
+    append interaction_info_maybe_rep_html "<tr bgcolor=\"$bgcolor\"><td>$action_id</td><td><a href=\"interaction?[export_url_vars interaction_id]\">$interaction_id</a></td><td><a href=\"issue?[export_url_vars issue_id]\">$issue_id</a></td><td>[ec_formatted_full_date $full_interaction_date]</td>"
     if { [empty_string_p $customer_user_id] } {
-	append doc_body "<td>unregistered user <a href=\"user-identification?[export_url_vars user_identification_id]\">$user_identification_id</a></td>"
+        append interaction_info_maybe_rep_html "<td>unregistered user <a href=\"user-identification?[export_url_vars user_identification_id]\">$user_identification_id</a></td>"
     } else {
-	append doc_body "<td><a href=\"[ec_acs_admin_url]users/one?user_id=$customer_user_id\">$customer_last_name, $customer_first_names</a></td>"
+        append interaction_info_maybe_rep_html "<td><a href=\"[ec_acs_admin_url]users/one?user_id=$customer_user_id\">$customer_last_name, $customer_first_names</a></td>"
     }
-
     if { ![empty_string_p $customer_service_rep] } {
-	append doc_body "<td><a href=\"[ec_acs_admin_url]users/one?user_id=$customer_service_rep\">$rep_last_name, $rep_first_names</a></td>"
+        append interaction_info_maybe_rep_html "<td><a href=\"[ec_acs_admin_url]users/one?user_id=$customer_service_rep\">$rep_last_name, $rep_first_names</a></td>"
     } else {
-	append doc_body "<td>&nbsp;</td>"
+        append interaction_info_maybe_rep_html "<td>&nbsp;</td>"
     }
-
-    append doc_body "<td>$interaction_originator</td>
-    <td>$interaction_type</td>
-    </tr>
-    "
+    append interaction_info_maybe_rep_html "<td>$interaction_originator</td><td>$interaction_type</td></tr>\n"
     incr row_counter
 }
 
-if { $row_counter != 0 } {
-    append doc_body "</table>"
-} else {
-    append doc_body "<center>None Found</center>"
-}
-
-append doc_body "
-</blockquote>
-[ad_admin_footer]
-"
-
-
-doc_return  200 text/html $doc_body

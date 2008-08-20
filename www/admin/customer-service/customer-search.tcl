@@ -39,19 +39,10 @@ if { $exception_count > 0 } {
     return
 }
 
+set title  "Customer Search"
+set context [list [list index "Customer Service"] $title]
 
-append doc_body "[ad_admin_header "Customer Search"]
-
-<h2>Customer Search</h2>
-
-[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Customer Search"]
-
-<hr>
-Customers who spent more than [ec_pretty_price $amount [ad_parameter -package_id [ec_id] Currency ecommerce]] in the last $days days:
-<ul>
-"
-
-
+set currency [ec_pretty_price $amount [parameter::get -package_id [ec_id] -parameter Currency -default "USD"]]
 
 #set sql "select unique o.user_id, u.first_names, u.last_name, u.email
 #from ec_orders o, cc_users u
@@ -63,26 +54,13 @@ Customers who spent more than [ec_pretty_price $amount [ad_parameter -package_id
 set sql [db_map user_id_sql]
 
 set user_id_list [list]
+set user_ids_from_search_html ""
 db_foreach get_user_ids_from_search $sql {
-    
-    append doc_body "<li><a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$first_names $last_name</a> ($email)"
+    append user_ids_from_search_html "<li><a href=\"[ec_acs_admin_url]users/one?user_id=$user_id\">$first_names $last_name</a> ($email)</li>"
     lappend user_id_list $user_id
 }
+set user_id_list_len [llength $user_id_list]
 
-if { [llength $user_id_list] == 0 } {
-    append doc_body "None found."
-} 
-
-append doc_body "</ul>
-"
-
-if { [llength $user_id_list] != 0 } {
-    append doc_body "<a href=\"spam-2?show_users_p=t&[export_url_vars user_id_list]\">Spam these users</a>"
-}
-
-append doc_body "[ad_admin_footer]
-"
+set export_url_vars_html [export_url_vars user_id_list]
 
 db_release_unused_handles
-
-doc_return 200 text/html $doc_body
