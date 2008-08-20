@@ -19,28 +19,8 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-set page_html "[ad_admin_header "Confirm Deletion"]
+set title "Confirm Deletion"
+set context [list [list index "Product Categorization"] $title]
 
-<h2>Confirm Deletion</h2>
+set export_form_vars_html [export_form_vars subcategory_id category_id category_name]
 
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] [list "category?[export_url_vars category_id category_name]" $category_name] [list "subcategory?[export_url_vars subcategory_id subcategory_name category_id category_name]" $subcategory_name] "Delete this Subcategory"]
-
-<hr>
-
-<form method=post action=subcategory-delete-2>
-[export_form_vars subcategory_id category_id category_name]
-Please confirm that you wish to delete the category $category_name.  Please also note the following:
-<p>
-<ul>
-<li>This will delete all subsubcategories of the subcategory $subcategory_name.
-<li>This will not delete the products in this subcategory (if any).  However, it will cause them to no longer be associated with this subcategory.
-</ul>
-<p>
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-</form>
-
-[ad_admin_footer]
-"
-doc_return  200 text/html $page_html

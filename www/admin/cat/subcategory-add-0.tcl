@@ -38,31 +38,11 @@ if { $n_conflicts > 0 } {
     ad_return_complaint 1 "<li>The page you came from appears to be out-of-date;
     perhaps someone has changed the subcategories since you last reloaded the page.
     Please go back to the previous page, push \"reload\" or \"refresh\" and try
-    again."
+    again.</li>"
     return
 }
 
+set title "Add a New Subcategory"
+set context [list [list index "Product Categorization"] $title]
 
-set page_html "[ad_admin_header "Add a New Subcategory"]
-
-<h2>Add a New Subcategory</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Product Categories"] [list "category?[export_url_vars category_id category_name]" $category_name] "Add a New Subcategory"]
-
-<hr>
-
-<ul>
-
-<form method=post action=subcategory-add>
-[export_form_vars category_id category_name prev_sort_key next_sort_key]
-Name: <input type=text name=subcategory_name size=30>
-<input type=submit value=\"Add\">
-</form>
-
-</ul>
-
-[ad_admin_footer]
-"
-
-
-doc_return  200 text/html $page_html
+set export_form_vars_html [export_form_vars category_id category_name prev_sort_key next_sort_key]

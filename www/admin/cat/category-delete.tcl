@@ -1,5 +1,4 @@
 # /www/[ec_url_concat [ec_url] /admin]/cat/category-delete.tcl
-
 ad_page_contract {
 
     @param category_id the ID of the category to delete
@@ -14,31 +13,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
+set title "Confirm Delete"
+set context [list [list index "Product Categorization"] $title]
 
-set page_html "[ad_admin_header "Confirm Deletion"]
-
-<h2>Confirm Deletion</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] [list "category?[export_url_vars category_id category_name]" $category_name] "Delete this Category"]
-
-<hr>
-
-<form method=post action=category-delete-2>
-[export_form_vars category_id]
-Please confirm that you wish to delete the category $category_name.  Please also note the following:
-<p>
-<ul>
-<li>This will delete all subcategories and subsubcategories of the category $category_name.
-<li>This will not delete the products in this category (if any).  However, it will cause them to no longer be associated with this category.
-<li>This will not delete the templates associated with this category (if any).  However, it will cause them to no longer be associated with this category.
-</ul>
-<p>
-<center>
-<input type=submit value=\"Confirm\">
-</center>
-</form>
-
-[ad_admin_footer]
-"
-
-doc_return  200 text/html $page_html
+set export_form_vars_html [export_form_vars category_id]

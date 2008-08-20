@@ -41,37 +41,13 @@ if { $n_conflicts > 0 } {
     ad_return_complaint 1 "<li>The $category_name page appears to be out-of-date;
     perhaps someone has changed the subcategories since you last reloaded the page.
     Please go back to <a href=\"category?[export_url_vars category_id category_name]\">the $category_name page</a>, push
-    \"reload\" or \"refresh\" and try again."
+    \"reload\" or \"refresh\" and try again.</li>"
     return
 }
 
-
-set page_html "[ad_admin_header "Confirm New Subcategory"]
-
-<h2>Confirm New Subcategory</h2>
-
-[ad_context_bar [list "../" "Ecommerce([ec_system_name])"] [list "index" "Categories &amp; Subcategories"] [list "category?[export_url_vars category_id category_name]" $category_name] "Confirm New Subcategory"]
-
-<hr>
-
-Add the following new subcategory to $category_name?
-
-<blockquote>
-<code>$subcategory_name</code>
-</blockquote>
-"
+set title "Confirm New Subcategory"
+set context [list [list index "Product Categorization"] $title]
 
 set subcategory_id [db_nextval ec_subcategory_id_sequence]
 
-append page_html "<form method=post action=subcategory-add-2>
-[export_form_vars category_name category_id subcategory_name subcategory_id prev_sort_key next_sort_key]
-<center>
-<input type=submit value=\"Yes\">
-</center>
-</form>
-
-[ad_admin_footer]
-"
-
-
-doc_return  200 text/html $page_html
+set export_form_vars_html [export_form_vars category_name category_id subcategory_name subcategory_id prev_sort_key next_sort_key]
