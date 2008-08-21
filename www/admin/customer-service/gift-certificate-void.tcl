@@ -1,5 +1,4 @@
 # gift-certificate-void.tcl
-
 ad_page_contract {
     @param gift_certificate_id
     @author
@@ -20,31 +19,7 @@ if {$customer_service_rep == 0} {
     ad_script_abort
 }
 
+set title "Void Gift Certificate"
+set context [list [list index "Customer Service"] $title]
 
-
-set page_title "Void Gift Certificate"
-append doc_body "[ad_admin_header $page_title]
-<h2>$page_title</h2>
-
-[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] $page_title]
-
-<hr>
-Please explain why you are voiding this gift certificate:
-
-<form method=post action=gift-certificate-void-2>
-[export_form_vars gift_certificate_id]
-
-<blockquote>
-<textarea wrap name=reason_for_void rows=3 cols=50></textarea>
-</blockquote>
-
-<center>
-<input type=submit value=\"Continue\">
-</center>
-
-</form>
-
-[ad_admin_footer]
-"
-
-doc_return  200 text/html $doc_body
+set export_form_vars_html [export_form_vars gift_certificate_id]
