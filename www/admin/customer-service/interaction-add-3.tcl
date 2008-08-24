@@ -1,5 +1,4 @@
 # interaction-add-3.tcl
-
 ad_page_contract {  
     @param open_date_str:optional
     @param interaction_type:optional
@@ -63,7 +62,7 @@ ad_require_permission [ad_conn package_id] admin
 
 # doubleclick protection:
 if { [db_string get_service_action_count "select count(*) from ec_customer_service_actions where action_id=:action_id"] > 0 } {
-ns_log Notice "interaction-add-3.tcl: double click protection, line 65"
+    ns_log Notice "interaction-add-3.tcl: double click protection, line 65"
     ad_returnredirect index
 } elseif { $submit != "Interaction complete" } {
 	# I have to use the action_id to figure out user_identification_id
@@ -77,7 +76,6 @@ ns_log Notice "interaction-add-3.tcl: double click protection, line 65"
 }
 
 # the customer service rep must be logged on
-
 set customer_service_rep [ad_get_user_id]
 
 if {$customer_service_rep == 0} {
@@ -87,6 +85,7 @@ if {$customer_service_rep == 0} {
 }
 
 # error checking
+set error_path 0
 # what matters for the logic of the customer service system:
 # 1. that we don't have more than one d_user_id or d_user_identification_id
 #    (it's ok to have zero -- then a new user_identification_id will be generated,
@@ -102,25 +101,20 @@ set exception_text ""
 # first some little checks on the input data
 
 # issue_id and order_id should be numbers and action_details should be non-empty
-
 if { [regexp "\[^0-9\]+" $issue_id] } {
     incr exception_count
-    append exception_text "<li>The issue ID should be numeric.\n"
+    append exception_text "<li>The issue ID should be numeric.</li>\n"
 }
-
 if { [info exists order_id] && [regexp "\[^0-9\]+" $order_id] } {
     incr exception_count
-    append exception_text "<li>The Order ID should be numeric.\n"
+    append exception_text "<li>The Order ID should be numeric.</li>\n"
 }
-
 if { $exception_count > 0 } {
     ad_return_complaint $exception_count $exception_text
     ad_script_abort
 }
 
 # now for the painful checks
-
-
 
 # consistent issue ownership
 
@@ -135,98 +129,53 @@ if { [value_if_exists issue_id] > 0 } {
     where u.user_identification_id = i.user_identification_id
     and i.issue_id=:issue_id"]==0 } {
 
-	ad_return_complaint 1 "<li>The Issue ID that you specified is invalid.  Please go back and check the Issue ID you entered.  If this is a new issue, please leave the issue ID blank.</li>"
+        ad_return_complaint 1 "<li>The Issue ID that you specified is invalid.  Please go back and check the Issue ID you entered.  If this is a new issue, please leave the issue ID blank.</li>"
         ad_script_abort
-    }
-    
+    }    
 
     if { ![info exists c_user_identification_id] } {
-	# if the issue has a user_id associated with it and d_user_id doesn't exist or match
-	# the associated user_id, then give them a message with the chance to make them match
-	if { ![empty_string_p $issue_user_id] } {
-	    if { ![info exists d_user_id] || [string compare $d_user_id $issue_user_id] != 0 } {
-		
-		append doc_body "[ad_admin_header "User Doesn't Match Issue"]
-		<h2>User Doesn't Match Issue</h2>
-		[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
-		
-		<hr>
-		Issue ID $issue_id belongs to the registered user <a href=\"[ec_acs_admin_url]users/one?user_id=$issue_user_id\">[db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:issue_user_id"]</a>.
-		
-		</p><p>
-		
-		However, you haven't selected that user as the customer involved in this interaction.
-		
-		</p><p>
-		
-		Would you like to make this user be the owner of this interaction?  (If not, push Back and fix the issue ID.)
-		</p>
-		<form method=\"post\" action=\"interaction-add-3\">
-		[ec_hidden_input "d_user_id" $issue_user_id]
-		[ec_export_entire_form_except d_user_id d_user_identification_id]
-		<center>
-		<input type=\"submit\" value=\"Yes\">
-		</center>
-		</form>
-		
-		[ad_admin_footer]
-		"
-                ad_script_abort
-	    }
-	} elseif { ![info exists d_user_identification_id] || [string compare $d_user_identification_id $issue_user_identification_id] != 0 } {
-	    # if d_user_identification_id doesn't match the issue's user_identification_id, give
-	    # them a message with the chance to make them match
+        # if the issue has a user_id associated with it and d_user_id doesn't exist or match
+        # the associated user_id, then give them a message with the chance to make them match
+        set title  "Error: User Does Not Match Issue"
+        set context [list [list index "Customer Service"] $title]
 
-	    
-	    append doc_body "[ad_admin_header "User Doesn't Match Issue"]
-	    <h2>User Doesn't Match Issue</h2>
-	    [ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
-	    
-	    <hr>
- 	    <p>Issue ID $issue_id belongs to the the non-registered person who has had a previous interaction with us: [ec_user_identification_summary $issue_user_identification_id]
-	    
-	    </p><p>
-	    
-	    However, you haven't selected that user as the customer involved in this interaction.
-	    
-	    </p><p>
-	    
-	    Would you like to make this user be the owner of this interaction?  (If not, push Back and fix the issue ID.)
-	    </p>
-	    <form method=\"post\" action=\"interaction-add-3\">
-	    [ec_hidden_input "d_user_identification_id" $issue_user_identification_id]
-	    [ec_export_entire_form_except d_user_id d_user_identification_id]
-	    <center>
-	    <input type=\"submit\" value=\"Yes\">
-	    </center>
-	    </form>
-	    
-	    [ad_admin_footer]
-	    "
+        if { ![empty_string_p $issue_user_id] } {
+            if { ![info exists d_user_id] || [string compare $d_user_id $issue_user_id] != 0 } {
+                set error_path 1
+                set hidden_input_html [ec_hidden_input "d_user_id" $issue_user_id]
+                set export_entire_form_except_html [ec_export_entire_form_except d_user_id d_user_identification_id]
+                ad_script_abort
+            }
+        } elseif { ![info exists d_user_identification_id] || [string compare $d_user_identification_id $issue_user_identification_id] != 0 } {
+            # if d_user_identification_id doesn't match the issue's user_identification_id, give
+            # them a message with the chance to make them match
+            set error_path 2
+ 	        set user_id_summary_html [ec_user_identification_summary $issue_user_identification_id]
+            set hidden_input_html [ec_hidden_input "d_user_identification_id" $issue_user_identification_id]
+            set export_entire_form_html [ec_export_entire_form_except d_user_id d_user_identification_id]
             ad_script_abort
-	}
-
+        }
     } else {
-	# non-new interaction; user_identification_id fixed
-	# if the issue has a user_id, then the user_id associated with user_identification_id should match.
-	# since it's possible for the same user to be represented by more than one user_identification_id,
-	# we can't require that they match, although it is unfortunate if they don't (but it's too late to
-	# do anything about it at this point -- I should make some way to combine user_identifications)
-	if { ![empty_string_p $issue_user_id] } {
-	    # find out the user_id associated with c_user_identification_id
-	    set c_user_id [db_string get_user_id "select user_id from ec_user_identification where user_identification_id=:c_user_identification_id"]
-	    # if the c_user_id is null, they should be told about the option of matching up a user_id with
-	    # user_identification_id
-	    # otherwise, if the issue doesn't belong to them, they just get a plain error message
-	    if { [empty_string_p $c_user_id] } {
-		ad_return_complaint 1 "The issue ID you specified belongs to the registered user
-		<a href=\"[ec_acs_admin_url]users/one?user_id=$issue_user_id\">[db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:issue_user_id"]</a>.  However, you haven't associated this interaction with any registered user.  You've associated it with the unregistered user [ec_user_identification_summary $c_user_identification_id].  If these are really the same user, match them up by clicking on the \"user info\" link and then you can reload this page without getting this error message." 
+        # non-new interaction; user_identification_id fixed
+        # if the issue has a user_id, then the user_id associated with user_identification_id should match.
+        # since it's possible for the same user to be represented by more than one user_identification_id,
+        # we can't require that they match, although it is unfortunate if they don't (but it's too late to
+        # do anything about it at this point -- I should make some way to combine user_identifications)
+        if { ![empty_string_p $issue_user_id] } {
+            # find out the user_id associated with c_user_identification_id
+            set c_user_id [db_string get_user_id "select user_id from ec_user_identification where user_identification_id=:c_user_identification_id"]
+            # if the c_user_id is null, they should be told about the option of matching up a user_id with
+            # user_identification_id
+            # otherwise, if the issue doesn't belong to them, they just get a plain error message
+            if { [empty_string_p $c_user_id] } {
+                ad_return_complaint 1 "<li>The issue ID you specified belongs to the registered user
+		<a href=\"[ec_acs_admin_url]users/one?user_id=$issue_user_id\">[db_string get_full_name "select first_names || ' ' || last_name from cc_users where user_id=:issue_user_id"]</a>.  However, you haven't associated this interaction with any registered user.  You've associated it with the unregistered user [ec_user_identification_summary $c_user_identification_id].  If these are really the same user, match them up by clicking on the \"user info\" link and then you can reload this page without getting this error message.</li>" 
                 ad_script_abort
-	    } elseif { [string compare $c_user_id $issue_user_id] != 0 } {
-		ad_return_complaint 1 "The issue ID you specified does not belong to the user you specified."
+            } elseif { [string compare $c_user_id $issue_user_id] != 0 } {
+                ad_return_complaint 1 "<li>The issue ID you specified does not belong to the user you specified.</li>"
                 ad_script_abort
-	    }
-	}
+            }
+        }
     }
 }
 
@@ -235,61 +184,38 @@ if { [info exists order_id] && ![empty_string_p $order_id] } {
     # see who the order belongs to
     set row_exists_p [db_0or1row get_order_owner "select user_id as order_user_id from ec_orders where order_id=:order_id"]
     if { $row_exists_p==0 } {
-	ad_return_complaint 1 "<li>The shopping cart Order ID that you specified is invalid.  Please go back and check the order ID you entered.  If this issue is not about a specific online order, please leave the Order ID blank.</li>"
+        ad_return_complaint 1 "<li>The shopping cart Order ID that you specified is invalid.  Please go back and check the order ID you entered.  If this issue is not about a specific online order, please leave the Order ID blank.</li>"
         ad_script_abort
     }
     
-
     if { ![empty_string_p $order_user_id] } {
-
-	if { ![info exists interaction_id] } {
-	    if { ![info exists d_user_id] || [string compare $d_user_id $order_user_id] != 0 } {
-		
-		
-		append doc_body "[ad_admin_header "User Doesn't Match Order"]
-		<h2>User Doesn't Match Order</h2>
-		[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "New Interaction"]
-		
-		<hr>
-		<p>Order ID $order_id belongs to the registered user <a href=\"[ec_acs_admin_url]users/one?user_id=$order_user_id\">[db_string get_user_name "select first_names || ' ' || last_name from cc_users where user_id=:order_user_id"]</a>.
-		</p>
-		<p>
-		
-		However, you haven't selected that user as the customer involved in this interaction.
-		</p>
-		<p>
-		
-		Would you like to make this user be the owner of this interaction?  (If not, push Back and fix the order ID.)
-		</p>
-		<form method=\"post\" action=\"interaction-add-3\">
-		[ec_hidden_input "d_user_id" $order_user_id]
-		[ec_export_entire_form_except d_user_id d_user_identification_id]
-		<center>
-		<input type=\"submit\" value=\"Yes\">
-		</center>
-		</form>
-		
-		[ad_admin_footer]
-		"
+        if { ![info exists interaction_id] } {
+            if { ![info exists d_user_id] || [string compare $d_user_id $order_user_id] != 0 } {
+		        set title  "Error: User Does Not Match Order"
+                set context [list [list index "Customer Service"] $title]
+                set error_path 3
+                set registered_user_html "<a href=\"[ec_acs_admin_url]users/one?user_id=$order_user_id\">[db_string get_user_name "select first_names || ' ' || last_name from cc_users where user_id=:order_user_id"]</a>"
+                set hidden_input_html [ec_hidden_input "d_user_id" $order_user_id]
+                set export_entire_form_html [ec_export_entire_form_except d_user_id d_user_identification_id]
                 ad_script_abort
-	    }
-	} else {
-	    # interaction_id exists
-	    # find out the user_id associated with c_user_identification_id
-	    set c_user_id [db_string get_user_id_user "select user_id from ec_user_identification where user_identification_id=:c_user_identification_id"]
-	    # if the c_user_id is null, they should be told about the option of matching up a user_id with
-	    # user_identification_id
-	    # otherwise, if the order doesn't belong to them, they just get a plain error message
-	    if { [empty_string_p $c_user_id] } {
-		ad_return_complaint 1 "The order ID you specified belongs to the registered user
-		<a href=\"[ec_acs_admin_url]users/one?user_id=$order_user_id\">[db_stringget_user_full_name "select first_names || ' ' || last_name from cc_users where user_id=:order_user_id"]</a>.  However, you haven't associated this interaction with any registered user.  You've associated it with the unregistered user [ec_user_identification_summary $c_user_identification_id].  If these are really the same user, match them up by clicking on the \"user info\" link and then you can reload this page without getting this error message." 
+            }
+        } else {
+            # interaction_id exists
+            # find out the user_id associated with c_user_identification_id
+            set c_user_id [db_string get_user_id_user "select user_id from ec_user_identification where user_identification_id=:c_user_identification_id"]
+            # if the c_user_id is null, they should be told about the option of matching up a user_id with
+            # user_identification_id
+            # otherwise, if the order doesn't belong to them, they just get a plain error message
+            if { [empty_string_p $c_user_id] } {
+                ad_return_complaint 1 "<li>The order ID you specified belongs to the registered user 
+<a href=\"[ec_acs_admin_url]users/one?user_id=$order_user_id\">[db_stringget_user_full_name "select first_names || ' ' || last_name from cc_users where user_id=:order_user_id"]</a>.  
+However, you haven't associated this interaction with any registered user.  You've associated it with the unregistered user [ec_user_identification_summary $c_user_identification_id].  If these are really the same user, match them up by clicking on the \"user info\" link and then you can reload this page without getting this error message.</li>" 
                 ad_script_abort
-	    } elseif { [string compare $c_user_id $order_user_id] != 0 } {
-		ad_return_complaint 1 "The order ID you specified does not belong to the user you specified."
+            } elseif { [string compare $c_user_id $order_user_id] != 0 } {
+                ad_return_complaint 1 "<li>The order ID you specified does not belong to the user you specified.</li>"
                 ad_script_abort
-	    }
-	
-	}
+            }
+        }
     }
     # Otherwise, the order is in_basket (that's why it has no user_id associated with it).
     # If the user_identification_id has a user_id associated with it, we should
@@ -299,7 +225,6 @@ if { [info exists order_id] && ![empty_string_p $order_id] } {
 }
 
 # done error checking
-
 
 if { [info exists interaction_id] } {
     # then the open_date didn't get passed along to this
@@ -319,137 +244,130 @@ if { [info exists interaction_id] } {
 
 db_transaction {
 
-# I. Have to generate:
-#   1. interaction_id, unless it already exists
-#   2. issue_id, unless it already exists
+    # I. Have to generate:
+    #   1. interaction_id, unless it already exists
+    #   2. issue_id, unless it already exists
 
-# interaction_id will either be a number or it will not exist
-if { ![info exists interaction_id] } {
-    set interaction_id [db_nextval ec_interaction_id_sequence]
-}
-
-# issue_id will either be a number or it will be the empty string
-if { [empty_string_p $issue_id] } {
-    set issue_id [db_nextval ec_issue_id_sequence]
-    set create_new_issue_p "t"
-} else {
-    set create_new_issue_p "f"
-}
-
-# II. User identification (first time through):
-#   1. If we have d_user_id, see if there's a user_identification with that user_id
-#   2. Otherwise, see if we have d_user_identification_id
-#   3. Otherwise, create a new user_identification_id
-
-if { $create_new_interaction_p == "t" && ![info exists c_user_identification_id] } {
-    if { [info exists d_user_id] } {
-	db_0or1row get_uiid_to_insert "select user_identification_id as uiid_to_insert from ec_user_identification where user_id=:d_user_id"
+    # interaction_id will either be a number or it will not exist
+    if { ![info exists interaction_id] } {
+        set interaction_id [db_nextval ec_interaction_id_sequence]
     }
-    if { ![info exists uiid_to_insert] } {
-	if { [info exists d_user_identification_id] } {
-	    set uiid_to_insert $d_user_identification_id
-	} else {
-	    set user_id_to_insert ""
-	    if { [info exists d_user_id] } {
-		set user_id_to_insert $d_user_id
-	    }
-	    
-	    set uiid_to_insert [db_nextval ec_user_ident_id_sequence]
-	    db_dml insert_new_uiid "insert into ec_user_identification
+
+    # issue_id will either be a number or it will be the empty string
+    if { [empty_string_p $issue_id] } {
+        set issue_id [db_nextval ec_issue_id_sequence]
+        set create_new_issue_p "t"
+    } else {
+        set create_new_issue_p "f"
+    }
+
+    # II. User identification (first time through):
+    #   1. If we have d_user_id, see if there's a user_identification with that user_id
+    #   2. Otherwise, see if we have d_user_identification_id
+    #   3. Otherwise, create a new user_identification_id
+
+    if { $create_new_interaction_p == "t" && ![info exists c_user_identification_id] } {
+        if { [info exists d_user_id] } {
+            db_0or1row get_uiid_to_insert "select user_identification_id as uiid_to_insert from ec_user_identification where user_id=:d_user_id"
+        }
+        if { ![info exists uiid_to_insert] } {
+            if { [info exists d_user_identification_id] } {
+                set uiid_to_insert $d_user_identification_id
+            } else {
+                set user_id_to_insert ""
+                if { [info exists d_user_id] } {
+                    set user_id_to_insert $d_user_id
+                }
+                
+                set uiid_to_insert [db_nextval ec_user_ident_id_sequence]
+                db_dml insert_new_uiid "insert into ec_user_identification
 	    (user_identification_id, user_id, email, first_names, last_name, postal_code, other_id_info)
 	    values
-	    (:uiid_to_insert, :user_id_to_insert, :email,:first_names,:last_name,:postal_code,:other_id_info)
-	    "
-	}
+	    (:uiid_to_insert, :user_id_to_insert, :email,:first_names,:last_name,:postal_code,:other_id_info)"
+            }
+        }
+    } else {
+        set uiid_to_insert $c_user_identification_id
     }
-} else {
-    set uiid_to_insert $c_user_identification_id
-}
-#    doc_return  200 text/html "<B>three: UTI:  $uiid_to_insert</B>" 
+    #    doc_return  200 text/html "<B>three: UTI:  $uiid_to_insert</B>" 
+    
+    # III. Interaction (only if this is the first time through):
+    #   Have to insert into ec_customer_serv_interactions:
+    #   1. interaction_id
+    #   2. customer_service_rep
+    #   3. user_identification_id (= uiid_to_insert determined in II)
+    #   4. interaction_date (= open_date)
+    #   5. interaction_originator
+    #   6. interaction_type (=  interaction_type or interaction_type_other)
 
-# III. Interaction (only if this is the first time through):
-#   Have to insert into ec_customer_serv_interactions:
-#   1. interaction_id
-#   2. customer_service_rep
-#   3. user_identification_id (= uiid_to_insert determined in II)
-#   4. interaction_date (= open_date)
-#   5. interaction_originator
-#   6. interaction_type (=  interaction_type or interaction_type_other)
-
-if { $create_new_interaction_p == "t" } {
-    db_dml insert_new_cs_interaction "insert into ec_customer_serv_interactions
+    if { $create_new_interaction_p == "t" } {
+        db_dml insert_new_cs_interaction "insert into ec_customer_serv_interactions
     (interaction_id, customer_service_rep, user_identification_id, interaction_date, interaction_originator, interaction_type)
     values
-    (:interaction_id, :customer_service_rep, :uiid_to_insert, $date_string, :interaction_originator, [ec_decode $interaction_type "other" ":interaction_type_other" ":interaction_type"])
-    "
-}
-
-# IV. Issue (unless we already have an issue):
-#   1. Have to insert into ec_customer_service_issues:
-#     A. issue_id (passed along or generated)
-#     B. user_identification_id (= uiid_to_insert determined in II)
-#     C. order_id
-#     D. open_date
-#     E. close_date (=null if close_issue_p=f, =open_date if close_issue_p=t)
-#     F. closed_by (=null if close_issue_p=f, =customer_service_rep if close_issue_p=t)
-#   2. Have to insert into ec_cs_issue_type_map:
-#     issue_id & issue_type for each issue_type in issue_type_list
-#ns_log Notice "issue_type [value_if_exists issue_type], create_new_issue_p $create_new_issue_p "
-if { $create_new_issue_p == "t" } {
-    if { $close_issue_p == "t" } {
-	set customer_service_rep_bit :customer_service_rep
-	set close_date $date_string
-    } else {
-	set customer_service_rep_bit [db_map customer_service_rep_bit_null_sql]
-	set close_date [db_map close_date_null_sql]
+    (:interaction_id, :customer_service_rep, :uiid_to_insert, $date_string, :interaction_originator, [ec_decode $interaction_type "other" ":interaction_type_other" ":interaction_type"])"
     }
-    db_dml insert_new_ec_cs_issue "insert into ec_customer_service_issues
+
+    # IV. Issue (unless we already have an issue):
+    #   1. Have to insert into ec_customer_service_issues:
+    #     A. issue_id (passed along or generated)
+    #     B. user_identification_id (= uiid_to_insert determined in II)
+    #     C. order_id
+    #     D. open_date
+    #     E. close_date (=null if close_issue_p=f, =open_date if close_issue_p=t)
+    #     F. closed_by (=null if close_issue_p=f, =customer_service_rep if close_issue_p=t)
+    #   2. Have to insert into ec_cs_issue_type_map:
+    #     issue_id & issue_type for each issue_type in issue_type_list
+    #ns_log Notice "issue_type [value_if_exists issue_type], create_new_issue_p $create_new_issue_p "
+    if { $create_new_issue_p == "t" } {
+        if { $close_issue_p == "t" } {
+            set customer_service_rep_bit :customer_service_rep
+            set close_date $date_string
+        } else {
+            set customer_service_rep_bit [db_map customer_service_rep_bit_null_sql]
+            set close_date [db_map close_date_null_sql]
+        }
+        db_dml insert_new_ec_cs_issue "insert into ec_customer_service_issues
     (issue_id, user_identification_id, order_id, open_date, close_date, closed_by)
     values
-    (:issue_id, :uiid_to_insert, :order_id, $date_string, $close_date, $customer_service_rep_bit)
-    "
-    set issue_type_list [concat $issue_type_list $issue_type]
+    (:issue_id, :uiid_to_insert, :order_id, $date_string, $close_date, $customer_service_rep_bit)"
+        set issue_type_list [concat $issue_type_list $issue_type]
 
-    foreach issue_type $issue_type_list {
-	db_dml insert_into_issue_tm "insert into ec_cs_issue_type_map
+        foreach issue_type $issue_type_list {
+            db_dml insert_into_issue_tm "insert into ec_cs_issue_type_map
 	(issue_id, issue_type)
 	values
-	(:issue_id, :issue_type)
-	"
+	(:issue_id, :issue_type)"
+        }
     }
-}
 
-# V. Action:
-#  1. Have to insert into ec_customer_service_actions:
-#     A. action_id
-#     B. issue_id (passed along or generated)
-#     C. interaction_id (generated in II)
-#     D. action_details
-#     E. follow_up_required
-#  2. Have to insert into ec_cs_action_info_used_map:
-#     action_id and info_used for each info_used in info_used_list   
-
-db_dml insert_new_ec_service_action "insert into ec_customer_service_actions
+    # V. Action:
+    #  1. Have to insert into ec_customer_service_actions:
+    #     A. action_id
+    #     B. issue_id (passed along or generated)
+    #     C. interaction_id (generated in II)
+    #     D. action_details
+    #     E. follow_up_required
+    #  2. Have to insert into ec_cs_action_info_used_map:
+    #     action_id and info_used for each info_used in info_used_list   
+    
+    db_dml insert_new_ec_service_action "insert into ec_customer_service_actions
 (action_id, issue_id, interaction_id, action_details, follow_up_required)
 values
-(:action_id, :issue_id, :interaction_id, :action_details,:follow_up_required)
-"
+(:action_id, :issue_id, :interaction_id, :action_details,:follow_up_required)"
 
-foreach info_used $info_used_list {
-    db_dml insert_into_cs_action_info_map "insert into ec_cs_action_info_used_map
+    foreach info_used $info_used_list {
+        db_dml insert_into_cs_action_info_map "insert into ec_cs_action_info_used_map
     (action_id, info_used)
     values
-    (:action_id, :info_used)
-    "
-}
-
+    (:action_id, :info_used)"
+    }
 }
 
 if { $submit == "Interaction complete" } {
     if {[value_if_exists return_to_issue] < 1 } {
-	ad_returnredirect index
+        ad_returnredirect index
     } else {
-	ad_returnredirect "issue?issue_id=$return_to_issue"
+        ad_returnredirect "issue?issue_id=$return_to_issue"
     }
 } else {
     # (in c_user_identification_id, "c" stands for "confirmed" meaning
