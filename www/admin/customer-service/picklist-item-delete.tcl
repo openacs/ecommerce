@@ -1,5 +1,4 @@
 # picklist-item-delete.tcl
-
 ad_page_contract {
     @param  picklist_item_id
     @author
@@ -12,24 +11,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-append doc_body "[ad_admin_header "Please Confirm Deletion"]
+set title  "Please Confirm Deletion"
+set context [list [list index "Customer Service"] $title]
 
-<h2>Please Confirm Deletion</h2>
-
-[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] [list "picklists.tcl" "Picklist Management"] "Delete Item"]
-
-<hr>
-Please confirm that you wish to delete this item.
-
-<center>
-<form method=post action=picklist-item-delete-2>
-[export_form_vars picklist_item_id]
-<input type=submit value=\"Confirm\">
-</form>
-</center>
-
-[ad_admin_footer]
-"
-
-
-doc_return  200 text/html $doc_body
+set export_form_vars_html [export_form_vars picklist_item_id]
