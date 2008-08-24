@@ -1,5 +1,4 @@
 # interactions.tcl
-
 ad_page_contract {   
     @param view_rep:optional
     @param view_interaction_originator:optional
@@ -34,104 +33,63 @@ if { ![info exists order_by] } {
     set order_by "interaction_id"
 }
 
-
-append doc_body "[ad_admin_header "Customer Service Interactions"]
-
-<h2>Customer Service Interactions</h2>
-
-[ad_context_bar [list "../index.tcl" "Ecommerce([ec_system_name])"] [list "index.tcl" "Customer Service Administration"] "Issues"]
-
-<hr>
-
-<form method=post action=interactions>
-[export_form_vars view_interaction_originator view_interaction_type view_interaction_date order_by]
-
-<table border=0 cellspacing=0 cellpadding=0 width=100%>
-<tr bgcolor=ececec>
-<td align=center><b>Rep</b></td>
-<td align=center><b>Originator</b></td>
-<td align=center><b>Type</b></td>
-<td align=center><b>Date</b></td>
-</tr>
-<tr>
-<td align=center><select name=view_rep>
-<option value=\"all\">All
-"
-
+set title "Customer Service Interactions"
+set context [list [list index "Customer Service"] $title]
 
 set sql [db_map get_rep_info_by_rep_sql]
 #set sql "select i.customer_service_rep as rep, u.first_names as rep_first_names, u.last_name as rep_last_name from ec_customer_serv_interactions i, cc_users u where i.customer_service_rep=u.user_id
 #group by i.customer_service_rep, u.first_names, u.last_name order by u.last_name, u.first_names"
 
+set rep_info_by_rep_html ""
 db_foreach get_rep_info_by_rep $sql {
-    
     if { $view_rep == $rep } {
-	append doc_body "<option value=$rep selected>$rep_last_name, $rep_first_names\n"
+        append rep_info_by_rep_html "<option value=$rep selected>$rep_last_name, $rep_first_names</option>\n"
     } else {
-	append doc_body "<option value=$rep>$rep_last_name, $rep_first_names\n"
+        append rep_info_by_rep_html "<option value=$rep>$rep_last_name, $rep_first_names</option>\n"
     }
 }
 
-append doc_body "</select>
-<input type=submit value=\"Change\">
-</td>
-<td align=center>"
+set export_form_vars_html [export_form_vars view_interaction_originator view_interaction_type view_interaction_date order_by]
 
 set interaction_originator_list [db_list get_interation_originator_list "select unique interaction_originator from ec_customer_serv_interactions"]
-
 lappend interaction_originator_list "all"
 
 set linked_interaction_originator_list [list]
-
 foreach interaction_originator $interaction_originator_list {
     if { $interaction_originator == $view_interaction_originator } {
-	lappend linked_interaction_originator_list "<b>$interaction_originator</b>"
+        lappend linked_interaction_originator_list "<b>$interaction_originator</b>"
     } else {
-	lappend linked_interaction_originator_list "<a href=\"interactions?[export_url_vars view_rep view_interaction_type view_interaction_date]&view_interaction_originator=[ns_urlencode $interaction_originator]\">$interaction_originator</a>"
+        lappend linked_interaction_originator_list "<a href=\"interactions?[export_url_vars view_rep view_interaction_type view_interaction_date]&view_interaction_originator=[ns_urlencode $interaction_originator]\">$interaction_originator</a>"
     }
 }
 
-append doc_body "\[ [join $linked_interaction_originator_list " | "] \]
-</td>
-<td align=center>
-"
+set linked_interaction_originator_html  "\[ [join $linked_interaction_originator_list " | "] \]"
 
 set interaction_type_list [db_list get_interaction_type_list "select picklist_item from ec_picklist_items where picklist_name='interaction_type' order by sort_key"]
-
 lappend interaction_type_list "all"
 
 foreach interaction_type $interaction_type_list {
     if { $interaction_type == $view_interaction_type } {
-	lappend linked_interaction_type_list "<b>$interaction_type</b>"
+        lappend linked_interaction_type_list "<b>$interaction_type</b>"
     } else {
-	lappend linked_interaction_type_list "<a href=\"interactions?[export_url_vars view_rep view_interaction_originator view_interaction_date]&view_interaction_type=[ns_urlencode $interaction_type]\">$interaction_type</a>"
+        lappend linked_interaction_type_list "<a href=\"interactions?[export_url_vars view_rep view_interaction_originator view_interaction_date]&view_interaction_type=[ns_urlencode $interaction_type]\">$interaction_type</a>"
     }
 }
 
-append doc_body "\[ [join $linked_interaction_type_list " | "] \]
-</td>
-<td align=center>
-"
+set linked_interaction_type_html "\[ [join $linked_interaction_type_list " | "] \]"
 
 set interaction_date_list [list [list last_24 "last 24 hrs"] [list last_week "last week"] [list last_month "last month"] [list all all]]
 
 set linked_interaction_date_list [list]
-
 foreach interaction_date $interaction_date_list {
     if {$view_interaction_date == [lindex $interaction_date 0]} {
-	lappend linked_interaction_date_list "<b>[lindex $interaction_date 1]</b>"
+        lappend linked_interaction_date_list "<b>[lindex $interaction_date 1]</b>"
     } else {
-	lappend linked_interaction_date_list "<a href=\"interactions?[export_url_vars view_issue_type view_status order_by]&view_interaction_date=[lindex $interaction_date 0]\">[lindex $interaction_date 1]</a>"
+        lappend linked_interaction_date_list "<a href=\"interactions?[export_url_vars view_issue_type view_status order_by]&view_interaction_date=[lindex $interaction_date 0]\">[lindex $interaction_date 1]</a>"
     }
 }
 
-append doc_body "\[ [join $linked_interaction_date_list " | "] \]
-
-</td></tr></table>
-
-</form>
-<blockquote>
-"
+set linked_interaction_date_html  "\[ [join $linked_interaction_date_list " | "] \]"
 
 if { $view_rep == "all" } {
     set rep_query_bit ""
@@ -166,14 +124,14 @@ if { $view_interaction_date == "last_24" } {
 
 set link_beginning "interactions.tcl?[export_url_vars view_rep view_interaction_originator view_interaction_type view_interaction_date]"
 
-set table_header "<table>
+set table_header_html "<table>
 <tr>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_id"]\">Interaction ID</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_date"]\">Date</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "rep_last_name, rep_first_names"]\">Rep</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "customer_last_name, customer_first_names"]\">Customer</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_originator"]\">Originator</a></b></td>
-<td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_type"]\">Type</a></b></td>
+ <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_id"]\">Interaction ID</a></b></td>
+ <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_date"]\">Date</a></b></td>
+ <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "rep_last_name, rep_first_names"]\">Rep</a></b></td>
+ <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "customer_last_name, customer_first_names"]\">Customer</a></b></td>
+ <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_originator"]\">Originator</a></b></td>
+ <td><b><a href=\"$link_beginning&order_by=[ns_urlencode "i.interaction_type"]\">Type</a></b></td>
 </tr>"
 
 #set sql "select i.interaction_id, i.customer_service_rep, i.interaction_date,
@@ -190,58 +148,35 @@ set table_header "<table>
 #order by $order_by"
 
 set sql [db_map get_customer_interaction_detail_sql]
-
 set row_counter 0
-
+set customer_interaction_detail_html ""
 db_foreach get_customer_interaction_detail $sql {
-    
     if { $row_counter == 0 } {
-	append doc_body $table_header
+        append customer_interaction_detail_html $table_header
     } elseif { $row_counter == 20 } {
-	append doc_body "</table>
-	<p>
-	$table_header
-	"
-	set row_counter 1
+        append customer_interaction_detail_html "</table><br>${table_header}"
+        set row_counter 1
     }
     # even rows are white, odd are grey
     if { [expr floor($row_counter/2.)] == [expr $row_counter/2.] } {
-	set bgcolor "white"
+        set bgcolor "#ffffff"
     } else {
-	set bgcolor "ececec"
+        set bgcolor "#ececec"
     }
 
-    append doc_body "<tr bgcolor=\"$bgcolor\"><td><a href=\"interaction?interaction_id=$interaction_id\">$interaction_id</a></td>
-    <td>[ec_formatted_full_date $full_interaction_date]</td>
-    "
+    append customer_interaction_detail_html "<tr bgcolor=\"$bgcolor\"><td><a href=\"interaction?interaction_id=$interaction_id\">$interaction_id</a></td>
+    <td>[ec_formatted_full_date $full_interaction_date]</td>"
     if { ![empty_string_p $customer_service_rep] } {
-	append doc_body "<td><a href=\"[ec_acs_admin_url]users/one?user_id=$customer_service_rep\">$rep_last_name, $rep_first_names</a></td>"
+        append customer_interaction_detail_html "<td><a href=\"[ec_acs_admin_url]users/one?user_id=$customer_service_rep\">$rep_last_name, $rep_first_names</a></td>"
     } else {
-	append doc_body "<td>&nbsp;</td>"
+        append customer_interaction_detail_html "<td>&nbsp;</td>"
     }
     if { ![empty_string_p $customer_user_id] } {
-	append doc_body "<td><a href=\"[ec_acs_admin_url]users/one?user_id=$customer_user_id\">$customer_last_name, $customer_first_names</a></td>"
+        append customer_interaction_detail_html "<td><a href=\"[ec_acs_admin_url]users/one?user_id=$customer_user_id\">$customer_last_name, $customer_first_names</a></td>"
     } else {
-	append doc_body "<td>unregistered user: <a href=\"user-identification?[export_url_vars user_identification_id]\">$user_identification_id</a></td>"
+        append customer_interaction_detail_html "<td>unregistered user: <a href=\"user-identification?[export_url_vars user_identification_id]\">$user_identification_id</a></td>"
     }
-    append doc_body "<td>$interaction_originator</td>
-    <td>$interaction_type</td>
-    </tr>
-    "
+    append customer_interaction_detail_html "<td>$interaction_originator</td><td>$interaction_type</td></tr>"
     incr row_counter
 }
 
-if { $row_counter != 0 } {
-    append doc_body "</table>"
-} else {
-    append doc_body "<center>None Found</center>"
-}
-
-append doc_body "
-</blockquote>
-[ad_admin_footer]
-"
-
-
-
-doc_return  200 text/html $doc_body
