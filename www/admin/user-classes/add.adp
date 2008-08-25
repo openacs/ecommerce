@@ -5,7 +5,7 @@
 
 <p>Add the following new user class?</p>
 
-<pre>        $user_class_name
+<pre>        @user_class_name@
 </pre>
 
 <form method=post action=add-2>
