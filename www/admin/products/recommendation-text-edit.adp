@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
 <h2>@title@</h2>
 
-<p>Edit text for the recommendation of $product_name:</p>
+<p>Edit text for the recommendation of @product_name@:</p>
 
 <form method=GET action="recommendation-text-edit-2">
 @export_form_vars_html;noquote@

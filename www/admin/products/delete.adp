@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
 <h2>@title@</h2>
 <p>
-Are you sure you want to <b>delete $product_name?</b>
+Are you sure you want to <b>delete @product_name@?</b>
 </p>
 <p>The system will not let you delete a product if anyone has already ordered it
 (you might want to mark the product "discontinued" instead).

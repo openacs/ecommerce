@@ -19,11 +19,11 @@ Retailer
 </tr>
 <tr>
 <td>Price</td>
-<td><input type=text name=price size=6 value="@price@"> (in $currency)</td>
+<td><input type=text name=price size=6 value="@price@"> (in @currency@)</td>
 </tr>
 <tr>
 <td>Shipping</td>
-<td><input type=text name=shipping size=6 value="@shipping@"> (in $currency) 
+<td><input type=text name=shipping size=6 value="@shipping@"> (in @currency@) 
 &nbsp;&nbsp;<b>or</b>&nbsp;&nbsp;
 <input type=checkbox name=shipping_unavailable_p value="t" <if
 @shipping_unavailable_p@ true>checked</if>>
