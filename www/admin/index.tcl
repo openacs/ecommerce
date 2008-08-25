@@ -77,4 +77,4 @@ if {$flush_db_cache} {
     db_flush_cache -cache_key_pattern "ec-*"
 }
 set title "Administration"
-set context [list $title]
+set context [list ]
