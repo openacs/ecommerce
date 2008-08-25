@@ -212,7 +212,7 @@ if { ![info exists c_user_identification_id] } {
 set export_form_vars1_html [export_form_vars interaction_id c_user_identification_id action_id open_date_str interaction_type interaction_type_other interaction_originator first_names last_name email postal_code other_id_info return_to_issue insert_id]
 
 if { [info exists c_user_identification_id] } {
-    append form_body_html "<tr>
+    set form_body_html "<tr>
     <td bgcolor=\"\#cccccc\" valign=\"top\" align=\"right\">Customer:</td>
     <td bgcolor=\"\#cccccc\" valign=\"top\">[ec_user_identification_summary $c_user_identification_id "t"]"
 

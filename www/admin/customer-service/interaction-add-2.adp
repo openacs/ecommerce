@@ -13,8 +13,9 @@ enter the information about only one issue below:</p>
 <form method="post" action="interaction-add-3">
  @export_form_vars1_html;noquote@
   <table cellspacing="1" cellpadding="2">
+<if @form_body_html@ not nil>
    @form_body_html;noquote@
-
+</if>
 <if @issue_id@ nil>
   <tr>
     <td bgcolor="#cccccc" valign="top" align="right"><p>Previous Issue ID:</p></td>
