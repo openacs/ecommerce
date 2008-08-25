@@ -14,9 +14,9 @@
 <br>
 <h3>Actually used when sending email</h3>
 <table noborder>
-<tr><td>Template ID</td><td>$email_template_id</td></tr>
+<tr><td>Template ID</td><td>@email_template_id@</td></tr>
 <tr><td>Subject Line</td><td><input type=text name=subject size=30 value="@subject@"></td></tr>
-<tr><td valign=top>Message</td><td><TEXTAREA wrap=hard name=message COLS=50 ROWS=15>@message@</TEXTAREA></td></tr>
+<tr><td valign=top>Message</td><td><TEXTAREA wrap=hard name=message cols=50 rows=15>@message@</TEXTAREA></td></tr>
 <tr><td valign=top>Issue Type*</td><td valign=top>@issue_type_widget_html;noquote</td></tr>
 </table>
 <br>
