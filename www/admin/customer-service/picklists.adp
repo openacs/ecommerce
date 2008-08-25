@@ -10,5 +10,5 @@ lists will be grouped together under "all others").
 <if @picklist_item_counter@ gt 0>
   @picklist_list_html;noquote@
 </if><else>
-  <p>No items have been added.  @picklist_list_html;noquote@</p>
+  <p>No items have been added.  @picklist_add_html;noquote@</p>
 </else>

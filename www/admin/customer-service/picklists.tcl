@@ -47,6 +47,6 @@ foreach picklist $picklist_list {
 }
 append picklist_list_html "</table>\n"
 
-if { $picklist_counter == 0 } {
-    set picklist_list_html "<a href=\"picklist-item-add?prev_sort_key=1&next_sort_key=512&picklist_name=[ns_urlencode [lindex $picklist 0]]\">Add a picklist item.</a>"
+if { $picklist_item_counter == 0 } {
+    set picklist_add_html "<a href=\"picklist-item-add?prev_sort_key=1&next_sort_key=512&picklist_name=[ns_urlencode [lindex $picklist 0]]\">Add a picklist item.</a>"
 }
