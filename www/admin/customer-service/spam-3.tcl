@@ -49,7 +49,7 @@ set expires_to_insert [ec_decode $expires "" "null" $expires]
 # Get rid of stupid ^Ms
 regsub -all "\r" $message "" message
 
-set title "Spam Sent"
+set title "Email Sent"
 set context [list [list index "Customer Service"] $title]
 
 # Doubleclick protection
@@ -150,7 +150,7 @@ db_transaction {
          to_date(:end_date,'YYYY-MM-DD HH24:MI:SS'))"
 
     set sql $users_query
-    set title "Spamming Users..."
+    set title "Emailing Users..."
     set spamming_users_html ""
     db_foreach get_users_for_spam $sql {
         # Create a customer service issue/interaction/action

@@ -10,5 +10,5 @@
  <ul>
   @user_ids_from_search_html;noquote@
  </ul>
- <p><a href="spam-2?show_users_p=t&@export_url_vars_html;noquote@">Spam these users</a></p>
+ <p><a href="spam-2?show_users_p=t&@export_url_vars_html;noquote@">Email these users</a></p>
 </else>

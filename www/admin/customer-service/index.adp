@@ -40,7 +40,7 @@ Search for <b>registered</b> users: <input type=text size=15 name=keyword></p>
 
 <h3>Administrative Actions</h3>
 <ul>
-<li><a href="spam">Spam Users</a></li>
+<li><a href="spam">Email Users</a></li>
 <li><a href="picklists">Picklist Management</a></li>
 <li><a href="canned-responses">Prepared Responses</a></li>
 <li><a href="statistics">Statistics and Reports</a></li>

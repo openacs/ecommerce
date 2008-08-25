@@ -13,7 +13,7 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-set title "Spam Log"
+set title "Email Log"
 set context [list [list index "Customer Service"] $title]
 
 set form_alter_date_html "<form method=post action=\"[ad_conn url]\">

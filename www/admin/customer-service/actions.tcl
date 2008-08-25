@@ -1,5 +1,4 @@
 # actions.tcl
-
 ad_page_contract {
     @param view_info_used:optional
     @param view_rep:optional 

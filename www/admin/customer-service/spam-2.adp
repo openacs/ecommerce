@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
 <h2>@title@</h2>
 
-<p>The following users will be spammed:</p>
+<p>The following users will be emailed:</p>
 <ul>
  @users_for_spam_html;noquote@
 </ul>
@@ -23,7 +23,7 @@
  </center>
 </form>
 <p><b>Notes:</b></p>
-<p>* You can issue a gift certificate to each user you are spamming (if you don't want to, just leave the amount blank).</p>
+<p>* You can issue a gift certificate to each user you are emailing (if you don't want to, just leave the amount blank).</p>
 <p>** A customer service issue is created whenever an email is
 sent. The issue is automatically closed unless the customer replies to
 the issue, in which case it should be reopened.</p>

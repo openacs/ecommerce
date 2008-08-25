@@ -76,7 +76,7 @@ if { [string compare $end_date(date) ""] == 0 } {
 }
 
 
-set title  "Spam Users"
+set title  "Email Users"
 set context [list [list index "Customer Service"] $title]
 
 
@@ -87,10 +87,10 @@ set only_category_widget [ec_only_category_widget]
 
 foreach {v name widget} [list ml_body {Mailing lists} $mailing_list_widget uc_body {User classes} $user_class_widget c_body {Category} $only_category_widget] {
     if {[string equal [string trim $widget] "<b>none</b>"]} {
-        set $v  "$name: $widget - No one to spam.\n"
+        set $v  "$name: $widget - No one to email.\n"
     } else {
         set $v "<form method=post action=spam-2>
-<p>$name: $widget <br><input type=checkbox name=show_users_p value=\"t\" checked>Show me the users who will be spammed.</p>
+<p>$name: $widget <br><input type=checkbox name=show_users_p value=\"t\" checked>Show me the users who will be emailed.</p>
  <center><input type=submit value=\"Continue\"></center></form>\n"        
     }
 }

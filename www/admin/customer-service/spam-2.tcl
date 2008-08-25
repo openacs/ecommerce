@@ -36,7 +36,7 @@ if {$customer_service_rep == 0} {
     ad_script_abort
 }
 
-set title "Spam Users, continued"
+set title "Email Users, continued"
 set context [list [list index "Customer Service"] $title]
 
 if { [info exists show_users_p] && $show_users_p == "t" } {
@@ -84,7 +84,7 @@ if { [info exists show_users_p] && $show_users_p == "t" } {
     } else {
         set start ""
         set end ""
-        ad_return_complaint 1 "<li>I could not determine who you wanted to spam.  Please go back to previous page and make a selection.</li>"
+        ad_return_complaint 1 "<li>I could not determine who you wanted to email to.  Please go back to previous page and make a selection.</li>"
         ad_script_abort
     }
 
