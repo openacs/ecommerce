@@ -27,7 +27,14 @@ if ![regexp {([^//\\]+)$} $upload_file match client_filename] {
     # couldn't find a match
     set client_filename $upload_file
 }
-
+#sanitize uploaded filename
+regsub -all -- {[^a-zA-Z0-9\-\.]+} $client_filename "-" client_filename
+if { [string match {product.[jg][pi][gf]} $client_filename] } {
+    set client_filename "${product_id}-${client_filename}"
+  } elseif { [string match {product-thumbnail.jpg} $client_filename] } {
+    set client_filename "${product_id}-${client_filename}"
+  }
+    
 set perm_filename "$full_dirname/$client_filename"
 
 ns_cp $tmp_filename $perm_filename
