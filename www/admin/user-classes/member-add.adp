@@ -13,7 +13,7 @@
   <ul>
     @users_select_html;noquote@
   </ul>
-  <p>Click on a name to add that user to $user_class_name.</p>
+  <p>Click on a name to add that user to @user_class_name@.</p>
 </if><else>
   <p>No users were found.</p>
 </else>
