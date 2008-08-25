@@ -405,7 +405,6 @@ ad_proc ec_audit_trail_for_table {
     {audit_url ""}
     {restore_url ""}
 } {
-
     Returns the audit trail for each id from the id_column for updates
 and deletes from main_table_name and audit_table_name that occured
 between start_date and end_date. If start_date is blank, then it is
@@ -447,15 +446,13 @@ ns_log debug "eatp id_list:[llength $id_list] $id_list"
         # Set the HTML link tags to a page which displays the full
         # audit history.
         if { ![empty_string_p $audit_url] } {
-            set exports [export_vars id id_column \
-                    main_table_name audit_table_name]
+            set exports [export_url_vars id id_column main_table_name audit_table_name]
             set id_href "<a href=\"$audit_url?$exports\">"
             set id_href_close "</a>"
         } else {
             set id_href ""
             set id_href_close ""
         }
-
 
         set cell [ec_audit_trail $id \
                 $audit_table_name $main_table_name $id_column "" \
@@ -470,7 +467,7 @@ ns_log debug "eatp id_list:[llength $id_list] $id_list"
         "
     }
 
-    # We will now repeate the process to display the modifications
+    # We will now repeat the process to display the modifications
     # that took place between start_date and end_date but occurred on
     # records that have been deleted.
 
@@ -492,8 +489,7 @@ ns_log debug "eatp id_list:[llength $id_list] $id_list"
         # Set the HTML link tags to a page which displays the full
         # audit history.
         if { ![empty_string_p $audit_url] } {
-            set exports [export_vars id id_column main_table_name \
-                    audit_table_name]
+            set exports [export_url_vars id id_column main_table_name audit_table_name]
             set id_href "<a href=\"$audit_url?$exports\">"
             set id_href_close "</a>"
         } else {
