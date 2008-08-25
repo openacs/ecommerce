@@ -11,7 +11,7 @@
 enter the information about only one issue below:</p>
 
 <form method="post" action="interaction-add-3">
- @export_form_vars1.html;noquote@
+ @export_form_vars1_html;noquote@
   <table cellspacing="1" cellpadding="2">
    @form_body_html;noquote@
 
