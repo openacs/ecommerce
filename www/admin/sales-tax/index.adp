@@ -8,7 +8,7 @@
   <p>No tax is currently charged in any state.</p
 </if><else>
   <ul>
-    @sales_taxes_html;noqote@
+    @sales_taxes_html;noquote@
   </ul>
 </else>
 

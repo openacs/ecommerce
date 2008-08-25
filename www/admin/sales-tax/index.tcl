@@ -22,7 +22,7 @@ db_foreach get_sales_taxes "select state_name, tax_rate*100 as tax_rate_in_perce
 from ec_sales_tax_by_state, us_states
 where ec_sales_tax_by_state.usps_abbrev = us_states.abbrev" {
     incr taxes_counter
-    append page_html "<li>$state_name:
+    append sales_taxes_html "<li>$state_name:
 <ul><li>Tax rate: $tax_rate_in_percent%</li>
 <li>Charge tax on shipping? $shipping_p</li></ul></li>"
 
