@@ -267,7 +267,7 @@ ad_proc ec_multiple_state_widget { {default_list ""} {select_name "usps_abbrev"}
     db_foreach get_all_states $sql {
         
         if { [lsearch $default_list $abbrev] != -1 } {
-            append widget_value "<option value=\"$abbrev\" SELECTED>$state_name</option>\n" 
+            append widget_value "<option value=\"$abbrev\" selected>$state_name</option>\n" 
         } else {            
             append widget_value "<option value=\"$abbrev\">$state_name</option>\n"
         }
@@ -992,10 +992,10 @@ ad_proc ec_timeentrywidget {column {timestamp 0}} "Gives a HTML form input for a
 	set time "$hours:$mins:$secs"
     }
 
-    set output "<INPUT NAME=\"$column.time\" TYPE=text SIZE=9 VALUE=\"$time\">&nbsp;
-<SELECT NAME=\"$column.ampm\">
+    set output "<input name=\"$column.time\" type=text size=9 value=\"$time\">&nbsp;
+<select name=\"$column.ampm\">
 [ad_generic_optionlist [list "" AM PM] [list "" AM PM] $ampm]
-</SELECT>"
+</select>"
 
     return $output
 
@@ -1136,12 +1136,12 @@ ad_proc ec_interaction_type_widget { {default ""} } { interaction type widget } 
 
 ad_proc ec_report_date_range_widget { start_date end_date } { report date range widget } {
     return "from [ad_dateentrywidget start_date $start_date]
-<INPUT NAME=start%5fdate.time TYPE=\"hidden\" value=\"12:00:00\">
-<INPUT NAME=start%5fdate.ampm TYPE=\"hidden\" value=\"AM\">
+<input name=start%5fdate.time TYPE=\"hidden\" value=\"12:00:00\">
+<input name=start%5fdate.ampm TYPE=\"hidden\" value=\"AM\">
 
 through  [ad_dateentrywidget end_date $end_date]
-<INPUT NAME=end%5fdate.time TYPE=\"hidden\" value=\"11:59:59\">
-<INPUT NAME=end%5fdate.ampm TYPE=\"hidden\" value=\"PM\">
+<input name=end%5fdate.time TYPE=\"hidden\" value=\"11:59:59\">
+<input name=end%5fdate.ampm TYPE=\"hidden\" value=\"PM\">
 "
 }
 
@@ -1153,7 +1153,7 @@ ad_proc ec_generic_html_form_select_widget {name_of_select option_spec_list {def
 	set size_for_db [lindex $option_spec 0]
 	set size [lindex $option_spec 1]
 	if { [string compare $size $default] == 0 || [string compare $size_for_db $default] == 0 } {
-	    append options "<option value=\"$size_for_db\" SELECTED>$size\n"
+	    append options "<option value=\"$size_for_db\" selected>$size\n"
 	    set defaulted_flag 1
 	} else {
 	    append options "<option value=\"$size_for_db\">$size\n"
@@ -1162,7 +1162,7 @@ ad_proc ec_generic_html_form_select_widget {name_of_select option_spec_list {def
     if $defaulted_flag {
 	return "$header$options$footer"
     } else {
-	return "${header}<option value=\"\" SELECTED>select\n$options$footer"
+	return "${header}<option value=\"\" selected>select\n$options$footer"
     }
 }
 
@@ -1180,7 +1180,7 @@ ad_proc ec_state_widget { {default ""} {select_name "usps_abbrev"} } "Returns a 
 
     set widget_value "<select name=\"$select_name\">\n"
     if {[string length $default] < 2} {
-        append widget_value "<option value=\"\" SELECTED>select US state</option>\n"
+        append widget_value "<option value=\"\" selected>select US state</option>\n"
     } elseif { [string length $default] == 2 } {
 	set default [string toupper $default]
     }
@@ -1189,7 +1189,7 @@ ad_proc ec_state_widget { {default ""} {select_name "usps_abbrev"} } "Returns a 
     db_foreach get_all_states $sql {
         
         if { [lsearch $default $abbrev] != -1 } {
-            append widget_value "<option value=\"$abbrev\" SELECTED>[ec_capitalize_words $state_name]</option>\n" 
+            append widget_value "<option value=\"$abbrev\" selected>[ec_capitalize_words $state_name]</option>\n" 
         } else {            
             append widget_value "<option value=\"$abbrev\">[ec_capitalize_words $state_name]</option>\n"
         }
