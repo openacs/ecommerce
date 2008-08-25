@@ -24,24 +24,7 @@ ad_require_permission [ad_conn package_id] admin
 
 set table_names_and_id_column [list $main_table_name $audit_table_name $id_column]
 
-set page_content "
-[ad_admin_header "[ec_system_name] Audit of $id_column $id"]
+set title "Audit of $id_column $id"
+set context [list $title]
 
-<h2>[ec_system_name] Audit Trail</h2>
-
-[ad_context_bar [list index Ecommerce([ec_system_name])] [list "audit-tables?[export_url_vars table_names_and_id_column]" "Audit $main_table_name"] "[ec_system_name] Audit Trail"]
-<hr>
-
-<h3>$main_table_name</h3>
-<blockquote>
-
-[ec_audit_trail $id $audit_table_name $main_table_name $id_column]
-
-</blockquote>
-
-[ad_admin_footer]
-"
-
-
-
-doc_return  200 text/html $page_content
+set audit_trail_html "[ec_audit_trail $id $audit_table_name $main_table_name $id_column]"

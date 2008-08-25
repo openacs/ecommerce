@@ -1,5 +1,4 @@
 # /www/[ec_url_concat [ec_url] /admin]/restore-one-id.tcl
-
 ad_page_contract { 
 
    Tries to restore from the audit table to the main table
@@ -27,11 +26,8 @@ ad_require_permission [ad_conn package_id] admin
 
 # we need them to be logged in
 set user_id [ad_conn user_id]
-
 if {$user_id == 0} {
-    
     set return_url "[ad_conn url]?[export_entire_form_as_url_vars]"
-
     ad_returnredirect "/register?[export_url_vars return_url]"
     ad_script_abort
 }
@@ -40,8 +36,6 @@ if {$user_id == 0} {
 set audit_fields "last_modified, last_modifying_user, modified_ip_address"
 set peeraddr [ns_conn peeraddr]
 set audit_info "sysdate, :user_id, :peeraddr"
-
-
 
 set sql_insert ""
 set result "The $main_table_name table is not supported at this time."
@@ -88,19 +82,6 @@ if { ![empty_string_p $sql_insert] } {
     }
 }
 
-doc_return  200 text/html "
-[ss_new_staff_header "Restore of $id_column $id"]
-[ss_staff_context_bar "Restore Data"]
-
-<h3>Restore of $main_table_name</h3>
-For a the SQL insert
-<blockquote>
-$sql_insert
-</blockquote>
-This result was obtained
-<blockquote>
-$result
-</blockquote>
-[ls_admin_footer]"
-
-
+set title "Audit Restore of $id_column $id"
+set context [list $title]
+   

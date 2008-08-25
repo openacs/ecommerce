@@ -19,25 +19,13 @@ ad_page_contract {
 
 ad_require_permission [ad_conn package_id] admin
 
-doc_body_append "
-[ad_admin_header "[ec_system_name] Audit Trail"]
-<h2>$audit_name</h2>
-
-[ad_context_bar [list index Ecommerce([ec_system_name])] "Audit Trail"]
-<hr>
-"
+set title "[ec_system_name] Audit Trail"
+set context [list $title]
 
 set counter 0
-
+set main_table_html ""
 foreach main_table $main_tables {
-    doc_body_append "<h3>$main_table</h3>
-    <blockquote>
-
-    [ec_audit_trail $audit_id [lindex $audit_tables $counter] $main_table $audit_id_column]
-
-    </blockquote>
-    "
+    append main_table_html "<h3>$main_table</h3> [ec_audit_trail $audit_id [lindex $audit_tables $counter] $main_table $audit_id_column]"
     incr counter
 }
 
-doc_body_append "[ad_admin_footer]"
