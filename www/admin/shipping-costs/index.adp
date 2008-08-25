@@ -55,7 +55,11 @@ Ignore this section if you do not do express shipping.  The amounts you specify 
 <li>Additional Amount by Weight: 
 <input type=text name=add_exp_amount_by_weight size=5 value="@add_exp_amount_by_weight@">
 @currency@ / @weight_unit@</li>
-
+<li>
+Shipping costs based on the value of an order (value-based shipping)
+is supported, but not recommended. See procedure <a href="/api-doc/proc-view?proc=ecds%5fbase%5fshipping%5fprice%5ffrom%5forder%5fvalue">ecds_base_shipping_price_from_order_value</a>
+for examples on how to implement this.
+</li>
 </ol>
 
 <center>
