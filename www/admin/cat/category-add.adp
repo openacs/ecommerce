@@ -6,7 +6,7 @@
 <p>Add the following new category?</p>
 
 <pre>
-        $category_name
+        @category_name@
 
 </pre>
 <form method=post action=category-add-2>

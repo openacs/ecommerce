@@ -16,7 +16,7 @@
 <li><a href="@audit_url_html">Audit Trail</a>
 </ul>
 
-<h3>Current Subsubcategories of $subcategory_name</h3>
+<h3>Current Subsubcategories of @subcategory_name@</h3>
 <if @subsubcategory_counter@ gt 0>
 <table>
 @subcategory_infos_html;noquote@

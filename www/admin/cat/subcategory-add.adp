@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
 <h2>@title@</h2>
 
-<p>Add the following new subcategory to $category_name?</p>
+<p>Add the following new subcategory to @category_name@?</p>
 
 <pre>
         @subcategory_name@
