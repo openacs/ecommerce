@@ -13,7 +13,7 @@
 
 <p>
 All prices are in @currency@.  The price should
-be written as a decimal number (no special characters like \$).  If a
+be written as a decimal number (no special characters like $).  If a
 section is not applicable, just leave it blank.
 </p>
 <p>

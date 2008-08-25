@@ -28,7 +28,7 @@ be displayed on the web site in each of the categories you select.</td>
     <td>Regular Price</td>
     <td><input type=text size=6 name=price></td>
     <td>All prices are in @currency@.  The price should
-    be written as a decimal number (no special characters like \$).
+    be written as a decimal number (no special characters like $).
 </tr>
 <tr>
     <td>Stock Status</td>
