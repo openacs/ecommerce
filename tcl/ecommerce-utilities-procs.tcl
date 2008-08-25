@@ -55,38 +55,90 @@ ad_proc ec_pretty_price {
     {zero_if_null_p "f"} 
 } {
 
+    Returns a nicely formatted price. Zero may be displayed differently, depending on parameter DisplayPriceOfZeroAs
+
+} {  
+    # me thinks the code here should be refactored at some point. Left as is to assure functional predictability
+    set zero_value [parameter::get -package_id [ec_id] -parameter DisplayPriceOfZeroAs -default "0.00"]
+    if { [empty_string_p $currency] } {
+        set currency [parameter::get -package_id [ec_id] -parameter Currency -default USD]
+    }
+    if { [empty_string_p $the_price] } {
+
+        if { $zero_if_null_p == "t" } {
+            set formatted_price $zero_value
+        } else {
+            return ""
+        }
+
+    } else {
+        if { $the_price == 0 } {
+            set formatted_price $zero_value
+        } else {
+            set formatted_price [format "%0.2f" $the_price]
+        }
+
+        # If the formatted price is negative but rounds to zero, it shows up as -0.00,
+        # so in that case I'll bash it to 0.00
+        
+        if { [string compare $formatted_price "-0.00"] == 0 } {
+            set formatted_price $zero_value
+        }
+
+        if {$formatted_price ne $zero_value} {
+
+            if { $currency == "USD" } {
+                set formatted_price "\$[util_commify_number $formatted_price]"
+            } else {
+                set formatted_price "[util_commify_number $formatted_price] $currency"
+            }
+        }
+    }
+    return "$formatted_price"
+}
+
+ad_proc ec_pretty_pure_price { 
+    the_price 
+    {currency ""} 
+    {zero_if_null_p "f"} 
+} {
+
     Returns a nicely formatted price. 
 
 } {  
 
     if { [empty_string_p $currency] } {
-	set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
+        set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
     }
     if { [empty_string_p $the_price] } {
-	if { $zero_if_null_p == "t" } {
-	    set formatted_price "0.00"
-	} else {
-	    return ""
-	}
+        if { $zero_if_null_p == "t" } {
+            set formatted_price "0.00"
+        } else {
+            return "0.00"
+        }
     } else {
-	set formatted_price [format "%0.2f" $the_price]
-
-	# If the formatted price is negative but rounds to zero, it shows up as -0.00,
-	# so in that case I'll bash it to 0.00
+        if { $the_price == 0 } {
+         set formatted_price "0.00"
+        } else {
+            set formatted_price [format "%0.2f" $the_price]
+        }
+        # If the formatted price is negative but rounds to zero, it shows up as -0.00,
+        # so in that case I'll bash it to 0.00
 	
-	if { [string compare $formatted_price "-0.00"] == 0 } {
-	    set formatted_price "0.00"
-	}
+        if { [string compare $formatted_price "-0.00"] == 0 } {
+            set formatted_price "0.00"
+        }
 
-	set formatted_price [util_commify_number $formatted_price]
+
+        if { $currency == "USD" } {
+            set formatted_price "\$[util_commify_number $formatted_price]"
+        } else {
+            set formatted_price "[util_commify_number $formatted_price] $currency"
+        }
 
     }
     
-    if { $currency == "USD" } {
-	return "\$$formatted_price"
-    } else {
-	return "$formatted_price $currency"
-    }
+return "$formatted_price"
 }
 
 ad_proc ec_pretty_column_type { 
@@ -536,7 +588,7 @@ ad_proc ec_export_entire_form_except {
         set varname [ns_set key $the_form $i]
 	if { [lsearch -exact $args $varname] == -1 } {
 	    set varvalue [ns_set value $the_form $i]
-	    append hidden "<input type=hidden name=\"$varname\" value=\"[ad_quotehtml $varvalue]\">\n"
+	    append hidden "<input type=\"hidden\" name=\"$varname\" value=\"[ad_quotehtml $varvalue]\">\n"
 	}
     }
     return $hidden
@@ -549,7 +601,7 @@ ad_proc ec_hidden_input {
     Returns a safe-for-browsers hidden variable, i.e. one where \" has
     been replaced by &quote 
 } {
-    return "<input type=hidden name=\"$name\" value=\"[ad_quotehtml $value]\">"
+    return "<input type=\"hidden\" name=\"$name\" value=\"[ad_quotehtml $value]\">"
 }
 
 ad_proc ec_formatted_full_date { 
@@ -752,70 +804,6 @@ ad_proc ec_first_element_of_list_a_that_isnt_in_list_b {
     return ""
 }
 
-ad_proc ec_report_get_start_date_and_end_date {
-} { 
-
-    Gets the start and end date when the dates are supplied by
-    ec_report_date_range_widget; if they're not supplied, it makes
-    the first of this month be the start date and today be the end
-    date.  
-
-    This proc uses uplevel and assumes the existence of db. If the
-    date is supplied incorrectly or not supplied at all, it just
-    returns the default dates (above), unless return_date_error_p
-    (in the calling environment) is "t", in which case it returns 0
-
-} {
-    uplevel {
-
-	# Get rid of leading zeroes in start%5fdate.day and
-	# end%5fdate.day because it can't interpret 08 and
-	# 09 (It thinks they're octal numbers)
-
-	if { [info exists "start%5fdate.day"] } {
-	    set "start%5fdate.day" [string trimleft [set "start%5fdate.day"] "0"]
-	    set "end%5fdate.day" [string trimleft [set "end%5fdate.day"] "0"]
-	    ns_set update $form "start%5fdate.day" [set start%5fdate.day]
-	    ns_set update $form "end%5fdate.day" [set end%5fdate.day]
-	}
-	
-	set current_year [ns_fmttime [ns_time] "%Y"]
-	set current_month [ns_fmttime [ns_time] "%m"]
-	set current_date [ns_fmttime [ns_time] "%d"]
-
-	# It there's no time connected to the date, just the date argument to ns_dbformvalue,
-	# otherwise use the datetime argument
-
-	if [catch { ns_dbformvalue [ns_conn form] start_date date start_date} errmsg ] {
-	    if { ![info exists return_date_error_p] || $return_date_error_p == "f" } {
-		set start_date(date) "$current_year-$current_month-01"
-	    } else {
-		set start_date(date) "0"
-	    }    
-	}
-	if [catch  { ns_dbformvalue [ns_conn form] end_date date end_date} errmsg ] {
-	    if { ![info exists return_date_error_p] || $return_date_error_p == "f" } {
-		set end_date(date) "$current_year-$current_month-$current_date"
-	    } else {
-		set end_date(date) "0"
-	    }
-	}
-	if { [string compare $start_date(date) ""] == 0 } {
-	    if { ![info exists return_date_error_p] || $return_date_error_p == "f" } {
-		set start_date(date) "$current_year-$current_month-01"
-	    } else {
-		set start_date(date) "0"
-	    }
-	}
-	if { [string compare $end_date(date) ""] == 0 } {
-	    if { ![info exists return_date_error_p] || $return_date_error_p == "f" } {
-		set end_date(date) "$current_year-$current_month-$current_date"
-	    } else {
-		set end_date(date) "0"
-	    }
-	}
-    }
-}
 
 ad_proc ec_order_status {  
     order_id
@@ -1215,7 +1203,7 @@ ad_proc ec_stock_status {
     takes the value of ec_products.stock_status, returns stock status as text for presenting in context of html 
 } {
     set to_return ""
-    set to_return [ad_parameter -package_id [ec_id] "StockMessage[string toupper $stock_status]" ecommerce]
+    set to_return [parameter::get -package_id [ec_id] -parameter "StockMessage[string toupper $stock_status]" -default ""]
 
     return $to_return
 }
