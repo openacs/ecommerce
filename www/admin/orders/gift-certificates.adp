@@ -14,7 +14,7 @@
       <td align=center><select name=view_gift_certificate_state>
         @gift_certificate_state_list_html;noquote@
         </select>
-        <input type=submit value=\"Change\"></td>
+        <input type=submit value="Change"></td>
       <td align=center>@linked_issue_date_list_html;noquote@
           </td>
     </tr>

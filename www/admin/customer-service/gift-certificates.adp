@@ -12,7 +12,7 @@
   <tr>
     <td>Amount</td>
     <td><input type=text name=amount size=5> ()</td>
-    <td rowspan=2><input type=submit value=\"Grant\"></td>
+    <td rowspan=2><input type=submit value="Grant"></td>
   </tr>
   <tr>
     <td>Expires</td>

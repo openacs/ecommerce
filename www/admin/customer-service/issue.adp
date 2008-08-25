@@ -13,7 +13,7 @@
 <if @order_id@ not nil>
  <tr>
   <td align=right><b>Order #</td>
-  <td><a href=\"../orders/one?order_id=$order_id\">@order_id@</a></td>
+  <td><a href="../orders/one?order_id=$order_id">@order_id@</a></td>
  </tr>
 </if>
 

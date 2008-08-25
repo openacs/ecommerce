@@ -44,24 +44,24 @@
 <table>
 <tr>
 <td>First Name:</td>
-<td><input type=text name=first_names size=15 value=\"@first_names@\"> Last Name: <input type=text name=last_name size=20 value=\"@last_name@\"></td>
+<td><input type=text name=first_names size=15 value="@first_names@"> Last Name: <input type=text name=last_name size=20 value="@last_name@"></td>
 </tr>
 <tr>
 <td>Email Address:</td>
-<td><input type=text name=email size=30 value=\"@email@\"></td>
+<td><input type=text name=email size=30 value="@email@"></td>
 </tr>
 <tr>
 <td>Zip Code:</td>
-<td><input type=text name=postal_code size=5 maxlength=5 value=\"@postal_code@\"></td>
+<td><input type=text name=postal_code size=5 maxlength=5 value="@postal_code@"></td>
 </tr>
 <tr>
 <td>Other Identifying Info:</td>
-<td><input type=text name=other_id_info size=30 value=\"@other_id_info@\"></td>
+<td><input type=text name=other_id_info size=30 value="@other_id_info@"></td>
 </tr>
 </table>
 
 <center>
-<input type=submit value=\"Update\">
+<input type=submit value="Update">
 </center>
 </form>
 
@@ -74,7 +74,7 @@
  </ul>
 <if @d_user_id@ not nil>
  <center>
-  <input type=submit value=\"Confirm they are the same person\">
+  <input type=submit value="Confirm they are the same person">
  </center>
 </if><else>
  <p>No matches found.</p>

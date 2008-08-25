@@ -11,6 +11,6 @@
 <form method=post action=add-2>
 @export_form_vars_html;noquote@
 <center>
-  <input type=submit value=\"Yes\">
+  <input type=submit value="Yes">
 </center>
 </form>
