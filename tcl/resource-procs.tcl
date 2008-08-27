@@ -14,9 +14,11 @@ ad_proc -private ecommerce::resource::make_product_images {
     -tmp_filename
     {-product_name ""}
     {-dirname ""}
+    {-file_extension ""}
 } {
     This proc imports a product image and  creates the thumbnail and product image sized versions of the image.
-    The original image referenced by tmp_filename is not changed.
+    The original image referenced by tmp_filename is not changed. 
+    file_extension is required when importing an image from a form for example, since the tmp_filename will not indicate file_extension.
 
     Product name should only be supplied when importing an image for a new product. For updating existing products,
     leave product_name blank.        
@@ -35,14 +37,16 @@ ad_proc -private ecommerce::resource::make_product_images {
     set success 1
     set file_extension_actual [file extension $tmp_filename]
     set file_ext_lower [string tolower $file_extension_actual]
-
+    if { ![string match {.[jg][pi][gf]} $file_ext_lower] } {
+        set file_ext_lower [string tolower $file_extension]
+    }
     if { $file_ext_lower eq ".jpg" || $file_ext_lower eq ".gif" } {
  
         # get the directory name
         set resource_path [ecommerce::resource::resource_path -product_id $product_id -product_name $product_name -dirname $dirname]
 
         # permanent full size filename
-        set perm_filename [file join $resource_path "product.${file_ext_lower}"]
+        set perm_filename [file join $resource_path "product${file_ext_lower}"]
 
         # Find and remove any previously saved product image
         # There should be no more than 1 previous file, unless another was added directly..
@@ -57,21 +61,21 @@ ad_proc -private ecommerce::resource::make_product_images {
         # use file copy http://www.mail-archive.com/naviserver-devel@lists.sourceforge.net/msg00685.html
         if [catch {file copy $tmp_filename $perm_filename} ] {
             # when importing, there may be permissions issues
-            ns_log Notice "ecommerce::resource::make_product_images: unable to copy $tmp_filename to $perm_filename"
+            ns_log Notice "ecommerce::resource::make_product_images: unable to: file copy $tmp_filename $perm_filename"
             set success 0
         }
 
         # create thumbnails and standardized product image
         if { $success } {
-            set success [ecommerce::resource::resize_image -type Thumbnail -filename $perm_filename -dest_dir $resource_path]
+            set success [ecommerce::resource::resize_image -type Thumbnail -filename $perm_filename]
         }
         if { $success } {
-            set success [ecommerce::resource::resize_image -type ProductImage -filename $perm_filename -dest_dir $resource_path]
+            set success [ecommerce::resource::resize_image -type ProductImage -filename $perm_filename]
         }
     } else {
         # flag a soft error, we do not want to ad_return_complaint because this proc may be bulk uploading product images
         set success 0
-        ns_log Notice "ecommerce::resource::make_product_images: file extension ${file_extension_actuial} not supported, -product_id ${product_id}"
+        ns_log Notice "ecommerce::resource::make_product_images: file extension ${file_ext_lower} not supported, -product_id ${product_id}"
     }
 
     if { $success } {
@@ -89,7 +93,7 @@ ad_proc -private ecommerce::resource::resize_image {
 } {
     if { $type eq "Thumbnail" || $type eq "ProductImage" } {
         set success 1
-        #    -dest_dir is now calculated automatically.
+        #    dest_dir is now calculated automatically.
         set dest_dir [file dirname $filename]
         # get dimensions
         set use_both_param_dimensions [parameter::get -parameter "${type}SizeOuterlimits"]
@@ -119,14 +123,16 @@ ad_proc -private ecommerce::resource::resize_image {
         if { [file exists $filename] } {
             if {![string equal "" $convert] && [file exists $convert]} {
                 if [catch {exec $convert -geometry $convert_dimensions -comment \"$image_comment\" $filename $new_filename} errmsg ] {
-                    ns_log Notice "ecommerce::resource::resize_image An error occurred while converting a product image: $errmsg"
+                    ns_log Notice "ecommerce::resource::resize_image An error occurred while attempting '$convert -geometry $convert_dimensions -comment \"$image_comment\" $filename $new_filename': $errmsg"
                     set success 0
                 }
             } else {
-                ad_return_complaint 1 {
-                    ImageMagick's <b>convert</b> utility for
-                    image thumbnail creation seems unavailable.  Please reconfigure this subsystem before
-                    uploading pictures.
+                ns_log Error "ecommerce::resource::resize_image Check convert path parameter, convert not found at $convert"
+                set success 0
+#                ad_return_complaint 1 {
+ #                   ImageMagick's <b>convert</b> utility for
+ #                   image thumbnail creation seems unavailable.  Please reconfigure this subsystem before
+ #                   uploading pictures.
                 }
             }
         } else {

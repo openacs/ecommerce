@@ -127,8 +127,7 @@ if { [string compare $url "http://"] == 0 } {
 
 # Get the directory where dirname is stored
 set dirname [db_string dirname_select "select dirname from ec_products where product_id=:product_id"]
-set subdirectory [ec_product_file_directory $product_id]
-set full_dirname "[ec_data_directory][ec_product_directory]$subdirectory/$dirname"
+set full_dirname [file join [ec_data_directory] [ec_product_directory] [ec_product_file_directory $product_id] $dirname]
 
 # if an image file has been specified, upload it into the
 # directory that was just created and make a thumbnail (using
@@ -136,17 +135,28 @@ set full_dirname "[ec_data_directory][ec_product_directory]$subdirectory/$dirnam
 
 if { [exists_and_not_null upload_file] } {
 
+    # so that we'll know if it's a gif or a jpg
+    set file_extension [file extension $upload_file]
+
     # tmp file will be deleted when the thread ends
-    set tmp_filename ${upload_file.tmpfile}
+    set tmp_filename ${upload_file.tmpfile} 
 
-    # copy image & create thumbnails
-    # thumbnails are all jpg files
+    # copies this temp file into a permanent file
+#    set perm_filename [file join $full_dirname "product${file_extension}"]
+   
     
-    ecommerce::resource::make_product_images \
-        -file_extension [file extension $upload_file] \
-        -product_id $product_id \
-        -tmp_filename ${upload_file.tmpfile}
 
+    # import, copy image & create thumbnails
+    # thumbnails are all jpg files
+    ns_log Notice $upload_file
+    set upload_status [ecommerce::resource::make_product_images \
+        -product_id $product_id \
+        -tmp_filename ${upload_file.tmpfile} \
+        -file_extension $file_extension]
+
+    if { $upload_status == 0 } { 
+        ad_return_complaint 1 "<li>There was an error when trying to upload the new product image. Check the server logs if this message persists.</li>"
+    }
 }
 
 set dirname [ecommerce::resource::dirname -product_id $product_id -product_name $product_name]
