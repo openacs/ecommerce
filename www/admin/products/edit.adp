@@ -70,7 +70,7 @@ Data from Product's Name, One Line Description, and Other Detailed Description
 <td><input type=file size=10 name=upload_file>
 <if @thumbnail@ exists>
 <br>Your current picture is:<br>@thumbnail;noquote@
-</td>
+</if></td>
 <td>This picture (.gif or .jpg format) can be as large as you like.  A thumbnail will be automatically generated.  Note that file uploading doesn't work with Internet Explorer 3.0.</td>
 </tr>
 <tr>
