@@ -267,7 +267,7 @@ while { $line_status != -1 && !$errors} {
     }
 
 }
-
+set count [expr { $count -1 } ]
 if { $success_count == 1 } {
     set product_string "product"
 } else {
@@ -275,6 +275,3 @@ if { $success_count == 1 } {
 }
 
 set total_lines "[ec_decode $count "0" "0" [expr $count -1]]"
-
-
-
