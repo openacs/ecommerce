@@ -303,7 +303,7 @@ ad_proc -private ecommerce::resource::image_info {
 
     set filename "product${type}${extension}"
     set image_pathname [file join $dir_path $filename]
-    set image_url [ecommerce::resource::resource_url -product_id $product_id -product_name $product_name -dirname $dirname $filename]
+    set image_url "[ecommerce::resource::resource_url -product_id $product_id -product_name $product_name -dirname $dirname]/$filename"
 
     if { [file exists $image_pathname] && [file isfile $image_pathname] } {
         if { $extension eq ".jpg" } {
