@@ -58,8 +58,12 @@ set context [list [list index Products] $title]
 set currency [parameter::get -package_id [ec_id] -parameter Currency]
 set multiple_retailers_p [parameter::get -package_id [ec_id] -parameter MultipleRetailersPerProductP -default f]
 
-set categorization_html [ec_category_subcategory_and_subsubcategory_display $category_id_list $subcategory_id_list $subsubcategory_id_list]
+set dirname [ecommerce::resource::dirname -product_id $product_id -product_name $product_name]
+if { [string length $linked_thumbnail] < 5} {
+    set linked_thumbnail [ec_linked_thumbnail_if_it_exists $dirname]
+}
 
+set categorization_html [ec_category_subcategory_and_subsubcategory_display $category_id_list $subcategory_id_list $subsubcategory_id_list]
 if { !$multiple_retailers_p } {
     if { ![empty_string_p $stock_status] } {
         set stock_status_html [util_memoize "ad_parameter -package_id [ec_id] \"StockMessage[string toupper $stock_status]\"" [ec_cache_refresh]]

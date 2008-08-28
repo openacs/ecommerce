@@ -27,7 +27,7 @@ ad_page_contract {
   weight
   stock_status
   user_class_prices:array,optional
-  categorization:multiple
+  {categorization:multiple ""}
   available_date:array,date
   upload_file:optional
   upload_file.tmpfile:optional
@@ -151,16 +151,16 @@ if { [info exists upload_file] && [string length $upload_file] > 4 } {
     # copy image & create thumbnails
     # thumbnails are all jpg files
     
-    ecommerce::resource::make_product_images \
+    set dirname [ecommerce::resource::make_product_images \
         -file_extension [file extension $upload_file] \
         -product_id $product_id \
         -product_name $product_name \
-        -tmp_filename ${upload_file.tmpfile}
+                     -tmp_filename ${upload_file.tmpfile} ]
 
 }
-
-set dirname [ecommerce::resource::dirname -product_id $product_id -product_name $product_name]
-
+if { [string length $dirname] < 2 } {
+    set dirname [ecommerce::resource::dirname -product_id $product_id -product_name $product_name]
+}
 # TODO: improve, along with admin add product pages
 set linked_thumbnail [ecommerce::resource::image_tag -type Thumbnail -product_id $product_id -product_name $product_name]
 
