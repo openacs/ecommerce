@@ -141,25 +141,19 @@ if { [exists_and_not_null upload_file] } {
     # tmp file will be deleted when the thread ends
     set tmp_filename ${upload_file.tmpfile} 
 
-    # copies this temp file into a permanent file
-#    set perm_filename [file join $full_dirname "product${file_extension}"]
-   
-    
-
     # import, copy image & create thumbnails
     # thumbnails are all jpg files
     ns_log Notice $upload_file
-    set upload_status [ecommerce::resource::make_product_images \
+    set dirname [ecommerce::resource::make_product_images \
         -product_id $product_id \
         -tmp_filename ${upload_file.tmpfile} \
         -file_extension $file_extension]
 
-    if { $upload_status == 0 } { 
+    if { $dirname == 0 } { 
         ad_return_complaint 1 "<li>There was an error when trying to upload the new product image. Check the server logs if this message persists.</li>"
-    }
+    } 
 }
 
-set dirname [ecommerce::resource::dirname -product_id $product_id -product_name $product_name]
 set linked_thumbnail [ec_linked_thumbnail_if_it_exists $dirname]
 
 set title "Confirm Product Changes"
