@@ -73,6 +73,7 @@ drop sequence ec_action_id_seq;
 drop view ec_issue_id_sequence;
 drop sequence ec_issue_id_seq;
 drop table ec_gift_certificate_usage;
+drop trigger ec_gift_certificates_audit_tr on ec_gift_certificates;
 drop function ec_gift_certificates_audit_tr();
 drop table ec_gift_certificates_audit;
 drop view ec_gift_certificates_issued;
