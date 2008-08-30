@@ -119,12 +119,11 @@ while { $line_status != -1 && !$errors} {
                 # copy image & create thumbnails
                 # thumbnails are all jpg files
 
-                if { [catch {ecommerce::resource::make_product_images \
-                                 -file_extension [file extension $image_fullpathname] \
+                if { [ecommerce::resource::make_product_images \
                                  -product_id $product_id \
-                                 -tmp_filename $image_fullpathname} errmsg ] } {
+                                 -tmp_filename $image_fullpathname] == 0 } {
 
-                    append doc_body "<p><font color=red>Error!</font>Image update of <i>$sku</i> failed with error:<\p><p>$errmsg</p>"
+                    append doc_body "<p><font color=red>Error!</font>Image update of <i>$sku</i> failed. check server log for details.</p>"
                 } else {
                     append doc_body "<p>Imported images for product: $sku</p>"
                     # A product row has been successfully processed, increase counter
