@@ -168,6 +168,7 @@ if { ![empty_string_p $creditcard_id] } {
 	</tr>"
 }
 
+
 append order_details_html "<tr>
         <td align=right><b>In basket date</b></td>
         <td>[ec_formatted_full_date $in_basket_date]</td>
@@ -184,12 +185,20 @@ append order_details_html "<tr>
         <td align=right><b>Base shipping charged</b></td>
         <td>[ec_pretty_pure_price $shipping_charged] [ec_decode $shipping_method "pickup" "(Pickup)" "no shipping" "(No Shipping)" ""]</td>
       </tr>"
+set payment_gateway [parameter::get -package_id [ec_id] -parameter PaymentGateway -default ""]
+set addrs_ver_service_header ""
+set addrs_ver_service_cell ""   
+if { [string length $payment_gateway] > 0 && ( $payment_gateway eq "authorize-gateway" || $payment_gateway eq "ezic-gateway" } {
+    set addrs_ver_service_header "<th>Address&nbsp;Verification</th>"
+    set addrs_ver_service_cell "<td><include src=\"/packages/${payment_gateway}/lib/one\" transaction_id=\"${transaction_id}\" amount=\"${transaction_amount}\"></td>"
+} 
 
 set table_header "table border>
       <tr>
         <th>ID</th>
         <th>Date</th>
         <th>Creditcard Last 4</th>
+        $addrs_ver_service_header
         <th>Amount</th>
         <th>Type</th>
         <th>To Be Captured</th> 
@@ -216,6 +225,7 @@ db_foreach financial_transactions_select "
 	  <td>$transaction_id</td>
 	  <td>[ec_nbsp_if_null [ec_formatted_full_date $inserted_date]]</td>
 	  <td>$creditcard_last_four</td>
+      $addrs_ver_service_cell
 	  <td>[ec_pretty_pure_price $transaction_amount]</td>
 	  <td>[ec_decode $transaction_type "charge" "authorization to charge" "intent to refund"]</td>
 	  <td>[ec_nbsp_if_null [ec_decode $transaction_type "refund" "Yes" [ec_decode $to_be_captured_p "t" "Yes" "f" "No" ""]]]</td>
