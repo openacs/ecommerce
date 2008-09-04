@@ -51,8 +51,6 @@ if { ![info exists order_by] || [empty_string_p $order_by] || $order_by == "name
 set header " order by $ordering_options"
 set context [list [list index Products] $title]
 
-
-
 set list_items ""
 
 set have_how_many_more_p f

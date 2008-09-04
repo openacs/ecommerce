@@ -13,6 +13,7 @@ ad_page_contract {
 
 } {
     usca_p:optional
+    {card_code ""}
 }
 
 # The order that we're trying to reauthorize is the 'in_basket' order

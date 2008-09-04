@@ -7,7 +7,7 @@
 
 <h2>Sorry, There seems to be a problem with completing this transaction.</h3>
 
-  <blockquote>
+
   
   <p>At this time we are unable to receive authorization to charge
     your credit card.  Please check the number and the expiration
@@ -17,12 +17,8 @@
    Try again later, or report this problem to @ec_system_owner;noquote@.
 </p>
 
-  <table>
-    <tr>
-      <td>
 	@formatted_address@
-      </td>
-      <td>
+
 	<if @international_address@ eq 1>
 	  <form method="post" action="address-international">
 	    <input type="hidden" name="address_id" value="@address_id@"></input>
@@ -37,10 +33,7 @@
 	    <input type="submit" value="Edit"></input>
 	  </form>
 	</else>
-      </td>
-      <td width="20%">
-      </td>
-      <td>
+
 	<form method="post" action="credit-card-correction-2">
 	  <input type="hidden" name="address_id" value="@address_id@"></input>
 	  <table>
@@ -51,20 +44,22 @@
 	    <tr>
 	      <td>Type:</td>
 	      <td>@ec_creditcard_widget;noquote@</td>
-	      <td>
-		<center>
-		  <input type="submit" value="Submit">
-		</center>
-	      </td>
 	    </tr>
+	    <tr>
+	      <td>Credit card security code (cvv2/cvc2/cid):</td>
+	      <td><input type="text" name="card_code" size="4" value="@card_code@"></td>
+	    </tr>
+
 	    <tr>
 	      <td>Expires:</td>
 	      <td>@ec_expires_widget;noquote@</td>
 	    </tr>
+        <tr>
+	      <td colspan="2">
+		<center>
+		  <input type="submit" value="Submit">
+		</center>
+	      </td>
+        </tr>
 	  </table>
 	</form>
-      </td>
-    </tr>
-  </table>
-
-</blockquote>

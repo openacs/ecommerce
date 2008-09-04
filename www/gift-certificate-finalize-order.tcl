@@ -49,9 +49,9 @@ ad_page_contract {
     
     creditcard_number:notnull
     creditcard_type:notnull
-    creditcard_expire_1:notnull
-    
+    creditcard_expire_1:notnull    
     creditcard_expire_2:notnull
+    {card_code ""}
 }
 
 ec_redirect_to_https_if_possible_and_necessary
@@ -128,7 +128,7 @@ if { [regexp {[^0-9]} $creditcard_number] } {
 # Make sure the credit card type is right & that it has the right number
 # of digits
 
-# set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type]
+# set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type $card_code]
 # set exception_count [expr $exception_count + [lindex $additional_count_and_text 0]]
 # append exception_text [lindex $additional_count_and_text 1]
 

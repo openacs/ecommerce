@@ -7,17 +7,17 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="5.11" url="http://openacs.org/repository/download/apm/ecommerce-5.11.apm">
+    <version name="5.12" url="http://openacs.org/repository/download/apm/ecommerce-5.12.apm">
         <owner url="mailto:janine@furfly.net">Janine Sisk</owner>
         <owner url="mailto:bart.teeuwisse@7-sisters.com">Bart Teeuwisse</owner>
         <owner url="mailto:alfred@thunderstick.com">Alfred Werner</owner>
         <summary>The ACS 3.x based e-commerce solution ported to OpenACS.</summary>
         <release-date>2005-02-10</release-date>
         <vendor url="http://www.furfly.net">furfly.net, LLC</vendor>
-        <description format="text/plain">This module implements all that IT needs for a standard business-to-consumer Web service. You can find a feature summary in the documentaion.</description>
+        <description format="text/plain">This module implements a standard business-to-consumer Web store service. A feature summary is included with the documentaion.</description>
         <maturity>0</maturity>
 
-        <provides url="ecommerce" version="5.11"/>
+        <provides url="ecommerce" version="5.12"/>
         <requires url="acs-datetime" version="4.0"/>
         <requires url="acs-kernel" version="5.0"/>
         <requires url="ref-countries" version="0.1d"/>
@@ -58,6 +58,8 @@
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="OfferTaxExemptStatusP"  default="0" description="Should we ask people if their organization is tax exempt?" section_name="associated charges"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PaymentGateway"  description="The package-key of the payment  gateway to use. Leave empty if you don't want to use a gateway." section_name="payment information"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="PaymentRetryPeriod"  default="8" description="The time in hours that temporarily failed transactions should be repeated for. Transactions that do not receive a definitive answer from the gateway with this period fail at the end of the period." section_name="payment information"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="PaymentCardCodeAsk"  default="0" description="Default is 0. Set to 1 to display credit card CVV2/CVC2/CID code field along with credit card number etc. This is for accepting payments with the extra 3 or 4 digits on the card." section_name="payment information"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="PaymentCardCodeRequired"  default="0" description="Default is 0. Set to 1 to require a credit card's CVV2/CVC2/CID code to validate as a part of authorization and card processing." section_name="payment information"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="PickupP"  default="0" description="Can orders be picked up from your location by customers?" section_name="shipping"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ProductCommentsAllowP"  default="1" description="whether to allow user comments on products" section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="ProductCommentsNeedApprovalP"  default="1" description="whether user comments on products (if allowed) need approval before becoming live" section_name="display"/>

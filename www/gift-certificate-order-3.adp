@@ -8,7 +8,7 @@
 
 <form method=post action="gift-certificate-order-4">
   @hidden_form_variables;noquote@
-  <blockquote>
+
     <table>
       <tr>
 	<td>Credit card number:</td>
@@ -22,8 +22,14 @@
 	<td>Expires:</td>
 	<td>@ec_expires_widget;noquote@</td>
       </tr>
+<if @ask_for_card_code@ true>
+      <tr>
+	<td>Credit card security digits (cvv2/cvc2/cid):</td>
+	<td><input type="text" name="card_code" size="4"></td>
+      </tr>
+</if>
     </table>
-  </blockquote>
+
   <center>
     <input type="submit" value="Continue">
   </center>

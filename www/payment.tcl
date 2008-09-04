@@ -227,7 +227,8 @@ if { $show_creditcard_form_p == "t" } {
     append old_cards_to_choose_from "</table>"
 }
 
-set gift_certificate_p [ad_parameter -package_id [ec_id] SellGiftCertificatesP ecommerce]
+set ask_for_card_code [parameter::get -package_id [ec_id] -parameter PaymentCardCodeAsk -default 0]
+set gift_certificate_p [parameter::get -package_id [ec_id] -parameter SellGiftCertificatesP -default 0]
 
 set title "Completing Your Order: Payment information"
 set context [list $title]

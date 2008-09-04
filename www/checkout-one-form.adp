@@ -144,6 +144,12 @@
     <td align="right">Expires:</td>
     <td>@ec_expires_widget;noquote@</td>
   </tr>
+<if @ask_for_card_code@ true>
+  <tr>
+    <td align="right">Card Security Code (cvv2/cvc2/cid):</td>
+    <td><input type="text" name="card_code" size="4" tabindex="42"</td>
+  </tr>
+</if>
   </table>
 </if>
 

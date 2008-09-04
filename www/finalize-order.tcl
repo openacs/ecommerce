@@ -16,6 +16,7 @@ ad_page_contract {
     @revision-date April 2002
 
 } {
+    {card_code ""}
 }
 
 # If they reload, we don't have to worry about the credit card
@@ -264,7 +265,7 @@ if {$hard_goods_cost > 0} {
             values
             (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
 
-        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        array set response [ec_creditcard_authorization $order_id $transaction_id $card_code]
         set result $response(response_code)
         set transaction_id $response(transaction_id)
         if { [string equal $result "authorized"] } {
@@ -332,7 +333,7 @@ if {$hard_goods_cost > 0} {
             values
             (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
 
-        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        array set response [ec_creditcard_authorization $order_id $transaction_id $card_code]
         set result $response(response_code)
         set transaction_id $response(transaction_id)
         if { [string equal $result "authorized"] } {
@@ -355,7 +356,7 @@ if {$hard_goods_cost > 0} {
             # for the scheduled procedures to mark the
             # transaction.
 
-            array set response [ec_creditcard_marking $transaction_id]
+            array set response [ec_creditcard_marking $transaction_id $card_code]
             set mark_result $response(response_code)
             set pgw_transaction_id $response(transaction_id)
             if { [string equal $mark_result "invalid_input"]} {
@@ -436,7 +437,7 @@ if {$hard_goods_cost > 0} {
             values
             (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
 
-        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        array set response [ec_creditcard_authorization $order_id $transaction_id $card_code]
         set result $response(response_code)
         set soft_goods_transaction_id $response(transaction_id)
         if { [string equal $result "authorized"] } {
@@ -463,7 +464,7 @@ if {$hard_goods_cost > 0} {
             values
             (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
 
-            array set response [ec_creditcard_authorization $order_id $transaction_id]
+            array set response [ec_creditcard_authorization $order_id $transaction_id $card_code]
             set result $response(response_code)
             set hard_goods_transaction_id $response(transaction_id)
             if { [string equal $result "authorized"] } {
@@ -488,7 +489,7 @@ if {$hard_goods_cost > 0} {
             # waiting for the scheduled procedures to mark
             # the transaction.
 
-            array set response [ec_creditcard_marking $transaction_id]
+            array set response [ec_creditcard_marking $transaction_id $card_code]
             set mark_result $response(response_code)
             set pgw_transaction_id $response(transaction_id)
             if { [string equal $mark_result "invalid_input"]} {
@@ -617,7 +618,7 @@ if {$hard_goods_cost > 0} {
         values
         (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
 
-        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        array set response [ec_creditcard_authorization $order_id $transaction_id $card_code]
         set result $response(response_code)
         set transaction_id $response(transaction_id)
         #ns_log Notice "finalize-order.tcl, ref(623): order_id=$order_id,result=$result,transaction_id=${transaction_id}"
@@ -727,7 +728,7 @@ ns_log Notice "finalize-order.tcl, ref(672): result = '$result'"
         values
         (:transaction_id, :order_id, :transaction_amount, 'charge', sysdate)"
 
-        array set response [ec_creditcard_authorization $order_id $transaction_id]
+        array set response [ec_creditcard_authorization $order_id $transaction_id $card_code]
         set result $response(response_code)
         set transaction_id $response(transaction_id)
         if { [string equal $result "authorized"] } {
@@ -749,7 +750,7 @@ ns_log Notice "finalize-order.tcl, ref(672): result = '$result'"
         # Mark the transaction now, rather than waiting for
         # the scheduled procedures to mark the transaction.
 
-        array set response [ec_creditcard_marking $transaction_id]
+        array set response [ec_creditcard_marking $transaction_id $card_code]
         set mark_result $response(response_code)
         set pgw_transaction_id $response(transaction_id)
         if { [string equal $mark_result "invalid_input"]} {

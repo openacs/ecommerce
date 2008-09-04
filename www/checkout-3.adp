@@ -10,6 +10,7 @@
 <blockquote>
 
   <form method="post" action="finalize-order">
+@export_form_vars_html;noquote@
     <p><b>Push <input type="submit" value="Submit"> to send us your order!</b>
     </p>
 

@@ -219,6 +219,11 @@ ad_proc ec_sweep_for_payment_zombies {
 
 	    set card_type [ec_pretty_creditcard_type $creditcard_type]
 
+        # no cvv2/cvc2/cid card available, because this is a delayed transaction
+        # theoretically, card code can be held for up to 24 hours, but storing
+        # in the db defeats the spirit of the intended use.
+        set card_code ""
+
 	    # Connect to the payment gateway to authorize the transaction.
 
 	    array set response [acs_sc_call "PaymentGateway" "Authorize" \
@@ -228,6 +233,7 @@ ad_proc ec_sweep_for_payment_zombies {
 					 $card_number \
 					 $card_exp_month \
 					 $card_exp_year \
+                     $card_code \
 					 $card_name \
 					 $billing_address \
 					 $billing_city \
@@ -415,6 +421,9 @@ ad_proc ec_sweep_for_payment_zombie_gift_certificates {
 
 	set card_type [ec_pretty_creditcard_type $creditcard_type]
 
+    # card_code cvv2/cvc2/cid is not stored in the db
+    set card_code ""
+
 	# Connect to the payment gateway to authorize the transaction.
 
 	array set response [acs_sc_call "PaymentGateway" "Authorize" \
@@ -424,6 +433,7 @@ ad_proc ec_sweep_for_payment_zombie_gift_certificates {
 				     $card_number \
 				     $card_exp_month \
 				     $card_exp_year \
+                     $card_code \
 				     $card_name \
 				     $billing_address \
 				     $billing_city \
@@ -710,6 +720,9 @@ ad_proc ec_unauthorized_transactions {
 
 	set card_type [ec_pretty_creditcard_type $creditcard_type]
 
+    # card code cvv2/cvc2/cid not stored in db
+    set card_code ""
+
 	# Connect to the payment gateway to authorize the transaction.
 
 	array set response [acs_sc_call "PaymentGateway" "Authorize" \
@@ -719,6 +732,7 @@ ad_proc ec_unauthorized_transactions {
 				     $card_number \
 				     $card_exp_month \
 				     $card_exp_year \
+                     $card_code \
 				     $card_name \
 				     $billing_address \
 				     $billing_city \
@@ -868,6 +882,9 @@ ad_proc ec_unmarked_transactions {
 
 	set card_type [ec_pretty_creditcard_type $creditcard_type]
 
+    # card_code cvv2/cvc2/cid not stored in db
+    set card_code ""
+
 	# Connect to the payment gateway to authorize the transaction.
 
 	array set response [acs_sc_call "PaymentGateway" "ChargeCard" \
@@ -877,6 +894,7 @@ ad_proc ec_unmarked_transactions {
 				     $card_number \
 				     $card_exp_month \
 				     $card_exp_year \
+                     $card_code \
 				     $card_name \
 				     $billing_address \
 				     $billing_city \
@@ -1035,6 +1053,9 @@ ad_proc ec_unrefunded_transactions {
 
 	set card_type [ec_pretty_creditcard_type $creditcard_type]
 
+    # card_code cvv2/cvc2/cid is not stored in db
+    set card_code ""
+
 	# Connect to the payment gateway to authorize the transaction.
 
 	array set response [acs_sc_call "PaymentGateway" "Return" \
@@ -1044,6 +1065,7 @@ ad_proc ec_unrefunded_transactions {
 				     $card_number \
 				     $card_exp_month \
 				     $card_exp_year \
+                     $card_code \
 				     $card_name \
 				     $billing_address \
 				     $billing_city \

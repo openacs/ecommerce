@@ -44,6 +44,7 @@ ad_page_contract {
     @param tax_exempt_p:optional
     @param usca_p:optional
     @param value_currency_code:optional
+    @param card_code:optional
 
     @author
     @creation-date April 2002
@@ -98,7 +99,7 @@ ad_page_contract {
     tax_exempt_p:optional
     usca_p:optional
     value_currency_code:optional
-
+    {card_code ""}
 }
 
 # We need them to be logged in
@@ -123,6 +124,7 @@ if {![info exists bill_to_country_code]} {
 } else {
     set possible_exception_list [list [list bill_to_first_names "billing first name"] [list bill_to_last_name "billing last name"] [list bill_to_line1 "billing street address"] [list bill_to_city "billing city"] [list bill_to_country_code "billing country"] [list bill_to_phone "billing telephone number"]]
 }
+
 set exception_count 0
 set exception_text ""
 
@@ -680,7 +682,7 @@ if { [string equal $gift_certificate_covers_cost_p "f"] } {
         # make sure the credit card type is right & that it has
         # the right number of digits
 
-        set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type]
+        set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type $card_code]
         set exception_count [expr $exception_count + [lindex $additional_count_and_text 0]]
         append exception_text [lindex $additional_count_and_text 1]
         

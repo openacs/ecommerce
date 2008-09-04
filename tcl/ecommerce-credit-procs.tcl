@@ -13,10 +13,12 @@ ad_library {
 ad_proc -public ec_creditcard_authorization { 
     order_id 
     {transaction_id ""} 
+    {card_code ""}
 } { 
 
     Authorizes the credit card for use with an order. Gets info it
-    needs from database.  Connects to the payment gateway to
+    needs from database. Card_code does comes from mem to avoid storing in db.
+    Connects to the payment gateway to
     authorize card. Outputs one of the following strings,
     corresponding to the level of authorization:
 
@@ -121,6 +123,11 @@ ad_proc -public ec_creditcard_authorization {
 
     set card_type [ec_pretty_creditcard_type $creditcard_type]
     ns_log Notice "ec_creditcard_authorization card_type ${card_type} from ${creditcard_type}"
+
+    # card_code cvv2/cvc2/cid is not stored in the db
+    # if needed, is passed into proc
+   
+
     # Connect to the payment gateway to authorize the transaction.
 
     array set response [acs_sc_call "PaymentGateway" "Authorize" \
@@ -130,6 +137,7 @@ ad_proc -public ec_creditcard_authorization {
 			   $card_number \
 			   $card_exp_month \
 			   $card_exp_year \
+               $card_code \
 			   $card_name \
 			   $billing_address \
 			   $billing_city \
@@ -158,7 +166,7 @@ ad_proc -public ec_creditcard_authorization {
 	"not_implemented" {
 	    
 	    # The payment gateway rejected to authorize the
-	    # transaction. Or is not cable of authorizing
+	    # transaction. Or is not capable of authorizing
 	    # transactions.
 	    
 	    set outcome(response_code) "failed_authorization"
@@ -206,6 +214,7 @@ ad_proc -public ec_creditcard_authorization {
 
 ad_proc -public ec_creditcard_marking { 
     transaction_id 
+    {card_code ""}
 } { 
 
     Connect to the payment gateway to charge a previously authorized
@@ -299,6 +308,9 @@ ad_proc -public ec_creditcard_marking {
 
     set card_type [ec_pretty_creditcard_type $creditcard_type]
 
+    # card_code cvv2/cvc2/cid is not stored in the db
+    # if needed, needs to be passed in to proc
+
     # Connect to the payment gateway to authorize the transaction.
 
     array set response [acs_sc_call "PaymentGateway" "ChargeCard" \
@@ -308,6 +320,7 @@ ad_proc -public ec_creditcard_marking {
 			   $card_number \
 			   $card_exp_month \
 			   $card_exp_year \
+               $card_code \
 			   $card_name \
 			   $billing_address \
 			   $billing_city \
@@ -376,6 +389,7 @@ ad_proc -public ec_creditcard_marking {
 
 ad_proc -public ec_creditcard_return { 
     transaction_id 
+    {card_code ""}
 } { 
 
     Refunds a transaction back to the credit card used for that
@@ -465,6 +479,9 @@ ad_proc -public ec_creditcard_return {
 
     set card_type [ec_pretty_creditcard_type $creditcard_type]
 
+    # card_code cvv2/cvc2/cid is not stored in the db
+    # if needed, must be passed into proc
+
     # Connect to the payment gateway to authorize the transaction.
 
     array set response [acs_sc_call "PaymentGateway" "Return" \
@@ -474,6 +491,7 @@ ad_proc -public ec_creditcard_return {
 			   $card_number \
 			   $card_exp_month \
 			   $card_exp_year \
+               $card_code \
 			   $card_name \
 			   $billing_address \
 			   $billing_city \
@@ -547,6 +565,7 @@ ad_proc -public ec_creditcard_return {
 ad_proc -public ec_creditcard_precheck { 
     creditcard_number 
     creditcard_type 
+    {creditcard_code ""}
 } { 
 
     Prechecks credit card numbers. If you're going to accept cards
@@ -570,6 +589,7 @@ ad_proc -public ec_creditcard_precheck {
 
     set exception_count 0
     set exception_text ""
+    set card_code_required [parameter::get -package_id [ec_id] -parameter PaymentCardCodeRequired -default 0]
 
     if {![empty_string_p $creditcard_type]} {
 	switch -exact $creditcard_type {
@@ -583,6 +603,11 @@ ad_proc -public ec_creditcard_precheck {
 		    incr exception_count
 		    append exception_text "<li>The credit card number does not have the right number of digits.</li>"
 		}
+            if { $card_code_required && [string length $creditcard_code] != 3 } {
+		    incr exception_count
+		    append exception_text "<li>The credit card validation code (CVC2) should have 3 digits, and is usually a separate group of 3 digits to the right of the signature strip.</li>"
+		}
+
 	    }
 
 	    "v" {
@@ -594,6 +619,11 @@ ad_proc -public ec_creditcard_precheck {
 		    incr exception_count
 		    append exception_text "<li>The credit card number does not have the right number of digits.</li>"
 		}		    
+            if { $card_code_required && [string length $creditcard_code] != 3 } {
+		    incr exception_count
+		    append exception_text "<li>The credit card verification value (CVV2) should have 3 digits, and is usually a separate group of 3 digits to the right of the signature strip.</li>"
+		}
+
 	    }
 
 	    "a" {
@@ -605,10 +635,20 @@ ad_proc -public ec_creditcard_precheck {
 		    incr exception_count
 		    append exception_text "<li>The credit card number does not have the right number of digits.</li>"
 		}		    
+            if { $card_code_required && [string length $creditcard_code] != 4 } {
+		    incr exception_count
+		    append exception_text "<li>The credit card Unique Card Code (CID) should have 4 digits, and is a printed group of four digits on the right side of the face of the card.</li>"
+		}
+
 	    }
 
             "n" {
                 # no pattern available to precheck validity of card
+            if { $card_code_required && [string length $creditcard_code] != 3 } {
+		    incr exception_count
+		    append exception_text "<li>The credit card identification number (CID) should have 3 digits, and is usually a separate group of 3 digits to the right of the signature strip.</li>"
+		}
+
             }
 
 	    default {

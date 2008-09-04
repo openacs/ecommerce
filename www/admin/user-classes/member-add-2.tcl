@@ -26,8 +26,6 @@ if {$admin_user_id == 0} {
     ad_script_abort
 }
 
-
-
 # see if they're already in ec_user_class_user_map, in which case just update
 # their record
 

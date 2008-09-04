@@ -86,8 +86,9 @@ if { [empty_string_p $order_id] } {
     set billing_address_exists 0
     set more_addresses_available "f"
 
-    set currency [ad_parameter -package_id [ec_id] Currency ecommerce]
-    set tax_exempt_status [ad_parameter -package_id [ec_id] OfferTaxExemptStatusP ecommerce 0]
+    set currency [parameter::get -package_id [ec_id] -parameter Currency -default "USD"]
+    set ask_for_card_code [parameter::get -package_id [ec_id] -parameter PaymentCardCodeAsk -default 0]
+    set tax_exempt_status [parameter::get -package_id [ec_id] -parameter OfferTaxExemptStatusP -default 0]
     set tax_exempt_options ""
     if { $tax_exempt_status == "t" } {
         append tax_exempt_options "

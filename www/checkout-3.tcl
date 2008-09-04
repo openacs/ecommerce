@@ -16,6 +16,7 @@ ad_page_contract {
 } {
     usca_p:optional
     referer:optional
+    {card_code ""}
 }
 
 ec_redirect_to_https_if_possible_and_necessary
@@ -156,6 +157,7 @@ if {[exists_and_equal referer "checkout-one-form-2"]} {
     set display_progress "t"
 }
 
+set export_form_vars_html [export_form_vars card_code]
 set order_summary [ec_order_summary_for_customer $order_id $user_id]
 set title "Completing Your Order : verify and complete your order"
 set context [list $title]

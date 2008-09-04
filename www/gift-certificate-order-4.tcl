@@ -19,6 +19,7 @@ ad_page_contract {
     creditcard_type
     creditcard_expire_1
     creditcard_expire_2
+    {card_code ""}
 }
 
 ec_redirect_to_https_if_possible_and_necessary
@@ -102,7 +103,7 @@ if { ![info exists creditcard_type] || [empty_string_p $creditcard_type] } {
 # Make sure the credit card type is right & that it has the right
 # number of digits 
 
-set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type]
+set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type $card_code]
 set exception_count [expr $exception_count + [lindex $additional_count_and_text 0]]
 append exception_text [lindex $additional_count_and_text 1]
 
