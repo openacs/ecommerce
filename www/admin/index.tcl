@@ -59,9 +59,10 @@ set pretty_avg_price [ec_pretty_pure_price $avg_price]
 set unresolved_problem_count [db_string unresolved_problem_count_select "select count(*) from ec_problems_log where resolved_date is null"]
 set unresolved_problem_count_plural [ec_decode $unresolved_problem_count 1 "" "s"]
 
-set paymentgateway_key [ad_parameter -package_id [ec_id] PaymentGateway ecommerce]
+set paymentgateway_key [parameter::get -package_id [ec_id] -parameter PaymentGateway -default ""]
 set paymentgateway_show 0
 if { [string length $paymentgateway_key] > 1 } {
+    set paymentgateway_url [file join [apm_package_url_from_key $paymentgateway_key] admin]
     set paymentgateway_show 1
 }
 

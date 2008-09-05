@@ -28,7 +28,7 @@
 <li><a href="problems/">Potential Problems</a> <font size=-1>(@unresolved_problem_count@ unresolved problem@unresolved_problem_count_plural@)</font></li>
 
 <if @paymentgateway_show@>
-<li><a href="/@paymentgateway_key@/admin">Payment Gateway Administration</a></li>
+<li><a href="@paymentgateway_url@">Payment Gateway Administration</a></li>
 </if>
 
 <li><a href="products/">Products</a> <font size=-1>(@n_products@ products; average price: @pretty_avg_price@)</font></li>
