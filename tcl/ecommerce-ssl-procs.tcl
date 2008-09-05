@@ -73,10 +73,10 @@ ad_proc ec_secure_location {} {
     @return the secure location https://host:port, favoring the https module specified as an ecommerce parameter.
 } {
     # set loc [ad_parameter -package_id [ec_id] SecureLocation]
-    set loc [ad_parameter -package_id [ec_id] SecureLocation]
+    set loc [parameter::get -package_id [ec_id] -parameter SecureLocation]
     if {[empty_string_p $loc] || [string equal -nocase $loc "No Value"]} {
         # set sdriver [ad_parameter -package_id [ec_id] httpsModule]
-        set sdriver [ad_parameter -package_id [ec_id] httpsModule]
+        set sdriver [parameter::get -package_id [ec_id] -parameter httpsModule]
         if {[empty_string_p $sdriver]} {
             array set drivers [ec_preferred_drivers]
             set sdriver $drivers(sdriver)
@@ -194,7 +194,7 @@ ad_proc ec_redirect_to_https_if_possible_and_necessary {} {
 		# so that links from both /ecommerce-instance/ and 
 		# and /ecommerce-instance/admin work
 
-		set register_url "[ec_secure_location][ad_conn package_url]register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
+        set register_url "[ec_secure_location]/register/index?return_url=[ns_urlencode $secure_url]&http_id=$user_id&user_session_id=$user_session_id"
 		ad_returnredirect $register_url
 		template::adp_abort
 	    }
