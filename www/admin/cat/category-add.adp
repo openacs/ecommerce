@@ -10,6 +10,7 @@
 
 </pre>
 <form method=post action=category-add-2>
+@export_form_vars_html;noquote@
  <center>
   <input type=submit value="Yes">
  </center>

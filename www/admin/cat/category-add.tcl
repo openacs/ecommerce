@@ -31,11 +31,11 @@ if { $n_conflicts > 0 } {
     ad_return_complaint 1 "<li>The category page appears to be out-of-date;
     perhaps someone has changed the categories since you last reloaded the page.
     Please go back to <a href=\"index\">the category page</a>, push
-    \"reload\" or \"refresh\" and try again."
+    \"reload\" or \"refresh\" and try again.</li>"
     return
 }
 
-set title "Confirm New Category"]
+set title "Confirm New Category"
 set context [list [list index "Product Categorization"] $title]
 
 set category_id [db_nextval ec_category_id_sequence]
