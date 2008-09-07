@@ -28,7 +28,7 @@ insert into ec_templates (
         ) values (
         1,'Default',
         '<h2><%= $product_name %></h2>' || '\n'  || '\n'
-        || '<table width=100%>' || '\n'
+        || '<table width="100%">' || '\n'
         || '<tr>' || '\n'
         || '<td>' || '\n'
         || ' <table>' || '\n'
