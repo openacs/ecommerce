@@ -188,9 +188,8 @@ append order_details_html "<tr>
 set payment_gateway [parameter::get -package_id [ec_id] -parameter PaymentGateway -default ""]
 set addrs_ver_service_header ""
 set addrs_ver_service_cell ""   
-if { [string length $payment_gateway] > 0 && [info exists transaction_id] && ( $payment_gateway eq "authorize-gateway" || $payment_gateway eq "ezic-gateway") } {
+if {  $payment_gateway eq "authorize-gateway" || $payment_gateway eq "ezic-gateway" } {
     set addrs_ver_service_header "<th>Address&nbsp;Verification</th>"
-    set addrs_ver_service_cell "<td><include src=\"/packages/${payment_gateway}/lib/one\" transaction_id=\"${transaction_id}\" amount=\"${transaction_amount}\"></td>"
 } 
 
 set table_header "<table border=1 cellspacing=0 cellpadding=3>
@@ -221,6 +220,9 @@ db_foreach financial_transactions_select "
     if { $transaction_counter == 0 } {
         append financial_transaction_html $table_header
     }
+    if {  $payment_gateway eq "authorize-gateway" || $payment_gateway eq "ezic-gateway" } {
+        set addrs_ver_service_cell "<td><include src=\"/packages/${payment_gateway}/lib/one\" transaction_id=\"${transaction_id}\" amount=\"${transaction_amount}\"></td>"
+    } 
     append financial_transaction_html "<tr>
 	  <td>$transaction_id</td>
 	  <td>[ec_nbsp_if_null [ec_formatted_full_date $inserted_date]]</td>
