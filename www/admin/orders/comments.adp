@@ -4,6 +4,7 @@
 <h2>@title@</h2>
 
 <form method=post action=comments-edit>
+@export_form_vars_html;noquote@
 <p>Please add or edit comments below:</p>
 
 <blockquote>
