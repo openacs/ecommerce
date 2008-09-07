@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="checkout-progress" step="5">
+  <include src="/packages/ecommerce/lib/checkout-progress" step="5">
 
 <form method="post" action="gift-certificate-claim-2">
 

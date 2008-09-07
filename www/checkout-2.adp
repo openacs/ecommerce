@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="checkout-progress" step="2">
+  <include src="/packages/ecommerce/lib/checkout-progress" step="2">
 
 <blockquote>
 

@@ -4,7 +4,7 @@
   <property name="signatory">@ec_system_owner;noquote@</property>
 
 <if @display_progress@ true>
-  <include src="checkout-progress" step="6">
+  <include src="/packages/ecommerce/lib/checkout-progress" step="6">
 </if>
 
 <blockquote>

@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
   <property name="signatory">@ec_system_owner;noquote@</property>
 
-  <include src="checkout-progress" step="6">
+  <include src="/packages/ecommerce/lib/checkout-progress" step="6">
 
 <h2>Sorry, There seems to be a problem with completing this transaction.</h3>
 

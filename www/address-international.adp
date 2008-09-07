@@ -5,7 +5,7 @@
   <property name="signatory">@ec_system_owner;noquote@</property>
 
 <if @address_type@ eq "shipping">
-  <include src="checkout-progress" step="1">
+  <include src="/packages/ecommerce/lib/checkout-progress" step="1">
   <h2>Your shipping address</h2>
 </if>
 <else>

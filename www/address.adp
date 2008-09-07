@@ -6,7 +6,7 @@
 <if @address_type@ eq "shipping">
   <property name="doc(title)">Completing Your Order: Shipping Address</property>
 
-  <include src="checkout-progress" step="1">
+  <include src="/packages/ecommerce/lib/checkout-progress" step="1">
 
   <h2>Your shipping address</h2>
 </if>
