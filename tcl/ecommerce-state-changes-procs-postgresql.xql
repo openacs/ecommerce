@@ -93,12 +93,12 @@
 
   <fullquery name="ec_update_state_to_authorized.order_contains_soft_goods">      
     <querytext>
-	select item_id
-	from ec_items i, ec_products p 
-	where i.order_id = :order_id
-	and i.product_id = p.product_id
-	and p.no_shipping_avail_p = 't'
-	limit 1
+    select item_id
+    from ec_items i, ec_products p 
+    where i.order_id = :order_id
+    and i.product_id = p.product_id
+    and p.no_shipping_avail_p = 't'
+    limit 1
     </querytext>
   </fullquery>
 

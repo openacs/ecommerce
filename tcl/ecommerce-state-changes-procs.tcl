@@ -39,10 +39,10 @@ ad_proc ec_update_state_to_in_basket {
         set failed_p='t' 
         where creditcard_id=:creditcard_id"
     db_exec_plsql reinst_gift_cert_on_order "
-	declare 
-	begin 
-	    ec_reinst_gift_cert_on_order (:order_id); 
-	end;"
+    declare 
+    begin 
+        ec_reinst_gift_cert_on_order (:order_id); 
+    end;"
 # following cleans up errors resulting from ccard failures with shipping fulfill-3.tcl
     db_dml update_transaction_state "
         update ec_financial_transactions
@@ -65,45 +65,45 @@ ad_proc ec_update_state_to_authorized {
 } {
 
     db_dml set_order_authorized "
-	update ec_orders 
-	set order_state = 'authorized', authorized_date = sysdate 
-	where order_id = :order_id"
+    update ec_orders 
+    set order_state = 'authorized', authorized_date = sysdate 
+    where order_id = :order_id"
 
     # Soft goods don't require shipping and can go directly to the
     # 'shipped' state.
     
     if {[db_0or1row order_contains_soft_goods "
-	select item_id
-	from ec_items i, ec_products p 
-	where i.order_id = :order_id
-	and i.product_id = p.product_id
-	and p.no_shipping_avail_p = 't'
-	limit 1"]} {
-	set peeraddr [ns_conn peeraddr]
-	set shipment_id [db_nextval ec_shipment_id_sequence]
-	db_dml record_soft_goods_shipment "
-	    insert into ec_shipments
-	    (shipment_id, order_id, shipment_date, expected_arrival_date, carrier, shippable_p, last_modified, last_modifying_user, modified_ip_address)
-	    select :shipment_id, order_id, sysdate, sysdate, 'none', 'f', sysdate, user_id, :peeraddr from ec_orders where order_id = :order_id"
+    select item_id
+    from ec_items i, ec_products p 
+    where i.order_id = :order_id
+    and i.product_id = p.product_id
+    and p.no_shipping_avail_p = 't'
+    limit 1"]} {
+    set peeraddr [ns_conn peeraddr]
+    set shipment_id [db_nextval ec_shipment_id_sequence]
+    db_dml record_soft_goods_shipment "
+        insert into ec_shipments
+        (shipment_id, order_id, shipment_date, expected_arrival_date, carrier, shippable_p, last_modified, last_modifying_user, modified_ip_address)
+        select :shipment_id, order_id, sysdate, sysdate, 'none', 'f', sysdate, user_id, :peeraddr from ec_orders where order_id = :order_id"
 
-	db_dml set_soft_goods_shipped "
-	    update ec_items
-	    set item_state = 'shipped', shipment_id = :shipment_id
-	    from ec_products p
-	    where ec_items.order_id = :order_id
-	    and ec_items.product_id = p.product_id
-	    and p.no_shipping_avail_p = 't'"
+    db_dml set_soft_goods_shipped "
+        update ec_items
+        set item_state = 'shipped', shipment_id = :shipment_id
+        from ec_products p
+        where ec_items.order_id = :order_id
+        and ec_items.product_id = p.product_id
+        and p.no_shipping_avail_p = 't'"
     }
     # Update the state of all hard goods from 'in_basket' to
     # 'to_be_shipped'.
 
     db_dml set_hard_goods_to_be_shipped "
-	update ec_items 
-	set item_state = 'to_be_shipped' 
-	from ec_products p
-	where ec_items.order_id = :order_id
-	and ec_items.product_id = p.product_id
-	and p.no_shipping_avail_p = 'f'"
+    update ec_items 
+    set item_state = 'to_be_shipped' 
+    from ec_products p
+    where ec_items.order_id = :order_id
+    and ec_items.product_id = p.product_id
+    and p.no_shipping_avail_p = 'f'"
 
 }
 
@@ -124,16 +124,16 @@ ad_proc ec_update_state_to_confirmed {
 } {
 
     set user_id [db_string user_id_select "
-	select user_id 
-	from ec_orders 
-	where order_id=:order_id"]
+    select user_id 
+    from ec_orders 
+    where order_id=:order_id"]
 
     ec_apply_gift_certificate_balance $order_id $user_id
 
     db_dml order_state_update "
-	update ec_orders 
-	set order_state = 'confirmed', confirmed_date = sysdate 
-	where order_id = :order_id"
+    update ec_orders 
+    set order_state = 'confirmed', confirmed_date = sysdate 
+    where order_id = :order_id"
 }
 
 ad_proc ec_apply_gift_certificate_balance { 
@@ -146,27 +146,27 @@ ad_proc ec_apply_gift_certificate_balance {
 
 } {
     set amount_owed [db_string amount_owed_select "
-	select ec_order_amount_owed(:order_id) 
-	from dual"]
+    select ec_order_amount_owed(:order_id) 
+    from dual"]
 
     db_foreach available_gift_certificates "
-  	select gift_certificate_id, gift_certificate_amount_left(gift_certificate_id) as amount_available
-  	from ec_gift_certificates_approved
-  	where user_id = :user_id
-  	and sysdate - expires < 0
-  	and amount_remaining_p = 't'
-	and gift_certificate_amount_left(gift_certificate_id) > 0
-  	order by expires" {
+      select gift_certificate_id, gift_certificate_amount_left(gift_certificate_id) as amount_available
+      from ec_gift_certificates_approved
+      where user_id = :user_id
+      and sysdate - expires < 0
+      and amount_remaining_p = 't'
+    and gift_certificate_amount_left(gift_certificate_id) > 0
+      order by expires" {
 
-	if {$amount_owed > 0} {
-	    db_dml gift_certificate_usage_insert "
-		insert into ec_gift_certificate_usage
-		(gift_certificate_id, order_id, amount_used, used_date)
-		values
-		(:gift_certificate_id, :order_id, least(to_number(:amount_available), to_number(:amount_owed)), sysdate)"
-	    set amount_owed [db_string amount_owed_select "
-		select ec_order_amount_owed(:order_id) 
-		from dual"]
-	}
+    if {$amount_owed > 0} {
+        db_dml gift_certificate_usage_insert "
+        insert into ec_gift_certificate_usage
+        (gift_certificate_id, order_id, amount_used, used_date)
+        values
+        (:gift_certificate_id, :order_id, least(to_number(:amount_available), to_number(:amount_owed)), sysdate)"
+        set amount_owed [db_string amount_owed_select "
+        select ec_order_amount_owed(:order_id) 
+        from dual"]
+    }
     }
 }
