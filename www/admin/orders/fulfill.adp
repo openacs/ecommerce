@@ -4,7 +4,8 @@
 <h2>@title@</h2>
 
 <form name=fulfillment_form method=post action=fulfill-2>
-
+@export_form_vars_html;noquote@
+@items_for_fulfillment;noquote@
 <if @shipping_method@ eq "no shipping">
   <p>  Fulfillment date (required): @shipping_time_html;noquote@</p>
 </if><else>

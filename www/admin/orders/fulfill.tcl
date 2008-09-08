@@ -35,7 +35,7 @@ set items_for_fulfillment [ec_items_for_fulfillment_or_return $order_id "t"]
 
 set shipping_time_html "[ad_dateentrywidget shipment_date] [ec_timeentrywidget shipment_time]"
 
-if { ![string equal $shipping_method "no shipping" } {
+if { ![string equal $shipping_method "no shipping"] } {
 
     set expected_arrival_time "[ad_dateentrywidget expected_arrival_date ""] [ec_timeentrywidget expected_arrival_time ""]"
     # carrier list is hardcoded because we need carrier names to be exactly what we have here for connecting to package tracking pages
