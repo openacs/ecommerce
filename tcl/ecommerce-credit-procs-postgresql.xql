@@ -9,7 +9,7 @@
   <fullquery name="ec_creditcard_authorization.creditcard_data_select">      
     <querytext>
       select c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, 
-	  c.creditcard_type, a.attn as card_name,
+      c.creditcard_type, a.attn as card_name,
           a.zip_code as billing_zip,
           a.line1 as billing_address, 
           a.city as billing_city, 
@@ -25,7 +25,7 @@
   <fullquery name="ec_creditcard_marking.transaction_select">      
     <querytext>
       select f.transaction_amount, f.transaction_id, c.creditcard_type, a.attn as card_name, 
-	  c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type, 
+      c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type, 
           a.zip_code as billing_zip,
           a.line1 as billing_address, 
           a.city as billing_city, 

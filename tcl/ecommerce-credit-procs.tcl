@@ -53,10 +53,10 @@ ad_proc -public ec_creditcard_authorization {
     # PaymentGateway.
 
     if {[empty_string_p $payment_gateway] || ![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
-    ns_log Warning "ec_creditcard_authorization (54):  payment gateway not bound to ecommerce package."
-	set outcome(response_code) "failure"
-	set outcome(transaction_id) "$transaction_id"
-	return [array get outcome]
+        ns_log Warning "ec_creditcard_authorization (54):  payment gateway not bound to ecommerce package."
+        set outcome(response_code) "failure"
+        set outcome(transaction_id) "$transaction_id"
+        return [array get outcome]
     }
 
     # Authorize the entire order when the transaction_id is null,
@@ -66,15 +66,15 @@ ad_proc -public ec_creditcard_authorization {
     # for gift certificates).
     
     if { [empty_string_p $transaction_id] } {
-	db_1row order_data_select "
-	    select ec_order_cost(:order_id) as total_amount, 
-	    creditcard_id from ec_orders
-	    where order_id = :order_id"
+        db_1row order_data_select "
+        select ec_order_cost(:order_id) as total_amount, 
+        creditcard_id from ec_orders
+        where order_id = :order_id"
     } else {
-	db_1row transaction_data_select "
-	    select transaction_amount as total_amount, creditcard_id 
-	    from ec_financial_transactions 
-	    where transaction_id = :transaction_id"
+        db_1row transaction_data_select "
+        select transaction_amount as total_amount, creditcard_id 
+        from ec_financial_transactions 
+        where transaction_id = :transaction_id"
     }
 
     # The order amount is 0 (zero) and there is thus no need
@@ -82,39 +82,39 @@ ad_proc -public ec_creditcard_authorization {
     # success.
 
     if {$total_amount == 0} {
-	set outcome(response_code) "authorized"
-	set outcome(transaction_id) "$transaction_id"
-	return [array get outcome]
+        set outcome(response_code) "authorized"
+        set outcome(transaction_id) "$transaction_id"
+        return [array get outcome]
     }
 
     # Lookup the credit card for the transaction. Record an
     # invalid_input error if there isn't one.
 
     if {![db_0or1row creditcard_data_select "
-	    select c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, 
-		c.creditcard_type, a.attn as card_name,
-          	a.zip_code as billing_zip,
-          	a.line1 as billing_address, 
-	  	a.city as billing_city, 
-          	coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
-          	a.country_code as billing_country
-	    from ec_creditcards c, persons p, ec_addresses a 
-	    where c.user_id=p.person_id 
-	    and c.creditcard_id = :creditcard_id
-	    and c.billing_address = a.address_id"]} {
-	set outcome(response_code) "invalid_input"
-	set outcome(transaction_id) "$transaction_id"
-    ns_log Error "ec_creditcard_authorization (105): no creditcard for transaction_id $transaction_id"
-	return [array get outcome]
+        select c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, 
+        c.creditcard_type, a.attn as card_name,
+              a.zip_code as billing_zip,
+              a.line1 as billing_address, 
+          a.city as billing_city, 
+              coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
+              a.country_code as billing_country
+        from ec_creditcards c, persons p, ec_addresses a 
+        where c.user_id=p.person_id 
+        and c.creditcard_id = :creditcard_id
+        and c.billing_address = a.address_id"]} {
+        set outcome(response_code) "invalid_input"
+        set outcome(transaction_id) "$transaction_id"
+        ns_log Error "ec_creditcard_authorization (105): no creditcard for transaction_id $transaction_id"
+        return [array get outcome]
     } 
 
     # Generate a transaction_id if none has been provided.
 
     if { [empty_string_p $transaction_id] } {
-	set transaction_id [db_string latest_transaction_select "
-	    select max(transaction_id) 
-	    from ec_financial_transactions 
-	    where order_id = :order_id"]
+        set transaction_id [db_string latest_transaction_select "
+        select max(transaction_id) 
+        from ec_financial_transactions 
+        where order_id = :order_id"]
         ns_log Notice "ec_creditcard_authorization creating transaction_id ${transaction_id}"
     }
 
@@ -131,27 +131,27 @@ ad_proc -public ec_creditcard_authorization {
     # Connect to the payment gateway to authorize the transaction.
 
     array set response [acs_sc_call "PaymentGateway" "Authorize" \
-		      [list $transaction_id \
-			   $total_amount \
-			   $card_type \
-			   $card_number \
-			   $card_exp_month \
-			   $card_exp_year \
+              [list $transaction_id \
+               $total_amount \
+               $card_type \
+               $card_number \
+               $card_exp_month \
+               $card_exp_year \
                $card_code \
-			   $card_name \
-			   $billing_address \
-			   $billing_city \
-			   $billing_state \
-			   $billing_zip \
-			   $billing_country] \
-		      $payment_gateway]
+               $card_name \
+               $billing_address \
+               $billing_city \
+               $billing_state \
+               $billing_zip \
+               $billing_country] \
+              $payment_gateway]
 
     # Extract response_code, reason and the gateway transaction id
     # from the response. The response_code values are defined in
     # payment-gateway/tcl/payment-gateway-init.tcl. The reason is a
     # human readable description of the response and the
     # transaction id is the ID as returned by the payment gateway.
-
+    
     set response_code $response(response_code)
     set reason $response(reason)
     set pgw_transaction_id $response(transaction_id)
@@ -160,55 +160,55 @@ ad_proc -public ec_creditcard_authorization {
     # Interpret the response_code.
 
     switch -exact $response_code {
-	
-	"failure" -
-	"not_supported" -
-	"not_implemented" {
-	    
-	    # The payment gateway rejected to authorize the
-	    # transaction. Or is not capable of authorizing
-	    # transactions.
-	    
-	    set outcome(response_code) "failed_authorization"
-	    set outcome(transaction_id) "$transaction_id"
-	    return [array get outcome]
-	}
-  
-	"failure-retry" {
-
-	    # If the response_code is failure-retry, it means there was a
-	    # temporary failure that can be retried.  The order will be
-	    # retried the next time the scheduled procedure
-	    # ec_sweep_for_payment_zombies is run.
     
-	    set outcome(response_code) "no_recommendation"
-	    set outcome(transaction_id) "$transaction_id"
-	    return [array get outcome]
-	} 
-
-	"success" {
-
-	    # The payment gateway authorized the transaction.
-
-	    db_dml update_transaction_id "
-		update ec_financial_transactions 
-		set transaction_id = :pgw_transaction_id
-		where transaction_id = :transaction_id"
-
-	    set outcome(response_code) "authorized"
-	    set outcome(transaction_id) "$pgw_transaction_id"
-	    return [array get outcome]
-	}
-
-	default {
-
-	    # Unknown response_code, fail the authorization to be on
-	    # the safe side.
-
-	    set outcome(response_code) "failured_authorization"
-	    set outcome(transaction_id) "$transaction_id"
-	    return [array get outcome]
-	}
+        "failure" -
+        "not_supported" -
+        "not_implemented" {
+        
+        # The payment gateway rejected to authorize the
+        # transaction. Or is not capable of authorizing
+        # transactions.
+        
+            set outcome(response_code) "failed_authorization"
+            set outcome(transaction_id) "$transaction_id"
+            return [array get outcome]
+        }
+  
+        "failure-retry" {
+            
+            # If the response_code is failure-retry, it means there was a
+            # temporary failure that can be retried.  The order will be
+            # retried the next time the scheduled procedure
+            # ec_sweep_for_payment_zombies is run.
+            
+            set outcome(response_code) "no_recommendation"
+            set outcome(transaction_id) "$transaction_id"
+            return [array get outcome]
+        } 
+        
+        "success" {
+            
+            # The payment gateway authorized the transaction.
+            
+            db_dml update_transaction_id "
+        update ec_financial_transactions 
+        set transaction_id = :pgw_transaction_id
+        where transaction_id = :transaction_id"
+            
+            set outcome(response_code) "authorized"
+            set outcome(transaction_id) "$pgw_transaction_id"
+            return [array get outcome]
+        }
+        
+        default {
+            
+            # Unknown response_code, fail the authorization to be on
+            # the safe side.
+            
+            set outcome(response_code) "failured_authorization"
+            set outcome(transaction_id) "$transaction_id"
+            return [array get outcome]
+        }
     }
 }
 
@@ -216,7 +216,7 @@ ad_proc -public ec_creditcard_marking {
     transaction_id 
     {card_code ""}
 } { 
-
+    
     Connect to the payment gateway to charge a previously authorized
     credit card for a transaction. This marks the transaction for
     settlement by the credit card gateway at the end of the day (or
@@ -261,9 +261,9 @@ ad_proc -public ec_creditcard_marking {
     # PaymentGateway.
 
     if {[empty_string_p $payment_gateway] || ![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
-	set outcome(response_code) "failure"
-	set outcome(transaction_id) "$transaction_id"
-	return [array get outcome]
+        set outcome(response_code) "failure"
+        set outcome(transaction_id) "$transaction_id"
+        return [array get outcome]
     }
 
     # Retrieve the transaction amount from the database. NOTE The
@@ -272,25 +272,25 @@ ad_proc -public ec_creditcard_marking {
     # transaction.
  
     db_1row transaction_select "
-	select f.transaction_amount, f.transaction_id, c.creditcard_type, a.attn card_name, 
-	    c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type, 
+    select f.transaction_amount, f.transaction_id, c.creditcard_type, a.attn card_name, 
+        c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type, 
             a.zip_code as billing_zip,
             a.line1 as billing_address, 
             a.city as billing_city, 
             coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
             a.country_code as billing_country
-	from ec_financial_transactions f, ec_creditcards c, persons p, ec_addresses a  
-	where transaction_id = :transaction_id
-	and f.creditcard_id = c.creditcard_id 
-	and c.user_id = p.person_id
-	and c.billing_address = a.address_id"
+    from ec_financial_transactions f, ec_creditcards c, persons p, ec_addresses a  
+    where transaction_id = :transaction_id
+    and f.creditcard_id = c.creditcard_id 
+    and c.user_id = p.person_id
+    and c.billing_address = a.address_id"
 
     # Fail the post authorization no transaction amount has been retrieved.
 
     if { [empty_string_p $transaction_amount] } {
-	set outcome(response_code) "invalid_input"
-	set outcome(transaction_id) "$transaction_id"
-	return [array get outcome]
+        set outcome(response_code) "invalid_input"
+        set outcome(transaction_id) "$transaction_id"
+        return [array get outcome]
     }
 
     # The order amount is 0 (zero) and there is thus no need
@@ -298,9 +298,9 @@ ad_proc -public ec_creditcard_marking {
     # success.
 
     if {$transaction_amount == 0 } {
-	set outcome(response_code) "success"
-	set outcome(transaction_id) "$transaction_id"
-	return [array get outcome]
+        set outcome(response_code) "success"
+        set outcome(transaction_id) "$transaction_id"
+        return [array get outcome]
     } 
 
     # Convert the one digit creditcard abbreviation to the
@@ -314,20 +314,20 @@ ad_proc -public ec_creditcard_marking {
     # Connect to the payment gateway to authorize the transaction.
 
     array set response [acs_sc_call "PaymentGateway" "ChargeCard" \
-		      [list $transaction_id \
-			   $transaction_amount \
-			   $card_type \
-			   $card_number \
-			   $card_exp_month \
-			   $card_exp_year \
+              [list $transaction_id \
+               $transaction_amount \
+               $card_type \
+               $card_number \
+               $card_exp_month \
+               $card_exp_year \
                $card_code \
-			   $card_name \
-			   $billing_address \
-			   $billing_city \
-			   $billing_state \
-			   $billing_zip \
-			   $billing_country] \
-		      $payment_gateway]
+               $card_name \
+               $billing_address \
+               $billing_city \
+               $billing_state \
+               $billing_zip \
+               $billing_country] \
+              $payment_gateway]
 
     # Extract response_code, reason and the gateway transaction id
     # from the response. The response_code values are defined in
@@ -342,48 +342,48 @@ ad_proc -public ec_creditcard_marking {
     # Interpret the response_code.
 
     switch -exact $response_code {
-	
-	"failure" -
-	default {
-
-	    # The payment gateway rejected to post authorize the
-	    # transaction or returned an unknown response_code, fail the
-	    # post authorization to be on the safe side.
-	
-	    set outcome(response_code) "failure"
-	    set outcome(transaction_id) "$transaction_id"
-	    return [array get outcome]
-	}
-  
-	"failure-retry" -
-	"not_supported" -
-	"not_implemented" {
-
-	    # If the response_code is failure-retry, it means there was a
-	    # temporary failure that can be retried.  The order will be
-	    # retried the next time the scheduled procedure
-	    # ec_sweep_for_payment_zombies is run. Treat not_supported and
-	    # not_implemented responses the same.
     
-	    set outcome(response_code) "unknown"
-	    set outcome(transaction_id) "$transaction_id"
-	    return [array get outcome]
-	}
+        "failure" -
+        default {
 
-	"success" {
-
-	    # The payment gateway approved the transaction.
-
-	    if { ![empty_string_p $pgw_transaction_id] } {
-		db_dml update_transaction_id "
-		    update ec_financial_transactions 
-		    set transaction_id = :pgw_transaction_id
-		    where transaction_id = :transaction_id"
-	    }
-	    set outcome(response_code) "success"
-	    set outcome(transaction_id) "$pgw_transaction_id"
-	    return [array get outcome]
-	}
+            # The payment gateway rejected to post authorize the
+            # transaction or returned an unknown response_code, fail the
+            # post authorization to be on the safe side.
+    
+            set outcome(response_code) "failure"
+            set outcome(transaction_id) "$transaction_id"
+            return [array get outcome]
+        }
+        
+        "failure-retry" -
+        "not_supported" -
+        "not_implemented" {
+            
+            # If the response_code is failure-retry, it means there was a
+            # temporary failure that can be retried.  The order will be
+            # retried the next time the scheduled procedure
+            # ec_sweep_for_payment_zombies is run. Treat not_supported and
+            # not_implemented responses the same.
+            
+            set outcome(response_code) "unknown"
+            set outcome(transaction_id) "$transaction_id"
+            return [array get outcome]
+        }
+        
+        "success" {
+            
+            # The payment gateway approved the transaction.
+            
+            if { ![empty_string_p $pgw_transaction_id] } {
+                db_dml update_transaction_id "
+            update ec_financial_transactions 
+            set transaction_id = :pgw_transaction_id
+            where transaction_id = :transaction_id"
+            }
+            set outcome(response_code) "success"
+            set outcome(transaction_id) "$pgw_transaction_id"
+            return [array get outcome]
+        }
     }
 }
 
@@ -434,9 +434,9 @@ ad_proc -public ec_creditcard_return {
     # PaymentGateway.
 
     if {[empty_string_p $payment_gateway] || ![acs_sc_binding_exists_p "PaymentGateway" $payment_gateway]} {
-	set outcome(response_code) "failure"
-	set outcome(transaction_id) "$transaction_id"
-	return [array get outcome]
+        set outcome(response_code) "failure"
+        set outcome(transaction_id) "$transaction_id"
+        return [array get outcome]
     }
 
     # Retrieve the transaction amount and the credit card information
@@ -447,31 +447,31 @@ ad_proc -public ec_creditcard_return {
 
     if {![db_0or1row transaction_info_select "
              select t.refunded_transaction_id, t.transaction_amount, 
-		c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type,
-		a.attn as card_name, 
-          	a.zip_code as billing_zip,
-          	a.line1 as billing_address, 
-          	a.city as billing_city, 
-          	coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
-          	a.country_code as billing_country
+        c.creditcard_number as card_number, substring(creditcard_expire for 2) as card_exp_month, substring(creditcard_expire from 4 for 2) as card_exp_year, c.creditcard_type,
+        a.attn as card_name, 
+              a.zip_code as billing_zip,
+              a.line1 as billing_address, 
+              a.city as billing_city, 
+              coalesce(a.usps_abbrev, a.full_state_name) as billing_state, 
+              a.country_code as billing_country
              from ec_financial_transactions t, ec_creditcards c, persons p, ec_addresses a  
              where t.transaction_id = :transaction_id 
              and c.creditcard_id = t.creditcard_id
-	     and c.user_id = p.person_id
-      	     and c.billing_address = a.address_id"]} {
-	set outcome(response_code) "invalid_input"
-	set outcome(transaction_id) "$transaction_id"
-	return [array get outcome]
+         and c.user_id = p.person_id
+               and c.billing_address = a.address_id"]} {
+        set outcome(response_code) "invalid_input"
+        set outcome(transaction_id) "$transaction_id"
+        return [array get outcome]
     } 
 
     # The order amount is 0 (zero) and there is thus no need
     # to contact the payment gateway. Record an instant
     # success.
-
+    
     if { $transaction_amount == 0 } {
-	set outcome(response_code) "success"
-	set outcome(transaction_id) "$transaction_id"
-	return [array get outcome]
+        set outcome(response_code) "success"
+        set outcome(transaction_id) "$transaction_id"
+        return [array get outcome]
     } 
 
     # Convert the one digit creditcard abbreviation to the
@@ -485,20 +485,20 @@ ad_proc -public ec_creditcard_return {
     # Connect to the payment gateway to authorize the transaction.
 
     array set response [acs_sc_call "PaymentGateway" "Return" \
-		      [list $refunded_transaction_id \
-			   $transaction_amount \
-			   $card_type \
-			   $card_number \
-			   $card_exp_month \
-			   $card_exp_year \
+              [list $refunded_transaction_id \
+               $transaction_amount \
+               $card_type \
+               $card_number \
+               $card_exp_month \
+               $card_exp_year \
                $card_code \
-			   $card_name \
-			   $billing_address \
-			   $billing_city \
-			   $billing_state \
-			   $billing_zip \
-			   $billing_country] \
-		      $payment_gateway]
+               $card_name \
+               $billing_address \
+               $billing_city \
+               $billing_state \
+               $billing_zip \
+               $billing_country] \
+              $payment_gateway]
 
     # Extract response_code, reason and the gateway transaction id
     # from the response. The response_code values are defined in
@@ -514,51 +514,51 @@ ad_proc -public ec_creditcard_return {
 
     switch -exact $response_code {
 
-	"failure" -
-	default {
-
-	    # The payment gateway rejected to refund the transaction or
-	    # returned an unknown response_code. Fail the post
-	    # authorization to be on the safe side.
-
-	    db_dml transaction_failure_update "
-		update ec_financial_transactions 
-		set failed_p = 't'
-		where transaction_id = :transaction_id"
-
-	    set outcome(response_code) "failure"
-	    set outcome(transaction_id) "$transaction_id"
-	    return [array get outcome]
-	}
-  
-	"failure-retry" -
-	"not_supported" -
-	"not_implemented" {
-
-	    # If the response_code is failure-retry, it means there was a
-	    # temporary failure that can be retried.  The order will be
-	    # retried the next time the scheduled procedure
-	    # ec_sweep_for_payment_zombies is run. Treat not_supported and
-	    # not_implemented responses the same.
-	    
-	    set outcome(response_code) "unknown"
-	    set outcome(transaction_id) "$transaction_id"
-	    return [array get outcome]
-	} 
-
-	"success" {
-
-	    # The payment gateway authorized the transaction.
-
-	    db_dml transaction_success_update "
-		update ec_financial_transactions 
-		set transaction_id = :pgw_transaction_id, refunded_date = sysdate
-		where transaction_id = :transaction_id"
-
-	    set outcome(response_code) "success"
-	    set outcome(transaction_id) "$pgw_transaction_id"
-	    return [array get outcome]
-	}
+        "failure" -
+        default {
+            
+            # The payment gateway rejected to refund the transaction or
+            # returned an unknown response_code. Fail the post
+            # authorization to be on the safe side.
+            
+            db_dml transaction_failure_update "
+        update ec_financial_transactions 
+        set failed_p = 't'
+        where transaction_id = :transaction_id"
+            
+            set outcome(response_code) "failure"
+            set outcome(transaction_id) "$transaction_id"
+            return [array get outcome]
+        }
+        
+        "failure-retry" -
+        "not_supported" -
+        "not_implemented" {
+            
+            # If the response_code is failure-retry, it means there was a
+            # temporary failure that can be retried.  The order will be
+            # retried the next time the scheduled procedure
+            # ec_sweep_for_payment_zombies is run. Treat not_supported and
+            # not_implemented responses the same.
+            
+            set outcome(response_code) "unknown"
+            set outcome(transaction_id) "$transaction_id"
+            return [array get outcome]
+        } 
+        
+        "success" {
+            
+            # The payment gateway authorized the transaction.
+            
+            db_dml transaction_success_update "
+        update ec_financial_transactions 
+        set transaction_id = :pgw_transaction_id, refunded_date = sysdate
+        where transaction_id = :transaction_id"
+            
+            set outcome(response_code) "success"
+            set outcome(transaction_id) "$pgw_transaction_id"
+            return [array get outcome]
+        }
     }
 }
 
@@ -567,7 +567,7 @@ ad_proc -public ec_creditcard_precheck {
     creditcard_type 
     {creditcard_code ""}
 } { 
-
+    
     Prechecks credit card numbers. If you're going to accept cards
     other than MasterCard, Visa, or American Express, you'll have to
     modify this proc to recognize them.  It should be easy; just
@@ -592,96 +592,96 @@ ad_proc -public ec_creditcard_precheck {
     set card_code_required [parameter::get -package_id [ec_id] -parameter PaymentCardCodeRequired -default 0]
 
     if {![empty_string_p $creditcard_type]} {
-	switch -exact $creditcard_type {
-
-	    "m" {
-		if {[string index $creditcard_number 0] != 5} {
-		    incr exception_count
-		    append exception_text "<li>The credit card number is not a MasterCard number.</li>"
-		}
-		if {[string length $creditcard_number] != 16} {
-		    incr exception_count
-		    append exception_text "<li>The credit card number does not have the right number of digits.</li>"
-		}
-            if { $card_code_required && [string length $creditcard_code] != 3 } {
-		    incr exception_count
-		    append exception_text "<li>The credit card validation code (CVC2) should have 3 digits, and is usually a separate group of 3 digits to the right of the signature strip.</li>"
-		}
-
-	    }
-
-	    "v" {
-		if {[string index $creditcard_number 0] != 4} {
-		    incr exception_count
-		    append exception_text "<li>The credit card number is not a VISA number.</li>"
-		}
-		if {[string length $creditcard_number] != 16 && [string length $creditcard_number] != 13} {
-		    incr exception_count
-		    append exception_text "<li>The credit card number does not have the right number of digits.</li>"
-		}		    
-            if { $card_code_required && [string length $creditcard_code] != 3 } {
-		    incr exception_count
-		    append exception_text "<li>The credit card verification value (CVV2) should have 3 digits, and is usually a separate group of 3 digits to the right of the signature strip.</li>"
-		}
-
-	    }
-
-	    "a" {
-		if {[string index $creditcard_number 0] != 3} {
-		    incr exception_count
-		    append exception_text "<li>The credit card number is not an American Express number.</li>"
-		}
-		if {[string length $creditcard_number] != 15} {
-		    incr exception_count
-		    append exception_text "<li>The credit card number does not have the right number of digits.</li>"
-		}		    
-            if { $card_code_required && [string length $creditcard_code] != 4 } {
-		    incr exception_count
-		    append exception_text "<li>The credit card Unique Card Code (CID) should have 4 digits, and is a printed group of four digits on the right side of the face of the card.</li>"
-		}
-
-	    }
-
+        switch -exact $creditcard_type {
+            
+            "m" {
+                if {[string index $creditcard_number 0] != 5} {
+                    incr exception_count
+                    append exception_text "<li>The credit card number is not a MasterCard number.</li>"
+                }
+                if {[string length $creditcard_number] != 16} {
+                    incr exception_count
+                    append exception_text "<li>The credit card number does not have the right number of digits.</li>"
+                }
+                if { $card_code_required && [string length $creditcard_code] != 3 } {
+                    incr exception_count
+                    append exception_text "<li>The credit card validation code (CVC2) should have 3 digits, and is usually a separate group of 3 digits to the right of the signature strip.</li>"
+                }
+                
+            }
+            
+            "v" {
+                if {[string index $creditcard_number 0] != 4} {
+                    incr exception_count
+                    append exception_text "<li>The credit card number is not a VISA number.</li>"
+                }
+                if {[string length $creditcard_number] != 16 && [string length $creditcard_number] != 13} {
+                    incr exception_count
+                    append exception_text "<li>The credit card number does not have the right number of digits.</li>"
+                }            
+                if { $card_code_required && [string length $creditcard_code] != 3 } {
+                    incr exception_count
+                    append exception_text "<li>The credit card verification value (CVV2) should have 3 digits, and is usually a separate group of 3 digits to the right of the signature strip.</li>"
+                }
+                
+            }
+            
+            "a" {
+                if {[string index $creditcard_number 0] != 3} {
+                    incr exception_count
+                    append exception_text "<li>The credit card number is not an American Express number.</li>"
+                }
+                if {[string length $creditcard_number] != 15} {
+                    incr exception_count
+                    append exception_text "<li>The credit card number does not have the right number of digits.</li>"
+                }            
+                if { $card_code_required && [string length $creditcard_code] != 4 } {
+                    incr exception_count
+                    append exception_text "<li>The credit card Unique Card Code (CID) should have 4 digits, and is a printed group of four digits on the right side of the face of the card.</li>"
+                }
+                
+            }
+            
             "n" {
                 # no pattern available to precheck validity of card
-            if { $card_code_required && [string length $creditcard_code] != 3 } {
-		    incr exception_count
-		    append exception_text "<li>The credit card identification number (CID) should have 3 digits, and is usually a separate group of 3 digits to the right of the signature strip.</li>"
-		}
-
+                if { $card_code_required && [string length $creditcard_code] != 3 } {
+                    incr exception_count
+                    append exception_text "<li>The credit card identification number (CID) should have 3 digits, and is usually a separate group of 3 digits to the right of the signature strip.</li>"
+                }
+                
             }
-
-	    default {
-		incr exception_count
-		append exception_text "<li> Sorry, the credit card type is of an unknown type: [ec_pretty_creditcard_type $creditcard_type].</li>"
+            
+            default {
+                incr exception_count
+                append exception_text "<li> Sorry, the credit card type is of an unknown type: [ec_pretty_creditcard_type $creditcard_type].</li>"
                 ns_log Warning "ec_creditcard_precheck: Possible configuration error. Rejected a user supplied creditcard as unknown."
-	    }
-	}
+            }
+        }
     }
-
+    
     # Only if there haven't been any problems so far should we do
     # LUHN-10 error checking which the customer is less likely to
     # understand
-
+    
     if { $exception_count == 0 } {
-	set decoded_creditcard_type [ec_creditcard_validation $creditcard_number]
-	set vallas_creditcard_type [ec_pretty_creditcard_type $creditcard_type]
-
-	if {$decoded_creditcard_type == "unknown" } {
-	    incr exception_count
-	    append exception_text "
-		<li>
-		  The credit card number is of an unknown credit card type while the card is a(n) [ec_pretty_creditcard_type $creditcard_type] credit card.
-		</li>"
-	} else {
-	    if { $vallas_creditcard_type != $vallas_creditcard_type } {
-		incr exception_count
-		append exception_text "
-		    <li>
-		      The credit card number is a(n) $decoded_creditcard_type number while the card is a(n) [ec_pretty_creditcard_type $creditcard_type] credit card.
-		    </li>"
-	    }
-	}
+        set decoded_creditcard_type [ec_creditcard_validation $creditcard_number]
+        set vallas_creditcard_type [ec_pretty_creditcard_type $creditcard_type]
+        
+        if {$decoded_creditcard_type == "unknown" } {
+            incr exception_count
+            append exception_text "
+        <li>
+          The credit card number is of an unknown credit card type while the card is a(n) [ec_pretty_creditcard_type $creditcard_type] credit card.
+        </li>"
+        } else {
+            if { $vallas_creditcard_type != $vallas_creditcard_type } {
+                incr exception_count
+                append exception_text "
+            <li>
+              The credit card number is a(n) $decoded_creditcard_type number while the card is a(n) [ec_pretty_creditcard_type $creditcard_type] credit card.
+            </li>"
+            }
+        }
     }
     return [list $exception_count $exception_text]
 }
@@ -689,7 +689,7 @@ ad_proc -public ec_creditcard_precheck {
 ad_proc -private ec_creditcard_validation {
     numIn
 } { 
-
+    
     This procedure validates a credit card number. It was originally
     called valCC, and was written by Horace Vallas. The original was
     found at http://www.hav.com/valCC/nph-src.htm?valCC.nws (with an
@@ -729,23 +729,23 @@ ad_proc -private ec_creditcard_validation {
 
     Each card type has the following criteria requirements:
     
-    Card Type		Prefix			Length	Check-Digit Algoritm
+    Card Type        Prefix            Length    Check-Digit Algoritm
     
-    MC		        51 - 55			  16	    mod 10
+    MC                51 - 55              16        mod 10
     
-    VISA		4			13, 16	    mod 10
+    VISA        4            13, 16        mod 10
     
-    AMX		        34, 37			  15	    mod 10
+    AMX                34, 37              15        mod 10
     
-    Diners Club /	300 - 305, 36, 38	  14	    mod 10
+    Diners Club /    300 - 305, 36, 38      14        mod 10
     Carte Blanche
     
-    Discover	        6011			  16	    mod 10
+    Discover            6011              16        mod 10
     
-    enRoute		2014, 2149		  16	    - any -
+    enRoute        2014, 2149          16        - any -
     
-    JCB		        3			  16	    mod 10
-    JCB		        2131, 1800		  15	    mod 10
+    JCB                3              16        mod 10
+    JCB                2131, 1800          15        mod 10
 
 } {
 
@@ -773,114 +773,114 @@ ad_proc -private ec_creditcard_validation {
     switch -glob [string range $entered_number 0 3] {
 
         "51??" -  
-	"52??" -  
-	"53??" -  
-	"54??" -  
-	"55??" {
-	    if {$numLen == 16} {
-		set type "MasterCard"
-	    }
-	}
+        "52??" -  
+        "53??" -  
+        "54??" -  
+        "55??" {
+            if {$numLen == 16} {
+                set type "MasterCard"
+            }
+        }
         
-	"4???" {
-	    if {$numLen == 13 || $numLen == 16} {
-		set type "VISA"
-	    }
-	}
+        "4???" {
+            if {$numLen == 13 || $numLen == 16} {
+                set type "VISA"
+            }
+        }
         
-	"34??" -  
-	"37??" {
-	    if {$numLen == 15}  {
-		set type "American Express"
-	    }
-	}
+        "34??" -  
+        "37??" {
+            if {$numLen == 15}  {
+                set type "American Express"
+            }
+        }
         
-	"300?" -  
-	"301?" -  
-	"302?" -  
-	"303?" - 
-	"304?" - 
-	"305?" -  
-	"36??" -   
-	"38??" {
-	    if {$numLen == 14} {
-		set type "Diners Club"
-	    }
-	}
+        "300?" -  
+        "301?" -  
+        "302?" -  
+        "303?" - 
+        "304?" - 
+        "305?" -  
+        "36??" -   
+        "38??" {
+            if {$numLen == 14} {
+                set type "Diners Club"
+            }
+        }
         
-	"6011" {
-	    if {$numLen == 16} {
-		set type "Discover/Novus"
-	    }
-	}
+        "6011" {
+            if {$numLen == 16} {
+                set type "Discover/Novus"
+            }
+        }
         
-	"2014" -  
-	"2149" {
-	    if {$numLen == 15} {
-		set type "enRoute"
-	    }
-
-	    # early exit for enRoute
-
-	    return $type  
-	}
-
+        "2014" -  
+        "2149" {
+            if {$numLen == 15} {
+                set type "enRoute"
+            }
+            
+            # early exit for enRoute
+            
+            return $type  
+        }
+        
         "3???" {
-	    if {$numLen == 16} {
-		set type "JCB"
-	    }
-	}
+            if {$numLen == 16} {
+                set type "JCB"
+            }
+        }
         
-	"2131" -  
-	"1800" {
-	    if {$numLen == 15} {
-		set type "JCB"
-	    }
-	}
+        "2131" -  
+        "1800" {
+            if {$numLen == 15} {
+                set type "JCB"
+            }
+        }
         
-	default {
-	    set type "-unknown-"
-	}
+        default {
+            set type "-unknown-"
+        }
     }
-
+    
     # Early exit if card type is unknown.
-
+    
     if {$type == "-unknown-"} {
         return $type
     } 
-
+    
     # If prefix and number of digits are ok, then apply the mod10
     # check. Initialize the running sum
-
+    
     set sum 0
-
+    
     # Sum every digit starting with the RIGHT-MOST digit on alternate
     # digits (starting with the NEXT-TO-THE-RIGHT-MOST digit). Then
     # sum all digits in the result of TWO TIMES the alternate digit
     # RATHER than the original digit itself. Catch this summing loop
     # in case there are non-digit values in the credit card number.
-
+    
     if {[catch { 
-	for {set i [expr $numLen - 1]} {$i >= 0} {} {
-	    incr sum [lindex $num $i]
-	    if {[incr i -1] >= 0} {
-		foreach adigit [split [expr 2 * [lindex $num $i]] {}] {
-		    incr sum $adigit
-		}
-		incr i -1
-	    }
-	} }] !=  0} {
+        for {set i [expr $numLen - 1]} {$i >= 0} {} {
+            incr sum [lindex $num $i]
+            if {[incr i -1] >= 0} {
+                foreach adigit [split [expr 2 * [lindex $num $i]] {}] {
+                    incr sum $adigit
+                }
+                incr i -1
+            }
+        } }] !=  0} {
         return "-unknown-"
     }
-
+    
     # Emulate a mod 10 (base 10) on the calculated number. If there is
     # any remainder, then the number IS NOT VALID so reset type to
     # -unknown-
-
+    
     set lsum [split $sum {}]
     if {[lindex $lsum [expr [llength $lsum] - 1]]} {
-	set type "-unknown-"
+        set type "-unknown-"
     }
-
+    
     return $type
 }
