@@ -66,7 +66,7 @@ if { $exception_count > 0 } {
 set title "Specify refund amount"
 set context [list [list index "Orders / Shipments / Refunds"] $title]
 
-set shipping_refund_percent [parameter -package_id [ec_id] -parameter ShippingRefundPercent]
+set shipping_refund_percent [parameter::get -package_id [ec_id] -parameter ShippingRefundPercent]
 if { ![info exists all_items_p] } {
     set item_id_list $item_id
     set sql [db_map all_items_select]
