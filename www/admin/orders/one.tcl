@@ -221,7 +221,7 @@ db_foreach financial_transactions_select "
         append financial_transaction_html $table_header
     }
     if {  $payment_gateway eq "authorize-gateway" || $payment_gateway eq "ezic-gateway" } {
-        set addrs_ver_service_cell "<td><include src=\"/packages/${payment_gateway}/lib/one\" transaction_id=\"${transaction_id}\" amount=\"${transaction_amount}\"></td>"
+        set addrs_ver_service_cell "<td>[ad_parse_template -params [list [list transaction_id $transaction_id] [list amount $transaction_amount]] "/packages/${payment_gateway}/lib/one"]</td>"
     } 
     append financial_transaction_html "<tr>
 	  <td>$transaction_id</td>
