@@ -194,7 +194,7 @@ set cash_amount_to_refund_html [ec_pretty_pure_price $cash_amount_to_refund]
 # Request the credit card number to be re-entered if it is no longer
 # on file, yet there is money to refund.
 set request_creditcard [expr { [empty_string_p $creditcard_number] && $cash_amount_to_refund > 0 } ] 
-if { $request_credit_card } {
+if { $request_creditcard } {
     set creditcard_widget_html [ec_creditcard_widget $creditcard_type disabled]
 } else {
     set export_form_vars_2_html [export_form_vars creditcard_id creditcard_number]
@@ -202,3 +202,4 @@ if { $request_credit_card } {
 
 set export_form_vars_cc_type_html [export_form_vars creditcard_type]
 set export_form_vars_last_4_html [export_form_vars creditcard_last_four]
+set ask_for_card_code [parameter::get -package_id [ec_id] -parameter PaymentCardCodeAsk -default 0]

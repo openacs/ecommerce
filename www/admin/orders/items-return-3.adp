@@ -19,14 +19,22 @@
          <td><input type="hidden" name="creditcard_id" value="@creditcard_id@"></td>
          <td> @creditcard_widget_html;noquote@ </td>
          <td><input type="text" name="creditcard_number" size="21" maxlength="17"></td>
+        
        </tr>
+<if @ask_for_card_code@ true>
+  <tr>
+    <td align="right">Card Security Code (cvv2/cvc2/cid):</td>
+    <td><input type="text" name="card_code" size="4" tabindex="42"</td>
+  </tr>
+</if>
+
 	<tr>
 	  <td>Ending in:</td>
 	  <td>xxxxxxxxxxxx@creditcard_last_four@</td>
-       <tr>
+       </tr><tr>
          <td>Expires:</td>
          <td>@card_expiration@</td>
-       <tr>
+       </tr><tr>
          <td valign="top">Billing address:</td>
          <td>@billing_street@<br>
 	     @billing_city@, @billing_state@ @billing_zip@<br>

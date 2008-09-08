@@ -42,6 +42,7 @@ ad_page_contract {
     creditcard_type:optional
     creditcard_number:optional
     creditcard_last_four:optional
+    {card_code ""}
 }
 
 # The customer service rep must be logged on and have admin
@@ -112,7 +113,7 @@ if { [expr $cash_amount_to_refund] > 0 } {
         # Make sure the credit card number matches the credit card
         # type # and that the number has the right number of digits.
 
-        set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type]
+        set additional_count_and_text [ec_creditcard_precheck $creditcard_number $creditcard_type $card_code]
     
         set exception_count [expr $exception_count + [lindex $additional_count_and_text 0]]
         append exception_text [lindex $additional_count_and_text 1]
@@ -216,7 +217,7 @@ while { $refund_amount > 0 } {
         # 24 hours after they have been marked for settlement.
 
         # make sure date does not choke on decimal times
-        regsub -- {\.[0-9]+$} $marked_date "" marked_date
+        regsub -- {\.[0-9]+} $marked_date "" marked_date
         set 24hr [expr 24 * 60 * 60]
         set time_since_marking [expr [clock seconds] - [clock scan $marked_date]]
         if { $time_since_marking > $24hr } {
