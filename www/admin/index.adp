@@ -9,8 +9,8 @@
 <h3>business operations</h3>
 <ul>
 <li><a href="orders/">Orders / Shipments / Refunds</a> <font size=-1>(@n_in_last_24_hours@ orders in last 24 hours; @n_in_last_7_days@ in last 7 days)</font></li>
-<li><a href="customer-service/">Customer Service</a> <font size=-1>(@num_open_issues@ open issues)</font></li>
-
+<li><a href="customer-service/">Customer Service</a> <font size=-1>(@num_open_issues@ open issues)</font>
+<ul><li><a href="customer-service/issues?view%5fissue%5ftype=all+others&view%5fstatus=closed&order%5fby=issue%5fid&view_open_date=last_24">System emails sent to users from ecommerce</a></li></ul></li>
 <if @user_classes_reqs_approval@>
 <li><a href="user-classes/">User Classes</a> <font size=-1>(@n_not_yet_approved@ not yet approved user@num_classes_not_yet_approved_plural@)</font></li>
 </if>
