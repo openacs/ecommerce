@@ -73,8 +73,7 @@
 
   <h2>Any technical requirements?</h2>
 
-  <p>Froogle::upload relies on the ftp package in <a
+  <p>Like OpenACS 5.3+, Froogle::upload relies on the ftp package in <a
   href="http://tcllib.sourceforge.net/">tcllib</a> to perform the
   actual Ftp upload. As such tcllib has to be installed and ecommerce
-  should be running on AOLserver 4.x or the <code>package require
-  ftp</code> in <code>froogle::upload</code> fails.</p>
+  should be running on AOLserver.</p>

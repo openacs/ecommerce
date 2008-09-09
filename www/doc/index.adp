@@ -3,16 +3,16 @@
   <property name="signatory">@signatory;noquote@</property>
   <property name="context_bar">@context_bar;noquote@</property>
 
-  <p>@package_name@ implements all the IT needs for a standard
-    business-to-consumer web service.  Most importantly, it is tightly
-    integrated with the rest of the Open Architecture Community System
-    (OpenACS).  This enables the site administrator to run a single
+  <p>@package_name@ implements a standard
+    business-to-consumer web shopping service.  Most importantly, it is tightly
+    integrated with the rest of OpenACS
+    Site administrator can run a single
     query to "find users who have participated in the discussion forum
     on at least ten separate occasions but who have not bought
-    anything yet", then spam those folks with gift certificates.</p>
+    anything yet", then contact those folks with gift certificates.</p>
 
   <p>In addition to the standard shopping cart and real-time credit
-    card billing that you'd expect in any ecommerce system, @package_name@
+    card billing, @package_name@
     provides a customer service submodule (call center support),
     security, user tracking, gift certificates, mailing lists, an
     auditing system, order fulfillment, order tracking, special offers,
@@ -29,21 +29,11 @@
     <li><a href="froogle">Froogle data feed</a></li>
   </ol>
 
-  <p>Notes from the transition from ACS 3.x to 4.x.</p>
 
-  <ol>
-    <li><a href="release">4.1a Release notes</a></li>
-    <li><a href="porting-diary">4.1a Porting diary</a></li>
-  </ol>
-
-  <blockquote>
-    <font size=-2 face="verdana, arial, helvetica">
       <p>If you just want to sell a handful of items and not build a
 	full online community, you might want to try 
 	 ArsDigita Shoppe (1999-2001), available from the Web Archive.org archives <a
 	href="http://web.archive.org/web/20011127071655/www.arsdigita.com/free-tools/shoppe.html">http://arsdigita.com/free-tools/shoppe.html</a>.</p>
-    </font>
-  </blockquote>
 
   <p>@package_name@ is part of the <a href="/doc">Open
   Architecture Community System (OpenACS)</a> originally developed
@@ -53,7 +43,7 @@
   href=mailto:wtem@olywa.net>Walter McGinnis</a>, and <a
   href="http://furfly.net">furfly.net</a> followed by a major overhaul
   by <a href="mailto:bart.teeuwisse@thecodemill.biz">Bart
-  Teeuwisse</a>.</p>
+  Teeuwisse</a> and incremental improvements by others in the OpenACS community.</p>
 
   <p>@package_name@ is free software; you can redistribute it
     and/or modify it under the terms of the GNU General Public License
@@ -68,3 +58,4 @@
   <p>A <a href="license">copy of the GNU General Public License</a> is
     included. If not write to the Free Software Foundation, Inc., 59
     Temple Place, Suite 330, Boston, MA 02111-1307 USA
+</p>

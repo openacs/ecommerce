@@ -24,53 +24,6 @@
 	right away!)</p>
     </li>
 
-  <blockquote>
-    
-    <p>You can start testing @package_name@ with a 30-day FREE TRIAL <a
-      href="https://www.verisign.com/cgi-bin/go.cgi?a=w181333180622000">VeriSign
-      test SSL key</a>. 
-    </p>
-
-  </blockquote>
-
-  <li>
-    
-    <p>These are the files in this @package_name@ release that you need to
-      have to run the package:</p>
-
-    
-    <table>
-      <tbody>
-	<tr>
-	  <th align="left">data model</th>
-	  <td>in packages/ecommerce/sql/ecommerce*.sql</td>
-	</tr>
-	<tr>
-	  <th align="left">documentation</th>
-	  <td>in packages/ecommerce/www/doc/*</td>
-	</tr>
-	<tr>
-	  <th align="left">scripts</th>
-	  <td>in packages/ecommerce/www</td>
-	</tr>
-	<tr>
-	  <th align="left">admin scripts</th>
-	  <td>in packages/ecommerce/www/admin/</td>
-	</tr>
-	<tr>
-	  <th align="left">tcl procs</th>
-	  <td>in packages/ecommerce/tcl</td>
-	</tr>
-	<tr>
-	  <th align="left">ecommerce parameters</th> 
-	  <td>that can be reached from <a
-	    href="/admin/site-map/">/admin/site-map/</a> (after
-	    mounting an instance of @package_name@).</td>
-	</tr>
-      </tbody>    
-    </table>
-  </li>
-
   <li>
     <p>Install @package_name@ package from <a href="http://openacs.org/">OpenACS</a>.</p>
   </li>
@@ -209,7 +162,7 @@
 
 
   <li>
-    <p>Optional: If you want to have products be "visible" to the Site
+    <p>Optional (and untested for OpenACS 5.2+): If you want to have products be "visible" to the Site
       Wide Search package then you need to install the <a
       href="/doc/search/">Site Wide Search
       Package</a>, including all of its requirements for installation.
@@ -769,5 +722,5 @@
     email Eve at <a
     href="mailto:eveander@arsdigita.com">eveander@arsdigita.com</a> or
     Janine at <a href="mailto:janine@furfly.net">janine@furfly.net</a>
-
+</p>
 

@@ -18,7 +18,7 @@
       subsubcategory and the site administrator can make product
       recommendations by category / subcategory / subsubcategory.</li>
 
-    <li>Via simple forms, the site administrator can upload any
+    <li>The site administrator can upload any
       desired information about products either into the database or
       into the file system.  Standard product information such as
       product name, regular price, etc., and admin-defined custom
@@ -180,7 +180,7 @@
       automatically insert commonly-used paragraphs into their
       emails.</li>
 
-    <li>"Spam" groups of users based on various criteria (date of last
+    <li>Contact groups of users based on various criteria (date of last
       visit, number of purchases, pages they've visited, mailing lists
       they've signed up for, etc.)</li>
 
