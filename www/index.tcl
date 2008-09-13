@@ -57,7 +57,7 @@ if { $user_is_logged_on && $user_session_id ne "0"} {
 #ec_create_new_session_if_necessary "" cookies_are_not_required
 
 set ec_user_string ""
-set register_url "/register?return_url=[ns_urlencode [ec_url]]"
+set register_url "/register/logout?return_url=[ns_urlencode [ec_url]]"
 
 # the base url allows us to switch connections to http from https if currently an https connection
 # for saving computing SSL resources only when necessary
