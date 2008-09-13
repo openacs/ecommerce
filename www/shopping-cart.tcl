@@ -12,6 +12,7 @@ ad_page_contract {
     product_id:optional
 }
 
+    set logout_url "/register/logout?return_url=[ns_urlencode "[ec_url]"]"
 # bottom links:
 # 1) continue shopping (always)
 

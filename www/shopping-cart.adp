@@ -9,8 +9,8 @@
 <include src="/packages/ecommerce/lib/searchbar">
 
 <if @user_id@ ne 0>
-  for @first_names@ @last_name@ (if you're not @first_names@ @last_name@, 
-  <a href="/register/">click here</a>).
+<p>  If you're not @first_names@ @last_name@, 
+  <a href="@logout_url@">click here</a>).</p>
 </if>
 
 <blockquote>
