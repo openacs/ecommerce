@@ -51,7 +51,7 @@
 
 <table width="90%">
 <multiple name="products">
-<if @products.rownum@ ge @start@ and @products.rownum@ le @end@>
+<if @products.rownum@ ge @start_row@ and @products.rownum@ le @end@>
 	      <tr valign=top>
 	        <td rowspan=2>
 <if @products.thumbnail_url@ not nil>
