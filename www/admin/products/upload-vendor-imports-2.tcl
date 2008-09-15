@@ -11,6 +11,7 @@ ad_page_contract {
   abbrev
 }
 
+set doc_body ""
 # We need them to be logged in
 ad_require_permission [ad_conn package_id] admin
 set user_id [ad_get_user_id]
