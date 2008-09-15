@@ -73,7 +73,7 @@ ad_proc -private ecds_sku_from_brand {
         regsub -all -- { } $brandname_new {-} brandname_new
         set brandname_new [string trim [string tolower $brandname_new]]
 
-        set sku "${brandname_new}${product_sku}"
+        set sku "${brandname_new}-${product_sku}"
     }
     return $sku
 }
@@ -137,16 +137,23 @@ ad_proc -private ecds_get_url {
     
     } else {
         # get file from url
-        if { [catch {set get_id [ns_http queue GET $url]} err ]} {
+        if { [catch {set get_id [ns_http queue $url]} err ]} {
             set page $err
+            ns_log Error "ecds_get_url: url=$url error: $err"
         } else {
             ns_log Notice "ecds_get_url: ns_httping $url"
             set flags ""
-            set status [ns_http wait $get_id page]
+            if { [catch { ns_http wait -result page -status status -timeout "15:0" $get_id } err2 ]} {
+                ns_log Error "ecds_get_url: ns_http wait $err"
+            }
     
-            if { $page eq "timeout" } {
+            if { ![info exists status] || $status ne "200" } {
                 # no page info returned, just return error
-                set page "Error: url timed out"
+                if { ![info exists status] } {
+                    set status "not exists"
+                }
+                set page "Error: url timed out with status $status"
+                ns_log Notice $page
             } else {
                 #ns_log Notice "ecds_get_url: adding page to file cache"
                 #put page into file cache
@@ -278,6 +285,7 @@ ad_proc -private ecds_get_image_from_url {
     
             if { [catch {set get_id [ns_http queue GET $url]} err ]} {
                 set page $err
+                ns_log Error "ecds_get_image_from_url: $error"
             } else {
                 ns_log Notice "ecds_get_image_from_url: ns_httping $url"
                 set flags ""
