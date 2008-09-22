@@ -28,7 +28,7 @@
     <querytext>
       insert into ec_items
       (item_id, product_id, color_choice, size_choice, style_choice, order_id, in_cart_date)
-      (select ec_item_id_sequence.nextval, :product_id, :color_choice, :size_choice, :style_choice, :order_id, current_timestamp 
+      (select nextval('ec_item_id_seq') as nextval, :product_id, :color_choice, :size_choice, :style_choice, :order_id, current_timestamp 
       where not exists (select 1 
           from ec_items 
           where order_id=:order_id 
