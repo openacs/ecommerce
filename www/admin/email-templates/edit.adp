@@ -4,6 +4,7 @@
 <h2>@title@</h2>
 
 <form method=post action="edit-2">
+@export_form_vars_html;noquote@
 <h3>For informational purposes</h3>
 
 <table noborder>
@@ -17,7 +18,7 @@
 <tr><td>Template ID</td><td>@email_template_id@</td></tr>
 <tr><td>Subject Line</td><td><input type=text name=subject size=30 value="@subject@"></td></tr>
 <tr><td valign=top>Message</td><td><TEXTAREA wrap=hard name=message cols=50 rows=15>@message@</TEXTAREA></td></tr>
-<tr><td valign=top>Issue Type*</td><td valign=top>@issue_type_widget_html;noquote</td></tr>
+<tr><td valign=top>Issue Type*</td><td valign=top>@issue_type_widget_html;noquote@</td></tr>
 </table>
 <br>
 <center>
