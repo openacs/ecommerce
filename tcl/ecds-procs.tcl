@@ -4,19 +4,19 @@ ad_library {
 
     @creation-date  Aug 2007
 
-    #default import procs requires these ec_custom_product_field_values fields defined
-    unitofmeasure
-    brandname
-    brandmodelnumber
-    minshipqty
-    shortdescription
-    longdescription
-    salesdescription
-    webcomments
-    productoptions
-    unspsccode
-    vendorsku
-
+    #default import procs requires these ec_custom_product_field_values fields defined as text types of length indicated.
+    unitofmeasure 200
+    brandname 200
+    brandmodelnumber 200
+    minshipqty 200
+    shortdescription 4000
+    longdescription 4000
+    salesdescription 4000
+    webcomments 4000
+    productoptions 4000
+    unspsccode 200
+    vendorsku 200
+    vendorabbrev 200
 }
 
 ad_proc -private ecds_is_natural_number {
@@ -137,14 +137,18 @@ ad_proc -private ecds_get_url {
     
     } else {
         # get file from url
-        if { [catch {set get_id [ns_http queue $url]} err ]} {
+	ns_log Notice "ecds_get_url: $url waiting 15 seconds before trying, in case we recently grabbed a url"
+			after 15000
+
+        if { [catch {set get_id [ns_http queue -timeout 65 $url]} err ]} {
             set page $err
             ns_log Error "ecds_get_url: url=$url error: $err"
         } else {
             ns_log Notice "ecds_get_url: ns_httping $url"
             set flags ""
-            if { [catch { ns_http wait -result page -status status -timeout "15:0" $get_id } err2 ]} {
-                ns_log Error "ecds_get_url: ns_http wait $err"
+# removed -timeout "30" from next statment, because it is unrecognized for this instance..
+            if { [catch { ns_http wait -result page -status status $get_id } err2 ]} {
+                ns_log Error "ecds_get_url: ns_http wait $err2"
             }
     
             if { ![info exists status] || $status ne "200" } {
@@ -192,7 +196,7 @@ ad_proc -private ecds_get_url {
                             set testita $errmsg
                         } else {
                             set testita $filepathname
-                            ns_log Notice "ecds_get_url: wgetting $image_url"
+                            ns_log Notice "ecds_get_url: wgetting $image_url (waiting 20 sec to ck)"
                             # wait 20 sec to see if file is gotten
                             after 20000
                             if { [file exists $filepathname] } {
@@ -256,7 +260,7 @@ ad_proc -private ecds_get_image_from_url {
                 set status "ERROR"
             } else {
                 # wait 20 sec to see if file is gotten
-                ns_log Notice "ecds_get_image_from_url: wgetting $url"
+                ns_log Notice "ecds_get_image_from_url: wgetting $url (waiting 20 sec to check)"
                 after 20000
                 if { [file exists $filepathname] } {
                     # success! file gotten, now we can process it
@@ -974,6 +978,8 @@ ad_proc -private ecds_import_product_from_vendor_site {
         product_id {
             db_0or1row get_product_sku_vendor_sku_if_product_exists {select a.sku as sku, c.vendorsku as vendor_sku from ec_products a, ec_custom_product_field_values c where a.product_id = c.product_id and a.product_id =:product_ref }
 }
+
+
     }
 
     if { [string equal $product_ref_type "vendor"] && [string length $vendor] > 0 } {
@@ -1001,32 +1007,106 @@ ad_proc -private ecds_import_product_from_vendor_site {
 
             #ec_custom_product_field_values fields
             set ec_custom_fields_array(unitofmeasure) [ecdsii_${vendor}_units $page]
+	    if { [string length $ec_custom_fields_array(unitofmeasure)] > 198 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: unitofmeasure too long, the extra clipped is: [string range $ec_custom_fields_array(unitofmeasure) 198 end]"
+		set ec_custom_fields_array(unitofmeasure) [string range $ec_custom_fields_array(unitofmeasure) 0 198]
+	    }
             set ec_custom_fields_array(brandname) [ecdsii_${vendor}_brand_name $page]
+	    if { [string length $ec_custom_fields_array(brandname)] > 198 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: brandname too long, the extra clipped is: [string range $ec_custom_fields_array(brandname) 198 end]"
+		set ec_custom_fields_array(brandname) [string range $ec_custom_fields_array(brandname) 0 198]
+	    }
             set ec_custom_fields_array(brandmodelnumber) [ecdsii_${vendor}_brand_model_number $page]
+	    if { [string length $ec_custom_fields_array(brandmodelnumber)] > 198 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: brandmodelnumber too long, the extra clipped is: [string range $ec_custom_fields_array(brandmodelnumber) 198 end]"
+		set ec_custom_fields_array(brandmodelnumber) [string range $ec_custom_fields_array(brandmodelnumber) 0 198]
+	    }
             set ec_custom_fields_array(minshipqty) [ecdsii_${vendor}_min_ship_qty $page]
+	    if { [string length $ec_custom_fields_array(minshipqty)] > 198 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: minshipqty too long, the extra clipped is: [string range $ec_custom_fields_array(minshipqty) 198 end]"
+		set ec_custom_fields_array(minshipqty) [string range $ec_custom_fields_array(minshipqty) 0 198]
+	    }
             set ec_custom_fields_array(shortdescription) [ecdsii_${vendor}_short_description $page]
+	    if { [string length $ec_custom_fields_array(shortdescription)] > 3998 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: shortdescription too long, the extra clipped is: [string range $ec_custom_fields_array(shortdescription) 3998 end]"
+		set ec_custom_fields_array(shortdescription) [string range $ec_custom_fields_array(shortdescription) 0 3998]
+	    }
             set ec_custom_fields_array(longdescription) [ecdsii_${vendor}_long_description $page]
+	    if { [string length $ec_custom_fields_array(longdescription)] > 3998 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: longdescription too long, the extra clipped is: [string range $ec_custom_fields_array(longdescription) 3998 end]"
+		set ec_custom_fields_array(longdescription) [string range $ec_custom_fields_array(longdescription) 0 3998]
+	    }
 
             set ec_custom_fields_array(salesdescription) [ecdsii_${vendor}_sales_description $page]
+	    if { [string length $ec_custom_fields_array(salesdescription)] > 3998 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: salesdescription too long, the extra clipped is: [string range $ec_custom_fields_array(salesdescription) 3998 end]"
+		set ec_custom_fields_array(salesdescription) [string range $ec_custom_fields_array(salesdescription) 0 3998]
+	    }
             set ec_custom_fields_array(webcomments) [ecdsii_${vendor}_web_comments $page]
+	    if { [string length $ec_custom_fields_array(webcomments)] > 3998 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: webcomments too long, the extra clipped is: [string range $ec_custom_fields_array(webcomments) 3998 end]"
+		set ec_custom_fields_array(webcomments) [string range $ec_custom_fields_array(webcomments) 0 3998]
+	    }
+
             set ec_custom_fields_array(productoptions) [ecdsii_${vendor}_product_options $page]
+	    if { [string length $ec_custom_fields_array(productoptions)] > 3998 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: productoptions too long, the extra clipped is: [string range $ec_custom_fields_array(productoptions) 3998 end]"
+		set ec_custom_fields_array(productoptions) [string range $ec_custom_fields_array(productoptions) 0 3998]
+	    }
             set ec_custom_fields_array(unspsccode) [ecdsii_${vendor}_unspsc_code $page]
+	    if { [string length $ec_custom_fields_array(unspsccode)] > 198 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: unspsccode too long, the extra clipped is: [string range $ec_custom_fields_array(unspsccode) 198 end]"
+		set ec_custom_fields_array(unspsccode) [string range $ec_custom_fields_array(unspsccode) 0 198]
+	    }
             set ec_custom_fields_array(vendorsku) $vendor_sku
+	    if { [string length $ec_custom_fields_array(vendorsku)] > 198 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: vendorsku too long, the extra clipped is: [string range $ec_custom_fields_array(vendorsku) 198 end]"
+		set ec_custom_fields_array(vendorsku) [string range $ec_custom_fields_array(vendorsku) 0 198]
+	    }
+            set ec_custom_fields_array(vendorabbrev) $vendor
+	    if { [string length $ec_custom_fields_array(vendorabbrev)] > 198 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: vendorabbrev too long, the extra clipped is: [string range $ec_custom_fields_array(vendorabbrev) 198 end]"
+		set ec_custom_fields_array(vendorabbrev) [string range $ec_custom_fields_array(vendorabbrev) 0 198]
+	    }
 
             #ec_products fields
             set ec_products_array(sku) [ecds_sku_from_brand $ec_custom_fields_array(brandname) $ec_custom_fields_array(brandmodelnumber) $sku]
-ns_log Notice "ecds_import_product_from_vendor_site: sku = $ec_products_array(sku)"
+	    if { [string length $ec_products_array(sku)] > 98 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: sku too long, the extra clipped is: [string range $ec_products_array(sku) 98 end]"
+		set ec_products_array(sku) [string range $ec_products_array(sku) 0 98]
+	    }
+	    ns_log Notice "ecds_import_product_from_vendor_site: sku = $ec_products_array(sku)"
             set sku $ec_products_array(sku)
+
             set ec_products_array(stock_status) [ecdsii_${vendor}_stock_status $page]
             # unit_price:
             set ec_products_array(price) [ecdsii_${vendor}_unit_price $page]
             # ship weight:
             set ec_products_array(weight) [ecdsii_${vendor}_ship_weight $page]
             set ec_products_array(product_name) [ecdsii_${vendor}_product_name $page]
+	    if { [string length $ec_products_array(product_name)] > 198 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: product_name too long, the extra clipped is: [string range $ec_products_array(product_name) 198 end]"
+		set ec_products_array(product_name) [string range $ec_products_array(product_name) 0 198]
+	    }
+
             set ec_products_array(one_line_description) [ecdsii_${vendor}_one_line_description $page]
+	    if { [string length $ec_products_array(one_line_description)] > 398 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: one_line_description too long, the extra clipped is: [string range $ec_products_array(one_line_description) 398 end]"
+		set ec_products_array(one_line_description) [string range $ec_products_array(one_line_description) 0 398]
+	    }
+
             set ec_products_array(detailed_description) [ecdsii_${vendor}_detailed_description $page]
+	    if { [string length $ec_products_array(detailed_description)] > 3998 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: detailed_description too long, the extra clipped is: [string range $ec_products_array(detailed_description) 3998 end]"
+		set ec_products_array(detailed_description) [string range $ec_products_array(detailed_description) 0 3998]
+	    }
 
             set ec_products_array(search_keywords) "$ec_products_array(one_line_description)"
+	    if { [string length $ec_products_array(search_keywords)] > 3998 } {
+		ns_log Warning "ecds_import_product_from_vendor_site: search_keywords too long, the extra clipped is: [string range $ec_products_array(search_keywords) 3998 end]"
+		set ec_products_array(search_keywords) [string range $ec_products_array(search_keywords) 0 3998]
+	    }
+
             set ec_products_array(no_shipping_avail_p) [ecdsii_${vendor}_no_shipping_avail_p $page]
             set ec_products_array(shipping) [ecdsii_${vendor}_ec_shipping $page]
             set ec_products_array(shipping_additional) [ecdsii_${vendor}_ec_shipping_additional $page]
@@ -1099,11 +1179,11 @@ ad_proc -private ecds_add_product_to_ec_products {
 } {
   Adds product to ec_products. Requires a newly created product_id
 } {
-    upvar $ec_products_array ec_prods_arr $user_class_prices uclass_pri_arr $ec_custom_fields_array ec_custom_flds_arr
+    upvar $ec_products_array ec_prods_arr $user_class_prices uclass_pri_arr $ec_custom_fields_array ec_custom_fields_arr
     ad_require_permission [ad_conn package_id] admin
 
     template::util::array_to_vars ec_prods_arr
-    template::util::array_to_vars ec_custom_flds_arr
+    template::util::array_to_vars ec_custom_fields_arr
 
     # the custom product fields may or may not exist
     # and price$user_class_id for all the user classes may or may not exist
