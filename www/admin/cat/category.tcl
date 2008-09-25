@@ -49,7 +49,7 @@ db_foreach get_subcat_info_loop "select subcategory_id, sort_key, subcategory_na
     set old_sort_key $sort_key
     append subcat_info_loop_html "<tr><td> <a href=\"subcategory?[export_url_vars category_id category_name subcategory_id subcategory_name]\">$subcategory_name</a> </td>"
 }
-set sort_key [expr { $old_sort_key + ( $old_sort_key * 3 / $subcategory_counter ) } ]
+set sort_key [expr { $old_sort_key + round( $old_sort_key * 3 / ( $subcategory_counter + 1.)  ) } ]
 append subcat_info_loop_html "<td> <a href=\"subcategory-add-0?[export_url_vars category_id category_name]&prev_sort_key=$old_sort_key&next_sort_key=$sort_key\">insert after</a> </td><td> &nbsp; </td></tr>\n"
 
 set subcat_add_html " <a href=\"subcategory-add-0?[export_url_vars category_id category_name]&prev_sort_key=1&next_sort_key=2\">Add a subcategory</a>."
