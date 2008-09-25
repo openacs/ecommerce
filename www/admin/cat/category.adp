@@ -26,5 +26,5 @@
 </table>
 </if><else>
 <p>No subcategories found.</p>
-</else>
 <p>@subcat_add_html;noquote@</p>
+</else>
