@@ -349,7 +349,7 @@ ad_proc -private ecds_import_image_to_ecommerce {
     set convert [ec_convert_path]
     # check imagename
     if { [string match -nocase {*picsn.jpg} $image_filepathname ] || [empty_string_p $image_filepathname] || [string match -nocase *avail* $image_filepathname ] } {
-       #  image_filepathname is "notavail.jpg"
+       #  image_filepathname is "notavail.jpg" or picsn.jpg or xl-*
        # do not process
     } else {
         db_1row get_product_dirname "select dirname from ec_products where product_id = :product_id"
@@ -375,7 +375,7 @@ ad_proc -private ecds_import_image_to_ecommerce {
         }
 
         if { [catch {file copy $image_filepathname $product_image_location} errmsg] } {
-            ns_log Warning "Ref 50: while creating product image: $errmsg"
+            ns_log Warning "ecds_import_image_to_ecommerce (50): while creating product image: $errmsg"
             set serious_errors 1
         } else {
             # create thumbnail
@@ -1007,75 +1007,75 @@ ad_proc -private ecds_import_product_from_vendor_site {
 
             #ec_custom_product_field_values fields
             set ec_custom_fields_array(unitofmeasure) [ecdsii_${vendor}_units $page]
-	    if { [string length $ec_custom_fields_array(unitofmeasure)] > 198 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: unitofmeasure too long, the extra clipped is: [string range $ec_custom_fields_array(unitofmeasure) 198 end]"
-		set ec_custom_fields_array(unitofmeasure) [string range $ec_custom_fields_array(unitofmeasure) 0 198]
-	    }
+            if { [string length $ec_custom_fields_array(unitofmeasure)] > 198 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} unitofmeasure too long, the extra clipped is: [string range $ec_custom_fields_array(unitofmeasure) 198 end]"
+                set ec_custom_fields_array(unitofmeasure) [string range $ec_custom_fields_array(unitofmeasure) 0 198]
+            }
             set ec_custom_fields_array(brandname) [ecdsii_${vendor}_brand_name $page]
-	    if { [string length $ec_custom_fields_array(brandname)] > 198 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: brandname too long, the extra clipped is: [string range $ec_custom_fields_array(brandname) 198 end]"
-		set ec_custom_fields_array(brandname) [string range $ec_custom_fields_array(brandname) 0 198]
-	    }
+            if { [string length $ec_custom_fields_array(brandname)] > 198 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} brandname too long, the extra clipped is: [string range $ec_custom_fields_array(brandname) 198 end]"
+                set ec_custom_fields_array(brandname) [string range $ec_custom_fields_array(brandname) 0 198]
+            }
             set ec_custom_fields_array(brandmodelnumber) [ecdsii_${vendor}_brand_model_number $page]
-	    if { [string length $ec_custom_fields_array(brandmodelnumber)] > 198 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: brandmodelnumber too long, the extra clipped is: [string range $ec_custom_fields_array(brandmodelnumber) 198 end]"
-		set ec_custom_fields_array(brandmodelnumber) [string range $ec_custom_fields_array(brandmodelnumber) 0 198]
-	    }
+            if { [string length $ec_custom_fields_array(brandmodelnumber)] > 198 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} brandmodelnumber too long, the extra clipped is: [string range $ec_custom_fields_array(brandmodelnumber) 198 end]"
+                set ec_custom_fields_array(brandmodelnumber) [string range $ec_custom_fields_array(brandmodelnumber) 0 198]
+            }
             set ec_custom_fields_array(minshipqty) [ecdsii_${vendor}_min_ship_qty $page]
-	    if { [string length $ec_custom_fields_array(minshipqty)] > 198 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: minshipqty too long, the extra clipped is: [string range $ec_custom_fields_array(minshipqty) 198 end]"
-		set ec_custom_fields_array(minshipqty) [string range $ec_custom_fields_array(minshipqty) 0 198]
-	    }
+            if { [string length $ec_custom_fields_array(minshipqty)] > 198 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} minshipqty too long, the extra clipped is: [string range $ec_custom_fields_array(minshipqty) 198 end]"
+                set ec_custom_fields_array(minshipqty) [string range $ec_custom_fields_array(minshipqty) 0 198]
+            }
             set ec_custom_fields_array(shortdescription) [ecdsii_${vendor}_short_description $page]
-	    if { [string length $ec_custom_fields_array(shortdescription)] > 3998 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: shortdescription too long, the extra clipped is: [string range $ec_custom_fields_array(shortdescription) 3998 end]"
-		set ec_custom_fields_array(shortdescription) [string range $ec_custom_fields_array(shortdescription) 0 3998]
-	    }
+            if { [string length $ec_custom_fields_array(shortdescription)] > 3998 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} shortdescription too long, the extra clipped is: [string range $ec_custom_fields_array(shortdescription) 3998 end]"
+                set ec_custom_fields_array(shortdescription) [string range $ec_custom_fields_array(shortdescription) 0 3998]
+            }
             set ec_custom_fields_array(longdescription) [ecdsii_${vendor}_long_description $page]
-	    if { [string length $ec_custom_fields_array(longdescription)] > 3998 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: longdescription too long, the extra clipped is: [string range $ec_custom_fields_array(longdescription) 3998 end]"
-		set ec_custom_fields_array(longdescription) [string range $ec_custom_fields_array(longdescription) 0 3998]
-	    }
+            if { [string length $ec_custom_fields_array(longdescription)] > 3998 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} longdescription too long, the extra clipped is: [string range $ec_custom_fields_array(longdescription) 3998 end]"
+                set ec_custom_fields_array(longdescription) [string range $ec_custom_fields_array(longdescription) 0 3998]
+            }
 
             set ec_custom_fields_array(salesdescription) [ecdsii_${vendor}_sales_description $page]
-	    if { [string length $ec_custom_fields_array(salesdescription)] > 3998 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: salesdescription too long, the extra clipped is: [string range $ec_custom_fields_array(salesdescription) 3998 end]"
-		set ec_custom_fields_array(salesdescription) [string range $ec_custom_fields_array(salesdescription) 0 3998]
-	    }
+            if { [string length $ec_custom_fields_array(salesdescription)] > 3998 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} salesdescription too long, the extra clipped is: [string range $ec_custom_fields_array(salesdescription) 3998 end]"
+                set ec_custom_fields_array(salesdescription) [string range $ec_custom_fields_array(salesdescription) 0 3998]
+            }
             set ec_custom_fields_array(webcomments) [ecdsii_${vendor}_web_comments $page]
-	    if { [string length $ec_custom_fields_array(webcomments)] > 3998 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: webcomments too long, the extra clipped is: [string range $ec_custom_fields_array(webcomments) 3998 end]"
-		set ec_custom_fields_array(webcomments) [string range $ec_custom_fields_array(webcomments) 0 3998]
-	    }
+            if { [string length $ec_custom_fields_array(webcomments)] > 3998 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} webcomments too long, the extra clipped is: [string range $ec_custom_fields_array(webcomments) 3998 end]"
+                set ec_custom_fields_array(webcomments) [string range $ec_custom_fields_array(webcomments) 0 3998]
+            }
 
             set ec_custom_fields_array(productoptions) [ecdsii_${vendor}_product_options $page]
-	    if { [string length $ec_custom_fields_array(productoptions)] > 3998 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: productoptions too long, the extra clipped is: [string range $ec_custom_fields_array(productoptions) 3998 end]"
-		set ec_custom_fields_array(productoptions) [string range $ec_custom_fields_array(productoptions) 0 3998]
-	    }
+            if { [string length $ec_custom_fields_array(productoptions)] > 3998 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} productoptions too long, the extra clipped is: [string range $ec_custom_fields_array(productoptions) 3998 end]"
+                set ec_custom_fields_array(productoptions) [string range $ec_custom_fields_array(productoptions) 0 3998]
+            }
             set ec_custom_fields_array(unspsccode) [ecdsii_${vendor}_unspsc_code $page]
-	    if { [string length $ec_custom_fields_array(unspsccode)] > 198 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: unspsccode too long, the extra clipped is: [string range $ec_custom_fields_array(unspsccode) 198 end]"
-		set ec_custom_fields_array(unspsccode) [string range $ec_custom_fields_array(unspsccode) 0 198]
-	    }
+            if { [string length $ec_custom_fields_array(unspsccode)] > 198 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} unspsccode too long, the extra clipped is: [string range $ec_custom_fields_array(unspsccode) 198 end]"
+                set ec_custom_fields_array(unspsccode) [string range $ec_custom_fields_array(unspsccode) 0 198]
+            }
             set ec_custom_fields_array(vendorsku) $vendor_sku
-	    if { [string length $ec_custom_fields_array(vendorsku)] > 198 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: vendorsku too long, the extra clipped is: [string range $ec_custom_fields_array(vendorsku) 198 end]"
-		set ec_custom_fields_array(vendorsku) [string range $ec_custom_fields_array(vendorsku) 0 198]
-	    }
+            if { [string length $ec_custom_fields_array(vendorsku)] > 198 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} vendorsku too long, the extra clipped is: [string range $ec_custom_fields_array(vendorsku) 198 end]"
+                set ec_custom_fields_array(vendorsku) [string range $ec_custom_fields_array(vendorsku) 0 198]
+            }
             set ec_custom_fields_array(vendorabbrev) $vendor
-	    if { [string length $ec_custom_fields_array(vendorabbrev)] > 198 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: vendorabbrev too long, the extra clipped is: [string range $ec_custom_fields_array(vendorabbrev) 198 end]"
-		set ec_custom_fields_array(vendorabbrev) [string range $ec_custom_fields_array(vendorabbrev) 0 198]
-	    }
+            if { [string length $ec_custom_fields_array(vendorabbrev)] > 198 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} vendorabbrev too long, the extra clipped is: [string range $ec_custom_fields_array(vendorabbrev) 198 end]"
+                set ec_custom_fields_array(vendorabbrev) [string range $ec_custom_fields_array(vendorabbrev) 0 198]
+            }
 
             #ec_products fields
             set ec_products_array(sku) [ecds_sku_from_brand $ec_custom_fields_array(brandname) $ec_custom_fields_array(brandmodelnumber) $sku]
-	    if { [string length $ec_products_array(sku)] > 98 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: sku too long, the extra clipped is: [string range $ec_products_array(sku) 98 end]"
-		set ec_products_array(sku) [string range $ec_products_array(sku) 0 98]
-	    }
-	    ns_log Notice "ecds_import_product_from_vendor_site: sku = $ec_products_array(sku)"
+            if { [string length $ec_products_array(sku)] > 98 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} sku too long, the extra clipped is: [string range $ec_products_array(sku) 98 end]"
+                set ec_products_array(sku) [string range $ec_products_array(sku) 0 98]
+            }
+            ns_log Notice "ecds_import_product_from_vendor_site: ref. ${product_ref} sku = $ec_products_array(sku)"
             set sku $ec_products_array(sku)
 
             set ec_products_array(stock_status) [ecdsii_${vendor}_stock_status $page]
@@ -1084,28 +1084,28 @@ ad_proc -private ecds_import_product_from_vendor_site {
             # ship weight:
             set ec_products_array(weight) [ecdsii_${vendor}_ship_weight $page]
             set ec_products_array(product_name) [ecdsii_${vendor}_product_name $page]
-	    if { [string length $ec_products_array(product_name)] > 198 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: product_name too long, the extra clipped is: [string range $ec_products_array(product_name) 198 end]"
-		set ec_products_array(product_name) [string range $ec_products_array(product_name) 0 198]
-	    }
+            if { [string length $ec_products_array(product_name)] > 198 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} product_name too long, the extra clipped is: [string range $ec_products_array(product_name) 198 end]"
+                set ec_products_array(product_name) [string range $ec_products_array(product_name) 0 198]
+            }
 
             set ec_products_array(one_line_description) [ecdsii_${vendor}_one_line_description $page]
-	    if { [string length $ec_products_array(one_line_description)] > 398 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: one_line_description too long, the extra clipped is: [string range $ec_products_array(one_line_description) 398 end]"
-		set ec_products_array(one_line_description) [string range $ec_products_array(one_line_description) 0 398]
-	    }
+            if { [string length $ec_products_array(one_line_description)] > 398 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} one_line_description too long, the extra clipped is: [string range $ec_products_array(one_line_description) 398 end]"
+                set ec_products_array(one_line_description) [string range $ec_products_array(one_line_description) 0 398]
+            }
 
             set ec_products_array(detailed_description) [ecdsii_${vendor}_detailed_description $page]
-	    if { [string length $ec_products_array(detailed_description)] > 3998 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: detailed_description too long, the extra clipped is: [string range $ec_products_array(detailed_description) 3998 end]"
-		set ec_products_array(detailed_description) [string range $ec_products_array(detailed_description) 0 3998]
-	    }
+            if { [string length $ec_products_array(detailed_description)] > 3998 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} detailed_description too long, the extra clipped is: [string range $ec_products_array(detailed_description) 3998 end]"
+                set ec_products_array(detailed_description) [string range $ec_products_array(detailed_description) 0 3998]
+            }
 
             set ec_products_array(search_keywords) "$ec_products_array(one_line_description)"
-	    if { [string length $ec_products_array(search_keywords)] > 3998 } {
-		ns_log Warning "ecds_import_product_from_vendor_site: search_keywords too long, the extra clipped is: [string range $ec_products_array(search_keywords) 3998 end]"
-		set ec_products_array(search_keywords) [string range $ec_products_array(search_keywords) 0 3998]
-	    }
+            if { [string length $ec_products_array(search_keywords)] > 3998 } {
+                ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} search_keywords too long, the extra clipped is: [string range $ec_products_array(search_keywords) 3998 end]"
+                set ec_products_array(search_keywords) [string range $ec_products_array(search_keywords) 0 3998]
+            }
 
             set ec_products_array(no_shipping_avail_p) [ecdsii_${vendor}_no_shipping_avail_p $page]
             set ec_products_array(shipping) [ecdsii_${vendor}_ec_shipping $page]
@@ -1147,17 +1147,22 @@ ad_proc -private ecds_import_product_from_vendor_site {
                     # generate a product_id
                     set product_id [db_nextval acs_object_id_seq]
                     ecds_add_product_to_ec_products $product_id ec_products_array user_class_prices $category_id_list $subcategory_id_list $subsubcategory_id_list ec_custom_fields_array
-ns_log Notice "adding product_id $product_id"
+                    ns_log Notice "adding product_id $product_id"
                 } else {
                     # update sql
                     ecds_update_ec_products_product $product_id ec_products_array user_class_prices $category_id_list $subcategory_id_list $subsubcategory_id_list ec_custom_fields_array
-ns_log Notice "updating product_id $product_id"
+                    ns_log Notice "updating product_id $product_id"
                 }
                 # now we have a product_id
 
                 # this requires an existing product 
                 if { $image_import_location ne "ERROR" } {
-                    ecds_import_image_to_ecommerce $product_id $image_import_location
+                    #was ecds_import_image_to_ecommerce $product_id $image_import_location
+                    if { $import_mode eq "create" } {
+                        ecommerce::resource::make_product_images -product_id $product_id -tmp_filename $image_import_location -product_name $ec_products_array(product_name)
+                    } else {
+                        ecommerce::resource::make_product_images -product_id $product_id -tmp_filename $image_import_location
+                    }
                 }
             }
             return $import_conditions_met  
@@ -1676,12 +1681,13 @@ ad_proc -private ecds_create_ec_category {
 } {
     if { ![ecds_is_natural_number $category_id] || ![ecds_is_natural_number $sort_key] } {
         db_1row get_ec_category_maxes "select max(category_id) as max_category_id, max(sort_key) as max_sort_key from ec_categories"
+        set category_id [db_nextval ec_category_id_sequence]
         if { ![info exists max_sort_key] } {
             set max_sort_key 512
             set max_category_id 0
         }
         set sort_key [expr { $max_sort_key + 512 } ]
-        set category_id [expr { $max_category_id + 1 } ]
+        set category_id [ec_max [expr { $max_category_id + 1 } ] $category_id]
     }  
     # make sure values are uniqe in context of other categories
     set existing_rows_list [db_list get_category_confirmation "select category_id as cat_id from ec_categories
@@ -1718,7 +1724,7 @@ ad_proc -private ecds_create_ec_subcategory {
         db_1row get_ec_subcategory_id_max "select max(subcategory_id) as max_subcategory_id, max(sort_key) as max_sort_key from ec_subcategories"
         db_1row get_ec_subcategory_sortkey_max "select max(sort_key) as min_sort_key from ec_subcategories where category_id =:category_id and subcategory_name < :subcategory_name"
         db_1row get_ec_subcategory_sortkey_min "select min(sort_key) as max_sort_key from ec_subcategories where category_id =:category_id and subcategory_name > :subcategory_name"
-        
+        set subcategory_id [db_nextval ec_subcategory_id_sequence]
         if { ![ecds_is_natural_number $max_subcategory_id] } {
             set max_subcategory_id 0
         }
@@ -1730,7 +1736,7 @@ ad_proc -private ecds_create_ec_subcategory {
         }
 
         set sort_key [expr { int( ($max_sort_key + $min_sort_key ) / 2. + rand() * 10. )  } ]
-        set subcategory_id [expr { $max_subcategory_id + 1 } ]
+        set subcategory_id [ec_max [expr { $max_subcategory_id + 1 } ] $subcategory_id]
     }  
     # make sure values are uniqe in context of other categories
     set existing_rows_list [db_list get_subcategory_confirmation "select subcategory_id,subcategory_name, sort_key from ec_subcategories
@@ -1775,9 +1781,9 @@ ad_proc -private ecds_create_ec_subsubcategory {
         db_1row get_ec_subsubcategory_id_max "select max(subsubcategory_id) as max_subsubcategory_id, max(sort_key) as max_sort_key from ec_subsubcategories"
         db_1row get_ec_subsubcategory_sortkey_max "select max(sort_key) as max_sort_key from ec_subsubcategories where category_id =:category_id and subsubcategory_name < :subsubcategory_name"
         db_1row get_ec_subsubcategory_sortkey_min "select min(sort_key) as min_sort_key from ec_subsubcategories where category_id =:category_id and subsubcategory_name > :subsubcategory_name"
-        
+        set subsubcategory_id [db_nextval ec_subsubcategory_id_sequence]
         set sort_key [expr { int( ($max_sort_key + $min_sort_key ) / 2 )  } ]
-        set subsubcategory_id [expr { $max_subsubcategory_id + 1} ]
+        set subsubcategory_id [ec_max [expr { $max_subsubcategory_id + 1} ] $subsubcategory_id]
     }  
     # make sure values are uniqe in context of other categories
     set existing_rows_list [db_list get_subsubcategory_confirmation "select subsubcategory_id,subsubcategory_name, sort_key from ec_subsubcategories
