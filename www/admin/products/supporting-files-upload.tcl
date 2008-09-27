@@ -35,7 +35,9 @@ if { $dirname_exists } {
         set file [lindex [file split $file_name] end]
         if { [string match {product.[jg][pi][gf]} $file] } {
             # do not show it
+            append file_list_html "<li><a href=\"[ec_url]product-file/$subdirectory/$dirname/$file\">$file</a> \[<a href=\"supporting-file-delete?[export_url_vars file product_id]\">delete</a>]</li>\n"
         } elseif { [string match {product-thumbnail.jpg} $file] } {
+            append file_list_html "<li><a href=\"[ec_url]product-file/$subdirectory/$dirname/$file\">$file</a> \[<a href=\"supporting-file-delete?[export_url_vars file product_id]\">delete</a>]</li>\n"
             # do not show it
         } else {
             append file_list_html "<li><a href=\"[ec_url]product-file/$subdirectory/$dirname/$file\">$file</a> \[<a href=\"supporting-file-delete?[export_url_vars file product_id]\">delete</a>]</li>\n"

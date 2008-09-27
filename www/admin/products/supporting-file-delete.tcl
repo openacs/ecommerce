@@ -17,7 +17,7 @@ set product_name [ec_product_name $product_id]
 set title "Delete Supporting File for $product_name"
 set context [list [list index Products] $title]
 set comments ""
-if { [string match "product-*.jpg" $file } {
-    set comments "Note: this file is the thumbnail picture of the product.  If you delete it, the customer will not be able to see what the product looks like."
+if { [string match "product*.jpg" $file] || [string match "product.gif" $file] } {
+    set comments "Note: this file is a picture of the product.  If you delete it, the customer will not be able to see what the product looks like."
 }
 set export_form_vars_html [export_form_vars file product_id]
