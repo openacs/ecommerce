@@ -21,7 +21,7 @@ ad_page_contract {
     {combocategory_id ""}
     {category_id ""}
     {subcategory_id ""}
-    {rows_per_page:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
+    {rows_per_page:naturalnum {[parameter::get -package_id [ec_id] -parameter ProductsToDisplayPerPage -default 10]}}
     {start_row:naturalnum "0"}
     usca_p:optional
 }
@@ -112,7 +112,7 @@ set page_count 0
 db_1row get_search_count $query_count_string 
 
 set have_how_many_more_p "f"
-set end_row_of_next_page [expr $start_row + (2 * $rows_per_page)]
+set end_row_of_next_page [expr { $start_row + ( 2 * $rows_per_page) } ]
 db_foreach get_product_listing_from_search $query_string {
 
     if {[f::even_p $page_count]} {
@@ -165,7 +165,7 @@ if { $search_count == 0 } {
 } else {
     set search_results "<p> $search_count [ec_decode $search_count "1" "item found." "items found, most relevant first."]</p>"
     if { $start_row != 0 || $search_count > $rows_per_page } {
-        if { [info exists last_row_this_page] } {
+        if { [info exists last_row_this_page] } {           
             append search_results "<p>Showing items [expr $start_row + 1] to $last_row_this_page.</p>"
         } else {
             append search_results "<p>Display scope out of range of search results.</p>"
@@ -177,17 +177,3 @@ set title "${category_name}"
 set context [list $title]
 set ec_system_owner [ec_system_owner]
 
-db_release_unused_handles
-ad_return_template
-
-
-if { $search_count == 0 } {
-    set search_results "No products found."
-} else {
-    set search_results "<p> $search_count [ec_decode $search_count "1" "item found." "items found, most relevant first."]</p>$search_string"
-}
-
-set ec_system_owner [ec_system_owner]
-
-db_release_unused_handles
-ad_return_template
