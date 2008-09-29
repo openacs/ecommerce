@@ -19,10 +19,7 @@ ad_page_contract {
     quantity:array,naturalnum
 }
 
-
 set user_session_id [ec_get_user_session_id]
-
-
 
 if { $user_session_id == 0 } {
     doc_return  200 text/html "[ad_header "No Cart Found"]<h2>No Shopping Cart Found</h2>
@@ -95,61 +92,61 @@ db_foreach get_products_w_attribs  "
 #    set style_choice [lindex $product_color_size_style 3]
 
 set max_quantity_to_add [parameter::get -parameter CartMaxToAdd]
-	 
+     
 db_transaction {
 
     foreach product_color_size_style [array names quantity] {
 
-	set product_lookup $product_color_size_style
+        set product_lookup $product_color_size_style
 
-	regsub -all "{" $product_lookup {} product_lookup
-	regsub -all "}" $product_lookup {} product_lookup
-	
-	if { [info exists real_quantity($product_lookup)] } {
+        regsub -all "{" $product_lookup {} product_lookup
+        regsub -all "}" $product_lookup {} product_lookup
+    
+        if { [info exists real_quantity($product_lookup)] } {
 
-	    set quantity_to_add "[expr $quantity($product_color_size_style) - $real_quantity($product_lookup)]"
+            set quantity_to_add "[expr $quantity($product_color_size_style) - $real_quantity($product_lookup)]"
 
-	    set product_id [lindex $product_color_size_style 0]
-	    set color_choice [lindex $product_color_size_style 1]
-	    set size_choice [lindex $product_color_size_style 2]
-	    set style_choice [lindex $product_color_size_style 3]
+            set product_id [lindex $product_color_size_style 0]
+            set color_choice [lindex $product_color_size_style 1]
+            set size_choice [lindex $product_color_size_style 2]
+            set style_choice [lindex $product_color_size_style 3]
 
-	    if { $quantity_to_add > 0 } {
-		set remaining_quantity [min $quantity_to_add $max_quantity_to_add]
-		while { $remaining_quantity > 0 } {
-		    
-		    db_dml insert_new_quantity_to_add "insert into ec_items
-			(item_id, product_id, color_choice, size_choice, style_choice, order_id, in_cart_date)
-			values
-			(ec_item_id_sequence.nextval, :product_id, :color_choice, :size_choice, :style_choice, :order_id, sysdate)"
-		    set remaining_quantity [expr $remaining_quantity - 1]
-		}
-	    } elseif { $quantity_to_add < 0 } {
-		set remaining_quantity [expr abs($quantity_to_add)]
-		
-		set rows_to_delete [list]
-		while { $remaining_quantity > 0 } {
-		    # determine the rows to delete in ec_items (the last instance of this product within this order)
-		    if { [llength $rows_to_delete] > 0 } {
-			set extra_condition "and item_id not in ([join $rows_to_delete ", "])"
-		    } else {
-			set extra_condition ""
-		    }
-		    lappend rows_to_delete [db_string get_rows_to_delete "
-			select max(item_id) 
-			from ec_items 
-			where product_id=:product_id
-			and color_choice [ec_decode $color_choice "" "is null" "= :color_choice"]
-			and size_choice [ec_decode $size_choice "" "is null" "= :size_choice"]
-			and style_choice [ec_decode $style_choice "" "is null" "= :style_choice"]
-			and order_id=:order_id $extra_condition"]
+            if { $quantity_to_add > 0 } {
+                set remaining_quantity [min $quantity_to_add $max_quantity_to_add]
+                while { $remaining_quantity > 0 } {
+            
+                    db_dml insert_new_quantity_to_add "insert into ec_items
+            (item_id, product_id, color_choice, size_choice, style_choice, order_id, in_cart_date)
+            values
+            (nextval('ec_item_id_seq'), :product_id, :color_choice, :size_choice, :style_choice, :order_id, sysdate)"
+                    set remaining_quantity [expr $remaining_quantity - 1]
+                }
+            } elseif { $quantity_to_add < 0 } {
+                set remaining_quantity [expr abs($quantity_to_add)]
+                
+                set rows_to_delete [list]
+                while { $remaining_quantity > 0 } {
+                    # determine the rows to delete in ec_items (the last instance of this product within this order)
+                    if { [llength $rows_to_delete] > 0 } {
+                        set extra_condition "and item_id not in ([join $rows_to_delete ", "])"
+                    } else {
+                        set extra_condition ""
+                    }
+                    lappend rows_to_delete [db_string get_rows_to_delete "
+            select max(item_id) 
+            from ec_items 
+            where product_id=:product_id
+            and color_choice [ec_decode $color_choice "" "is null" "= :color_choice"]
+            and size_choice [ec_decode $size_choice "" "is null" "= :size_choice"]
+            and style_choice [ec_decode $style_choice "" "is null" "= :style_choice"]
+            and order_id=:order_id $extra_condition"]
 
-		    set remaining_quantity [expr $remaining_quantity - 1]
-		}
-		db_dml delete_from_ec_items "delete from ec_items where item_id in ([join $rows_to_delete ", "])"
-	    }
-	    # otherwise, do nothing
-	}
+                    set remaining_quantity [expr $remaining_quantity - 1]
+                }
+                db_dml delete_from_ec_items "delete from ec_items where item_id in ([join $rows_to_delete ", "])"
+            }
+            # otherwise, do nothing
+        }
     }    
 }
 
