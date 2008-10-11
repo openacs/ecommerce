@@ -107,15 +107,8 @@ ad_proc -public ec_url {
 ad_proc -private ec_url_mem {
 } {
 } {
-    if {[db_table_exists apm_packages]} {
-        return [db_string ec_mountpoint "
-	    select site_node.url(s.node_id)
-	    from site_nodes s, apm_packages a
-	    where s.object_id = a.package_id
-	    and a.package_key = 'ecommerce'" -default 0]
-    } else {
-        return 0
-    }
+    return [apm_package_url_from_key ecommerce]
+
 }
 
 ### the url to get to ec
@@ -522,15 +515,14 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
 	append sort_blurb "sorted by date | <a href=\"product?[export_url_vars product_id]&comments_sort_by=rating\">sort by rating</a>"
     }
 
-    set to_return "<hr>
-    <b><font size=\"+1\">[ad_system_name] member reviews:</font></b>
-    "
+    set to_return "<hr width=\"50%\" noshade size=\"1\"><p>
+    <b>[ad_system_name] member reviews:</b></p>"
 
-    set comments_to_print ""
+    set comments_to_print "<ul>"
 
     db_foreach product_comment_info_select "
 	select c.one_line_summary,
-	       c.rating,
+	       c.rating,0
 	       c.user_comment,
  	       to_char(c.last_modified,'Day Month DD, YYYY') as last_modified_pretty,
 	       u.email,
@@ -543,31 +535,23 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
     " {
 
         array set person [person::get -person_id $user_id]
-	append comments_to_print "<b><a href=\"/shared/community-member?[export_url_vars user_id]\">$person(first_names) $person(last_name)</a></b> rated this product [ec_display_rating $rating] on <i>$last_modified_pretty</i> and wrote:<br>
+	append comments_to_print "<li><i><a href=\"/shared/community-member?[export_url_vars user_id]\">$person(first_names) $person(last_name)</a></i> rated this product [ec_display_rating $rating] on $last_modified_pretty and wrote:<br>
 	<b>$one_line_summary</b><br>
 	$user_comment 
-	<p>
-	"
+	</li>"
     }
-
-    if { ![empty_string_p $comments_to_print] } {
-	append to_return "average customer review [ec_display_rating [db_string avg_rating_select {
+    append comments_to_print "</ul>"
+    if { $comments_to_print ne "<ul></ul>" } {
+	append to_return "<p>Average customer review [ec_display_rating [db_string avg_rating_select {
             select avg(rating) from ec_product_comments where product_id = :product_id and approved_p = 't'
         }]]<br>
 	Number of reviews: [db_string n_reviews_select "
             select count(*) from ec_product_comments where product_id = :product_id and (approved_p='t' [ec_decode [ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP ecommerce] "0" "or approved_p is null" ""])
-        "] ($sort_blurb)
-
-	<p>
-	
+        "] ($sort_blurb)</p>
 	$comments_to_print
-	
-	<p>
-
-	<a href=\"review-submit?[export_url_vars product_id]\">Write your own review!</a>
-	"
+	<p><a href=\"review-submit?[export_url_vars product_id]\">Add a review</a>.</p>"
     } else {
-	append to_return "<p>\n<a href=\"review-submit?[export_url_vars product_id]\">Be the first to review this product!</a>\n"
+        append to_return "<p><a href=\"review-submit?[export_url_vars product_id]\">Be the first to review this product</a>!</p>\n"
     }
  
     return $to_return
