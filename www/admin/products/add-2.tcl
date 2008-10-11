@@ -158,7 +158,7 @@ if { [info exists upload_file] && [string length $upload_file] > 4 } {
                      -tmp_filename ${upload_file.tmpfile} ]
 
 }
-if { [string length $dirname] < 2 } {
+if { ![info exists dirname] || [string length $dirname] < 2 } {
     set dirname [ecommerce::resource::dirname -product_id $product_id -product_name $product_name]
 }
 # TODO: improve, along with admin add product pages
