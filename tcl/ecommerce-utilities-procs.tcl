@@ -344,6 +344,8 @@ ad_proc ec_linked_thumbnail_if_it_exists {
     dirname 
     {border_p "t"} 
     {link_to_product_p "f"} 
+    {image_title "item view"}
+    {image_align ""}
 } { 
 
     This looks at dirname to see if the thumbnail is there and if
@@ -356,9 +358,12 @@ ad_proc ec_linked_thumbnail_if_it_exists {
     set linked_thumbnail ""
 
     if { $border_p == "f" } {
-	set border_part_of_img_tag " border=\"0\" "
+        set border_part_of_img_tag " border=\"0\" "
     } else {
-	set border_part_of_img_tag ""
+        set border_part_of_img_tag ""
+    }
+    if { [string length $image_align] > 0 } {
+        set image_align " align=\"${image_align}\""
     }
 
     # See if there's an image file (and thumbnail)
@@ -372,23 +377,20 @@ ad_proc ec_linked_thumbnail_if_it_exists {
     set full_dirname "$product_data_directory$file_path"
 
     if { [file exists "$full_dirname/product-thumbnail.jpg"] } {
-	set thumbnail_size [ns_jpegsize "$full_dirname/product-thumbnail.jpg"]
+        set thumbnail_size [ns_jpegsize "$full_dirname/product-thumbnail.jpg"]
 
-	if { $link_to_product_p == "f" } {
+        if { $link_to_product_p == "f" } {
 
-	    # Try to link to a product.jpg or product.gif
+            # Try to link to a product.jpg or product.gif
 
-	    if { [file exists "$full_dirname/product.jpg"] } {
-		set linked_thumbnail "
-                    <a href=\"[ec_url]product-file/$file_path/product.jpg\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\"></a>"
-	    } elseif { [file exists "$full_dirname/product.gif"] } {
-		set linked_thumbnail "
-		    <a href=\"[ec_url]product-file/$file_path/product.gif\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\"></a>"
-	    }
-	} else {
-	    set linked_thumbnail "
-	    	<a href=\"product?[export_vars product_id]\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"Product thumbnail\"></a>"
-	}
+            if { [file exists "$full_dirname/product.jpg"] } {
+                set linked_thumbnail "<a href=\"[ec_url]product-file/$file_path/product.jpg\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"${image_title}\"${image_align}></a>"
+            } elseif { [file exists "$full_dirname/product.gif"] } {
+                set linked_thumbnail "<a href=\"[ec_url]product-file/$file_path/product.gif\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"${image_title}\"${image_align}></a>"
+            }
+        } else {
+            set linked_thumbnail "<a href=\"[ec_url]product?[export_vars product_id]\"><img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" alt=\"${image_title}\"${image_align}></a>"
+        }
     }
     return $linked_thumbnail
 }
@@ -1118,7 +1120,12 @@ ad_proc ec_product_image_if_it_exists {
     dirname 
     {border_p "t"} 
     {image_title "item view"}
+    {image_align ""}
 } { 
+@dirname@
+@border_p@
+@image_title@
+@image_align@
     This looks at dirname to see if image is there and if
     so returns an html IMG fragment that shows image
     of the product.
@@ -1129,9 +1136,12 @@ ad_proc ec_product_image_if_it_exists {
     set product_image_html ""
 
     if { $border_p == "f" } {
-	set border_part_of_img_tag "border=\"0\""
+        set border_part_of_img_tag "border=\"0\""
     } else {
-	set border_part_of_img_tag "border=\"1\""
+        set border_part_of_img_tag "border=\"1\""
+    }
+    if { [string length $image_align] > 0 } {
+        set image_align " align=\"${image_align}\""
     }
 
     # See if there's an image file
@@ -1148,10 +1158,10 @@ ad_proc ec_product_image_if_it_exists {
 
     if { [file exists "$full_dirname/product.jpg"] } {
 	set product_image_size [ns_jpegsize "$full_dirname/product.jpg"]
-	set product_image_html "<img src=\"[ec_url]product-file/$file_path/product.jpg\" $border_part_of_img_tag width=[lindex $product_image_size 0] height=[lindex $product_image_size 1] alt=\"$image_title\">"
+        set product_image_html "<img src=\"[ec_url]product-file/$file_path/product.jpg\" $border_part_of_img_tag width=[lindex $product_image_size 0] height=[lindex $product_image_size 1]${image_align} alt=\"$image_title\">"
     } elseif { [file exists "$full_dirname/product.gif"] } {
 	set product_image_size [ns_gifsize "$full_dirname/product.gif"]
-	set product_image_html "<img src=\"[ec_url]product-file/$file_path/product.gif\" $border_part_of_img_tag width=[lindex $product_image_size 0] height=[lindex $product_image_size 1] alt=\"$image_title\">"
+        set product_image_html "<img src=\"[ec_url]product-file/$file_path/product.gif\" $border_part_of_img_tag width=[lindex $product_image_size 0] height=[lindex $product_image_size 1]${image_align} alt=\"$image_title\">"
     } 
 
     return $product_image_html
@@ -1162,6 +1172,7 @@ ad_proc ec_thumbnail_if_it_exists {
     dirname 
     {border_p "t"} 
     {image_title "item view"}
+    {image_align ""}
 } { 
 
     This looks at dirname to see if the thumbnail is there and if
@@ -1173,9 +1184,13 @@ ad_proc ec_thumbnail_if_it_exists {
     set thumbnail ""
 
     if { $border_p == "f" } {
-	set border_part_of_img_tag " border=\"0\" "
+        set border_part_of_img_tag " border=\"0\" "
     } else {
-	set border_part_of_img_tag ""
+        set border_part_of_img_tag ""
+    }
+
+    if { [string length $image_align] > 0 } {
+        set image_align " align=\"${image_align}\""
     }
 
     # See if there's an image file (and thumbnail)
@@ -1191,7 +1206,7 @@ ad_proc ec_thumbnail_if_it_exists {
     if { [file exists "$full_dirname/product-thumbnail.jpg"] } {
 	set thumbnail_size [ns_jpegsize "$full_dirname/product-thumbnail.jpg"]
 
-        set thumbnail "<img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\" title=\"$image_title\">"
+        set thumbnail "<img $border_part_of_img_tag width=[lindex $thumbnail_size 0] height=[lindex $thumbnail_size 1] src=\"[ec_url]product-file/$file_path/product-thumbnail.jpg\"${image_align} title=\"$image_title\">"
 	
     }
     return $thumbnail
