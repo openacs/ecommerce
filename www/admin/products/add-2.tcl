@@ -179,6 +179,7 @@ foreach user_class_id [db_list user_class_select "select user_class_id from ec_u
   append export_form_vars_html "<input type=hidden name=\"user_class_prices.$user_class_id\" value=\"$user_class_prices($user_class_id)\">\n"
 }
 
+append export_form_vars_html "<input type=hidden name=available_date value=\"[ec_date_text available_date]\">"
 # create the template drop-down list
 
 set template_html [ec_template_widget $category_id_list]
