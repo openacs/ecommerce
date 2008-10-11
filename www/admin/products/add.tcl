@@ -30,8 +30,7 @@ if { $multiple_retailers_p } {
     set stock_status_html [ec_stock_status_widget]
     set price_html "" 
 } 
-set available_date "[clock format [clock seconds] -format "%Y-%m-%d"]"
-set available_date_html [ad_dateentrywidget $available_date]
+set available_date_html [ad_dateentrywidget available_date 0 ]
 set product_category_html [ec_category_widget t]
 set n_user_classes [db_string num_user_classes_select "select count(*) from ec_user_classes"]
 if { $n_user_classes > 0 && !$multiple_retailers_p} {
