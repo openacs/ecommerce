@@ -42,9 +42,11 @@ These utilities help you load catalog data into the database:
 </p></li>
 <li><p>
 <a href="upload-vendor-imports">Upload Vendor Imports</a> imports
-products from a vendor website according to previously defined procedures: ecds_vendor_procs.
+products from a vendor website according to previously defined procedures: ecds_vendor_procs using references in a file.
 </p></li>
-
+<li><p>
+<a href="vendor-imports-add-update">Vendor Imports Add/Update</a> adds or imports products from a vendor website via a form.
+</p></li>
 </ul>
 <p>Note:</p>
 <ul>
