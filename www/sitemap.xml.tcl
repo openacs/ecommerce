@@ -15,4 +15,3 @@ foreach url_pair $sitemap_list {
 }
 append sitemap_xml "</urlset>\n"
 ns_return 200 text/xml $sitemap_xml
-ns_log Notice "ecommerce/www/sitemap.xml.tcl: returning $sitemap_xml"
