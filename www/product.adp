@@ -8,9 +8,10 @@
   <property name="category_id">@category_id@</property>
   <property name="subcategory_id">@subcategory_id@</property>  
 
-<include src="/packages/ecommerce/lib/toolbar"/>
-<include src="/packages/ecommerce/lib/searchbar"/>
+<include src="/packages/ecommerce/lib/toolbar">
+<include src="/packages/ecommerce/lib/searchbar" category_id="@category_id@" subcategory_id="@subcategory_id@" search_text="@search_text@">
 
-  <% eval $product_code %>
+  @product_code_output;noquote@
 
 <include src="/packages/ecommerce/lib/product-files-list" product_id="@product_id@">
+

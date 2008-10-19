@@ -193,10 +193,12 @@ db_foreach find_a_good_category "
     where rownum = 1" {
 }
 
-db_release_unused_handles
+
 set title $product_name
 set context [list $title]
 set ec_system_owner [ec_system_owner]
 
 # TODO should memoize this
 set product_code [template::adp_compile -string $template]
+set product_code_output [template::adp_eval product_code]
+db_release_unused_handles
