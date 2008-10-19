@@ -10,7 +10,7 @@ set sitemap_list [db_list_of_lists get_catalog_products "
 foreach url_pair $sitemap_list {
     set product_id [lindex $url_pair 0]
     set last_modified [lindex $url_pair 1]
-    set url "[ec_insecure_location][ec_url]product?usca_p=t%26product_id=${product_id}"
+    set url "[ec_insecure_location][ec_url]product?usca_p=t&amp;product_id=${product_id}"
     set last_mod ""
     regsub -- { } $last_modified {T} last_mod
     append last_mod ":00"
