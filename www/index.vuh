@@ -1,0 +1,36 @@
+# ecommmerce/www/product-file.vuh
+ad_page_contract {
+    
+    Return a product image
+    @author jerry@hollyjerry.org
+    @creation-date winter 2001
+    @cvs-id
+} {
+} 
+
+#  set is_url  [ad_conn url]
+#  set e_url   [ad_conn extra_url]
+#  set f       [ad_conn file]
+set path_info  [ad_conn path_info]
+
+# if path_info contains no /, lookup f(path_info) as sku
+if { [string match "*.html" $path_info] } {
+    set sku [string range $path_info 0 end-5] 
+    db_0or1row get_product_id_from_sku_if_exists "select product_id from ec_products where sku =:sku"
+}
+
+#   no need to verify that the sku is not a root openacs page, since root openacs pages are chosen over index.vuh redirects
+#   set reserved_filename_list [list account address-2 address-international-2 address-international address billing browse-categories card-security category-browse-subcategory category-browse-subsubcategory category-browse checkout-2 checkout-3 checkout-one-form-2 checkout-one-form checkout credit-card-correction-2 credit-card-correction delete-address finalize-order gift-certificate-billing gift-certificate-claim-2 gift-certificate-claim gift-certificate-finalize-order gift-certificate-order-2 gift-certificate-order-3 gift-certificate-order-4 gift-certificate-order gift-certificate-thank-you gift-certificate index mailing-list-add-2 mailing-list-add mailing-list-remove order payment policy-privacy policy-sales-terms policy-shipping process-order-quantity-shipping process-payment product-search product product2 review-submit-2 review-submit-3 review-submit select-shipping shopping-cart-add shopping-cart-delete-from shopping-cart-quantities-change shopping-cart-retrieve-2 shopping-cart-retrieve-3 shopping-cart-retrieve shopping-cart-save-2 shopping-cart-save shopping-cart sitemap.xml thank-you track update-user-classes-2 update-user-classes]
+#  \[lsearch -exact $reserved_filename_list $path_info\] < 0
+
+if { [info exists product_id] } {
+#    set redirect_url "\[file join \[ec_url\] product\]"
+    rp_form_put usca_p t
+    rp_form_put product_id $product_id
+#    ns_log Notice "ecommerce/www/index.vuh redirecting to $path_info"
+    rp_internal_redirect product
+} else {
+    ns_log Notice "packages/www/ecommerce/index.vuh: path requested and not found: $path_info"
+    rp_form_put product_id -1
+    rp_internal_redirect product
+}
