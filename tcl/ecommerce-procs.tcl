@@ -1459,6 +1459,17 @@ ad_proc -private ec_create_new_session_if_necessary {
                     # For this page continue
 
                     ns_log Notice "ec_create_new_session_if_necessary: ec_create_session cookies are off but that's okay, they aren't required."
+
+                    set current_url [ns_conn url]
+                    if { [parameter::get -parameter CacheProductAsFile -default 0] && [string match "*[ec_url]product*" $current_url ] } {
+                        regexp {product_id=([1-9][0-9]*)} $current_url scratch product_id
+                        db_0or1row get_sku_from_product_id "select sku from ec_products where product_id = :product_id"
+                        if { [info exists sku] && [file exists "[file join [acs_root_dir] www [string trim [ec_url] /] ${sku}.html]"] } {
+                            # this is a valid product url, redirect to the existing static version
+                            ad_returnredirect "[ec_url]${sku}.html"
+                            ad_script_abort
+                        }
+                    }
                     
                 } elseif {[string compare $_ec_cookie_requirement "shopping_cart_required"] == 0} {
 

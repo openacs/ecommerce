@@ -62,6 +62,7 @@ ad_proc -private ecds_sku_from_brand {
         set brandname_width 16
         set brandname_len_limit 14
         regsub -all -- { } $brand_name {} brandname_new
+        regsub -all -- {&} $brandname_new {} brandname_new
         if { [string length $brandname_new] > $brandname_width } {
             set brandname_end [expr { [string last " " [string range $brandname_new 0 $brandname_width] ] - 1 } ]
             if { $brandname_end < 0 } {
@@ -71,8 +72,8 @@ ad_proc -private ecds_sku_from_brand {
             regsub {[^a-zA-Z0-9]+\.\.} $brandname_new {} brandname_new
         }
         regsub -all -- { } $brandname_new {-} brandname_new
-        set brandname_new [string trim [string tolower $brandname_new]]
 
+        set brandname_new [string trim [string tolower $brandname_new]]
         set sku "${brandname_new}-${product_sku}"
     }
     return $sku
@@ -81,8 +82,10 @@ ad_proc -private ecds_sku_from_brand {
 
 ad_proc -private ecds_base_shipping_price_from_order_value {
     total_price
+    base_ship_price
 } {
     returns the value based shipping price, based on the value of the total price of items in the cart
+    and perhaps the value of any existing shipping price
     this value based shipping price gets added to the base_shipping_price
     this is ignored when using a shipping gateway
 } {
@@ -99,7 +102,10 @@ ad_proc -private ecds_base_shipping_price_from_order_value {
    #     set value_based_shipping 0
    # }
 
-    set value_based_shipping 0
+   # example 3 using 1/x multiplier
+    set multiplier [f::max [expr { ( 15. / ( $total_price + 4 ) ) - 0.05 } ] 0]
+
+    set value_based_shipping [expr { $total_price * $multiplier } ]
     return $value_based_shipping
 }
 
@@ -1164,6 +1170,7 @@ ad_proc -private ecds_import_product_from_vendor_site {
                         ecommerce::resource::make_product_images -product_id $product_id -tmp_filename $image_import_location
                     }
                 }
+                ecds_file_cache_product $product_id
             }
             return $import_conditions_met  
         }
@@ -1825,4 +1832,120 @@ ad_proc -private ecds_email_on_purchase_list {
 } {
     set email [parameter::get -parameter CustomerServiceEmailAddress -default [ad_system_owner]]
     return $email
+}
+
+
+ad_proc -private ecds_file_cache_product {
+    product_id
+} {
+    creates or updates a static page of product?product_id for web crawlers
+} {
+    set cache_product_as_file [parameter::get -parameter CacheProductAsFile -default 0]
+    # Should we be creating or updating a static page for this product_id?
+
+    # the static page for each product is $sku.html
+    # using ${product_id}.html may not work if some products have an integer sku
+     db_0or1row check_product_history {select sku,last_modified from ec_products where product_id = :product_id }
+
+    if { $cache_product_as_file && [info exists sku] } {
+        set reserved_filename_list [list account address-2 address-international-2 address-international address billing browse-categories card-security category-browse-subcategory category-browse-subsubcategory category-browse checkout-2 checkout-3 checkout-one-form-2 checkout-one-form checkout credit-card-correction-2 credit-card-correction delete-address finalize-order gift-certificate-billing gift-certificate-claim-2 gift-certificate-claim gift-certificate-finalize-order gift-certificate-order-2 gift-certificate-order-3 gift-certificate-order-4 gift-certificate-order gift-certificate-thank-you gift-certificate index mailing-list-add-2 mailing-list-add mailing-list-remove order payment policy-privacy policy-sales-terms policy-shipping process-order-quantity-shipping process-payment product-search product product2 review-submit-2 review-submit-3 review-submit select-shipping shopping-cart-add shopping-cart-delete-from shopping-cart-quantities-change shopping-cart-retrieve-2 shopping-cart-retrieve-3 shopping-cart-retrieve shopping-cart-save-2 shopping-cart-save shopping-cart sitemap.xml thank-you track update-user-classes-2 update-user-classes]
+        # verify that the sku is not a root openacs page
+        if { [lsearch -exact $reserved_filename_list $sku] < 0 } {
+            # the cached files go into the www/ec_url dir so we do not have to worry about overwriting
+            # ecommerce files, but the www/ec_url dir takes presidence in url resolving, so still must check
+
+            set cache_dir "[file join [acs_root_dir] www [string trim [ec_url] /]]"
+            ec_assert_directory $cache_dir
+            set filepathname [file join $cache_dir ${sku}.html]
+            set url "[ec_insecure_location][ec_url]product?usca_p=t&product_id=${product_id}"
+            set product_file_exists [file exists $filepathname]
+            if { ( $product_file_exists eq 0 ) || ( $product_file_exists && [clock scan [string range $last_modified 0 18]] > [file mtime $filepathname] ) } {
+                # product file either does not exist or has been updated after the current file modification time
+                # updating file
+                ns_log Notice "ecds_file_cache_product: product_id = $product_id waiting 15 seconds before trying, in case we recently ns_http ed"
+                # ec_create_new_session_if_necessary needs to NOT automatically redirect the following ns_http get 
+                # to the static html file, since we want to update that file with a fresh http request
+                # so, we need to remove this file before requesting it.
+                if { [file exists $filepathname ] } {
+                    file delete $filepathname
+                }
+                after 15000
+                if { [catch {set get_id [ns_http queue -timeout 65 $url]} err ]} {
+                    set page $err
+                    ns_log Error "ecds_file_cache_product: url=$url error: $err"
+                } else {
+                    ns_log Notice "ecds_file_cache_product: ns_httping $url"
+                    # removed -timeout "30" from next statment, because it is unrecognized for this instance..
+                    if { [catch { ns_http wait -result page -status status $get_id } err2 ]} {
+                        ns_log Error "ecds_file_cache_product: ns_http wait $err2"
+                    }
+    
+                    if { ![info exists status] || $status ne "200" } {
+                        # no page info returned, just return error
+                        if { ![info exists status] } {
+                            set status "not exists"
+                        }
+                        set page "ecds_file_cache_product Error: url timed out with status $status"
+                        ns_log Notice $page
+                    } else {
+                        #if { [file exists $filepathname ] } {
+                        #    \[file delete $filepathname\]
+                        #}
+                        #put page into acs_root_dir/www not packages/ecommerce/www
+                        if { [catch {open $filepathname w} fileId]} {
+                            ns_log Error "ecds_file_cache_product: unable to write to file $filepathname"
+                            ad_script_abort
+                        } else {
+                            # strip extra lines and funny characters
+                            regsub -all -- {[\f\e\r\v\n\t]} $page { } oneliner
+                            # strip extra spaces 
+                            regsub -all -- {[ ][ ]*} $oneliner { } oneliner2
+                            set page $oneliner2
+                            puts $fileId $page
+                            ns_log Notice "ecds_file_cache_product: writing $filepathname"
+                            close $fileId
+                        }
+                    }
+                }
+            }
+        } else {
+            ns_log Warning "ecds_file_cache_product: sku is same as a reserved ecommerce filename for product_id $product_id"
+        }
+    } 
+} 
+
+
+ad_proc -private ecds_create_cache_product_files {
+} {
+    creates or updates the static pages referenced in the ecommerce sitemap.xml
+} {
+
+    set cache_product_as_file [parameter::get -parameter CacheProductAsFile -default 0]
+    ns_log Notice "ecds_create_cache_product_files: starting.."
+    if { $cache_product_as_file } {
+        set sitemap_list [db_list_of_lists get_catalog_product_ids "
+      select product_id from ec_products
+        where active_p='t' and present_p = 't' and sku is not null
+        order by last_modified desc"]
+
+        foreach product_id $sitemap_list {
+            ecds_file_cache_product $product_id
+        }
+    }
+    ns_log Notice "ecds_create_cache_product_files: ended"
+}
+
+ad_proc -private ecds_refresh_import_products_from_vendor {
+    vendor_abbrev
+} {
+    creates or updates product info for imported products of a specific vendor
+} {
+
+    set vendor_product_ids_list [db_list_of_lists get_vendor_product_ids "
+        select product_id from ec_custom_product_field_values
+        where vendorabbrev = :vendor_abbrev"]
+    set product_count [llength $vendor_product_ids_list]
+    foreach product_id $vendor_product_ids_list {
+        ecds_import_product_from_vendor_site $vendor_abbrev product_id $product_id
+    }
 }

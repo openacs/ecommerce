@@ -7,7 +7,7 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="5.12" url="http://openacs.org/repository/download/apm/ecommerce-5.12.apm">
+    <version name="5.14" url="http://openacs.org/repository/download/apm/ecommerce-5.14.apm">
         <owner url="mailto:janine@furfly.net">Janine Sisk</owner>
         <owner url="mailto:bart.teeuwisse@7-sisters.com">Bart Teeuwisse</owner>
         <owner url="mailto:alfred@thunderstick.com">Alfred Werner</owner>
@@ -17,7 +17,7 @@
         <description format="text/plain">This module implements a standard business-to-consumer Web store service. A feature summary is included with the documentaion.</description>
         <maturity>0</maturity>
 
-        <provides url="ecommerce" version="5.12"/>
+        <provides url="ecommerce" version="5.14"/>
         <requires url="acs-datetime" version="4.0"/>
         <requires url="acs-kernel" version="5.0"/>
         <requires url="ref-countries" version="0.1d"/>
@@ -31,6 +31,9 @@
         <parameters>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="AllowPreOrdersP"  default="1" description="whether customers will be able to place orders for items whose available_date has not yet come" section_name="shopping cart"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CacheRefresh"  default="600" description="Seconds between cache (util_memoize) updates" section_name="technical"/>
+
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CacheProductAsFile"  default="0" description="Some web crawlers prefer to spider html pages. Should static files be created to mirror each product file? 0 = no, 1 = yes. Browsers and crawlers that do not accept cookies will be redirected to the static version of the product page." section_name="technical"/>
+
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CalcProductRelationshipsP"  default="0" description="whether the system should calculate additional product relationships" section_name="display"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="DisplayPriceOfZeroAs"  default="0.00" description="Displays this value instead of zero for a product that has a price of zero.  This value might be set to Free to help with external search indexing, or Call to help with products where prices are changing inconveniently fast." section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CartDuration"  default="30" description="# of days an 'in_basket' order will remain in the system before a cron job expires it" section_name="shopping cart"/>
