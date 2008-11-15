@@ -132,6 +132,7 @@ while { $line_status != -1 && !$errors} {
                     incr rows_inserted
                 }
             }
+            ecds_file_cache_product $product_id
         }  else {
             # adding ns_log for cases where uploading extends past max input time (config.tcl:recwait)
             ns_log Notice "While bulk uploading custom fields, cannot obtain an existing product_id for row $count in file $csv_file."

@@ -219,4 +219,6 @@ db_transaction {
   }
 }
 
+ecds_file_cache_product $product_id
+
 ad_returnredirect "one?[export_url_vars product_id]"

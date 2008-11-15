@@ -33,24 +33,26 @@ if { [string length $abbrev] == 0 } {
 set count 0
 set errors $serious_errors
 set success_count 0
-
-regsub -all -- {[^a-zA-Z0-9\-_\(\)\[\]\.] } $vendor_sku_string { } vendor_sku_string
-set vendor_sku_list [split $vendor_sku_string]
-foreach vendor_sku $vendor_sku_list {
-    set vendor_code [string trim $vendor_sku]
-    set product_id [ecds_import_product_from_vendor_site $abbrev vendor $vendor_code]
-    incr count
-    if { $product_id == -1 } {
-        ns_log Warning "vendor-imports-add-update-2.tcl: Unable to import \"${vendor_code}\"."
-    } else {
-        incr success_count
+if { $vendor_sku_string eq "all" } {
+    set count [ecds_refresh_import_products_from_vendor $abbrev]
+    set success_count $count
+} else {
+    regsub -all -- {[^a-zA-Z0-9\-_\(\)\[\]\.] } $vendor_sku_string { } vendor_sku_string
+    set vendor_sku_list [split $vendor_sku_string]
+    foreach vendor_sku $vendor_sku_list {
+        set vendor_code [string trim $vendor_sku]
+        set product_id [ecds_import_product_from_vendor_site $abbrev vendor $vendor_code]
+        incr count
+        if { $product_id == -1 } {
+            ns_log Warning "vendor-imports-add-update-2.tcl: Unable to import \"${vendor_code}\"."
+        } else {
+            incr success_count
+        }
     }
 }
-
 if { $success_count == 1 } {
     set product_string "product"
 } else {
     set product_string "products"
 }
-
 set line_count [ec_decode $count "0" "0" [expr $count -1]]
