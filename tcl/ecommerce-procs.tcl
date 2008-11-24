@@ -989,21 +989,11 @@ ad_proc ec_price_line {
     set lowest_price [lindex $lowest_price_and_price_name 0]
     set lowest_price_description [lindex $lowest_price_and_price_name 1]
     if {![string equal "" $lowest_price_description]} {
-        set price_line "
-	    <table width=\"180\" cellspacing=\"0\" cellpadding=\"0\">
-	      <tr>
-	                        <td width=\"140\" align=\"right\"> $lowest_price_description:&nbsp;</td>"
+        set price_line "$lowest_price_description:&nbsp;"
     } else {
-	set price_line "
-            <table width=\"180\" cellspacing=\"0\" cellpadding=\"0\">
-              <tr>
-                <td width=\"140\" align=\"right\"> Our Price:&nbsp;</td>"
+        set price_line "Our price:&nbsp;"
     }
-    append price_line "
-          <td width=\"40\" align=\"right\">
-            <strong>[ec_pretty_price $lowest_price $currency]</strong>
-	  </td>
-	</tr>"
+    append price_line "<strong>[ec_pretty_price $lowest_price $currency]</strong>"
 
     if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
         db_1row get_regular_approvalrequired_price "
@@ -1046,27 +1036,10 @@ ad_proc ec_price_line {
     # savings.
 
     if {[string compare $lowest_price $regular_price] == -1} {
-	append price_line "
-	      <tr>
-	        <td width=140>Compare to:</td>
-	        <td width=40 align=right><strike>[ec_pretty_price $regular_price $currency]</strike></td>
-	      </tr>
-	      <tr>
-	        <td width=140>Savings:</td>
-	        <td width=40 align=right><font color=red>[format %.2f [expr (($regular_price - $lowest_price) / $regular_price) * 100]]%</font></td>
-	      </tr>
-	    </table>"
+        append price_line " Compare to: <strike>[ec_pretty_price $regular_price $currency]</strike> 
+    Save:&nbsp;<font color=red>[format %.2f [expr (($regular_price - $lowest_price) / $regular_price) * 100]]%</font>"
     } else {
-	append price_line "
-	      <tr>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	      </tr>
-	      <tr>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	      </tr>
-	    </table>"
+        append price_line ""
     }
     return $price_line
 }
@@ -1406,38 +1379,74 @@ ad_proc -private ec_create_new_session_if_necessary {
 
         if { $user_session_id == 0 } {
             if {![info exists usca_p]} {
-
                 # First time we've seen this visitor no previous
                 # attempt made.
                 
-                set user_session_id [db_nextval ec_user_session_sequence]
 
-                ## use ACS 4 faster sessions
-                ## set user_session_id [ad_conn session_id]
-                
-                set ip_address      [ns_conn peeraddr]
-                set http_user_agent [ecGetUserAgentHeader]
-                
-                # we should be able to get rid of this in ACS 4, but
-                # we need to examine longevity of ad_sessions
+                # if this is a ec_url/product request, maybe we redirect to $sku.html
+                # and serve as a static page ie. no session activity
+                set current_url [ns_conn url]
+                set right_of_q [ad_conn query]
+                #ns_log Notice "ec_create_new_session_if_necessary: ns_conn url = $current_url, ad_conn query = ${right_of_q}"
+                if { [parameter::get -parameter CacheProductAsFile -default 0] && [string match "*[ec_url]product*" $current_url ] } {
+                    # in order to prevent indexing of both product?usca=t&product_id=XXX and $sku.html
+                    # We just redirect to the $sku.html and ignore creating a new session for this case
+                    if { ![regexp {product_id=([1-9][0-9]*)} $right_of_q scratch product_id ] } {
+                        regexp {product%f5id=([1-9][0-9]*)} $right_of_q scratch product_id 
+                    }
+                    if { [info exists product_id] } {
+                        db_0or1row get_sku_from_product_id "select sku from ec_products where product_id = :product_id"
+                        if { [info exists sku] } {
+                            # this is a valid product url, redirect to the existing static version
+                            # replacing  ad_returnredirect "\[ec_url\]${sku}.html" with following so it works with return code 301
+                            set url "[ec_insecure_location][ec_url]${sku}.html"
+                            ns_set update [ns_conn outputheaders] Location $url
+                            ns_return 301 "text/html" [subst {<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+  <HTML>
+  <HEAD>
+  <TITLE>Moved</TITLE>
+  </HEAD>
+  <BODY>
+  <H2>Moved</H2>
+  <A HREF="$url">The requested URL has moved here.</A>
+ <P ALIGN=RIGHT><SMALL><I>[ns_info name]/[ns_info patchlevel] on [ns_conn location]</I></SMALL></P>
+  </BODY></HTML>}]
+                            ad_script_abort
+                        }
+                    }
 
-		db_dml insert_user_session $__sql
+                } else {
+
+                    set user_session_id [db_nextval ec_user_session_sequence]
+
+                    ## use ACS 4 faster sessions
+                    ## set user_session_id [ad_conn session_id]
+                    
+                    set ip_address      [ns_conn peeraddr]
+                    set http_user_agent [ecGetUserAgentHeader]
+                    
+                    # we should be able to get rid of this in ACS 4, but
+                    # we need to examine longevity of ad_sessions
+
+                    db_dml insert_user_session $__sql
+                    
+                    set cookie_name  "user_session_id"
+                    set cookie_value $user_session_id
+                    
+                    set usca_p "t"
+                    set final_page "[ns_conn url]?[export_url_vars usca_p]"
+                    if ![empty_string_p $_ec_more_url_vars_exported] {
+                        append final_page "&" $_ec_more_url_vars_exported
+                    }
                 
-                set cookie_name  "user_session_id"
-                set cookie_value $user_session_id
-                
-                set usca_p "t"
-                set final_page "[ns_conn url]?[export_url_vars usca_p]"
-                if ![empty_string_p $_ec_more_url_vars_exported] {
-                    append final_page "&" $_ec_more_url_vars_exported
+                    # It would probably be good to add max_age as a
+                    # parameter in the future
+
+                    ad_set_cookie -replace "t" -path "/" user_session_id $cookie_value
+                    ad_returnredirect $final_page
+                    ad_script_abort
                 }
-                
-		# It would probably be good to add max_age as a
-		# parameter in the future
 
-		ad_set_cookie -replace "t" -path "/" user_session_id $cookie_value
-		ad_returnredirect $final_page
-                ad_script_abort
             } else {
 
                 # usca_p has been set, but user id is still 0! So,
@@ -1454,20 +1463,36 @@ ad_proc -private ec_create_new_session_if_necessary {
                     in your browser.
                     "
                     ad_script_abort
+
                 } elseif {[string compare $_ec_cookie_requirement "cookies_are_not_required"] == 0} {
                     
                     # For this page continue
-
                     ns_log Notice "ec_create_new_session_if_necessary: ec_create_session cookies are off but that's okay, they aren't required."
 
                     set current_url [ns_conn url]
+                    set right_of_q [ad_conn query]
+                    ns_log Notice "ec_create_new_session_if_necessary: ns_conn url = $current_url"
                     if { [parameter::get -parameter CacheProductAsFile -default 0] && [string match "*[ec_url]product*" $current_url ] } {
-                        regexp {product_id=([1-9][0-9]*)} $current_url scratch product_id
+                        if { ![regexp {product_id=([1-9][0-9]*)} $right_of_q scratch product_id ] } {
+                            regexp {product%f5id=([1-9][0-9]*)} $right_of_q scratch product_id 
+                        }
                         if { [info exists product_id] } {
                             db_0or1row get_sku_from_product_id "select sku from ec_products where product_id = :product_id"
-                            if { [info exists sku] && [file exists "[file join [acs_root_dir] www [string trim [ec_url] /] ${sku}.html]"] } {
+                            if { [info exists sku] } {
                                 # this is a valid product url, redirect to the existing static version
-                                ad_returnredirect "[ec_url]${sku}.html"
+                                # replacing  ad_returnredirect "\[ec_url\]${sku}.html" with following so it works with return code 301
+                                set url "[ec_insecure_location][ec_url]${sku}.html"
+                                ns_set update [ns_conn outputheaders] Location $url
+                                ns_return 301 "text/html" [subst {<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+  <HTML>
+  <HEAD>
+  <TITLE>Moved</TITLE>
+  </HEAD>
+  <BODY>
+  <H2>Moved</H2>
+  <A HREF="$url">The requested URL has moved here.</A>
+ <P ALIGN=RIGHT><SMALL><I>[ns_info name]/[ns_info patchlevel] on [ns_conn location]</I></SMALL></P>
+  </BODY></HTML>}]
                                 ad_script_abort
                             }
                         }
