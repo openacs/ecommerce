@@ -760,22 +760,21 @@ ad_proc -private ecds_update_ec_category_map {
                 set old_subcategory_id_list [lrange $old_subcategory_id 1 end]
 
             } elseif { $mapping_already_exists == -1 && $remove_multiple_categories == 0 } {
-		ns_log Notice "ecds_update_ec_category_map (L474): category mapping does not exist for product_id $product_id , subcategory_id $subcategory_id , adding..."   
-		if { [catch {db_dml ecds_subcategory_insert "insert into ec_subcategory_product_map (product_id, subcategory_id, publisher_favorite_p, last_modified, last_modifying_user, modified_ip_address) values (:product_id, :subcategory_id, 'f', now(), :user_id, :ip)"} errmsg] } {
-		    #error, probably already loaded this one
-		}
-	    }
-
-            if { remove_multiple_categories == 1 } {
-		# remove others (skip if old_subcategory_id = subcategory_id )
-		foreach existing_subcategory_id $old_subcategory_id_list {
-		    # remove old category item
-		    if { $existing_subcategory_id != $subcategory_id } {
-			db_dml remove_subcategory_id_from_subcategory_map "delete from ec_subcategory_product_map where category_id = :category_id and product_id = :product_id and subcategory_id = :existing_subcategory_id"
-		    }
-		}
+                ns_log Notice "ecds_update_ec_category_map (L474): category mapping does not exist for product_id $product_id , subcategory_id $subcategory_id , adding..."   
+                if { [catch {db_dml ecds_subcategory_insert "insert into ec_subcategory_product_map (product_id, subcategory_id, publisher_favorite_p, last_modified, last_modifying_user, modified_ip_address) values (:product_id, :subcategory_id, 'f', now(), :user_id, :ip)"} errmsg] } {
+                    #error, probably already loaded this one
+                }
             }
 
+            if { remove_multiple_categories == 1 } {
+                # remove others (skip if old_subcategory_id = subcategory_id )
+                foreach existing_subcategory_id $old_subcategory_id_list {
+                    # remove old category item
+                    if { $existing_subcategory_id != $subcategory_id } {
+                        db_dml remove_subcategory_id_from_subcategory_map "delete from ec_subcategory_product_map where category_id = :category_id and product_id = :product_id and subcategory_id = :existing_subcategory_id"
+                    }
+                }
+            }
         }
 
         # put product_id in category_map if it is not already there
@@ -1107,7 +1106,7 @@ ad_proc -private ecds_import_product_from_vendor_site {
                 set ec_products_array(detailed_description) [string range $ec_products_array(detailed_description) 0 3998]
             }
 
-            set ec_products_array(search_keywords) "$ec_products_array(one_line_description)"
+            set ec_products_array(search_keywords) "$ec_products_array(one_line_description), $ec_custom_fields_array(vendorsku) $ec_custom_fields_array(brandname) ec_custom_fields_array(brandmodelnumber)"
             if { [string length $ec_products_array(search_keywords)] > 3998 } {
                 ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} search_keywords too long, the extra clipped is: [string range $ec_products_array(search_keywords) 3998 end]"
                 set ec_products_array(search_keywords) [string range $ec_products_array(search_keywords) 0 3998]
@@ -1687,13 +1686,24 @@ ad_proc -private ecds_create_ec_category {
     returns category_id, or -1 if unable to insert
 } {
     if { ![ecds_is_natural_number $category_id] || ![ecds_is_natural_number $sort_key] } {
-        db_1row get_ec_category_maxes "select max(category_id) as max_category_id, max(sort_key) as max_sort_key from ec_categories"
+        db_1row get_ec_category_id_max "select max(category_id) as max_category_id, max(sort_key) as max_sort_key from ec_categories"
+        db_1row get_ec_category_sortkey_max "select max(sort_key) as min_sort_key from ec_categories where category_name < :category_name"
+        db_1row get_ec_category_sortkey_min "select min(sort_key) as max_sort_key from ec_categories where category_name > :category_name"
         set category_id [db_nextval ec_category_id_sequence]
-        if { ![info exists max_sort_key] } {
-            set max_sort_key 512
+        if { ![ecds_is_natural_number $max_category_id] } {
             set max_category_id 0
         }
-        set sort_key [expr { $max_sort_key + 512 } ]
+        if { ![info exists min_sort_key] || ![ecds_is_natural_number $min_sort_key] } {
+            if { ![info exists max_sort_key] || ![ecds_is_natural_number $max_sort_key] } {
+                set max_sort_key 2560
+            }
+            set min_sort_key [expr { int( $max_sort_key / 2. ) } ]
+        }
+        if { ![info exists max_sort_key] || ![ecds_is_natural_number $max_sort_key] } {
+            set max_sort_key [expr { ( $min_sort_key * 2. ) + 1024. + int( rand() * 100. ) } ]
+        }
+
+        set sort_key [expr { int( ($max_sort_key + $min_sort_key ) / 2. + ( ( rand() - 0.5 )  * ( $max_sort_key - $min_sort_key ) / 2 ) )  } ]
         set category_id [ec_max [expr { $max_category_id + 1 } ] $category_id]
     }  
     # make sure values are uniqe in context of other categories
@@ -1736,13 +1746,17 @@ ad_proc -private ecds_create_ec_subcategory {
             set max_subcategory_id 0
         }
         if { ![info exists min_sort_key] || ![ecds_is_natural_number $min_sort_key] } {
-            set min_sort_key [expr { int( rand() * 11. ) } ]
+            if { ![info exists max_sort_key] || ![ecds_is_natural_number $max_sort_key] } {
+                set max_sort_key 2560
+            }
+            set min_sort_key [expr { int( $max_sort_key / 2. ) } ]
         }
+
         if { ![info exists max_sort_key] || ![ecds_is_natural_number $max_sort_key] } {
             set max_sort_key [expr { ( $min_sort_key * 2. ) + 1024. + int( rand() * 100. ) } ]
         }
 
-        set sort_key [expr { int( ($max_sort_key + $min_sort_key ) / 2. + rand() * 10. )  } ]
+        set sort_key [expr { int( ($max_sort_key + $min_sort_key ) / 2. + ( ( rand() - 0.5 )  * ( $max_sort_key - $min_sort_key ) / 2 ) )  } ]
         set subcategory_id [ec_max [expr { $max_subcategory_id + 1 } ] $subcategory_id]
     }  
     # make sure values are uniqe in context of other categories
@@ -1857,57 +1871,91 @@ ad_proc -private ecds_file_cache_product {
             set cache_dir "[file join [acs_root_dir] www [string trim [ec_url] /]]"
             ec_assert_directory $cache_dir
             set filepathname [file join $cache_dir ${sku}.html]
-            set url "[ec_insecure_location][ec_url]product?usca_p=t&product_id=${product_id}"
+
             set product_file_exists [file exists $filepathname]
             if { ( $product_file_exists eq 0 ) || ( $product_file_exists && [clock scan [string range $last_modified 0 18]] > [file mtime $filepathname] ) } {
                 # product file either does not exist or has been updated after the current file modification time
                 # updating file
-                ns_log Notice "ecds_file_cache_product: product_id = $product_id waiting 15 seconds before trying, in case we recently ns_http ed"
-                # ec_create_new_session_if_necessary needs to NOT automatically redirect the following ns_http get 
-                # to the static html file, since we want to update that file with a fresh http request
-                # so, we need to remove this file before requesting it.
-                if { [file exists $filepathname ] } {
-                    file delete $filepathname
-                }
-                after 15000
-                if { [catch {set get_id [ns_http queue -timeout 65 $url]} err ]} {
-                    set page $err
-                    ns_log Error "ecds_file_cache_product: url=$url error: $err"
-                } else {
-                    ns_log Notice "ecds_file_cache_product: ns_httping $url"
-                    # removed -timeout "30" from next statment, because it is unrecognized for this instance..
-                    if { [catch { ns_http wait -result page -status status $get_id } err2 ]} {
-                        ns_log Error "ecds_file_cache_product: ns_http wait $err2"
+
+                # set use_http_get 1 = http_get, 0= ad_template::include method
+                set use_http_get 1
+                if { $use_http_get } {
+                    ns_log Notice "ecds_file_cache_product: product_id = $product_id waiting 15 seconds before trying, in case we recently ns_http ed"
+                    set url "[ec_insecure_location][ec_url]${sku}.html"
+                    # ec_create_new_session_if_necessary needs to NOT automatically redirect the following ns_http get 
+                    # to the static html file, since we want to update that file with a fresh http request
+                    # so, we need to remove this file before requesting it.
+                    if { [file exists $filepathname ] } {
+                        file delete $filepathname
                     }
-    
-                    if { ![info exists status] || $status ne "200" } {
-                        # no page info returned, just return error
-                        if { ![info exists status] } {
-                            set status "not exists"
-                        }
-                        set page "ecds_file_cache_product Error: url timed out with status $status"
-                        ns_log Notice $page
+                    after 15000
+                    if { [catch {set get_id [ns_http queue -timeout 65 $url]} err ]} {
+                        set page $err
+                        ns_log Error "ecds_file_cache_product: url=$url error: $err"
                     } else {
-                        #if { [file exists $filepathname ] } {
-                        #    \[file delete $filepathname\]
-                        #}
-                        #put page into acs_root_dir/www not packages/ecommerce/www
-                        if { [catch {open $filepathname w} fileId]} {
-                            ns_log Error "ecds_file_cache_product: unable to write to file $filepathname"
-                            ad_script_abort
+                        ns_log Notice "ecds_file_cache_product: ns_httping $url"
+                        # removed -timeout "30" from next statment, because it is unrecognized for this instance..
+                        if { [catch { ns_http wait -result page -status status $get_id } err2 ]} {
+                            ns_log Error "ecds_file_cache_product: ns_http wait $err2"
+                        }
+                        
+                        if { ![info exists status] || $status ne "200" } {
+                            # no page info returned, just return error
+                            if { ![info exists status] } {
+                                set status "not exists"
+                            }
+                            set page "ecds_file_cache_product Error: url timed out with status $status"
+                            ns_log Notice $page
                         } else {
-                            # strip extra lines and funny characters
-                            regsub -all -- {[\f\e\r\v\n\t]} $page { } oneliner
-                            # strip extra spaces 
-                            regsub -all -- {[ ][ ]*} $oneliner { } oneliner2
-                            set page $oneliner2
-                            puts $fileId $page
-                            ns_log Notice "ecds_file_cache_product: writing $filepathname"
-                            close $fileId
+                            #put page into acs_root_dir/www not packages/ecommerce/www
+                            if { [catch {open $filepathname w} fileId]} {
+                                ns_log Error "ecds_file_cache_product: unable to write to file $filepathname"
+                                ad_script_abort
+                            } else {
+                                # strip extra lines and funny characters
+                                regsub -all -- {[\f\e\r\v\n\t]} $page { } oneliner
+                                # strip extra spaces 
+                                regsub -all -- {[ ][ ]*} $oneliner { } oneliner2
+                                set page $oneliner2
+                                puts $fileId $page
+                                ns_log Notice "ecds_file_cache_product: writing $filepathname"
+                                close $fileId
+                            }
                         }
                     }
+
+                } else {
+
+                    ns_log Notice "ecds_file_cache_product: product_id = $product_id"
+                    # create/replace product file using template::adp_include
+                    # 
+                    # ec_create_new_session_if_necessary needs to NOT automatically redirect the following ns_http get 
+                    # to the static html file, since we want to update that file with a fresh http request
+                    # so, we need to remove this file before requesting it.
+                    if { [file exists $filepathname ] } {
+                        file delete $filepathname
+                    }
+                    set tvalue "t"
+                    set page [template::adp_include "/packages/ecommerce/www/product" [list product_id $product_id usca_p $tvalue ]]
+                    #put page into acs_root_dir/www not packages/ecommerce/www
+ns_log Notice "page = $page"
+                    if { [catch {open $filepathname w} fileId]} {
+                        ns_log Error "ecds_file_cache_product: unable to write to file $filepathname"
+                        ad_script_abort
+                    } else {
+                        # strip extra lines and funny characters
+                        regsub -all -- {[\f\e\r\v\n\t]} $page { } oneliner
+                        # strip extra spaces 
+                        regsub -all -- {[ ][ ]*} $oneliner { } oneliner2
+                        set page $oneliner2
+                        puts $fileId $page
+                        ns_log Notice "ecds_file_cache_product: writing $filepathname"
+                        close $fileId
+                    }
+
                 }
             }
+
         } else {
             ns_log Warning "ecds_file_cache_product: sku is same as a reserved ecommerce filename for product_id $product_id"
         }
@@ -1947,5 +1995,91 @@ ad_proc -private ecds_refresh_import_products_from_vendor {
     set product_count [llength $vendor_product_ids_list]
     foreach product_id $vendor_product_ids_list {
         ecds_import_product_from_vendor_site $vendor_abbrev product_id $product_id
+    }
+}
+
+ad_proc -private ecds_pagination_by_items {
+    item_count
+    items_per_page
+    first_item_displayed
+    base_url
+    {separator "&nbsp;"}
+} {
+    returns a list of 3 pagination html fragments, the first is for pages before the current page, the second refers to the current page, and the third for pages after the current page. 
+} {
+
+    if { $items_per_page > 0 && $item_count > 0 && $first_item_displayed > 0 && $first_item_displayed <= $item_count } {
+        set nbr_of_pages [expr { ( $item_count + $items_per_page - 1 ) / $items_per_page } ]
+        set current_page [expr { ( $first_item_displayed + $items_per_page - 1 ) / $items_per_page } ]
+        set outer_limit [expr { $nbr_of_pages + 1 } ]
+        set prev_bar $separator
+        set next_bar $separator
+        for  {set page 1} {$page < $outer_limit} {incr page 1} {
+            set start_item [expr { ( ( $page - 1 ) * $items_per_page ) + 1 } ]
+            if { $page < $current_page } {
+                append prev_bar " <a href=\"${base_url}${start_item}\">$page</a> $separator"
+            } elseif { $page eq $current_page } {
+                set current_bar " $page "
+            } elseif { $page > $current_page } {
+                if { $page < $nbr_of_pages } {
+                    append next_bar " <a href=\"${base_url}${start_item}\">$page</a> $separator"
+                } else {
+                    append next_bar " <a href=\"${base_url}${start_item}\">$page</a> "
+                }
+            }
+        }
+        set bar_list [list $prev_bar $current_bar $next_bar]
+    } else {
+        ns_log Warning "ecds_pagination_by_items: parameter value(s) out of bounds for base_url $base_url $item_count $items_per_page $first_item_displayed"
+        set bar_list [list 1 $first_item_displayed $item_count]
+    }
+    return $bar_list
+}
+
+
+ad_proc -private ecds_sort_categories {
+} {
+    resets the order of the ec_categories table according to standard sorting of category_name text order
+} {
+    set category_ids_sorted_list [db_list_of_lists get_db_sorted_category_ids "
+        select category_id from ec_categories order by category_name"]
+    set category_count [llength $category_ids_sorted_list]
+    set key_incr [expr { int( 1024. / $category_count ) + 2 } ]
+    set sort_key $key_incr
+    foreach category_id $category_ids_sorted_list {
+        incr sort_key $key_incr
+        db_dml category_sortkey_update "update ec_categories set sort_key=:sort_key where category_id =:category_id"
+    }
+}
+
+ad_proc -private ecds_sort_subcategory_list {
+category_id
+} {
+    resets the order of the ec_subcategories table for subcategories in category_id according to standard sorting of subcategory_name text order
+} {
+    set subcategory_ids_sorted_list [db_list_of_lists get_db_sorted_subcategory_ids "
+        select subcategory_id from ec_subcategories where category_id = :category_id order by subcategory_name"]
+    set subcategory_count [llength $subcategory_ids_sorted_list]
+    set key_incr [expr { int( 2048. / $subcategory_count ) + 8 } ]
+    set sort_key $key_incr
+    foreach subcategory_id $subcategory_ids_sorted_list {
+        incr sort_key $key_incr
+        db_dml subcategory_sortkey_update "update ec_subcategories set sort_key=:sort_key where subcategory_id =:subcategory_id and category_id = :category_id"
+    }
+}
+
+ad_proc -private ecds_sort_all_categories {
+} {
+    resets the order of the ecommerce categories according to standard sorting of category_name text order
+} {
+    set category_ids_sorted_list [db_list_of_lists get_db_sorted_category_ids "
+        select category_id from ec_categories order by category_name"]
+    set category_count [llength $category_ids_sorted_list]
+    set key_incr [expr { int( 1024. / $category_count ) + 2 } ]
+    set sort_key $key_incr
+    foreach category_id $category_ids_sorted_list {
+        incr sort_key $key_incr
+        db_dml category_sortkey_update "update ec_categories set sort_key=:sort_key where category_id =:category_id"
+        ecds_sort_subcategory_list $category_id
     }
 }
