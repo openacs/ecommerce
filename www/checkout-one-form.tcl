@@ -141,7 +141,7 @@ if { [empty_string_p $order_id] } {
 
     }
     set order_total_price_pre_gift_certificate $order_total    
-
+    set bom_total $order_total
 
     # Check if the order requires shipping
     
@@ -318,7 +318,7 @@ if { [exists_and_equal shipping_required "t"] } {
  
             # set base shipping charge
 
-            set order_shipping_cost $base_shipping_cost
+            set order_shipping_cost [expr { [ecds_base_shipping_price_from_order_value $bom_total $base_shipping_cost ] + $base_shipping_cost } ] 
 
             set shipping_method_standard $order_shipping_cost
 
