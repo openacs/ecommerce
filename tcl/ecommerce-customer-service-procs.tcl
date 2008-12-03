@@ -39,7 +39,7 @@ ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_orig
  (Seb 20000817) Since Oracle driver now supports nested transactions
  we will, for the time being, simply ignore begin_new_transaction_p.
 } {
-    set issue_id [db_string get_ec_issue_seq "select ec_issue_id_sequence.NEXTVAL from dual"]
+    set issue_id [db_nextval ec_issue_id_sequence]
 
     if { ![empty_string_p $user_id] } {
 	    
@@ -52,7 +52,7 @@ ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_orig
 	if { [empty_string_p $user_identification_id] } {
 	    # no previous customer service interaction with this user, so
 	    # insert them into ec_user_identification
-	    set user_identification_id [db_nextval "ec_user_ident_id_sequence"]
+	    set user_identification_id [db_nextval ec_user_ident_id_sequence]
 	    db_dml user_identification_insert {
                 insert into ec_user_identification
 		(user_identification_id, user_id)
@@ -64,7 +64,7 @@ ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_orig
 
     # now we have a non-null user_identification_id to use in the issue/interaction
     
-    set interaction_id [db_nextval "ec_interaction_id_sequence"]
+    set interaction_id [db_nextval ec_interaction_id_sequence]
 
     db_dml customer_service_interaction_insert {
 	insert into ec_customer_serv_interactions
@@ -73,7 +73,7 @@ ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_orig
 	(:interaction_id, :customer_service_rep, :user_identification_id, sysdate, :interaction_originator, :interaction_type, :interaction_headers)
     }
 
-    set issue_id [db_nextval "ec_issue_id_sequence"]
+    set issue_id [db_nextval ec_issue_id_sequence]
 
     db_dml customer_service_issue_insert {
         insert into ec_customer_service_issues
@@ -91,7 +91,7 @@ ad_proc ec_customer_service_simple_issue { customer_service_rep interaction_orig
 	}
     }
     
-    set action_id [db_nextval "ec_action_id_sequence"]
+    set action_id [db_nextval ec_action_id_sequence]
 
     db_dml customer_service_action_insert {
         insert into ec_customer_service_actions
