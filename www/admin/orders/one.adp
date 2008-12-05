@@ -15,11 +15,9 @@
       <tr>
         <td align=right><b>Ordered by</td>
         <td>@first_names@ @last_name@<br>
-<if @email@ eq "no email">
+
 @user_admin_page_html;noquote@
-</if><else>
-@email@
-</else>
+
 </td>
       </tr>
       <tr>
