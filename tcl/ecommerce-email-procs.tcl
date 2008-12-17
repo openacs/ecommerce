@@ -67,7 +67,7 @@ ad_proc ec_email_new_order {
 	} elseif { [string equal $shipping_method "pickup"] } {
 	    set address "no shipping. (Arranging to pickup)"
 	} else {
-    	    set address "not deliverable"
+    	    set address "delivery not required"
     }
     
 	set price_summary [ec_formatted_price_shipping_gift_certificate_and_tax_in_an_order $order_id]
@@ -228,88 +228,106 @@ ad_proc ec_email_order_shipped {
 } {
     
     if {[db_0or1row shipment_select "
-	select u.email, u.user_id, s.shipment_date, s.address_id, o.order_state, o.order_id
+	select u.email, u.user_id, s.shipment_date, s.address_id, s.expected_arrival_date, s.carrier, s.tracking_number, o.order_state, o.order_id
 	from ec_orders o, cc_users u, ec_shipments s
 	where o.user_id = u.user_id
 	and o.order_id = s.order_id
 	and s.shipment_id = :shipment_id"]} {
 
-	set shipped_date [util_AnsiDatetoPrettyDate $shipment_date]
+        # Get item_summary
 
-	# Get item_summary
+        set item_list [list]
+        db_foreach item_summary_select "
+           select p.product_name, p.one_line_description, p.product_id, i.price_charged, i.price_name, count(*) as quantity
+            from ec_items i, ec_products p
+            where i.product_id=p.product_id
+            and i.shipment_id=:shipment_id
+            group by p.product_name, p.one_line_description, p.product_id, i.price_charged, i.price_name" {
+            lappend item_list "Quantity $quantity: $product_name; $price_name: [ec_pretty_price $price_charged]"
+        }
 
-	set item_list [list]
-	db_foreach item_summary_select "
-	    select p.product_name, p.one_line_description, p.product_id, i.price_charged, i.price_name, count(*) as quantity
-	    from ec_items i, ec_products p
-	    where i.product_id=p.product_id
-	    and i.shipment_id=:shipment_id
-	    group by p.product_name, p.one_line_description, p.product_id, i.price_charged, i.price_name" {
-	    lappend item_list "Quantity $quantity: $product_name; $price_name: [ec_pretty_price $price_charged]"
-	}
+        set shipped_date [util_AnsiDatetoPrettyDate $shipment_date]
+        if { ![info exists expected_arrival_date] } {
+            set expected_arrival_date ""
+        } else {
+            set expected_arrival_date "Expected to arrive by [util_AnsiDatetoPrettyDate $expected_arrival_date]"
+        }
+        if { ![info exists carrier] } {
+            set carrier ""
+	    } else {
+            set carrier " via $carrier"
+        }
+	    if { ![info exists tracking_number] } {
+            set tracking_number ""
+        } else {
+            set tracking_number "Tracking Ref: $tracking_number"
+        }
 
-	set item_summary [join $item_list "\n"]
-	set address [ec_pretty_mailing_address_from_ec_addresses $address_id]
+        set item_summary [join $item_list "\n"]
+        set address [ec_pretty_mailing_address_from_ec_addresses $address_id]
 
-	# See whether this completes the order
+        # See whether this completes the order
 
-	if { $order_state == "fulfilled" } {
-	    set order_completion_sentence "This completes your order."
-	} else {
-	    set order_completion_sentence "There is still more to come.  We will let you know when\nthe rest of your order ships."
-	}
+        if { $order_state == "fulfilled" } {
+            set order_completion_sentence "This completes your order."
+        } else {
+            set order_completion_sentence "There is still more to come.  We will let you know when\nthe rest of your order ships."
+        }
 
-	set customer_service_signature [ec_customer_service_signature]
-	set system_url "[ec_insecure_location][ec_url]"
+        set customer_service_signature [ec_customer_service_signature]
+        set system_url "[ec_insecure_location][ec_url]"
 
-	# Have to get rid of ampersands in above variables because
-	# they mess up regsubs
+        # Have to get rid of ampersands in above variables because
+        # they mess up regsubs
 
-	regsub -all -- "&" $item_summary {\\&} item_summary
-	regsub -all -- "&" $address {\\&} address
-	regsub -all -- "&" $order_completion_sentence {\\&} order_completion_sentence
-	regsub -all -- "&" $customer_service_signature {\\&} customer_service_signature
-	regsub -all -- "&" $system_url {\\&} system_url
+        regsub -all -- "&" $item_summary {\\&} item_summary
+        regsub -all -- "&" $address {\\&} address
+        regsub -all -- "&" $order_completion_sentence {\\&} order_completion_sentence
+        regsub -all -- "&" $customer_service_signature {\\&} customer_service_signature
+        regsub -all -- "&" $system_url {\\&} system_url
 	
-	# Note: template #2 is defined to be the "Order Shipped" email
+        # Note: template #2 is defined to be the "Order Shipped" email
 
-	db_1row template_select_2 "
+        db_1row template_select_2 "
 	    select subject as email_subject, message as email_body, issue_type_list 
 	    from ec_email_templates
 	    where email_template_id = 2"
 
-	# And get rid of ctrl-M's in the body
+        # And get rid of ctrl-M's in the body
+        
+        regsub -all -- "\r" $email_body "" email_body
+        regsub -all -- "carrier_type" $email_body $carrier email_body
+        regsub -all -- "tracking_number" $email_body $tracking_number email_body
+        regsub -all -- "expected_arrival_date" $email_body $expected_arrival_date email_body
+        regsub -all -- "order_id_here" $email_body $order_id email_body
+        regsub -all -- "shipped_date_here" $email_body $shipped_date email_body
+        regsub -all -- "item_summary_here" $email_body $item_summary email_body
+        regsub -all -- "address_here" $email_body $address email_body
+        regsub -all -- "sentence_about_whether_this_completes_the_order_here" $email_body $order_completion_sentence email_body
+        regsub -all -- "customer_service_signature_here" $email_body $customer_service_signature email_body
+        regsub -all -- "system_url_here" $email_body $system_url email_body
 
-	regsub -all -- "\r" $email_body "" email_body
-	regsub -all -- "order_id_here" $email_body $order_id email_body
-	regsub -all -- "shipped_date_here" $email_body $shipped_date email_body
-	regsub -all -- "item_summary_here" $email_body $item_summary email_body
-	regsub -all -- "address_here" $email_body $address email_body
-	regsub -all -- "sentence_about_whether_this_completes_the_order_here" $email_body $order_completion_sentence email_body
-	regsub -all -- "customer_service_signature_here" $email_body $customer_service_signature email_body
-	regsub -all -- "system_url_here" $email_body $system_url email_body
+        db_transaction {
 
-	db_transaction {
+            # Create a customer service issue/interaction/action
 
-	    # Create a customer service issue/interaction/action
-
-	    set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" \
+            set user_identification_and_issue_id [ec_customer_service_simple_issue "" "automatic" "email" \
 						      "To: $email\nFrom: [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce]\nSubject: $email_subject" \
 						      $order_id $issue_type_list $email_body $user_id]
 
-	    set user_identification_id [lindex $user_identification_and_issue_id 0]
-	    set issue_id [lindex $user_identification_and_issue_id 1]
+            set user_identification_id [lindex $user_identification_and_issue_id 0]
+            set issue_id [lindex $user_identification_and_issue_id 1]
 
-	    # Add a row to the automatic email log
+            # Add a row to the automatic email log
 
-	    db_dml email_log_insert_2 "
+            db_dml email_log_insert_2 "
 		insert into ec_automatic_email_log
 		(user_identification_id, email_template_id, order_id, shipment_id, date_sent)
 		values
 		(:user_identification_id, 2, :order_id, :shipment_id, sysdate)"
-	}
-	set email_from [ec_customer_service_email_address $user_identification_id $issue_id]
-	ec_sendmail_from_service "$email" "$email_from" "$email_subject" "$email_body"
+        }
+        set email_from [ec_customer_service_email_address $user_identification_id $issue_id]
+        ec_sendmail_from_service "$email" "$email_from" "$email_subject" "$email_body"
     }	
 }
 

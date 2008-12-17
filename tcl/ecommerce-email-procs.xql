@@ -40,7 +40,7 @@
 
   <fullquery name="ec_email_order_shipped.shipment_select">      
     <querytext>
-      select u.email, u.user_id, s.shipment_date, s.address_id, o.order_state, o.order_id
+      select u.email, u.user_id, s.shipment_date, s.address_id, s.expected_arrival_date, s.carrier, s.tracking_number, o.order_state, o.order_id
       from ec_orders o, cc_users u, ec_shipments s
       where o.user_id = u.user_id
       and o.order_id = s.order_id
