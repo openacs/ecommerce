@@ -93,23 +93,31 @@ set address_id [db_string  get_address_id "
     select shipping_address 
     from ec_orders 
     where order_id=$order_id" -default ""]
-if { [empty_string_p $address_id] } {
+
+# Check if the order requires shipping
+    
+if {[db_0or1row shipping_avail "
+    select p.no_shipping_avail_p
+    from ec_items i, ec_products p
+    where i.product_id = p.product_id
+    and p.no_shipping_avail_p = 'f' 
+    and i.order_id = :order_id
+    group by no_shipping_avail_p"]} {
+    
+    set shipping_required 1
+}  else {
+    set shipping_required 0
+}
+
+if { [empty_string_p $address_id] && $shipping_required } {
 
     # No shipping address is needed if the order only consists of soft
     # goods not requiring shipping.
-
-    if {[db_0or1row shipping_avail "
-	select p.no_shipping_avail_p, count (*)
-	from ec_items i, ec_products p
-	where i.product_id = p.product_id
-	and p.no_shipping_avail_p = 'f' 
-	and i.order_id = :order_id
-	group by no_shipping_avail_p"]} {
-        ns_log Notice "checkout-3.tcl ref(110): no shipping address needed for order_id:$order_id, redirecting to checkout"
+    ns_log Notice "checkout-3.tcl ref(110): shipping address needed for order_id:$order_id, redirecting to checkout"
 	ad_returnredirect [ec_securelink [ec_url]checkout]
-        ad_script_abort
-    }
+    ad_script_abort
 }
+
 
 # Make sure there is a credit card (or that the
 # gift_certificate_balance covers the cost) and a shipping method for
@@ -143,7 +151,9 @@ set shipping_method [db_string get_shipping_method "
     select shipping_method 
     from ec_orders 
     where order_id=:order_id" -default ""]
-if { [empty_string_p $shipping_method] || ([empty_string_p $creditcard_id] && [exists_and_equal gift_certificate_covers_cost_p "f"]) } {
+
+if { ([empty_string_p $shipping_method] && $shipping_required) || ([empty_string_p $creditcard_id] && [exists_and_equal gift_certificate_covers_cost_p "f"]) } {
+
     ns_log Notice "checkout-3.tcl ref(146): no shipping method for order_id:$order_id. Redirecting to checkout-2"
     rp_internal_redirect checkout-2
     ad_script_abort
