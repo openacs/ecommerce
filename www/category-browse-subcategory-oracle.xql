@@ -49,7 +49,7 @@
       order by p.product_name
             ) q
         ) r
-        where r_rownum > :start_row
+        where r_rownum => :start_row
         and r_rownum <= :start_row + :how_many
     </querytext>
   </fullquery>

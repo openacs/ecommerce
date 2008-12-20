@@ -41,7 +41,7 @@
       where p.product_id = m.product_id
       and m.${sub}category_id = :${sub}category_id
       $exclude_subproducts
-      order by p.product_name limit :how_many offset :start_row
+      order by p.product_name limit :how_many offset :start_db_row
     </querytext>
   </fullquery>
 

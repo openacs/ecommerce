@@ -120,6 +120,8 @@ db_multirow -extend {
 #==============================
 # products
 
+set start_db_row [expr { $start_row - 1 } ]
+
 # All products in the "category" and not in "subcategories"
 
 set exclude_subproducts ""
