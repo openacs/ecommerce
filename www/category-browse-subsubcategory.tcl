@@ -19,7 +19,7 @@ ad_page_contract {
     subcategory_id:optional,naturalnum
     subsubcategory_id:optional,naturalnum
     {how_many:naturalnum {[ad_parameter -package_id [ec_id] ProductsToDisplayPerPage ecommerce]}}
-    {start_row:naturalnum "0"}
+    {start_row:naturalnum "1"}
     usca_p:optional
 }
 
@@ -59,16 +59,19 @@ if { [string compare $user_session_id "0"] != 0 } {
     db_dml grab_new_session_id "insert into ec_user_session_info (user_session_id, category_id) values (:user_session_id, :category_id)"
 }
 
-set category_name [db_string get_category_name "select category_name from ec_categories where category_id=:category_id"]
+set category_name_txt [db_string get_category_name "select category_name from ec_categories where category_id=:category_id"]
+regsub -all -- {&} $category_name_txt {\&amp;} category_name
 
 set subcategory_name ""
 if [ec_have subcategory_id] {
-    set subcategory_name [db_string get_subcat_name "select subcategory_name from ec_subcategories where subcategory_id=:subcategory_id"]
+    set subcategory_name_txt [db_string get_subcat_name "select subcategory_name from ec_subcategories where subcategory_id=:subcategory_id"]
+    regsub -all -- {&} $subcategory_name_txt {\&amp;} subcategory_name
 }
 
 set subsubcategory_name ""
 if [ec_have subsubcategory_id] {
-    set subsubcategory_name [db_string get_subsubcat_name "select subsubcategory_name from ec_subsubcategories where subsubcategory_id=:subsubcategory_id"]
+    set subsubcategory_name_txt [db_string get_subsubcat_name "select subsubcategory_name from ec_subsubcategories where subsubcategory_id=:subsubcategory_id"]
+    regsub -all -- {&} $subsubcategory_name_txt {\&amp;} subsubcategory_name
 }
 
 #==============================
@@ -113,6 +116,8 @@ if {[string equal $recommendations {<table width="100%">}]} {
 
 #==============================
 # products
+
+set start_db_row [expr { $start_row - 1 } ]
 
 # All products in the "category" and not in "subcategories"
 
@@ -161,12 +166,16 @@ db_multirow -extend {
 # if start_row < how_many, then we can assume it is the first page and so no Previous link.
 if { $start_row >= $how_many } {
     set prev_url [export_vars -base [ad_conn url] -override {{start_row {[expr $start_row - $how_many]}}} {category_id subcategory_id subsubcategory_id how_many}]
+    regsub -all -- {&amp;} $prev_url {&} prev_url
+    regsub -all -- {&} $prev_url {&amp;} prev_url
 }
 
 set how_many_more [expr $count - $start_row - $how_many + 1]
 
 if { $how_many_more > 0 } {
     set next_url [export_vars -base [ad_conn url] -override {{start_row {[expr $start_row + $how_many]}}} {category_id subcategory_id subsubcategory_id how_many}]
+    regsub -all -- {&amp;} $next_url {&} next_url
+    regsub -all -- {&} $next_url {&amp;} next_url
 
     if { $how_many_more >= $how_many } {
         set how_many_next $how_many
@@ -196,13 +205,16 @@ SELECT * from ec_sub${sub}categories c
     
     append subcategories "<li><a href=category-browse-sub${sub}category?[export_url_vars category_id subcategory_id subsubcategory_id]>[eval "ec_ident \$sub${sub}category_name"]</a>"
 }
+    regsub -all -- {&amp;} $subcategories {&} subcategories
+    regsub -all -- {&} $subcategories {&amp;} subcategories
+
 }
 
 set the_category_id $category_id
 set the_category_name [eval "ec_ident \$${sub}category_name"]
 set category_url "category-browse?category_id=${category_id}"
-set subcategory_url "category-browse-subcategory?category_id=${category_id}&subcategory_id=${subcategory_id}"
-set title "$category_name : $subcategory_name : $the_category_name"
+set subcategory_url "category-browse-subcategory?category_id=${category_id}&amp;subcategory_id=${subcategory_id}"
+set title "$category_name_txt : $subcategory_name_txt : $the_category_name"
 set context [list [list $category_url $category_name] [list $subcategory_url $subcategory_name] $the_category_name]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
