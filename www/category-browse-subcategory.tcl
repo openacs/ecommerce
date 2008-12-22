@@ -91,7 +91,8 @@ if { [ad_parameter -package_id [ec_id] UserClassApproveP ecommerce] } {
 # since per-user prices are calculated
 # TODO: actually, it could be by offer code, which would allow less caching
 upvar 0 ${sub}category_id cat_id
-set cache_key_prefix "ec-${sub}subcategory-browse-products-${cat_id}-${user_id}"
+set start_db_row [expr { $start_row - 1 } ]
+set cache_key_prefix "ec-${sub}subcategory-browse-products-${cat_id}-${user_id}-${start_db_row}-${how_many}"
 ns_log Notice "using cache_key_prefix: $cache_key_prefix"
 
 db_multirow -extend {
@@ -120,28 +121,42 @@ db_multirow -extend {
 #==============================
 # products
 
-set start_db_row [expr { $start_row - 1 } ]
+
 
 # All products in the "category" and not in "subcategories"
 
 set exclude_subproducts ""
 if { ![ec_at_bottom_level_p] } {
-  set exclude_subproducts "
-and not exists (
+  set exclude_subproducts "and not exists (
 select 'x' from $product_map(sub$sub) s, ec_sub${sub}categories c
                  where p.product_id = s.product_id
                    and s.sub${sub}category_id = c.sub${sub}category_id
-                   and c.${sub}category_id = :${sub}category_id)
-"
+                   and c.${sub}category_id = :${sub}category_id)"
 }
 
+# we are caching get_regular_product_count, because this is fairly stable
 
+db_1row -cache_key ec-regular-product-count get_regular_product_count "
+    select count(*) as product_count
+    from $product_map($sub) m, ec_products_searchable p left outer join ec_user_session_offer_codes o on (p.product_id = o.product_id and user_session_id = :user_session_id)
+    where p.product_id = m.product_id
+and m.${sub}category_id = :${sub}category_id
+    $exclude_subproducts"
+
+# we are not caching get_regular_products because this intefers with the dynamics of db level pagination. Also,
+# sites with large number of products show that db level pagination is faster here (even with extra above query), than
+# caching full queries (without offset and limit).
+# if pagination does not appear to be fast, verify that postgresql is tuned well.
+# in postgresql.conf file:
+# stats_row_level = on
+# and consider raising shared buffers by a factor of 4.
+  
 db_multirow -extend {
                     thumbnail_url
                     thumbnail_height
                     thumbnail_width
                     price_line
-                    } -cache_key ${cache_key_prefix}-products products get_regular_product_list "sql in db specific xql files" {
+                    } products get_regular_product_list "sql in db specific xql files" {
 
                         if {[array exists thumbnail_info]} {
                             unset thumbnail_info
@@ -167,7 +182,7 @@ if { $start_row >= $how_many } {
     set prev_url [export_vars -base [ad_conn url] -override {{start_row {[expr $start_row - $how_many]}}} {category_id subsubcategory_id subcategory_id how_many}]
 }
 
-set how_many_more [expr ${products:rowcount} - $start_row - $how_many + 1]
+set how_many_more [expr ${product_count} - $start_row - $how_many + 1]
 
 if { $how_many_more > 0 } {
     set next_url [export_vars -base [ad_conn url] -override {{start_row {[expr $start_row + $how_many]}}} {category_id subsubcategory_id subcategory_id how_many}]
@@ -180,6 +195,8 @@ if { $how_many_more > 0 } {
 }
 
 set end [expr $start_row + $how_many - 1]
+
+set page_number [expr { int( ( $start_row + $how_many - 1) / $how_many ) } ]
 
 #==============================
 # subcategories
@@ -198,7 +215,13 @@ set the_category_id   $category_id
 set the_category_name [eval "ec_ident \$${sub}category_name"]
 set category_url "category-browse?category_id=${the_category_id}"
 set title "$category_name : $subcategory_name"
-set context [list [list $category_url $category_name] $subcategory_name]
+if { $page_number > 1 } {
+    append title ", page ${page_number}"
+    set subcat_extra ", page ${page_number}"
+} else {
+    set subcat_extra ""
+}
+set context [list [list $category_url $category_name] "${subcategory_name}${subcat_extra}"]
 set ec_system_owner [ec_system_owner]
 db_release_unused_handles
 ad_return_template
