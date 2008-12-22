@@ -1,1 +1,1 @@
-@prev_bar;noquote@ @current_bar@ @next_bar;noquote@
+@prev_bar;noquote@ @current_bar;noquote@ @next_bar;noquote@

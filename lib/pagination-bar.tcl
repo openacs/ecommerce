@@ -11,9 +11,6 @@ if { ![info exists separator] } {
 }
 
 set bar_list_set [ecds_pagination_by_items $item_count $items_per_page $this_start_row]
-set prev_bar $separator
-set next_bar $separator
-
 
 set prev_bar_list [lindex $bar_list_set 0]
 foreach {page_num start_row} $prev_bar_list {
@@ -26,6 +23,6 @@ set current_bar "[lindex $current_bar_list 0]"
 
 set next_bar_list [lindex $bar_list_set 2]
 foreach {page_num start_row} $next_bar_list {
-    append next_bar " <a href=\"${base_url}${start_row}\">${page_num}</a> "
+    lappend next_bar " <a href=\"${base_url}${start_row}\">${page_num}</a> "
 }
 set next_bar [join $next_bar $separator]
