@@ -40,9 +40,9 @@ set choices_html "\[ <a href=\"issue-edit?[export_url_vars issue_id]\">change is
 set issue_type_list [db_list get_issue_type_list "select issue_type from ec_cs_issue_type_map where issue_id=:issue_id"]
 set issue_type [join $issue_type_list ", "]
 
-set open_full_date_html [util_AnsiDatetoPrettyDate [lindex [split $full_open_date " "] 0]] [lindex [split $full_open_date " "] 1]
+set open_full_date_html "[util_AnsiDatetoPrettyDate [lindex [split $full_open_date " "] 0]] [lindex [split $full_open_date " "] 1]"
 
-set close_date_html [util_AnsiDatetoPrettyDate [lindex [split $full_close_date " "] 0]] [lindex [split $full_close_date " "] 1]
+set close_date_html "[util_AnsiDatetoPrettyDate [lindex [split $full_close_date " "] 0]] [lindex [split $full_close_date " "] 1]"
 
 set closed_by_user_id_url "[ec_acs_admin_url]users/one?user_id=$closed_by"
 
