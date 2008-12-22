@@ -2009,19 +2009,91 @@ ad_proc -private ecds_pagination_by_items {
 } {
 
     if { $items_per_page > 0 && $item_count > 0 && $first_item_displayed > 0 && $first_item_displayed <= $item_count } {
-        set nbr_of_pages [expr { ( $item_count + $items_per_page - 1 ) / $items_per_page } ]
+        set bar_list [list]
+        set end_page [expr { ( $item_count + $items_per_page - 1 ) / $items_per_page } ]
+
         set current_page [expr { ( $first_item_displayed + $items_per_page - 1 ) / $items_per_page } ]
-        set outer_limit [expr { $nbr_of_pages + 1 } ]
+
+        # first row of current page \[expr { (( $current_page - 1)  * $items_per_page ) + 1 } \]
+
+        # create bar_list with no pages beyond end_page
+
+        if { $item_count > [expr { $items_per_page * 81 } ] } {
+            # use exponential page referencing
+            set relative_step 0
+            set next_bar_list [list]
+            set prev_bar_list [list]
+            # 0.69314718056 = log(2)  
+            set max_search_points [expr { int( ( log( $end_page ) / 0.69314718056 ) + 1 ) } ]
+            for {set exponent 0} { $exponent <= $max_search_points } { incr exponent 1 } {
+                # exponent refers to a page, relative_step refers to a relative row
+                set relative_step_row [expr { int( pow( 2, $exponent ) ) } ]
+                set relative_step_page $relative_step_row
+                lappend next_bar_list $relative_step_page
+                set prev_bar_list [linsert $prev_bar_list 0 [expr { -1 * $relative_step_page } ]]
+            }
+
+            # template_bar_list and relative_bar_list contain page numbers
+            set template_bar_list [concat $prev_bar_list 0 $next_bar_list]
+            set relative_bar_list [lsort -unique -increasing -integer $template_bar_list]
+            
+            # translalte bar_list relative values to absolute rows
+            foreach {relative_page} $relative_bar_list {
+                set new_page [expr { int ( $relative_page + $current_page ) } ]
+                if { $new_page < $end_page } {
+                    lappend bar_list $new_page 
+                }
+            }
+
+        } elseif {  $item_count > [expr { $items_per_page * 10 } ] } {
+            # use linear, stepped page referencing
+
+            set next_bar_list [list 1 2 3 4 5]
+            set prev_bar_list [list -5 -4 -3 -2 -1]
+            set template_bar_list [concat $prev_bar_list 0 $next_bar_list]
+            set relative_bar_list [lsort -unique -increasing -integer $template_bar_list]
+            # translalte bar_list relative values to absolute rows
+            foreach {relative_page} $relative_bar_list {
+                set new_page [expr { int ( $relative_page + $current_page ) } ]
+                if { $new_page < $end_page } {
+                    lappend bar_list $new_page 
+                }
+            }
+            # add absolute page references
+            for {set page_number 10} { $page_number <= $end_page } { incr page_number 10 } {
+                lappend bar_list $page_number
+                set bar_list [linsert $bar_list 0 [expr { -1 * $page_number } ] ]
+            }
+
+        } else {
+            # use complete page reference list
+            for {set page_number 1} { $page_number <= $end_page } { incr page_number 1 } {
+                lappend bar_list $page_number
+            }
+        }
+
+        # add absolute reference for first page, last page
+        lappend bar_list $end_page
+        set bar_list [linsert $bar_list 0 1]
+
+        # clean up list
+        # now we need to sort and remove any remaining nonpositive integers and duplicates
+        set filtered_bar_list [lsort -unique -increasing -integer [lsearch -all -glob -inline $bar_list {[0-9]*} ]]
+        # delete any cases of page zero
+        set zero_index [lsearch $filtered_bar_list 0]
+        set bar_list [lreplace $filtered_bar_list $zero_index $zero_index]
+
+        # generate code  (this part should be moved to ecommerce/lib))
         set prev_bar $separator
         set next_bar $separator
-        for  {set page 1} {$page < $outer_limit} {incr page 1} {
+        foreach page $bar_list {
             set start_item [expr { ( ( $page - 1 ) * $items_per_page ) + 1 } ]
             if { $page < $current_page } {
                 append prev_bar " <a href=\"${base_url}${start_item}\">$page</a> $separator"
             } elseif { $page eq $current_page } {
                 set current_bar " $page "
             } elseif { $page > $current_page } {
-                if { $page < $nbr_of_pages } {
+                if { $page < $end_page } {
                     append next_bar " <a href=\"${base_url}${start_item}\">$page</a> $separator"
                 } else {
                     append next_bar " <a href=\"${base_url}${start_item}\">$page</a> "
@@ -2031,8 +2103,8 @@ ad_proc -private ecds_pagination_by_items {
         set bar_list [list $prev_bar $current_bar $next_bar]
     } else {
         ns_log Warning "ecds_pagination_by_items: parameter value(s) out of bounds for base_url $base_url $item_count $items_per_page $first_item_displayed"
-        set bar_list [list 1 $first_item_displayed $item_count]
     }
+
     return $bar_list
 }
 
@@ -2082,4 +2154,42 @@ ad_proc -private ecds_sort_all_categories {
         db_dml category_sortkey_update "update ec_categories set sort_key=:sort_key where category_id =:category_id"
         ecds_sort_subcategory_list $category_id
     }
+}
+
+ad_proc -private ecds_keyword_search_update {
+    product_id
+    {extras_list ""}
+} {
+    adds certain custom field values to ec_products.search_keywords, returns 1 if updated, otherwise returns 0
+} {
+    if { $extras_list eq "" } {
+        set extras_list [list brandname brandmodelnumber unspsccode vendorsku vendorabbrev]
+    }
+    set success 0
+
+    db_0or1row select_product_keywords_and_extras "select a.search_keywords, b.brandname, b.brandmodelnumber, b.unspsccode, b.vendorsku, b.vendorabbrev from ec_products a, ec_custom_product_field_values b where a.product_id = b.product_id and a.product_id = :product_id"
+
+    # if extras are not in search_keywords, add them
+    if { [info exists search_keywords ] } {
+        set keywords [string tolower $search_keywords]
+    } else { 
+        set keywords ""
+    }
+    foreach extra $extras_list {
+        if { ![info exists $extra] } {
+            set $extra ""
+            ns_log Warning "ecds_search_keywords_update: working on product_id $product_id, no info for $extra"
+       } else {
+            set extra_value [string tolower [expr $$extra]]
+            if { [string length $extra_value] > 0 && [string first $extra_value $keywords] eq -1 } {
+                set search_keywords [string range "${search_keywords}, ${extra_value}" 0 3998]
+                set success 1
+            }
+        }
+    }
+    if { $success } {
+        # upate search_keywords
+        db_dml update_search_keywords "update ec_products set search_keywords = :search_keywords where product_id = :product_id"
+    }
+    return $success
 }
