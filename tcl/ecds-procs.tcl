@@ -2002,10 +2002,8 @@ ad_proc -private ecds_pagination_by_items {
     item_count
     items_per_page
     first_item_displayed
-    base_url
-    {separator "&nbsp;"}
 } {
-    returns a list of 3 pagination html fragments, the first is for pages before the current page, the second refers to the current page, and the third for pages after the current page. 
+    returns a list of 3 pagination components, the first is a list of page_number and start_row pairs for pages before the current page, the second contains page_number and start_row for the current page, and the third is the same value pair for pages after the current page.  See ecommerce/lib/paginiation-bar for an implementation example. 
 } {
 
     if { $items_per_page > 0 && $item_count > 0 && $first_item_displayed > 0 && $first_item_displayed <= $item_count } {
@@ -2083,29 +2081,26 @@ ad_proc -private ecds_pagination_by_items {
         set zero_index [lsearch $filtered_bar_list 0]
         set bar_list [lreplace $filtered_bar_list $zero_index $zero_index]
 
-        # generate code  (this part should be moved to ecommerce/lib))
-        set prev_bar $separator
-        set next_bar $separator
+        # generate list of lists for code in ecommerce/lib
+        set prev_bar_list_pair [list]
+        set current_bar_list_pair [list]
+        set next_bar_list_pair [list]
         foreach page $bar_list {
             set start_item [expr { ( ( $page - 1 ) * $items_per_page ) + 1 } ]
             if { $page < $current_page } {
-                append prev_bar " <a href=\"${base_url}${start_item}\">$page</a> $separator"
+                lappend prev_bar_list_pair $page $start_item
             } elseif { $page eq $current_page } {
-                set current_bar " $page "
+                lappend current_bar_list_pair $page $start_item
             } elseif { $page > $current_page } {
-                if { $page < $end_page } {
-                    append next_bar " <a href=\"${base_url}${start_item}\">$page</a> $separator"
-                } else {
-                    append next_bar " <a href=\"${base_url}${start_item}\">$page</a> "
-                }
+                lappend next_bar_list_pair $page $start_item
             }
         }
-        set bar_list [list $prev_bar $current_bar $next_bar]
+        set bar_list_set [list $prev_bar_list_pair $current_bar_list_pair $next_bar_list_pair]
     } else {
         ns_log Warning "ecds_pagination_by_items: parameter value(s) out of bounds for base_url $base_url $item_count $items_per_page $first_item_displayed"
     }
 
-    return $bar_list
+    return $bar_list_set
 }
 
 
