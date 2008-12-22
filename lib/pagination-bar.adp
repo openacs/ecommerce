@@ -1,1 +1,3 @@
-@prev_bar;noquote@ @current_bar;noquote@ @next_bar;noquote@
+<if @prev_bar@ not nil or @next_bar@ not nil>
+<p>Jump to page: @prev_bar;noquote@ &nbsp; [@current_bar;noquote@] &nbsp; @next_bar;noquote@</p>
+</if>

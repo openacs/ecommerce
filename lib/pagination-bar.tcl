@@ -11,6 +11,8 @@ if { ![info exists separator] } {
 }
 
 set bar_list_set [ecds_pagination_by_items $item_count $items_per_page $this_start_row]
+set prev_bar [list]
+set next_bar [list]
 
 set prev_bar_list [lindex $bar_list_set 0]
 foreach {page_num start_row} $prev_bar_list {
