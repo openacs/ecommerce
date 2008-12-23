@@ -150,6 +150,7 @@ and m.${sub}category_id = :${sub}category_id
 # in postgresql.conf file:
 # stats_row_level = on
 # and consider raising shared buffers by a factor of 4.
+# also dbpools, see http://openacs.org/forums/message-view?message_id=1458697
   
 db_multirow -extend {
                     thumbnail_url
