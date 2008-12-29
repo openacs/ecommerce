@@ -26,7 +26,7 @@ where a.interaction_id=:interaction_id
 order by a.action_id desc"
 set interaction_actions_html ""
 db_foreach get_interaction_actions $sql {
-    append interaction_actions_html "<table width=90%>
+    append interaction_actions_html "<table width=\"90%\">
 <tr bgcolor=\"ececec\"><td><b>Issue:</b> <a href=\"issue?issue_id=$issue_id\">$issue_id</a></td></tr>
 <tr><td><b>Details:</b><br>[ec_display_as_html $action_details]</td></tr>\n"
     if { ![empty_string_p $follow_up_required] } {

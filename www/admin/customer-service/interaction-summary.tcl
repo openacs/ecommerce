@@ -49,7 +49,7 @@ set interaction_summary_html ""
 db_foreach get_interaction_summary $sql {
     incr action_counter
     if { [string compare $interaction_id $old_interaction_id] != 0 } {
-        append interaction_summary_html "<br><table width=90%>
+        append interaction_summary_html "<br><table width=\"90%\">
     <tr><td colspan="3" bgcolor=\"ececec\"><b>[ec_formatted_full_date $full_interaction_date]</b></td></tr>
 	<tr><td align=right><b>Rep</td><td><a href=\"[ec_acs_admin_url]users/one?user_id=$customer_service_rep\">$rep_name</a></td></tr>
 	<tr><td align=right><b>Originator</td><td>$interaction_originator</td></tr>
@@ -57,7 +57,7 @@ db_foreach get_interaction_summary $sql {
    </table>"
     }
     append interaction_summary_html "<br>
-    <table width=90%>
+    <table width=\"90%\">
     <tr bgcolor=\"ececec\"><td>Issue ID: <a href=\"issue?issue_id=$issue_id\">$issue_id</a></td></tr>
     <tr><td><p><b>Details:</b>[ec_display_as_html $action_details]</td></tr>\n"
     if { ![empty_string_p $follow_up_required] } {

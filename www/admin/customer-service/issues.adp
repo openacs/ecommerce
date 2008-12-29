@@ -6,7 +6,7 @@
 <form method=post action=issues>
 @export_form_vars_html;noquote@
 
- <table border=0 cellspacing=0 cellpadding=0 width=100%>
+ <table border=0 cellspacing=0 cellpadding=0 width=\"100%\">
   <tr bgcolor=#ececec>
    <td align=center><b>Issue Type</b></td>
    <td align=center><b>Status</b></td>

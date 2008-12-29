@@ -74,7 +74,7 @@ db_foreach get_actions_assoc_w_user $sql {
             }
             append actions_assoc_w_user_html "</table><br>"
         }
-        append actions_assoc_w_user_html "<table width=90%>
+        append actions_assoc_w_user_html "<table width=\"90%\">
 	<tr bgcolor=\"ececec\"><th>Date</th><th>Rep</th><th>Originator</th><th>Inquired Via</th><th>Info Used</th><th>Interaction</th></tr>
 	<tr bgcolor=\"ececec\"><td>[util_AnsiDatetoPrettyDate [lindex [split $full_interaction_date " "] 0]] [lindex [split $full_interaction_date " "] 1]</td><td>[ec_decode $customer_service_rep "" "&nbsp;" "<a href=\"[ec_acs_admin_url]users/one?user_id=$customer_service_rep\">$customer_service_rep</a>"]</td><td>$interaction_originator</td><td>$interaction_type</td>"
     }
