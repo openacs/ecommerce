@@ -22,16 +22,29 @@ where shipment_id = :shipment_id"
 set carrier_info ""
 
 if { $carrier == "FedEx" } {
-    set fedex_url "http://www.fedex.com/cgi-bin/tracking?tracknumbers=$tracking_number&action=track&language=english&cntry_code=us"
-    with_catch errmsg {
-        set page_from_fedex [ns_httpget $fedex_url]
-        regexp {(<TABLE WIDTH="290".*?</TABLE>).*?(<TABLE WIDTH="460" BORDER="0" CELLPADDING="2" CELLSPACING="1">.*?</TABLE>)} $page_from_fedex match detailed_info scan_activity
-        # Remove links
-        regsub -all -nocase {</*?a.*?>} $scan_activity "" scan_activity
-        set carrier_info "$detailed_info $scan_activity"
-    } {
-        set carrier_info "Unable to retrieve data from FedEx."
+    set fedex_url "http://www.fedex.com/Tracking?tracknumbers=${tracking_number}&language=english&cntry_code=us"
+    set carrier_info "Unable to retrieve data from FedEx."
+    if { [catch {set get_id [ns_http queue -timeout 65 $fedex_url]} err ]} {
+        ns_log Error "ecommerce/www/admin/orders/track.tcl  url=$fedex_url error: $err"
+    } else {
+        ns_log Notice "ecommerce/www/admin/orders/track.tcl  ns_httping $fedex_url"
+
+        if { [catch { ns_http wait -result page_from_fedex -status status $get_id } err2 ]} {
+            ns_log Error "ecommerce/www/admin/orders/track.tcl  ns_http wait $err2"
+        }
+        
+        if { ![info exists status] || $status ne "200" } {
+            # no page info returned, just return error
+            ns_log Warning "ecommerce/www/admin/orders/track.tcl Unable to retrieve FedEx data for ${tracking_number}. Error is $errmsg"
+        } else {
+            # Received page, Remove links
+            set scan_activity [ecds_get_contents_from_tag {<!-- BEGIN Scan Activity -->} {<!-- END Scan Activity -->} $page_from_fedex]
+            set detailed_info [ecds_get_contents_from_tag {!-- shipment info -->} {<!-- BEGIN Scan Activity -->} $page_from_fedex]
+            regsub -all -nocase {</*?a.*?>} $scan_activity "" scan_activity
+            set carrier_info "$detailed_info $scan_activity"
+        }
     }
+
 } elseif { [string match "UPS*" $carrier] } {
     set ups_url "http://wwwapps.ups.com/etracking/tracking.cgi?submit=Track&InquiryNumber1=$tracking_number&TypeOfInquiryNumber=T&build_detail=yes"
     with_catch errmsg {

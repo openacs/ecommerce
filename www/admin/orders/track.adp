@@ -13,5 +13,5 @@
 <h4>Information from @carrier_name@</h4>
 
 <blockquote>
-@carrier_tracking_info@
+@carrier_tracking_info;noquote@
 </blockquote>
