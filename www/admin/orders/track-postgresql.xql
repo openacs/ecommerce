@@ -6,7 +6,7 @@
 <fullquery name="shipment_select">      
       <querytext>
       
-select to_char(shipment_date, 'MMDDYY') as ship_date_for_fedex, to_char(shipment_date, 'MM/DD/YYYY') as pretty_ship_date, carrier, tracking_number
+select to_char(shipment_date, 'MMDDYY') as ship_date_for_fedex, to_char(shipment_date, 'MM/DD/YYYY') as pretty_ship_date, carrier, tracking_number, expected_arrival_date, order_id
 from ec_shipments
 where shipment_id = :shipment_id
 
