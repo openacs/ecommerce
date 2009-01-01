@@ -30,49 +30,54 @@ ad_proc ec_combocategory_widget {
     Category widget combining categories and subcategories 
 } {
     if { $multiple_p == "f" } {
-	set select_tag "<select name=\"combocategory_id\"><option value=\"\">Entire catalog</option>\n"
+        set select_tag "<select name=\"combocategory_id\"><option value=\"\">Entire catalog</option>\n"
     } else {
-	set select_tag "<select multiple name=\"category_id\" size=\"3\"><option value=\"\">Entire catalog</option>\n"
+        set select_tag "<select multiple name=\"category_id\" size=\"3\"><option value=\"\">Entire catalog</option>\n"
     }
     set to_return ""
     set category_counter 0
     set last_category_id ""
 
-    # Get all categories and their subcategories
+    # Decode the combo of category and subcategory ids
+    set default_list [split $default "|"]
+    set selected_cat_id [lindex $default_list 0]
+    set selected_subcat_id [lindex $default_list 1]
+
+
+    # Get the categories and the current subcategory and any default subcategories
     db_foreach get_combocategories "
 	select c.category_id, s.subcategory_id, category_name, subcategory_name from ec_categories c left outer join ec_subcategories s using (category_id)" {
+        regsub -all -- {&} $category_name {\&amp;} category_name
+        if { [info exists subcategory_name] } {
+            regsub -all -- {&} $subcategory_name {\&amp;} subcategory_name
+        }
+        # There is at least one category. Open the select widget on the first pass of the foreach loop
+        incr category_counter
+        if { $category_id != $last_category_id } {
+            set last_category_id $category_id
+            
+            # New category. Check if the category has been selected.
+            if { [lsearch -exact $default "${category_id}|0"] != -1 } {
+                append to_return "<option value=\"${category_id}|0\" selected>&nbsp;-&nbsp;${category_name}</option>"
+            } elseif { $category_id eq 55 } {
+                append to_return "<option value=\"${category_id}|0\">&nbsp;-&nbsp;${category_name}</option>"
+            } else {
+                append to_return "<option value=\"${category_id}|0\">&nbsp;+&nbsp;${category_name}</option>"
+            }
 
-	# There is at least one category. Open the select widget on the first pass of the foreach loop
-	if { $category_counter == 0} {
-	    append to_return $select_tag
-	}
-	incr category_counter
-	if { $category_id != $last_category_id } {
-	    set last_category_id $category_id
+        # Check if there are subcategories.
+        } elseif {![empty_string_p $subcategory_id] && ( $category_id eq $selected_cat_id || $category_id eq 55 ) } {
 
-	    # Check if the category has been selected.
-	    if { [lsearch -exact $default "$category_id|0"] != -1 || [lsearch -exact $default $category_name] != -1 } {
-		append to_return "<option value=\"$category_id|0\" selected>&nbsp;&nbsp;$category_name</option>"	    
-	    } else {
-		append to_return "<option value=\"$category_id|0\">&nbsp;&nbsp;$category_name</option>"
-	    }
-	}
-
-	# Check if there are subcategories.
-
-	if {![empty_string_p $subcategory_id]} {
-
-	    # Check if the subcategory has been selected.
-
-	    if { [lsearch -exact $default "$category_id|$subcategory_id"] != -1 || [lsearch -exact $default $subcategory_name] != -1 } {
-		append to_return "<option value=\"$category_id|$subcategory_id\" selected>&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;$subcategory_name</option>"	    
-	    } else {
-		append to_return "<option value=\"$category_id|$subcategory_id\">&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;$subcategory_name</option>"
-	    }
-	}
+            # Check if the subcategory has been selected.
+            if { [lsearch -exact $default "${category_id}|${subcategory_id}"] != -1 } {
+                append to_return "<option value=\"${category_id}|${subcategory_id}\" selected>&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;${subcategory_name}</option>"	    
+            } else {
+                append to_return "<option value=\"${category_id}|${subcategory_id}\">&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;${subcategory_name}</option>"
+            }
+        }
     }
     if { $category_counter != 0 } {
-	append to_return "</select>\n"
+        set to_return "${select_tag}\n${to_return}</select>\n"
     }
     return $to_return
 }
@@ -91,18 +96,19 @@ ad_proc ec_only_category_widget {
     set to_return ""
     set category_counter 0
     db_foreach get_ec_categories "select category_id, category_name from ec_categories order by category_name" {
-	if { $category_counter == 0} {
-	    append to_return $select_tag
-	}
-	incr category_counter
-	if { [lsearch -exact $default $category_id] != -1 || [lsearch -exact $default $category_name] != -1 } {
-	    append to_return "<option value=$category_id selected>$category_name</option>"	    
-	} else {
-	    append to_return "<option value=$category_id>$category_name</option>"
-	}
+        regsub -all -- {&} $category_name {\&amp;} category_name
+        if { $category_counter == 0} {
+            append to_return $select_tag
+        }
+        incr category_counter
+        if { [lsearch -exact $default $category_id] != -1 || [lsearch -exact $default $category_name] != -1 } {
+            append to_return "<option value=$category_id selected>$category_name</option>"	    
+        } else {
+            append to_return "<option value=$category_id>$category_name</option>"
+        }
     }
     if { $category_counter != 0 } {
-	append to_return "</select>\n"
+        append to_return "</select>\n"
     }
     return $to_return
 }
@@ -119,15 +125,16 @@ ad_proc ec_subcategory_widget { category_id {multiple_p "f"} {default ""} } { su
     }
     set subcategory_counter 0
     db_foreach get_subcats_by_name "select subcategory_id, subcategory_name from ec_subcategories where category_id=:category_id order by subcategory_name" {
-	incr subcategory_counter
-	if { [string compare $default $subcategory_id] == 0 || [string compare $default $subcategory_name] == 0 } {
-	    append to_return "<option value=$subcategory_id selected>$subcategory_name"
-	} else {
-	    append to_return "<option value=$subcategory_id>$subcategory_name"
-	}
+        regsub -all -- {&} $subcategory_name {\&amp;} subcategory_name
+        incr subcategory_counter
+        if { [string compare $default $subcategory_id] == 0 || [string compare $default $subcategory_name] == 0 } {
+            append to_return "<option value=$subcategory_id selected>$subcategory_name"
+        } else {
+            append to_return "<option value=$subcategory_id>$subcategory_name"
+        }
     }
     if { $subcategory_counter == 0 } {
-	append to_return "<option value=\"\">There are no subcategories to choose from."
+        append to_return "<option value=\"\">There are no subcategories to choose from."
     }
     append to_return "</select>\n"
     return $to_return
@@ -307,30 +314,30 @@ ad_proc ec_stock_status_widget { {default ""} } { returns stock status } {
 # I'll be using ns_conn form anyway and I can get all of them
 ad_proc ec_subcategory_with_subsubcategories_widget { category_id {multiple_p "f"} {default ""} } { returns subcategories with subcategories } {
     if { $multiple_p == "f" } {
-	set to_return "<select name=subcategory_and_subsubcategory>\n"
+        set to_return "<select name=subcategory_and_subsubcategory>\n"
     } else {
-	set to_return "<select multiple name=subcategory_and_subsubcategory size=3>\n"
+        set to_return "<select multiple name=subcategory_and_subsubcategory size=3>\n"
     }
 
     set subcategory_list [db_list get_subcategory_ids "select subcategory_id from ec_subcategories where category_id=:category_id"]
     set subcategory_counter 0
     foreach subcategory_id $subcategory_list {
-	incr subcategory_counter
-	set subcategory_name [db_string get_subcategory_names "select subcategory_name from ec_subcategories where subcategory_id=:subcategory_id"]
-	append to_return "<option value=\"[list $subcategory_id ""]\">$subcategory_name\n"
+        incr subcategory_counter
+        set subcategory_name [db_string get_subcategory_names "select subcategory_name from ec_subcategories where subcategory_id=:subcategory_id"]
+        regsub -all -- {&} $subcategory_name {\&amp;} subcategory_name
+        append to_return "<option value=\"[list $subcategory_id ""]\">$subcategory_name\n"
 
-	set sql "select subsubcategory_id, subsubcategory_name from ec_subsubcategories where subcategory_id=:subcategory_id"]
-	db_foreach get_subcategory_info $sql {
-	    
-	    append to_return "<option value=\"[list $subcategory_id $subsubcategory_id]\">$subcategory_name -- $subsubcategory_name\n"
-	}
+        set sql "select subsubcategory_id, subsubcategory_name from ec_subsubcategories where subcategory_id=:subcategory_id"
+        db_foreach get_subcategory_info $sql {
+            regsub -all -- {&} $subsubcategory_name {\&amp;} subsubcategory_name
+            append to_return "<option value=\"[list $subcategory_id $subsubcategory_id]\">$subcategory_name -- $subsubcategory_name\n"
+        }
 
     }
     if { $subcategory_counter == 0 } {
-	append to_return "<option value=\"\">There are no subcategories to choose from."
+        append to_return "<option value=\"\">There are no subcategories to choose from."
     }
     append to_return "</select>\n"
-
     return $to_return
 }
 
@@ -358,42 +365,45 @@ ad_proc ec_category_widget { {multiple_p "f"} {default ""} {allow_null_categoriz
     set old_category_id ""
     set old_subcategory_id ""
     db_foreach get_category_info_joined_w_children $sql {
-	incr category_counter
+        incr category_counter
 	
-	
-	if { $category_id != $old_category_id } {
-
-	    if { [lsearch -exact $default $category_id] != -1 || [lsearch -exact $default $category_name] != -1 } {
-		append to_return "<option value=$category_id selected>$category_name\n"
-	    } else {
-		append to_return "<option value=$category_id>$category_name\n"
-	    }
-	    set old_category_id $category_id
-	} ; # end of new category line
+        if { $category_id != $old_category_id } {
+            regsub -all -- {&} $category_name {\&amp;} category_name
+            if { [lsearch -exact $default $category_id] != -1 || [lsearch -exact $default $category_name] != -1 } {
+                append to_return "<option value=$category_id selected>$category_name\n"
+            } else {
+                append to_return "<option value=$category_id>$category_name\n"
+            }
+            set old_category_id $category_id
+        } 
+        # end of new category line
 	    
-	if { $subcategory_id != $old_subcategory_id && ![empty_string_p $subcategory_id]} {
-	    if { [lsearch -exact $default "$category_id $subcategory_id"] != -1 } {
-		append to_return "<option value=\"$category_id $subcategory_id\" selected>&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name\n"
-	    } else {
-		append to_return "<option value=\"$category_id $subcategory_id\">&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name\n"
-	    }
-	    set old_subcategory_id $subcategory_id
-	} ; # end of new subcategory line
+        if { $subcategory_id != $old_subcategory_id && ![empty_string_p $subcategory_id]} {
+            regsub -all -- {&} $subcategory_name {\&amp;} subcategory_name
+            if { [lsearch -exact $default "$category_id $subcategory_id"] != -1 } {
+                append to_return "<option value=\"$category_id $subcategory_id\" selected>&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name\n"
+            } else {
+                append to_return "<option value=\"$category_id $subcategory_id\">&nbsp;&nbsp;&nbsp;&nbsp;$subcategory_name\n"
+            }
+            set old_subcategory_id $subcategory_id
+        } 
+        # end of new subcategory line
 
-	if { ![empty_string_p $subsubcategory_id] } {
-	    if { [lsearch -exact $default "$category_id $subcategory_id $subsubcategory_id"] != -1 } {
-		append to_return "<option value=\"$category_id $subcategory_id $subsubcategory_id\" selected>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$subsubcategory_name\n"
-	    } else {
-		append to_return "<option value=\"$category_id $subcategory_id $subsubcategory_id\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$subsubcategory_name\n"
-	    }
-	}
+        if { ![empty_string_p $subsubcategory_id] } {
+            regsub -all -- {&} $subsubcategory_name {\&amp;} subsubcategory_name
+            if { [lsearch -exact $default "$category_id $subcategory_id $subsubcategory_id"] != -1 } {
+                append to_return "<option value=\"$category_id $subcategory_id $subsubcategory_id\" selected>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$subsubcategory_name\n"
+            } else {
+                append to_return "<option value=\"$category_id $subcategory_id $subsubcategory_id\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$subsubcategory_name\n"
+            }
+        }
 
     }
     if { $category_counter == 0 } {
-	append to_return "<option value=\"\">There are no categories to choose from."
+        append to_return "<option value=\"\">There are no categories to choose from."
     }
     append to_return "</select>\n"
-  return $to_return
+    return $to_return
 }
 
 # Shows mailing lists (i.e., categories/subcategories/subsubcategories, at least for now)
@@ -436,62 +446,61 @@ ad_proc ec_mailing_list_widget { {drop_down_p "t"} {multiple_p "f"} {default ""}
     set old_subsubcategory_id ""
     db_foreach get_category_children $sql {
 	
-	if { [string compare $old_category_id $category_id] != 0 || [string compare $old_subcategory_id $subcategory_id] != 0 || [string compare $old_subsubcategory_id $subsubcategory_id] != 0 } {
-	    if { $drop_down_p == "t" } {
-		append to_return "<option value=\""
+        if { [string compare $old_category_id $category_id] != 0 || [string compare $old_subcategory_id $subcategory_id] != 0 || [string compare $old_subsubcategory_id $subsubcategory_id] != 0 } {
+            if { $drop_down_p == "t" } {
+                append to_return "<option value=\""
 
-		if { ![empty_string_p $category_id] } {
-		    append to_return "$category_id"
-		}
+                if { ![empty_string_p $category_id] } {
+                    append to_return "$category_id"
+                }
 		
-		if { ![empty_string_p $subcategory_id] } {
-		    append to_return " $subcategory_id"
-		}
-		if { ![empty_string_p $subsubcategory_id] } {
-		    append to_return " $subsubcategory_id"
-		}
+                if { ![empty_string_p $subcategory_id] } {
+                    append to_return " $subcategory_id"
+                }
+                if { ![empty_string_p $subsubcategory_id] } {
+                    append to_return " $subsubcategory_id"
+                }
+                
+                append to_return "\">"
+            } else {
+                append to_return "<li><a href=\"one"
 		
-		append to_return "\">"
-	    } else {
-		append to_return "<li><a href=\"one"
-		
-		if { ![empty_string_p $category_id] } {
-		    append to_return "?category_id=$category_id"
-		}
+                if { ![empty_string_p $category_id] } {
+                    append to_return "?category_id=$category_id"
+                }
 
-		if { ![empty_string_p $subcategory_id] } {
-		    append to_return "&subcategory_id=$subcategory_id"
-		}
+                if { ![empty_string_p $subcategory_id] } {
+                    append to_return "&subcategory_id=$subcategory_id"
+                }
 
-		if { ![empty_string_p $subsubcategory_id] } {
-		    append to_return "&subsubcategory_id=$subsubcategory_id"
-		}
-		append to_return "\">"
-	    }
-	    
-	    append to_return "$category_name"
+                if { ![empty_string_p $subsubcategory_id] } {
+                    append to_return "&subsubcategory_id=$subsubcategory_id"
+                }
+                append to_return "\">"
+            }
+	        regsub -all -- {&} $category_name {\&amp;} category_name
+            append to_return "$category_name"
 
-	    if { ![empty_string_p $subcategory_id] } {
-		append to_return ": $subcategory_name"
-	    }
-	    if { ![empty_string_p $subsubcategory_id] } {
-		append to_return ": $subsubcategory_name"
-	    }
+            if { ![empty_string_p $subcategory_id] } {
+                regsub -all -- {&} $subcategory_name {\&amp;} subcategory_name
+                append to_return ": $subcategory_name"
+            }
+            if { ![empty_string_p $subsubcategory_id] } {
+                regsub -all -- {&} $subsubcategory_name {\&amp;} subsubcategory_name
+                append to_return ": $subsubcategory_name"
+            }
 
-	    if { $drop_down_p == "f" } {
-		append to_return "</a>"
-	    }
-	}
+            if { $drop_down_p == "f" } {
+                append to_return "</a>"
+            }
+        }
         set old_category_id $category_id
         set old_subcategory_id $subcategory_id
         set old_subsubcategory_id $subsubcategory_id
     }
     if {[string length $to_return] == $loop_detector} {
-        set to_return "
-        <b>none</b>
-        "
+        set to_return "<b>none</b>"
     } else {
-
         if { $drop_down_p == "t" } {
             append to_return "</select>"
         } else {
@@ -514,50 +523,56 @@ ad_proc ec_rating_widget { } { ratings widget } {
 # given category_list, subcategory_list, and subsubcategory_list, this determines
 # which options of the categorization widget should be selected by default (when
 # editing a product)
-ad_proc ec_determine_categorization_widget_defaults { category_list subcategory_list subsubcategory_list } { given category_list, subcategory_list, and subsubcategory_list, this determines which options of the categorization widget should be selected by default (when editing a product) } {
-
-  
+ad_proc ec_determine_categorization_widget_defaults { 
+    category_list 
+    subcategory_list 
+    subsubcategory_list 
+} { 
+    given category_list, subcategory_list, and subsubcategory_list, this determines which options of the categorization widget should be selected by default (when editing a product) 
+} {
 
     if { [empty_string_p $category_list] } {
-	return [list]
+        return [list]
     }
 
     set to_return [list]
     foreach category_id $category_list {
 
-	if { ![empty_string_p $subcategory_list] } {
-	    set relevant_subcategory_list [db_list get_sub_list "select subcategory_id from ec_subcategories where category_id=:category_id and subcategory_id in ([join $subcategory_list ","]) order by subcategory_name"]
-	} else {
-	    set relevant_subcategory_list [list]
-	}
+        if { ![empty_string_p $subcategory_list] } {
+            set relevant_subcategory_list [db_list get_sub_list "select subcategory_id from ec_subcategories where category_id=:category_id and subcategory_id in ([join $subcategory_list ","]) order by subcategory_name"]
+            regsub -all -- {&} $relevant_subcategory_list {\&amp;} relevant_subcategory_list
+        } else {
+            set relevant_subcategory_list [list]
+        }
 
-	if { [llength $relevant_subcategory_list] == 0 } {
-	    lappend to_return $category_id
-	} else {
-	    foreach subcategory_id $relevant_subcategory_list {
+        if { [llength $relevant_subcategory_list] == 0 } {
+            lappend to_return $category_id
+        } else {
 
-		if { ![empty_string_p $subsubcategory_list] } {
-		    set relevant_subsubcategory_list [db_list get_subsub_list "select subsubcategory_id from ec_subsubcategories where subcategory_id=:subcategory_id and subsubcategory_id in ([join $subsubcategory_list ","]) order by subsubcategory_name"]
-		} else {
-		    set relevant_subsubcategory_list [list]
-		}
-		
+            foreach subcategory_id $relevant_subcategory_list {
+                if { ![empty_string_p $subsubcategory_list] } {
+                    set relevant_subsubcategory_list [db_list get_subsub_list "select subsubcategory_id from ec_subsubcategories where subcategory_id=:subcategory_id and subsubcategory_id in ([join $subsubcategory_list ","]) order by subsubcategory_name"]
+                    regsub -all -- {&} $relevant_subsubcategory_list {\&amp;} relevant_subsubcategory_list
+                } else {
+                    set relevant_subsubcategory_list [list]
+                }
 
-		if { [llength $relevant_subsubcategory_list] == 0 } {
-		    lappend to_return "$category_id $subcategory_id"
-		} else {
-		    foreach subsubcategory_id $relevant_subsubcategory_list {
-			lappend to_return "$category_id $subcategory_id $subsubcategory_id"
-		    }
-		}
+                if { [llength $relevant_subsubcategory_list] == 0 } {
+                    lappend to_return "$category_id $subcategory_id"
+                } else {
+                    foreach subsubcategory_id $relevant_subsubcategory_list {
+                        lappend to_return "$category_id $subcategory_id $subsubcategory_id"
+                    }
+                }
+            } 
+            # end foreach subcategory_id
 
-	    } ; # end foreach subcategory_id
-
-	} ; # end of case where relevant_subcategory_list is non-empty
-
-    } ; # end foreach category_id
-	    
-  return $to_return
+        } 
+        # end of case where relevant_subcategory_list is non-empty
+    } 
+    # end foreach category_id
+    
+    return $to_return
 }
 
 ad_proc ec_continue_shopping_options { } { returns continue shopping options } {
@@ -990,7 +1005,7 @@ ad_proc ec_timeentrywidget {column {timestamp 0}} "Gives a HTML form input for a
 
     set output "<input name=\"$column.time\" type=text size=9 value=\"$time\">&nbsp;
 <select name=\"$column.ampm\">
-[ad_generic_optionlist [list "" AM PM] [list "" AM PM] $ampm]
+[ad_generic_optionlist [list $ampm AM PM] [list $ampm AM PM] $ampm]
 </select>"
 
     return $output
