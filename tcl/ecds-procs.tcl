@@ -1106,7 +1106,7 @@ ad_proc -private ecds_import_product_from_vendor_site {
                 set ec_products_array(detailed_description) [string range $ec_products_array(detailed_description) 0 3998]
             }
 
-            set ec_products_array(search_keywords) "$ec_products_array(one_line_description), $ec_custom_fields_array(vendorsku) $ec_custom_fields_array(brandname) ec_custom_fields_array(brandmodelnumber)"
+            set ec_products_array(search_keywords) "$ec_products_array(one_line_description), $ec_custom_fields_array(vendorsku) $ec_custom_fields_array(brandname) $ec_custom_fields_array(brandmodelnumber)"
             if { [string length $ec_products_array(search_keywords)] > 3998 } {
                 ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} search_keywords too long, the extra clipped is: [string range $ec_products_array(search_keywords) 3998 end]"
                 set ec_products_array(search_keywords) [string range $ec_products_array(search_keywords) 0 3998]
@@ -1152,11 +1152,19 @@ ad_proc -private ecds_import_product_from_vendor_site {
                     # generate a product_id
                     set product_id [db_nextval acs_object_id_seq]
                     ecds_add_product_to_ec_products $product_id ec_products_array user_class_prices $category_id_list $subcategory_id_list $subsubcategory_id_list ec_custom_fields_array
-                    ns_log Notice "adding product_id $product_id"
+                    ns_log Notice "ecds_import_product_from_vendor_site: adding product_id $product_id"
                 } else {
                     # update sql
+                    # update webcomments but include old comments if there are any
+                    # this gives us a web place to hold comments that do not get erased on product updates.
+                    db_0or1row get_webcomments_from_product_id {select webcomments from ec_custom_product_field_values where product_id = :product_id}
+                    if { [info exists webcomments] && $webcomments ne "" } {
+                        set ec_custom_fields_array(webcomments) [string range "$ec_custom_fields_array(webcomments) $webcomments" 0 3998]
+                        ns_log Notice "ecds_import_product_from_vendor_site: appending old webcomments to new for product_id $product_id"
+                    }
+
                     ecds_update_ec_products_product $product_id ec_products_array user_class_prices $category_id_list $subcategory_id_list $subsubcategory_id_list ec_custom_fields_array
-                    ns_log Notice "updating product_id $product_id"
+                    ns_log Notice "ecds_import_product_from_vendor_site: updating product_id $product_id"
                 }
                 # now we have a product_id
 
