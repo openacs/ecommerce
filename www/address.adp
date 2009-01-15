@@ -13,7 +13,7 @@
 <else>
   <property name="doc(title)">Completing Your Order: Billing Address</property>
   <if @referer@ ne "gift-certificate-billing">
-    <include src="checkout-progress" step="4">
+    <include src="/packages/ecommerce/lib/checkout-progress" step="4">
   </if>
   <h2>Your billing address</h2>
 </else>
