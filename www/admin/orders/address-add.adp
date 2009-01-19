@@ -47,7 +47,7 @@ All future shipments for this order will go to this address.</p>
 
 <blockquote>
   <form method=post action=address-add-2>
-@export_international_form_vars;noquote@
+@export_international_form_vars_html;noquote@
  <table>
    <tr>
  <td>Name</td>
@@ -75,7 +75,7 @@ All future shipments for this order will go to this address.</p>
    </tr>
    <tr>
  <td>Country</td>
- <td>@country_widget_html;noqute@</td>
+ <td>@country_widget_html;noquote@</td>
    </tr>
    <tr>
  <td>Phone</td>
