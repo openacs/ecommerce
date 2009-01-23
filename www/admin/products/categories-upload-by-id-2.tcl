@@ -35,6 +35,7 @@ set doc_body ""
 set unix_file_name ${csv_file.tmpfile}
 
 # Check that the file is readable.
+set serious_errors 0
 
 if { ![file readable $unix_file_name] } {
     append doc_body "Cannot read file $unix_file_name"
@@ -46,7 +47,7 @@ if { [string length $delimiter] != 1 && [string eq $file_type "delim"]} {
     set serious_errors 1
 }
 
-if { !serious_errors } {
+if { !${serious_errors} } {
 
     set datafilefp [open $unix_file_name]
     set count 0
@@ -105,7 +106,7 @@ if { !serious_errors } {
     	    if { [catch {db_dml subsubcategory_insert $sql} errmsg] } {
     		#error, probably already loaded this one
     	    } else {
-    		append doc_body "Matched $category to subsubcategory $subsubcategory_name in subcategory $subcategory_name, category $category_name.<br>\n"
+                append doc_body "Matched product_id ${product_id} to subsubcategory $subsubcategory_name in subcategory $subcategory_name, category $category_name.<br>\n"
     	    }
     
     	    # now add it to the subcategory that owns this subsubcategory
@@ -186,6 +187,6 @@ if { !serious_errors } {
         set category_string "category mappings"
     }
     
-    append doc_body "<p>Done loading $success_count $category_string out of [expr $count - 1].
+    append doc_body "<p>Done loading $success_count $category_string out of [expr $count - 1]."
     
 }
