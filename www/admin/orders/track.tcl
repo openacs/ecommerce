@@ -66,15 +66,15 @@ if { $carrier == "FedEx" } {
     }
 
 } elseif { [string match "UPS*" $carrier] } {
-    set ups_url "http://wwwapps.ups.com/etracking/tracking.cgi?submit=Track&InquiryNumber1=$tracking_number&TypeOfInquiryNumber=T&build_detail=yes"
+    set ups_url "http://wwwapps.ups.com/WebTracking/track?trackNums=$tracking_number&track.x=track"
     with_catch errmsg {
         set ups_page [ns_httpget $ups_url]
-        if { ![regexp {(<TR><TD[^>]*>Tracking Number:.*</TABLE>).*Tracking results provided by UPS} $ups_page match ups_info] } {
+        if { ![regexp {(<!-- Begin Summary List -->.*<!-- End Summary List -->)} $ups_page match ups_info] } {
             set carrier_info "Unable to parse detail data from UPS."
         } else {
             # Remove spacer images
             regsub -all -nocase {<img.*?>} $ups_info "" ups_info
-            set carrier_info "<table noborder>$ups_info"
+            set carrier_info "<table noborder>$ups_info</table>"
         }
     } {
         set carrier_info "Unable to retrieve data from UPS."
