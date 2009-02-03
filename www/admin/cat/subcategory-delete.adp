@@ -4,6 +4,7 @@
 <h2>@title@</h2>
 
 <form method=post action=subcategory-delete-2>
+@export_form_vars_html;noquote@
 <p>Please confirm that you wish to delete the subcategory
 @subcategory_name@ of category @category_name@.  Please also note the following:</p>
 <ul>
