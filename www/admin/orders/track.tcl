@@ -66,15 +66,21 @@ if { $carrier == "FedEx" } {
     }
 
 } elseif { [string match "UPS*" $carrier] } {
-    set ups_url "http://wwwapps.ups.com/WebTracking/track?trackNums=$tracking_number&track.x=track"
+    set ups_url "http://wwwapps.ups.com/WebTracking/track?HTMLVersion=5.0&loc=en_US&Requester=UPSHome&trackNums=$tracking_number&track.x=track"
     with_catch errmsg {
         set ups_page [ns_httpget $ups_url]
-        if { ![regexp {(<!-- Begin Summary List -->.*<!-- End Summary List -->)} $ups_page match ups_info] } {
-            set carrier_info "Unable to parse detail data from UPS."
-        } else {
+        if { [regexp {(<!-- Begin Summary List -->.*<!-- End Summary List -->)} $ups_page match ups_info] } {
             # Remove spacer images
             regsub -all -nocase {<img.*?>} $ups_info "" ups_info
             set carrier_info "<table noborder>$ups_info</table>"
+        } elseif { [regexp {(<!-- Begin Package Progress -->.*<!-- End Package Progress -->)} $ups_page match ups_info] } {
+            # Remove spacer images
+            regsub -all -nocase {<img.*?>} $ups_info "" ups_info
+            set carrier_info "<table noborder>$ups_info</table>"
+
+        } else { 
+            set carrier_info "Unable to parse detail data from UPS."
+            ns_log Error "ecommerce/www/admin/orders/track.tcl: unable to parse detail data from UPS for order_id $order_id"
         }
     } {
         set carrier_info "Unable to retrieve data from UPS."
