@@ -6,31 +6,90 @@ ad_page_contract {
     @creation-date winter 2001
     @cvs-id
 } {
+usca_p:optional
 } 
 
 #  set is_url  [ad_conn url]
 #  set e_url   [ad_conn extra_url]
 #  set f       [ad_conn file]
 set path_info  [ad_conn path_info]
-
-# if path_info contains no /, lookup f(path_info) as sku
+# path_info doesn not contain the stuff after a ? in a url, at least in some cases
+#ns_log Notice "path_info $path_info"
+# if path_info contains no /, lookup f(path_info) as ecds_product_id_site_url_map.site_url
 if { [string match "*.html" $path_info] } {
-    set sku [string range $path_info 0 end-5] 
-    db_0or1row get_product_id_from_sku_if_exists "select product_id from ec_products where sku =:sku"
+    set product_id [ecds_product_id_from_path $path_info]
 }
+if { [info exists product_id] && $product_id eq -1 } {
+    # see if $path_info equals sku.html (an recently obsoleted reference).. 
 
+    if { [string match "*.html" $path_info] } {
+        regsub -all -- "/" $path_info "-" sku_ref
+        set sku [string range $sku_ref 0 end-5] 
+#ns_log Notice "sku $sku sku_ref $sku_ref path_info $path_info"
+        if { [db_0or1row get_product_id_from_sku_if_exists "select product_id from ec_products where sku =:sku"] } {
+#            ns_log Notice "product_id $product_id"
+            set url [ec_insecure_location][ec_url][ecds_product_path_from_id $product_id]
+            ec_return_page_moved $url
+        } else {
+            set product_id 1
+        }
+    }
+}
 #   no need to verify that the sku is not a root openacs page, since root openacs pages are chosen over index.vuh redirects
-#   set reserved_filename_list [list account address-2 address-international-2 address-international address billing browse-categories card-security category-browse-subcategory category-browse-subsubcategory category-browse checkout-2 checkout-3 checkout-one-form-2 checkout-one-form checkout credit-card-correction-2 credit-card-correction delete-address finalize-order gift-certificate-billing gift-certificate-claim-2 gift-certificate-claim gift-certificate-finalize-order gift-certificate-order-2 gift-certificate-order-3 gift-certificate-order-4 gift-certificate-order gift-certificate-thank-you gift-certificate index mailing-list-add-2 mailing-list-add mailing-list-remove order payment policy-privacy policy-sales-terms policy-shipping process-order-quantity-shipping process-payment product-search product product2 review-submit-2 review-submit-3 review-submit select-shipping shopping-cart-add shopping-cart-delete-from shopping-cart-quantities-change shopping-cart-retrieve-2 shopping-cart-retrieve-3 shopping-cart-retrieve shopping-cart-save-2 shopping-cart-save shopping-cart sitemap.xml thank-you track update-user-classes-2 update-user-classes]
-#  \[lsearch -exact $reserved_filename_list $path_info\] < 0
+   set reserved_filename_list [list account address-2 address-international-2 address-international address billing browse-categories card-security category-browse-subcategory category-browse-subsubcategory category-browse checkout-2 checkout-3 checkout-one-form-2 checkout-one-form checkout credit-card-correction-2 credit-card-correction delete-address finalize-order gift-certificate-billing gift-certificate-claim-2 gift-certificate-claim gift-certificate-finalize-order gift-certificate-order-2 gift-certificate-order-3 gift-certificate-order-4 gift-certificate-order gift-certificate-thank-you gift-certificate index mailing-list-add-2 mailing-list-add mailing-list-remove order payment policy-privacy policy-sales-terms policy-shipping process-order-quantity-shipping process-payment product-search product product2 review-submit-2 review-submit-3 review-submit select-shipping shopping-cart-add shopping-cart-delete-from shopping-cart-quantities-change shopping-cart-retrieve-2 shopping-cart-retrieve-3 shopping-cart-retrieve shopping-cart-save-2 shopping-cart-save shopping-cart sitemap.xml thank-you track update-user-classes-2 update-user-classes]
 
-if { [info exists product_id] } {
+set jump_to_reserved_page [lsearch -exact $reserved_filename_list [file tail $path_info]]
+
+if { [info exists product_id] && $product_id > 0 } {
 #    set redirect_url "\[file join \[ec_url\] product\]"
-    rp_form_put usca_p t
+    if { ![info exists usca_p] } {
+        rp_form_put usca_p t
+    }
     rp_form_put product_id $product_id
-#    ns_log Notice "ecommerce/www/index.vuh redirecting to $path_info"
-    rp_internal_redirect product
+
+    #  ns_log Notice "ecommerce/www/index.vuh redirecting to $path_info"
+    if { [string match "*.html" $path_info] } {
+        # this seems to return status 200 regardles of url= product or *.html
+        rp_internal_redirect /packages/ecommerce/www/product
+        ad_script_abort
+    } else {
+        set url [ec_insecure_location][ec_url][ecds_product_path_from_id $product_id]
+        ec_return_page_moved $url
+    }
+
+} elseif { $jump_to_reserved_page > 0 } {
+    switch -exact -- $jump_to_reserved_page {
+        10 { rp_internal_redirect /packages/ecommerce/www/category-browse 
+             ns_log Notice "ecommerce/www/index.vuh: special case 10 category-browse"
+            }
+        30 { rp_internal_redirect /packages/ecommerce/www/index 
+             ns_log Notice "ecommerce/www/index.vuh: special case 30 index"
+            }
+        31 -
+        32 { rp_internal_redirect /packages/ecommerce/www/mailing-list-add 
+            ns_log Notice "ecommerce/www/index.vuh: special case 32 mailing-list-add" 
+        }
+        42 { rp_internal_redirect /packages/ecommerce/www/product
+            ns_log Notice "ecommerce/www/index.vuh: special case 42 product" 
+        }
+        44 -
+        45 -
+        46 { rp_internal_redirect /packages/ecommerce/www/review-submit
+            ns_log Notice "ecommerce/www/index.vuh: special case 46 review-submit"
+        }
+        default { 
+            # note product_id is never 1, since it is a subset of acs object_id. product_id needs to be positive to pass positive integer input verification
+            rp_form_put product_id 1
+            rp_internal_redirect /packages/ecommerce/www/product
+            ns_log Notice "ecommerce/www/index.vuh: special default case for misc ${path_info} reserved index list nbr ${jump_to_reserved_page} Returning product 404 page"
+        }
+    }
 } else {
-    ns_log Notice "packages/www/ecommerce/index.vuh: path requested and not found: $path_info"
-    rp_form_put product_id -1
-    rp_internal_redirect product
+
+    ns_log Notice "packages/www/ecommerce/index.vuh: path requested and not found: jump to list index nbr ${jump_to_reserved_page} path_info: $path_info Returning product 404"
+    # note product_id is never 1, since it is a subset of acs object_id. product_id needs to be positive to pass positive integer input verification
+    set product_id 1
+ #   rp_form_put product_id 1
+    rp_internal_redirect /packages/ecommerce/www/product
+    ad_script_abort
 }

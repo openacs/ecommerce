@@ -7,14 +7,15 @@ set sitemap_xml "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 if { $cache_product_as_file } {
 
     set sitemap_list [db_list_of_lists get_catalog_sku_products "
-      select sku, last_modified from ec_products
-        where active_p='t' and present_p = 't' and sku is not null
-        order by last_modified desc"]
+      select b.site_url as site_url, a.last_modified as last_modified from ec_products a, ecds_product_id_site_url_map b
+        where a.product_id = b.product_id and a.active_p='t' and a.present_p = 't' and b.site_url is not null
+        order by a.last_modified desc limit 10000"]
 
-    foreach url_pair $sitemap_list {
-        set sku [lindex $url_pair 0]
-        set last_modified [lindex $url_pair 1]
-        set url "[ec_insecure_location][ec_url]${sku}.html"
+    foreach url_set $sitemap_list {
+        set site_url [lindex $url_set 0]
+        set last_modified [lindex $url_set 1]
+        set url "[ec_insecure_location][ec_url]${site_url}"
+
         set last_mod ""
         regsub -- { } $last_modified {T} last_mod
         append last_mod ":00"
