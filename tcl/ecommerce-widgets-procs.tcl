@@ -577,7 +577,7 @@ ad_proc ec_determine_categorization_widget_defaults {
 
 ad_proc ec_continue_shopping_options { } { returns continue shopping options } {
     return "
-	<form method=post action=\"category-browse\">
+	<form method=post action=\"[ec_url]category-browse\">
 	  Continue Shopping for [ec_only_category_widget] 
 	  <input type=submit value=\"Go\">
 	</form>"
@@ -986,7 +986,7 @@ ad_proc ec_timeentrywidget {column {timestamp 0}} "Gives a HTML form input for a
 	regexp {^0([^0].*)} $secs match secs
 	if { [regexp -nocase {am} $secsampm] } {
 	    set ampm AM
-	} elseif { [regexp -nocase {pm} $secsampm] } {
+	} elseif { [regexp -nocase {pm} $secsampm] } { 
 	    set ampm PM
 	} else {
 	    # assume that we're dealing with military time
@@ -1005,7 +1005,7 @@ ad_proc ec_timeentrywidget {column {timestamp 0}} "Gives a HTML form input for a
 
     set output "<input name=\"$column.time\" type=text size=9 value=\"$time\">&nbsp;
 <select name=\"$column.ampm\">
-[ad_generic_optionlist [list $ampm AM PM] [list $ampm AM PM] $ampm]
+[ad_generic_optionlist [list "" AM PM] [list "" AM PM] $ampm]
 </select>"
 
     return $output
