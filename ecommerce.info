@@ -7,7 +7,7 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="5.14" url="http://openacs.org/repository/download/apm/ecommerce-5.14.apm">
+    <version name="5.15" url="http://openacs.org/repository/download/apm/ecommerce-5.15.apm">
         <owner url="mailto:janine@furfly.net">Janine Sisk</owner>
         <owner url="mailto:bart.teeuwisse@7-sisters.com">Bart Teeuwisse</owner>
         <owner url="mailto:alfred@thunderstick.com">Alfred Werner</owner>
@@ -17,7 +17,7 @@
         <description format="text/plain">This module implements a standard business-to-consumer Web store service. A feature summary is included with the documentaion.</description>
         <maturity>0</maturity>
 
-        <provides url="ecommerce" version="5.14"/>
+        <provides url="ecommerce" version="5.15"/>
         <requires url="acs-datetime" version="4.0"/>
         <requires url="acs-kernel" version="5.0"/>
         <requires url="ref-countries" version="0.1d"/>

@@ -1,3 +1,6 @@
+drop index ecds_product_id_site_url_map_site_url_idx;
+drop index ecds_product_id_site_url_map_product_idx;
+drop table ecds_product_id_site_url_map;
 drop index ecds_url_cache_map_url_idx;
 drop table ecds_url_cache_map;
 drop index ecks_object_templates_map_template_id_idx;

@@ -1378,130 +1378,88 @@ ad_proc -private ec_create_new_session_if_necessary {
     uplevel {
 
         if { $user_session_id == 0 } {
-            if {![info exists usca_p]} {
+            set cache_product_as_file [parameter::get -parameter CacheProductAsFile -default 0]
+            if { ![info exists usca_p] } {
+#                ns_log Notice "ec_create_new_session_if_necessary: L1390 user_session_id is 0, usca_p does not exist"
                 # First time we've seen this visitor no previous
                 # attempt made.
+
+                 
+                set user_session_id [db_nextval ec_user_session_sequence]
+#                ns_log Notice "ec_create_new_session_if_necessary: L1415 setting usca_p and user_session_id" 
+                ## use ACS 4 faster sessions
+                ## set user_session_id [ad_conn session_id]
                 
-
-                # if this is a ec_url/product request, maybe we redirect to $sku.html
-                # and serve as a static page ie. no session activity
-                set current_url [ns_conn url]
-                set right_of_q [ad_conn query]
-                #ns_log Notice "ec_create_new_session_if_necessary: ns_conn url = $current_url, ad_conn query = ${right_of_q}"
-                if { [parameter::get -parameter CacheProductAsFile -default 0] && [string match "*[ec_url]product*" $current_url ] } {
-                    # in order to prevent indexing of both product?usca=t&product_id=XXX and $sku.html
-                    # We just redirect to the $sku.html and ignore creating a new session for this case
-                    if { ![regexp {product_id=([1-9][0-9]*)} $right_of_q scratch product_id ] } {
-                        regexp {product%f5id=([1-9][0-9]*)} $right_of_q scratch product_id 
-                    }
-                    if { [info exists product_id] } {
-                        db_0or1row get_sku_from_product_id "select sku from ec_products where product_id = :product_id"
-                        if { [info exists sku] } {
-                            # this is a valid product url, redirect to the existing static version
-                            # replacing  ad_returnredirect "\[ec_url\]${sku}.html" with following so it works with return code 301
-                            set url "[ec_insecure_location][ec_url]${sku}.html"
-                            ns_set update [ns_conn outputheaders] Location $url
-                            ns_return 301 "text/html" [subst {<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-  <HTML>
-  <HEAD>
-  <TITLE>Moved</TITLE>
-  </HEAD>
-  <BODY>
-  <H2>Moved</H2>
-  <A HREF="$url">The requested URL has moved here.</A>
- <P ALIGN=RIGHT><SMALL><I>[ns_info name]/[ns_info patchlevel] on [ns_conn location]</I></SMALL></P>
-  </BODY></HTML>}]
-                            ad_script_abort
-                        }
-                    }
-
-                } else {
-
-                    set user_session_id [db_nextval ec_user_session_sequence]
-
-                    ## use ACS 4 faster sessions
-                    ## set user_session_id [ad_conn session_id]
-                    
-                    set ip_address      [ns_conn peeraddr]
-                    set http_user_agent [ecGetUserAgentHeader]
-                    
-                    # we should be able to get rid of this in ACS 4, but
-                    # we need to examine longevity of ad_sessions
-
-                    db_dml insert_user_session $__sql
-                    
-                    set cookie_name  "user_session_id"
-                    set cookie_value $user_session_id
-                    
-                    set usca_p "t"
-                    set final_page "[ns_conn url]?[export_url_vars usca_p]"
-                    if ![empty_string_p $_ec_more_url_vars_exported] {
-                        append final_page "&" $_ec_more_url_vars_exported
-                    }
+                set ip_address      [ns_conn peeraddr]
+                set http_user_agent [ecGetUserAgentHeader]
                 
-                    # It would probably be good to add max_age as a
-                    # parameter in the future
+                # we should be able to get rid of this in ACS 4, but
+                # we need to examine longevity of ad_sessions
+                
+                db_dml insert_user_session $__sql
+                
+                set cookie_name "user_session_id"
+                set cookie_value $user_session_id
+                set usca_p "t"
+                
+                set final_page "[ns_conn url]?[export_url_vars usca_p]"
+                if ![empty_string_p $_ec_more_url_vars_exported] {
+                    append final_page "&" $_ec_more_url_vars_exported
+                }
+                    
+                # It would probably be good to add max_age as a
+                # parameter in the future
+                ad_set_cookie -replace "t" -path "/" user_session_id $cookie_value
+#                ns_log Notice "ec_create_new_session_if_necessary: L1434 user_session_id is $user_session_id, final_page = ${final_page}"                    
 
-                    ad_set_cookie -replace "t" -path "/" user_session_id $cookie_value
-                    ad_returnredirect $final_page
-                    ad_script_abort
+                if { [string range [ns_conn url] end-4 end] eq ".html" } {
+                    set final_page [ns_conn url]
                 }
 
-            } else {
+                ad_returnredirect $final_page
+                ad_script_abort
 
+            } else {
+                set cache_product_as_file [parameter::get -parameter CacheProductAsFile -default 0]
+#                ns_log Notice "ec_create_new_session_if_necessary: L1448 user_session_id is 0, usca_p previously set"
                 # usca_p has been set, but user id is still 0! So,
                 # cookies haven't been set!  visitor has been here
                 # before previous attempt made
                 
-                if {[string compare $_ec_cookie_requirement "cookies_are_required"] == 0} {
-
+                if { [string compare $_ec_cookie_requirement "cookies_are_required"] == 0} {
+                    
                     ns_log Notice "ec_create_new_session_if_necessary(ref 1): requested user to accept cookies."
-
+                    
                     ad_return_complaint 1 "
-                    You need to have cookies turned on so that we can
+                    Your browser needs to accept cookies so that the system can
                     remember what you have in your shopping cart.  Please turn on cookies
-                    in your browser.
-                    "
+                    in your browser."
                     ad_script_abort
 
-                } elseif {[string compare $_ec_cookie_requirement "cookies_are_not_required"] == 0} {
+                } elseif { [string compare $_ec_cookie_requirement "cookies_are_not_required"] == 0 } {
                     
                     # For this page continue
-                    ns_log Notice "ec_create_new_session_if_necessary: ec_create_session cookies are off but that's okay, they aren't required."
-
                     set current_url [ns_conn url]
                     set right_of_q [ad_conn query]
-                    ns_log Notice "ec_create_new_session_if_necessary: ns_conn url = $current_url"
-                    if { [parameter::get -parameter CacheProductAsFile -default 0] && [string match "*[ec_url]product*" $current_url ] } {
+                    ns_log Notice "ec_create_new_session_if_necessary: ec_create_session cookies are off but that's okay, they aren't required for ${current_url}."
+                    if { $cache_product_as_file && "[ec_url]product" eq $current_url } {
                         if { ![regexp {product_id=([1-9][0-9]*)} $right_of_q scratch product_id ] } {
                             regexp {product%f5id=([1-9][0-9]*)} $right_of_q scratch product_id 
                         }
                         if { [info exists product_id] } {
-                            db_0or1row get_sku_from_product_id "select sku from ec_products where product_id = :product_id"
-                            if { [info exists sku] } {
-                                # this is a valid product url, redirect to the existing static version
-                                # replacing  ad_returnredirect "\[ec_url\]${sku}.html" with following so it works with return code 301
-                                set url "[ec_insecure_location][ec_url]${sku}.html"
-                                ns_set update [ns_conn outputheaders] Location $url
-                                ns_return 301 "text/html" [subst {<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-  <HTML>
-  <HEAD>
-  <TITLE>Moved</TITLE>
-  </HEAD>
-  <BODY>
-  <H2>Moved</H2>
-  <A HREF="$url">The requested URL has moved here.</A>
- <P ALIGN=RIGHT><SMALL><I>[ns_info name]/[ns_info patchlevel] on [ns_conn location]</I></SMALL></P>
-  </BODY></HTML>}]
-                                ad_script_abort
+                            set path_tail [ecds_product_path_from_id $product_id]
+                            if { [string length $path_tail] > 0 } {
+                                set url "[ec_insecure_location][ec_url]${path_tail}"
+#                                ns_log Notice "ec_create_new_session_if_necessary: L1479 paged moved to $url message"
+                                ec_return_page_moved $url
                             }
                         }
                     }
                     
-                } elseif {[string compare $_ec_cookie_requirement "shopping_cart_required"] == 0} {
+                } elseif { [string compare $_ec_cookie_requirement "shopping_cart_required"] == 0 } {
 
                     ns_log Warning "ec_create_new_session_if_necessary(ref 2): requested user to accept cookies, nothing found in cart."
-
+            
                     ad_return_error "No Cart Found"  "
 			<h2>No Shopping Cart Found</h2>
 			<p> We could not find any shopping cart for you.  This may be because you have cookies 
@@ -1512,9 +1470,10 @@ ad_proc -private ec_create_new_session_if_necessary {
 			Internet Options -> Advanced -> Security. </i></p>
 			<p>[ec_continue_shopping_options]</p>"
                     ad_script_abort 
+
                 } else {
-		    ad_return_error "bug" "we should never get here"
-		}
+                    ad_return_error "bug" "we should never get here"
+                }
             }
         }
     }
@@ -1647,3 +1606,21 @@ ad_proc ec_max_of_list {
     return $max
 }
 
+ad_proc ec_return_page_moved {
+    url
+} {
+    returns page with redirect 301 headers and stops page execution
+} {
+    ns_set update [ns_conn outputheaders] Location $url
+    ns_return 301 "text/html" [subst {<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+  <HTML>
+  <HEAD>
+  <TITLE>Moved</TITLE>
+  </HEAD>
+  <BODY>
+  <H2>Moved</H2>
+  <A HREF="$url">The requested URL has moved here.</A>
+ <P ALIGN=RIGHT><SMALL><I>[ns_info name]/[ns_info patchlevel] on [ns_conn location]</I></SMALL></P>
+  </BODY></HTML>}]
+    ad_script_abort
+}

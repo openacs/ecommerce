@@ -91,6 +91,9 @@ ad_proc -private ecdsii_ex_unit_price {
     reurns unit_price from content of a vendor's product page
 } {
     set unit_price $page
+    # add markup                                                                                                                                                                                          
+    set unit_price [expr { 2.2 * pow( $unit_price , 0.931701 ) } ]
+
     return $unit_price
 }
 

@@ -50,6 +50,7 @@ ad_proc -private ecds_sku_from_brand {
     brand_name
     brand_model_number
     {sku ""}
+    {separator "-"}
 } {
     returns a normalized sku, given brand info, or sku if it exists
     @brand_name@
@@ -59,10 +60,19 @@ ad_proc -private ecds_sku_from_brand {
     if { [string length $sku] == 0 } {
         set product_sku [string trim [string tolower $brand_model_number]]
 
-        set brandname_width 16
-        set brandname_len_limit 14
-        regsub -all -- { } $brand_name {} brandname_new
+        set brandname_width 21
+        set brandname_len_limit 19
+#ns_log Notice "brand_name $brand_name"
+        regsub -all -- { and } $brand_name {-} brandname_new
+#ns_log Notice "1brandname_new $brandname_new"
+        regsub -all -- {\/} $brandname_new {} brandname_new
+#ns_log Notice "2brandname_new $brandname_new"
+        regsub -all -- { } $brandname_new {} brandname_new
+#ns_log Notice "3brandname_new $brandname_new"
         regsub -all -- {&} $brandname_new {} brandname_new
+#ns_log Notice "4brandname_new $brandname_new"
+        regsub -all -- {\.} $brandname_new {} brandname_new
+#ns_log Notice "5brandname_new $brandname_new"
         if { [string length $brandname_new] > $brandname_width } {
             set brandname_end [expr { [string last " " [string range $brandname_new 0 $brandname_width] ] - 1 } ]
             if { $brandname_end < 0 } {
@@ -71,10 +81,14 @@ ad_proc -private ecds_sku_from_brand {
             set brandname_new [string range $brandname_new 0 $brandname_end ]
             regsub {[^a-zA-Z0-9]+\.\.} $brandname_new {} brandname_new
         }
+#ns_log Notice "6brandname_new $brandname_new"
         regsub -all -- { } $brandname_new {-} brandname_new
-
+#ns_log Notice "7brandname_new $brandname_new"
         set brandname_new [string trim [string tolower $brandname_new]]
-        set sku "${brandname_new}-${product_sku}"
+#ns_log Notice "8brandname_new $brandname_new"
+        set sku "${brandname_new}${separator}${product_sku}"
+        regsub -all -- {[\-]+} $sku {-} sku
+#ns_log Notice "returning sku $sku"
     }
     return $sku
 }
@@ -966,6 +980,7 @@ ad_proc -private ecds_import_product_from_vendor_site {
     #  have procs defined using the $vendor under separate file ecds-$vendor-procs.tcl
     # which helps with defining code that is shareable from code that is proprietary
 
+  if { [string length $product_ref] > 0 } {
     # filter out invalid characters etc for the proc name substitution
     regsub -all -- {[^a-zA-Z0-9]} $vendor {} vendor
     set vendor [string range $vendor 0 10]
@@ -1016,16 +1031,25 @@ ad_proc -private ecds_import_product_from_vendor_site {
                 ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} unitofmeasure too long, the extra clipped is: [string range $ec_custom_fields_array(unitofmeasure) 198 end]"
                 set ec_custom_fields_array(unitofmeasure) [string range $ec_custom_fields_array(unitofmeasure) 0 198]
             }
-            set ec_custom_fields_array(brandname) [ecdsii_${vendor}_brand_name $page]
-            if { [string length $ec_custom_fields_array(brandname)] > 198 } {
+            set brandname [ecdsii_${vendor}_brand_name $page]
+            if { [string length $brandname] > 198 } {
                 ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} brandname too long, the extra clipped is: [string range $ec_custom_fields_array(brandname) 198 end]"
-                set ec_custom_fields_array(brandname) [string range $ec_custom_fields_array(brandname) 0 198]
+                set brandname [string range $brandname 0 198]
             }
+            db_0or1row get_normalized_brand_name_from_alt_spelling "select normalized as brand_name from ecds_alt_spelling_map where alt_spelling =:brandname and context='brand'"
+            if { [info exists brand_name] } {
+                set ec_custom_fields_array(brandname) $brand_name
+            } else {
+                set ec_custom_fields_array(brandname) $brandname
+            }
+
             set ec_custom_fields_array(brandmodelnumber) [ecdsii_${vendor}_brand_model_number $page]
             if { [string length $ec_custom_fields_array(brandmodelnumber)] > 198 } {
                 ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} brandmodelnumber too long, the extra clipped is: [string range $ec_custom_fields_array(brandmodelnumber) 198 end]"
                 set ec_custom_fields_array(brandmodelnumber) [string range $ec_custom_fields_array(brandmodelnumber) 0 198]
             }
+
+
             set ec_custom_fields_array(minshipqty) [ecdsii_${vendor}_min_ship_qty $page]
             if { [string length $ec_custom_fields_array(minshipqty)] > 198 } {
                 ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} minshipqty too long, the extra clipped is: [string range $ec_custom_fields_array(minshipqty) 198 end]"
@@ -1177,11 +1201,16 @@ ad_proc -private ecds_import_product_from_vendor_site {
                         ecommerce::resource::make_product_images -product_id $product_id -tmp_filename $image_import_location
                     }
                 }
-                ecds_file_cache_product $product_id
+                if { $import_conditions_met eq 1 } {
+                    ecds_file_cache_product $product_id
+                }
             }
             return $import_conditions_met  
         }
     }
+} else {
+    ns_log Warning "ecds_import_product_from_vendor_site: blank product_ref "
+}
     # should have returned already, if everything worked
     return -1
 }
@@ -1865,131 +1894,169 @@ ad_proc -private ecds_file_cache_product {
     set cache_product_as_file [parameter::get -parameter CacheProductAsFile -default 0]
     # Should we be creating or updating a static page for this product_id?
 
-    # the static page for each product is $sku.html
-    # using ${product_id}.html may not work if some products have an integer sku
-     db_0or1row check_product_history {select sku,last_modified from ec_products where product_id = :product_id }
+    # the static page for each product was $sku.html
+    # for scalability, the static page for each product is now determined by ecds_product_path_from_id
+    # also, note that using ${product_id}.html may not work as a default for cases without sku value, if some products have an integer sku
+    set filepath_tail [ecds_product_path_from_id $product_id]
 
-    if { $cache_product_as_file && [info exists sku] } {
-        set reserved_filename_list [list account address-2 address-international-2 address-international address billing browse-categories card-security category-browse-subcategory category-browse-subsubcategory category-browse checkout-2 checkout-3 checkout-one-form-2 checkout-one-form checkout credit-card-correction-2 credit-card-correction delete-address finalize-order gift-certificate-billing gift-certificate-claim-2 gift-certificate-claim gift-certificate-finalize-order gift-certificate-order-2 gift-certificate-order-3 gift-certificate-order-4 gift-certificate-order gift-certificate-thank-you gift-certificate index mailing-list-add-2 mailing-list-add mailing-list-remove order payment policy-privacy policy-sales-terms policy-shipping process-order-quantity-shipping process-payment product-search product product2 review-submit-2 review-submit-3 review-submit select-shipping shopping-cart-add shopping-cart-delete-from shopping-cart-quantities-change shopping-cart-retrieve-2 shopping-cart-retrieve-3 shopping-cart-retrieve shopping-cart-save-2 shopping-cart-save shopping-cart sitemap.xml thank-you track update-user-classes-2 update-user-classes]
-        # verify that the sku is not a root openacs page
-        if { [lsearch -exact $reserved_filename_list $sku] < 0 } {
-            # the cached files go into the www/ec_url dir so we do not have to worry about overwriting
-            # ecommerce files, but the www/ec_url dir takes presidence in url resolving, so still must check
+    if { $cache_product_as_file && [string length $filepath_tail] > 0 } {
 
-            set cache_dir "[file join [acs_root_dir] www [string trim [ec_url] /]]"
-            ec_assert_directory $cache_dir
-            set filepathname [file join $cache_dir ${sku}.html]
+        set ec_url_root [string trim [ec_url] /]
+        set filepathname "[file join [acs_root_dir] www $ec_url_root $filepath_tail]"
+        set cache_dir "[file dirname $filepathname]"
+        ec_assert_directory $cache_dir
+        set product_file_exists [file exists $filepathname]
+        db_1row get_product_last_modification "select last_modified from ec_products where product_id = :product_id"
+        if { ( $product_file_exists eq 0 ) || ( $product_file_exists && [clock scan [string range $last_modified 0 18]] > [file mtime $filepathname] ) } {
+            # product file either does not exist or has been updated after the current file modification time
+            # updating file
 
-            set product_file_exists [file exists $filepathname]
-            if { ( $product_file_exists eq 0 ) || ( $product_file_exists && [clock scan [string range $last_modified 0 18]] > [file mtime $filepathname] ) } {
-                # product file either does not exist or has been updated after the current file modification time
-                # updating file
-
-                # set use_http_get 1 = http_get, 0= ad_template::include method
-                set use_http_get 1
-                if { $use_http_get } {
-                    ns_log Notice "ecds_file_cache_product: product_id = $product_id waiting 15 seconds before trying, in case we recently ns_http ed"
-                    set url "[ec_insecure_location][ec_url]${sku}.html"
-                    # ec_create_new_session_if_necessary needs to NOT automatically redirect the following ns_http get 
-                    # to the static html file, since we want to update that file with a fresh http request
-                    # so, we need to remove this file before requesting it.
-                    if { [file exists $filepathname ] } {
-                        file delete $filepathname
-                    }
-                    after 15000
-                    if { [catch {set get_id [ns_http queue -timeout 65 $url]} err ]} {
-                        set page $err
-                        ns_log Error "ecds_file_cache_product: url=$url error: $err"
-                    } else {
-                        ns_log Notice "ecds_file_cache_product: ns_httping $url"
-                        # removed -timeout "30" from next statment, because it is unrecognized for this instance..
-                        if { [catch { ns_http wait -result page -status status $get_id } err2 ]} {
-                            ns_log Error "ecds_file_cache_product: ns_http wait $err2"
-                        }
-                        
-                        if { ![info exists status] || $status ne "200" } {
-                            # no page info returned, just return error
-                            if { ![info exists status] } {
-                                set status "not exists"
-                            }
-                            set page "ecds_file_cache_product Error: url timed out with status $status"
-                            ns_log Notice $page
-                        } else {
-                            #put page into acs_root_dir/www not packages/ecommerce/www
-                            if { [catch {open $filepathname w} fileId]} {
-                                ns_log Error "ecds_file_cache_product: unable to write to file $filepathname"
-                                ad_script_abort
-                            } else {
-                                # strip extra lines and funny characters
-                                regsub -all -- {[\f\e\r\v\n\t]} $page { } oneliner
-                                # strip extra spaces 
-                                regsub -all -- {[ ][ ]*} $oneliner { } oneliner2
-                                set page $oneliner2
-                                puts $fileId $page
-                                ns_log Notice "ecds_file_cache_product: writing $filepathname"
-                                close $fileId
-                            }
-                        }
-                    }
-
+            # set use_http_get 1 = http_get, 0= ad_template::include method
+            set use_http_get 1
+            if { $use_http_get } {
+                ns_log Notice "ecds_file_cache_product: product_id = $product_id waiting 15 seconds before trying, in case we recently ns_http ed"
+                set url "[ec_insecure_location][ec_url]${filepath_tail}"
+                # ec_create_new_session_if_necessary needs to NOT automatically redirect the following ns_http get 
+                # to the static html file, since we want to update that file with a fresh http request
+                # so, we need to remove this file before requesting it.
+                if { [file exists $filepathname ] } {
+                    file delete $filepathname
+                }
+                after 15000
+                if { [catch {set get_id [ns_http queue -timeout 65 $url]} err ]} {
+                    set page $err
+                    ns_log Error "ecds_file_cache_product: url=$url error: $err"
                 } else {
-
-                    ns_log Notice "ecds_file_cache_product: product_id = $product_id"
-                    # create/replace product file using template::adp_include
-                    # 
-                    # ec_create_new_session_if_necessary needs to NOT automatically redirect the following ns_http get 
-                    # to the static html file, since we want to update that file with a fresh http request
-                    # so, we need to remove this file before requesting it.
-                    if { [file exists $filepathname ] } {
-                        file delete $filepathname
+                    ns_log Notice "ecds_file_cache_product: ns_httping $url"
+                    # removed -timeout "30" from next statment, because it is unrecognized for this instance..
+                    if { [catch { ns_http wait -result page -status status $get_id } err2 ]} {
+                        ns_log Error "ecds_file_cache_product: ns_http wait $err2"
                     }
-                    set tvalue "t"
-                    set page [template::adp_include "/packages/ecommerce/www/product" [list product_id $product_id usca_p $tvalue ]]
-                    #put page into acs_root_dir/www not packages/ecommerce/www
-ns_log Notice "page = $page"
-                    if { [catch {open $filepathname w} fileId]} {
-                        ns_log Error "ecds_file_cache_product: unable to write to file $filepathname"
-                        ad_script_abort
+                    
+                    if { ![info exists status] || $status ne "200" } {
+                        # no page info returned, just return error
+                        if { ![info exists status] } {
+                            set status "not exists"
+                        }
+                        set page "ecds_file_cache_product Error: url timed out with status $status"
+                        ns_log Notice $page
                     } else {
-                        # strip extra lines and funny characters
-                        regsub -all -- {[\f\e\r\v\n\t]} $page { } oneliner
-                        # strip extra spaces 
-                        regsub -all -- {[ ][ ]*} $oneliner { } oneliner2
-                        set page $oneliner2
-                        puts $fileId $page
-                        ns_log Notice "ecds_file_cache_product: writing $filepathname"
-                        close $fileId
+                        #put page into acs_root_dir/www not packages/ecommerce/www
+                        if { [catch {open $filepathname w} fileId]} {
+                            ns_log Error "ecds_file_cache_product: unable to write to file $filepathname"
+                            ad_script_abort
+                        } else {
+                            # strip extra lines and funny characters
+                            regsub -all -- {[\f\e\r\v\n\t]} $page { } oneliner
+                            # strip extra spaces 
+                            regsub -all -- {[ ][ ]*} $oneliner { } oneliner2
+                            set page $oneliner2
+                            puts $fileId $page
+                            ns_log Notice "ecds_file_cache_product: writing $filepathname"
+                            close $fileId
+                        }
                     }
-
+                }
+                
+            } else {
+                
+                ns_log Notice "ecds_file_cache_product: product_id = $product_id"
+                # create/replace product file using template::adp_include
+                # 
+                # ec_create_new_session_if_necessary needs to NOT automatically redirect the following ns_http get 
+                # to the static html file, since we want to update that file with a fresh http request
+                # so, we need to remove this file before requesting it.
+                if { [file exists $filepathname ] } {
+                    file delete $filepathname
+                }
+                set tvalue "t"
+                set page [template::adp_include "/packages/ecommerce/www/product" [list product_id $product_id usca_p $tvalue ]]
+                #put page into acs_root_dir/www not packages/ecommerce/www
+                # maybe use: ad_return_template ?
+                ns_log Notice "page = $page"
+                if { [catch {open $filepathname w} fileId]} {
+                    ns_log Error "ecds_file_cache_product: unable to write to file $filepathname"
+                    ad_script_abort
+                } else {
+                    # strip extra lines and funny characters
+                    regsub -all -- {[\f\e\r\v\n\t]} $page { } oneliner
+                    # strip extra spaces 
+                    regsub -all -- {[ ][ ]*} $oneliner { } oneliner2
+                    set page $oneliner2
+                    puts $fileId $page
+                    ns_log Notice "ecds_file_cache_product: writing $filepathname"
+                    close $fileId
                 }
             }
-
-        } else {
-            ns_log Warning "ecds_file_cache_product: sku is same as a reserved ecommerce filename for product_id $product_id"
         }
-    } 
-} 
+        
+    } elseif { $cache_product_as_file } {
+        ns_log Warning "ecds_file_cache_product: filepath is not supported for product_id $product_id"
+    }
+}
 
 
 ad_proc -private ecds_create_cache_product_files {
 } {
-    creates or updates the static pages referenced in the ecommerce sitemap.xml
+    creates or updates the static pages of active products
 } {
 
     set cache_product_as_file [parameter::get -parameter CacheProductAsFile -default 0]
     ns_log Notice "ecds_create_cache_product_files: starting.."
     if { $cache_product_as_file } {
-        set sitemap_list [db_list_of_lists get_catalog_product_ids "
+        set active_product_list [db_list_of_lists get_catalog_product_ids "
       select product_id from ec_products
         where active_p='t' and present_p = 't' and sku is not null
         order by last_modified desc"]
 
-        foreach product_id $sitemap_list {
+        foreach product_id $active_product_list {
             ecds_file_cache_product $product_id
         }
     }
     ns_log Notice "ecds_create_cache_product_files: ended"
 }
+
+ad_proc -private ecds_create_product_site_urls {
+    {calc_sku 0}
+} {
+    creates or updates the static page references (ecds_product_id_site_url_map.site_url) of active products, recalculates product sku if calc_sku is supplied as 1.
+} {
+    set cache_product_as_file [parameter::get -parameter CacheProductAsFile -default 0]
+    ns_log Notice "ecds_create_product_site_urls: starting..  cache_product_as_file ${cache_product_as_file}"
+    if { $cache_product_as_file } {
+        set active_product_list [db_list_of_lists get_all_active_product_ids "
+      select product_id from ec_products
+        where active_p='t' and present_p = 't'
+        order by last_modified desc"]
+        ns_log Notice "ecds_create_product_site_urls: processing [llength $active_product_list] products."
+        foreach product_id $active_product_list {
+            set sku ""
+            set brandname ""
+            set brand_name ""
+            set brandmodelnumber ""
+            if { $calc_sku } {
+                db_0or1row check_product_history_2 {select a.sku as sku,a.last_modified as last_modified, b.brandname as brandname, b.brandmodelnumber as brandmodelnumber from ec_products a, ec_custom_product_field_values b where a.product_id = b.product_id and a.product_id = :product_id }
+                if { [info exists brandname] } {
+                    db_0or1row get_normalized_brand_name_from_alt_spelling "select normalized as brand_name from ecds_alt_spelling_map where alt_spelling =:brandname and context='brand'"
+                } else {
+                    ns_log Warning "ecds_create_product_site_urls: brandname is blank for product_id $product_id"
+                }
+                if { [info exists brand_name] && [string length $brand_name] > 0 } {
+                    set brandname $brand_name
+                }
+    #            ns_log Notice "ecds_create_product_site_urls: brandname $brandname brandmodelnumber $brandmodelnumber "
+                set new_sku [ecds_sku_from_brand $brandname $brandmodelnumber]
+                if { $new_sku ne $sku } {
+                    db_dml update_sku_for_a_product {update ec_products set sku = :new_sku where product_id = :product_id }
+                    ns_log Notice "ecds_create_product_site_urls: updating sku from $sku to ${new_sku} for product_id ${product_id}"
+                }
+            }
+            ecds_product_path_from_id $product_id $sku $brandname $brandmodelnumber
+        }
+    }
+    ns_log Notice "ecds_create_product_site_urls: ended"
+}
+
 
 ad_proc -private ecds_refresh_import_products_from_vendor {
     vendor_abbrev
@@ -2195,4 +2262,99 @@ ad_proc -private ecds_keyword_search_update {
         db_dml update_search_keywords "update ec_products set search_keywords = :search_keywords where product_id = :product_id"
     }
     return $success
+}
+
+ad_proc -private ecds_product_path_from_id {
+    product_id
+    {sku ""}
+    {brandname ""}
+    {brandmodelnumber ""}
+} {
+    returns the product unique portion of the local url for the product (after ec_url), either {brandname}/{brandmodelnumber}.html or {product-sku}.html or blank if not found and not enough info to create it.
+} {
+    # cache this query because it is used in an index.vuh that may get lots of demand
+    db_0or1row -cache_key "ec-path-product-${product_id}" get_product_path_from_id "select site_url from ecds_product_id_site_url_map where product_id = :product_id"
+
+    # if path not found, create it and store it in ecds_product_id_path_map
+    if { ![info exists site_url] } {
+        
+        if { [string length $brandname] == 0 || [string length $brandmodelnumber] == 0 || [string length $sku] == 0 } {
+            # get sku, brandname, brandmodelnumber
+            db_0or1row check_product_history {select a.sku as sku,a.last_modified as last_modified, b.brandname as brandname, b.brandmodelnumber as brandmodelnumber from ec_products a, ec_custom_product_field_values b where a.product_id = b.product_id and a.product_id = :product_id }
+            db_0or1row get_normalized_brand_name_from_alt_spelling "select normalized as brand_name from ecds_alt_spelling_map where alt_spelling =:brandname and context='brand'"
+            if { [info exists brand_name] } {
+                set brandname $brand_name
+            }
+
+        }
+        if { [string length $brandmodelnumber] == 0 || [string length $sku] == 0 } {
+            # we still have no prerequisites, we cannot create a file cache path
+            return ""
+        }
+# temporary
+       if { [string length $brandname] == 0 } {
+            # we still have no prerequisites, we cannot create a file cache path
+ns_log Warning "brandname is blank"
+adp_abort
+            return ""
+        }
+
+        set file_path_parts [ecds_sku_from_brand $brandname $brandmodelnumber "" "|"]
+        set file_path_parts_list [split $file_path_parts "|"]
+        set sku_dir [lindex $file_path_parts_list 0]
+        set sku_file [lindex $file_path_parts_list 1]
+
+        if { [string length $sku_dir] > 0 } {
+            set site_url "${sku_dir}/${sku_file}"
+        } else {
+            set site_url $sku_file
+        }
+
+        # Verify that the site_url is not a root openacs page.
+        # The cached files go into the www/ec_url dir so we do not have to worry about overwriting
+        # ecommerce files, but the www/ec_url dir takes presidence in url resolving, so we still must check.
+        set reserved_filename_list [list account address-2 address-international-2 address-international address billing browse-categories card-security category-browse-subcategory category-browse-subsubcategory category-browse checkout-2 checkout-3 checkout-one-form-2 checkout-one-form checkout credit-card-correction-2 credit-card-correction delete-address finalize-order gift-certificate-billing gift-certificate-claim-2 gift-certificate-claim gift-certificate-finalize-order gift-certificate-order-2 gift-certificate-order-3 gift-certificate-order-4 gift-certificate-order gift-certificate-thank-you gift-certificate index mailing-list-add-2 mailing-list-add mailing-list-remove order payment policy-privacy policy-sales-terms policy-shipping process-order-quantity-shipping process-payment product-search product review-submit-2 review-submit-3 review-submit select-shipping shopping-cart-add shopping-cart-delete-from shopping-cart-quantities-change shopping-cart-retrieve-2 shopping-cart-retrieve-3 shopping-cart-retrieve shopping-cart-save-2 shopping-cart-save shopping-cart sitemap.xml thank-you track update-user-classes-2 update-user-classes]
+        if { [lsearch -exact $reserved_filename_list $site_url] >= 0 } {
+            # modify site_url to be nonreserved location
+            append site_url "-item"
+        }
+        append site_url ".html"
+        # check if sku already exists elsewhere
+        set dupcount 2
+        while { [db_0or1row get_ecds_product_id_from_site_url "select product_id as product_id_other from ecds_product_id_site_url_map where site_url = :site_url and product_id != :product_id"] } {
+            # duplicate key found! 
+            ns_log Error "ecds_product_path_from_id: Duplicate key error for product_id ${product_id_other} and ${product_id} and site_url $site_url, adding suffix"
+            if { $dupcount > 2 } {
+                set site_url "[string range $site_url 0 end-[expr { [string length [expr { $dupcount - 1 } ]] + 5 }]]-${dupcount}.html"
+            } else {
+                set site_url "[string range $site_url 0 end-5]-${dupcount}.html"
+            }
+            incr dupcount
+        }
+        
+            # no duplicate key, okay to add
+        if { [db_0or1row get_ecds_product_id_site_url_map_for_id "select site_url as site_url_old from ecds_product_id_site_url_map where product_id = :product_id"] } {
+            # map exists, update
+            db_dml update_product_site_url "update ecds_product_id_site_url_map set site_url = :site_url where product_id = :product_id"
+        } else {
+            # new map            
+            db_dml insert_product_site_url "insert into ecds_product_id_site_url_map (site_url, product_id) values (:site_url, :product_id)"
+        }
+    
+        
+    }
+    return $site_url
+}
+
+ad_proc -private ecds_product_id_from_path {
+    product_path
+} {
+    returns the product_id from the site's product_url (unique portion of the local url (after ec_url)) for the product derived from ecommerce/www/index.vuh, or -1 if  product_url not found
+} {
+    # we cache the query because this should return a fairly constant value and hopefully will be called repeatedly
+    db_0or1row -cache_key "ec-ds-id-site-url-${product_path}" get_product_id_from_filepath_tail "select product_id from ecds_product_id_site_url_map where site_url = :product_path"
+    if { ![info exists product_id] } {
+        set product_id -1
+    }
+    return $product_id
 }
