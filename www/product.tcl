@@ -15,7 +15,7 @@ ad_page_contract {
     @revision-date April 2002
 
 } {
-    product_id:integer
+    {product_id 1}
     offer_code:optional
     comments_sort_by:optional
     usca_p:optional
@@ -88,6 +88,19 @@ if { [db_0or1row get_ec_product_info "
     <p><a href=\"index\">Continue browsing</a>.</p>"
     ns_log Warning "product.tcl,line88: product_id $product_id_temp requested, not found."
     return
+}
+
+if { [parameter::get -parameter CacheProductAsFile -default 0] && $current_url eq "[ec_url]product" } {
+    ns_log Notice "ecommerce/www/product.tcl: current_url = $current_url"
+    set site_url [ecds_product_path_from_id $product_id] 
+    if { [string length $site_url] > 0 } {
+        ad_returnredirect "[ec_insecure_location][ec_url]${site_url}"
+        ad_script_abort
+    }
+}
+
+if { [info exists url] && [string length $url] > 0 } {
+    set url "Original product data at: <a href=\"$url\" target=\"_blank\">$url</a> (opens in new window)."
 }
 
 # Finishing up the kludge from a few lines back
