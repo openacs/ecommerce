@@ -41,8 +41,10 @@ Legal values for field names are the columns in ec_products:
 </blockquote>
 <p>
 Note: <code>@undesirable_cols_html;noquote@</code> are set 
-automatically and should not appear in the data file.
-
+automatically and should not appear in the data file. Also, note that <tt>product_name</tt> is not required for
+parts that are already existing in the system; which eases the price updating process, since you can get by with a file
+with only two columns: <tt>sku</tt> and <tt>price</tt>.
+</p>
 </blockquote>
 </blockquote>
 <p>About search_keywords: Data from product_name, one_line_description, and detailed_description 
