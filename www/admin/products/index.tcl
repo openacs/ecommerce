@@ -21,3 +21,10 @@ set audit_html "[ec_url_concat [ec_url] /admin]/audit-tables?[export_url_vars ta
 
 db_1row products_select "select count(*) as n_products, round(avg(price),2) as avg_price from ec_products_displayable"
 
+set repeat_skus [db_list possible_sku_ref_issues "select sku from ec_products where active_p = 't'  group by sku having count(sku) > 1"]
+if { [llength $repeat_skus] > 0 } {
+    set repeat_sku_warn 1
+} else {
+    set repeat_sku_warn 0
+}
+
