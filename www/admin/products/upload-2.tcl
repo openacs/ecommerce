@@ -114,8 +114,9 @@ while { $line_status != -1 && !$errors} {
         # Check if all the required fields have been given a value
 
         foreach required_field_name $required_field_names {
-            if {[set $required_field_name] == ""} {
+            if {[set $required_field_name] == ""  && $required_field_name ne "product_name" } {
                 incr errors
+                ns_log Notice "ecommerce/www/admin/products/upload-2.tcl: a required fieldname is blank: $required_field_name"
             }
         }
 
@@ -144,6 +145,12 @@ while { $line_status != -1 && !$errors} {
 
             set product_id [db_string product_check {select product_id from ec_products where sku = :sku;} -default ""]
             if { $product_id != ""} {
+                if { $product_name eq "" } {
+                    # use existing product_name
+                    ns_log Notice "ecommerce/www/admin/products/upload-2.tcl: working on sku $sku"
+                    db_1row get_product_name_from_product_id "select product_name from ec_products where product_id = :product_id"
+                }
+
 
                 # We found a product_id for the given sku, let's
                 # update the product.
@@ -174,6 +181,7 @@ while { $line_status != -1 && !$errors} {
                     append doc_body "<p><font color=red>FAILURE!</font> Product update of <i>$product_name</i> failed with error:<\p><p>$errmsg</p>"
                 } else {
                     append doc_body "<p>Updated $product_name</p>"
+                    ecds_file_cache_product $product_id
                 }
             } else {
 
@@ -223,7 +231,7 @@ while { $line_status != -1 && !$errors} {
                         append doc_body "<font color=red>FAILURE!</font> Product creation of <i>$product_name</i> failed with error:<\p><p>$errmsg</p>"
                     } else {
                         append doc_body "<p>Created $product_name</p>"
-
+                        ecds_file_cache_product $product_id
                         # we have to also write a row into ec_custom_product_field_values
                         # for consistency with add*.tcl (added 1999-08-08, inadvertently removed 20020504)
                         if { [catch {db_dml custom_product_field_insert "insert into ec_custom_product_field_values (product_id, last_modified, last_modifying_user, modified_ip_address) values (:product_id, now(), :user_id, :peeraddr)" } errmsg] } {
