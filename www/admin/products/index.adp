@@ -32,7 +32,7 @@
 
 
 <form method=post action=search>
-<li>Search by SKU: <input type=text name=sku size=90>
+<li>Search by SKU: <input type=text name=sku size=40>
 <input type=submit value="Search"></li>
 </form>
 <br>
