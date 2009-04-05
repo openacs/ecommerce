@@ -770,7 +770,7 @@ ad_proc ec_creditcard_summary {
 	and c.billing_address = a.address_id"] == 0 } {
 	return ""
     }
-    return "[ec_pretty_creditcard_type $creditcard_type]\nxxxxxxxxxxxx$creditcard_last_four\nexp: $creditcard_expire"
+    return "[ec_pretty_creditcard_type $creditcard_type]\nxxxxxxxxxxxx$creditcard_last_four"
 }
 
 ad_proc ec_elements_of_list_a_that_arent_in_list_b {
