@@ -237,7 +237,13 @@ $express_part_of_shipping_summary
 }
 
 # for one product, displays the sub/sub/category info in a table.
-ad_proc ec_category_subcategory_and_subsubcategory_display { category_list subcategory_list subsubcategory_list } "Returns an HTML table of category, subcategory, and subsubcategory information" {
+ad_proc ec_category_subcategory_and_subsubcategory_display { 
+    category_list 
+    subcategory_list 
+    subsubcategory_list 
+} {
+    Returns an HTML table of category, subcategory, and subsubcategory information
+} {
 
     if { [empty_string_p $category_list] } {
 	return "None Defined"
@@ -245,56 +251,58 @@ ad_proc ec_category_subcategory_and_subsubcategory_display { category_list subca
 
     set to_return "<table border=0 cellspacing=0 cellpadding=0>\n"
     foreach category_id $category_list {
-	append to_return "<tr>\n"
-	set tr_done 1
+        append to_return "<tr>\n"
+        set tr_done 1
 
-	if { ![empty_string_p $subcategory_list] } {
-	    set relevant_subcategory_list [db_list subcategories_select "
+        if { ![empty_string_p $subcategory_list] } {
+            set relevant_subcategory_list [db_list subcategories_select "
 		select subcategory_id from ec_subcategories where category_id = :category_id and subcategory_id in ([join $subcategory_list ", "]) order by subcategory_name
             "]
-	} else {
-	    set relevant_subcategory_list [list]
-	}
+        } else {
+            set relevant_subcategory_list [list]
+        }
 
-	if { [llength $relevant_subcategory_list] == 0 } {
-	    append to_return "<td valign=top>[ec_space_to_nbsp [db_string category_name_select_1 {
+        if { [llength $relevant_subcategory_list] == 0 } {
+            set category_query_list [db_string category_name_select_1 {
                 select category_name from ec_categories where category_id = :category_id
-            }]]</td><td></td><td></td>\n"
-	} else {
-	    append to_return "<td valign=top rowspan=[llength $relevant_subcategory_list]>[ec_space_to_nbsp [db_string category_name_select_2 {
+            }]
+            regsub -all -- {&} $category_query_list {\&amp;} category_query_list
+            append to_return "<td valign=top>[ec_space_to_nbsp $category_query_list] </td><td></td><td></td>\n"
+        } else {
+            set category_query_list [db_string category_name_select_2 {
                 select category_name from ec_categories where category_id = :category_id
-            }]]</td>"
-
-	    foreach subcategory_id $relevant_subcategory_list {
-
-		if { $tr_done } {
-		    set tr_done 0
-		} else {
-		    append to_return "<tr>\n"
-		}
-
-		append to_return "<td valign=top>&nbsp;--&nbsp;[ec_space_to_nbsp [db_string subcategory_name_select_1 {
+            }]
+            regsub -all -- {&} $category_query_list {\&amp;} category_query_list
+            append to_return "<td valign=top rowspan=[llength $relevant_subcategory_list]>[ec_space_to_nbsp $category_query_list]</td>"
+            
+            foreach subcategory_id $relevant_subcategory_list {
+                if { $tr_done } {
+                    set tr_done 0
+                } else {
+                    append to_return "<tr>\n"
+                }
+                set subcategory_query_list [db_string subcategory_name_select_1 {
                     select subcategory_name from ec_subcategories where subcategory_id = :subcategory_id
-                }]]</td><td valign=top>"
-
-		if { ![empty_string_p $subsubcategory_list] } {
-		    set relevant_subsubcategory_name_list [db_list subcategory_name_select_2 "
-			select subsubcategory_name from ec_subsubcategories where subcategory_id = :subcategory_id and subsubcategory_id in ([join $subsubcategory_list ","]) order by subsubcategory_name
-                    "]
-		} else {
-		    set relevant_subsubcategory_name_list [list]
-		}
-		
-		foreach subsubcategory_name $relevant_subsubcategory_name_list {
-		    append to_return "&nbsp;--&nbsp;[ec_space_to_nbsp $subsubcategory_name]<br>\n"
-		}
-
-		append to_return "</td></tr>"
-
-	    } ; # end foreach subcategory_id
-
-	} ; # end of case where relevant_subcategory_list is non-empty
-
+                }]
+                append to_return "<td valign=top>&nbsp;--&nbsp;[ec_space_to_nbsp $subcategory_query_list]</td><td valign=top>"
+                
+                if { ![empty_string_p $subsubcategory_list] } {
+                    set relevant_subsubcategory_name_list [db_list subcategory_name_select_2 "
+			select subsubcategory_name from ec_subsubcategories where subcategory_id = :subcategory_id and subsubcategory_id in ([join $subsubcategory_list ","]) order by subsubcategory_name"]
+                } else {
+                    set relevant_subsubcategory_name_list [list]
+                }
+                foreach subsubcategory_name $relevant_subsubcategory_name_list {
+                    regsub -all -- {&} $subsubcategory_name {\&amp;} subsubcategory_name
+                    append to_return "&nbsp;--&nbsp;[ec_space_to_nbsp $subsubcategory_name]<br>\n"
+                }
+                
+                append to_return "</td></tr>"
+                
+            } ; # end foreach subcategory_id
+            
+        } ; # end of case where relevant_subcategory_list is non-empty
+        
     } ; # end foreach category_id
     append to_return "</table>\n"
     return $to_return
@@ -326,37 +334,39 @@ ad_proc ec_full_categorization_display { {category_id ""} {subcategory_id ""} {s
     will look up the category_id to find the category_name.
 } {
     if { [empty_string_p $category_id] && [empty_string_p $subcategory_id] && [empty_string_p $subsubcategory_id] } {
-	return ""
+        return ""
     } elseif { ![empty_string_p $subsubcategory_id] } {
 
-	if { [empty_string_p $subcategory_id] } {
-	    set subcategory_id [db_string subcategory_id_select {
-		select subcategory_id from ec_subsubcategories where subsubcategory_id = :subsubcategory_id
-	    }]
-	}
+        if { [empty_string_p $subcategory_id] } {
+            set subcategory_id [db_string subcategory_id_select {
+                select subcategory_id from ec_subsubcategories where subsubcategory_id = :subsubcategory_id
+            }]
+        }
 
-	if { [empty_string_p $category_id] } {
-	    set category_id [db_string category_id_select {
-		select category_id from ec_subcategories where subcategory_id = :subcategory_id
-	    }]
-	}
-
-	return "[db_string category_name_select {select category_name from ec_categories where category_id = :category_id}]: [db_string subcategory_name_select {select subcategory_name from ec_subcategories where subcategory_id = :subcategory_id}]: [db_string subsubcategory_name_select {select subsubcategory_name from ec_subsubcategories where subsubcategory_id = :subsubcategory_id}]"
+        if { [empty_string_p $category_id] } {
+            set category_id [db_string category_id_select {
+                select category_id from ec_subcategories where subcategory_id = :subcategory_id
+            }]
+        }
+        set to_return "[db_string category_name_select {select category_name from ec_categories where category_id = :category_id}]: [db_string subcategory_name_select {select subcategory_name from ec_subcategories where subcategory_id = :subcategory_id}]: [db_string subsubcategory_name_select {select subsubcategory_name from ec_subsubcategories where subsubcategory_id = :subsubcategory_id}]"
+        regsub -all -- {&} $to_return {\&amp;} to_return
+        return $to_return
 
     } elseif { ![empty_string_p $subcategory_id] } {
 
-	if { [empty_string_p $category_id] } {
-	    set category_id [db_string category_id_select {
-		select category_id from ec_categories where subcategory_id = :subcategory_id
-	    }]
-	}
-
-	return "[db_string category_name_select {select category_name from ec_categories where category_id = :category_id}]: [db_string subcategory_name_select {select subcategory_name from ec_subcategories where subcategory_id = :subcategory_id}]"
-
+        if { [empty_string_p $category_id] } {
+            set category_id [db_string category_id_select {
+                select category_id from ec_categories where subcategory_id = :subcategory_id
+            }]
+        }
+        set to_return "[db_string category_name_select {select category_name from ec_categories where category_id = :category_id}]: [db_string subcategory_name_select {select subcategory_name from ec_subcategories where subcategory_id = :subcategory_id}]"
+        regsub -all -- {&} $to_return {\&amp;} to_return
+        return $to_return
+        
     } else {
-
-	return "[db_string category_name_select {select category_name from ec_categories where category_id = :category_id}]"
-
+        set to_return "[db_string category_name_select {select category_name from ec_categories where category_id = :category_id}]"
+        regsub -all -- {&} $to_return {\&amp;} to_return
+        return $to_return
     }
 }
 
@@ -376,7 +386,7 @@ ad_proc ec_mailing_list_link_for_a_product { product_id } {
     db_0or1row mailing_categories {}
 
     if { ![empty_string_p $category_id] || ![empty_string_p $subcategory_id] || ![empty_string_p $subsubcategory_id] } {
-        return "<a href=\"mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]\">Add yourself to the [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] mailing list!</a>"
+        return "<a href=\"[ec_url]mailing-list-add?[export_url_vars category_id subcategory_id subsubcategory_id]\">Subscribe to [ec_full_categorization_display $category_id $subcategory_id $subsubcategory_id] announcements</a>."
     } else { 
         return ""
     }
@@ -449,7 +459,7 @@ ad_proc ec_display_rating { rating } {
 
 ad_proc ec_product_links_if_they_exist { product_id } { return product links } {
     set to_return "<p>
-    <b>We think you may also be interested in:</b>
+    <b>You may also be interested in:</b>
     <ul>
     "
 
@@ -459,7 +469,7 @@ ad_proc ec_product_links_if_they_exist { product_id } { return product links } {
 	select p.product_id, p.product_name from ec_products_displayable p, ec_product_links l where l.product_a = :product_id and l.product_b = p.product_id
     } {
 	incr link_counter
-	append to_return "<li><a href=\"product?[export_url_vars product_id product_name]\">$product_name</a>\n"
+        append to_return "<li><a href=\"[ec_url]product?[export_url_vars product_id product_name]\">$product_name</a>\n"
     }
 
     if { $link_counter == 0 } {
@@ -483,9 +493,7 @@ ad_proc ec_professional_reviews_if_they_exist { product_id } { returns professio
     }
 
     if { ![empty_string_p $product_reviews] } {
-	return "<hr>
-	$product_reviews
-	"
+	return "<hr>$product_reviews"
     } else {
 	return ""
     }
@@ -509,14 +517,13 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
 
     if { $comments_sort_by == "rating" } {
 	append end_of_comment_query "\norder by c.rating desc"
-	append sort_blurb "sorted by rating | <a href=\"product?[export_url_vars product_id]&comments_sort_by=last_modified\">sort by date</a>"
+        append sort_blurb "sorted by rating | <a href=\"[ec_url]product?[export_url_vars product_id]&comments_sort_by=last_modified\">sort by date</a>"
     } else {
 	append end_of_comment_query "\norder by c.last_modified desc"
-	append sort_blurb "sorted by date | <a href=\"product?[export_url_vars product_id]&comments_sort_by=rating\">sort by rating</a>"
+        append sort_blurb "sorted by date | <a href=\"[ec_url]product?[export_url_vars product_id]&comments_sort_by=rating\">sort by rating</a>"
     }
 
-    set to_return "<hr width=\"50%\" noshade size=\"1\"><p>
-    <b>[ad_system_name] member reviews:</b></p>"
+    set to_return "<hr width=\"25%\" noshade size=\"1\">"
 
     set comments_to_print "<ul>"
 
@@ -542,16 +549,17 @@ ad_proc ec_customer_comments { product_id {comments_sort_by ""} {prev_page_url "
     }
     append comments_to_print "</ul>"
     if { $comments_to_print ne "<ul></ul>" } {
-	append to_return "<p>Average customer review [ec_display_rating [db_string avg_rating_select {
+        set to_return "<p><b>[ad_system_name] reviews:</b></p>${to_return}"
+        append to_return "<p>Average customer review [ec_display_rating [db_string avg_rating_select {
             select avg(rating) from ec_product_comments where product_id = :product_id and approved_p = 't'
         }]]<br>
 	Number of reviews: [db_string n_reviews_select "
             select count(*) from ec_product_comments where product_id = :product_id and (approved_p='t' [ec_decode [ad_parameter -package_id [ec_id] ProductCommentsNeedApprovalP ecommerce] "0" "or approved_p is null" ""])
         "] ($sort_blurb)</p>
 	$comments_to_print
-	<p><a href=\"review-submit?[export_url_vars product_id]\">Add a review</a>.</p>"
+	<p><a href=\"[ec_url]review-submit?[export_url_vars product_id]\">Review this item</a>.</p>"
     } else {
-        append to_return "<p><a href=\"review-submit?[export_url_vars product_id]\">Be the first to review this product</a>!</p>\n"
+        append to_return "<p><a href=\"[ec_url]review-submit?[export_url_vars product_id]\">Be the first to review this item</a>!</p>\n"
     }
  
     return $to_return
@@ -612,7 +620,7 @@ ad_proc ec_add_to_cart_link {
     
     if { $available_p } {
 	set r "
-        <form method=post action=\"$form_action\">
+        <form method=post action=\"[ec_url]$form_action\">
 	[export_form_vars product_id]
 	[ec_decode $order_id "" "" [export_form_vars order_id]]
 	$color_widget $size_widget $style_widget
@@ -628,7 +636,7 @@ ad_proc ec_add_to_cart_link {
         "]
 	if { [ad_parameter -package_id [ec_id] AllowPreOrdersP ecommerce] } {
 	    set r "
-            <form method=post action=\"$form_action\">
+            <form method=post action=\"[ec_url]$form_action\">
 	    [export_form_vars product_id]
 	    [ec_decode $order_id "" "" [export_form_vars order_id]]
 	    $color_widget $size_widget $style_widget
@@ -678,8 +686,9 @@ ad_proc ec_navbar {
             select category_id, category_name 
 	    from ec_categories 
 	    order by sort_key " {
+            regsub -all -- {&} $category_name {\&amp;} category_name
             if { [string compare $category_id $current_location] != 0 } {
-                lappend linked_category_list "<a href=\"[ec_insecurelink category-browse?category_id=$category_id]\">$category_name</a>"
+                lappend linked_category_list "<a href=\"[ec_insecurelink [ec_url]category-browse?category_id=$category_id]\">$category_name</a>"
             } else {
                 lappend linked_category_list "<b>$category_name</b>"
             }
@@ -1128,7 +1137,7 @@ ad_proc ec_display_product_purchase_combinations { product_id } { display produc
         if { ![empty_string_p $product_id] } {
             set item_name [db_string product_name_select {select product_name from ec_products where product_id = :product_id and present_p = 't'} -default ""]
 	    if { ![empty_string_p $item_name] } {
-                append to_return "<li><a href=\"product?[export_url_vars product_id]\">${item_name}</a></li>"
+            append to_return "<li><a href=\"[ec_url]product?[export_url_vars product_id]\">${item_name}</a></li>"
             }
         }
     }
@@ -1501,7 +1510,7 @@ ad_proc ec_state_name_from_usps_abbrev {usps_abbrev} "Takes a USPS abbrevation a
 ### file manager functions from acs-3.48
 ##################################################
 # Checks for any function execution in an adp page
-
+ 
 ad_proc ec_adp_function_p {adp_page} { Checks for any function execution in an adp page } {
     if {[ad_parameter -package_id [ec_id] ECTemplatesMayContainTclFunctionsP]} {
 	return 0
@@ -1564,6 +1573,7 @@ ad_proc -private ec_ident {x} {
 ad_proc -private ec_have {
     var
 } { 
+    confirms that variable var exists and is not equal to 0.
   from ecommerce/www/category-browse*.tcl
 } {
     upvar $var x
@@ -1572,15 +1582,19 @@ ad_proc -private ec_have {
 
 ad_proc -private ec_in_subcat    {
 } { 
+    confirms that subcategory_id exists, returns 0 or 1
   from ecommerce/www/category-browse*.tcl
 } {
+    # this should also verify that subcategory_id exists in ec_subcategories (cached query)
     return [uplevel {ec_have subcategory_id}]
 }
 
 ad_proc -private ec_in_subsubcat {
 } { 
+    confirms that subsubcategory_id exists, returns 0 or 1
   from ecommerce/www/category-browse*.tcl
 } {
+    # this should also verify that subsubcategory_id exists in ec_subsubcategories (cached query)
     return [uplevel {ec_have subsubcategory_id}]
 }
 
