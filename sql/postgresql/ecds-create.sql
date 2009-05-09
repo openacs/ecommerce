@@ -120,3 +120,14 @@ create table ecds_product_id_site_url_map (
 create index ecds_product_id_site_url_map_site_url_idx on ecds_product_id_site_url_map (site_url);
 create index ecds_product_id_site_url_map_product_idx on ecds_product_id_site_url_map (product_id);
 
+-- process_control allows near realtime control of procedures programmed to use it.
+-- Processes check if okay_to_start before beginning. Extended processes check before each iteration
+-- thereby providing a clean way to stop a batch process without having to shutdown the server.
+
+ CREATE TABLE ecds_process_control (
+   process_ref varchar(48) unique,
+   okay_to_start varchar(1) default 'f',
+   status text
+ );
+
+create index ecds_process_control_proc_ref_idx on ecds_process_control (process_ref);

@@ -1,3 +1,5 @@
+drop index ecds_process_control_proc_ref_idx;
+drop table ecds_process_control;
 drop index ecds_product_id_site_url_map_site_url_idx;
 drop index ecds_product_id_site_url_map_product_idx;
 drop table ecds_product_id_site_url_map;
