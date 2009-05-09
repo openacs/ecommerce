@@ -118,7 +118,7 @@ ad_proc -private ecds_base_shipping_price_from_order_value {
 
    # example 3 using 1/x multiplier
     set multiplier [f::max [expr { ( 15. / ( $total_price + 4 ) ) - 0.05 } ] 0]
-
+    
     set value_based_shipping [expr { $total_price * $multiplier } ]
     return $value_based_shipping
 }
@@ -371,6 +371,16 @@ ad_proc -private ecds_import_image_to_ecommerce {
     if { [string match -nocase {*picsn.jpg} $image_filepathname ] || [empty_string_p $image_filepathname] || [string match -nocase *avail* $image_filepathname ] } {
        #  image_filepathname is "notavail.jpg" or picsn.jpg or xl-*
        # do not process
+        # remove any old images
+        set 2prod [ec_product_file_directory $product_id]
+        set product_path [file join [ec_data_directory_mem] [ec_product_directory_mem] $2prod $dirname]
+        ec_assert_directory $product_path
+        set product_base_pathname [file join $product_path "product*" ]
+        foreach match [glob -nocomplain -- $product_base_pathname] {
+            ns_log Notice "ecds_import_image_to_ecommerce: unavailable image detected for product_id ${product_id}. Removing existing image $match"
+            [file delete $match]
+        }
+
     } else {
         db_1row get_product_dirname "select dirname from ec_products where product_id = :product_id"
         set new_imagetype [string tolower [string range $image_filepathname end-2 end]]
@@ -977,6 +987,11 @@ ad_proc -private ecds_import_product_from_vendor_site {
   returns product_id of a product, or -1 if there are significant errors
 } {
 
+    # check if okay to start / continue this process
+    if { [ecds_process_control_check ecds_import_product_from_vendor_site okay_to_start] eq 0 } {
+        return -1
+    }
+
     #  have procs defined using the $vendor under separate file ecds-$vendor-procs.tcl
     # which helps with defining code that is shareable from code that is proprietary
 
@@ -1048,6 +1063,7 @@ ad_proc -private ecds_import_product_from_vendor_site {
                 ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} brandmodelnumber too long, the extra clipped is: [string range $ec_custom_fields_array(brandmodelnumber) 198 end]"
                 set ec_custom_fields_array(brandmodelnumber) [string range $ec_custom_fields_array(brandmodelnumber) 0 198]
             }
+
 
 
             set ec_custom_fields_array(minshipqty) [ecdsii_${vendor}_min_ship_qty $page]
@@ -1130,7 +1146,8 @@ ad_proc -private ecds_import_product_from_vendor_site {
                 set ec_products_array(detailed_description) [string range $ec_products_array(detailed_description) 0 3998]
             }
 
-            set ec_products_array(search_keywords) "$ec_products_array(one_line_description), $ec_custom_fields_array(vendorsku) $ec_custom_fields_array(brandname) $ec_custom_fields_array(brandmodelnumber)"
+            set original_brand_model_number [ecdsii_${vendor}_original_brand_model_number $page]
+            set ec_products_array(search_keywords) "${original_brand_model_number}, $ec_products_array(one_line_description), $ec_custom_fields_array(vendorsku) $ec_custom_fields_array(brandname) $ec_custom_fields_array(brandmodelnumber)"
             if { [string length $ec_products_array(search_keywords)] > 3998 } {
                 ns_log Warning "ecds_import_product_from_vendor_site: ref. ${product_ref} search_keywords too long, the extra clipped is: [string range $ec_products_array(search_keywords) 3998 end]"
                 set ec_products_array(search_keywords) [string range $ec_products_array(search_keywords) 0 3998]
@@ -1786,7 +1803,7 @@ ad_proc -private ecds_create_ec_subcategory {
             if { ![info exists max_sort_key] || ![ecds_is_natural_number $max_sort_key] } {
                 set max_sort_key 2560
             }
-            set min_sort_key [expr { int( $max_sort_key / 2. ) } ]
+            set min_sort_key [expr { int( $max_sort_key / 1.89 ) } ]
         }
 
         if { ![info exists max_sort_key] || ![ecds_is_natural_number $max_sort_key] } {
@@ -1800,7 +1817,7 @@ ad_proc -private ecds_create_ec_subcategory {
     set existing_rows_list [db_list get_subcategory_confirmation "select subcategory_id,subcategory_name, sort_key from ec_subcategories
 where subcategory_id=:subcategory_id or ( sort_key=:sort_key and category_id = :category_id ) or subcategory_name = :subcategory_name "]
     if { [llength $existing_rows_list] > 0} {
-        ns_log Warning "ecds_create_ec_category: unable to create subcategory, subcategory_id ${subcategory_id}, or subcategory_name ${subcategory_name}, or sort_key ${sort_key} not unique, given max_key ${max_sort_key}, min_key ${min_sort_key} and max_subcat = ${max_subcategory_id}"
+        ns_log Warning "ecds_create_ec_subcategory: unable to create subcategory, subcategory_id ${subcategory_id}, or subcategory_name ${subcategory_name}, or sort_key ${sort_key} not unique, given max_key ${max_sort_key}, min_key ${min_sort_key} and max_subcat = ${max_subcategory_id}"
         return -1
     }
 
@@ -1898,6 +1915,10 @@ ad_proc -private ecds_file_cache_product {
     # for scalability, the static page for each product is now determined by ecds_product_path_from_id
     # also, note that using ${product_id}.html may not work as a default for cases without sku value, if some products have an integer sku
     set filepath_tail [ecds_product_path_from_id $product_id]
+    # check if okay to start / continue this process
+    if { $cache_product_as_file } {
+        set cache_product_as_file [ecds_process_control_check ecds_file_cache_product okay_to_start]
+    }
 
     if { $cache_product_as_file && [string length $filepath_tail] > 0 } {
 
@@ -1992,84 +2013,6 @@ ad_proc -private ecds_file_cache_product {
         
     } elseif { $cache_product_as_file } {
         ns_log Warning "ecds_file_cache_product: filepath is not supported for product_id $product_id"
-    }
-}
-
-
-ad_proc -private ecds_create_cache_product_files {
-} {
-    creates or updates the static pages of active products
-} {
-
-    set cache_product_as_file [parameter::get -parameter CacheProductAsFile -default 0]
-    ns_log Notice "ecds_create_cache_product_files: starting.."
-    if { $cache_product_as_file } {
-        set active_product_list [db_list_of_lists get_catalog_product_ids "
-      select product_id from ec_products
-        where active_p='t' and present_p = 't' and sku is not null
-        order by last_modified desc"]
-
-        foreach product_id $active_product_list {
-            ecds_file_cache_product $product_id
-        }
-    }
-    ns_log Notice "ecds_create_cache_product_files: ended"
-}
-
-ad_proc -private ecds_create_product_site_urls {
-    {calc_sku 0}
-} {
-    creates or updates the static page references (ecds_product_id_site_url_map.site_url) of active products, recalculates product sku if calc_sku is supplied as 1.
-} {
-    set cache_product_as_file [parameter::get -parameter CacheProductAsFile -default 0]
-    ns_log Notice "ecds_create_product_site_urls: starting..  cache_product_as_file ${cache_product_as_file}"
-    if { $cache_product_as_file } {
-        set active_product_list [db_list_of_lists get_all_active_product_ids "
-      select product_id from ec_products
-        where active_p='t' and present_p = 't'
-        order by last_modified desc"]
-        ns_log Notice "ecds_create_product_site_urls: processing [llength $active_product_list] products."
-        foreach product_id $active_product_list {
-            set sku ""
-            set brandname ""
-            set brand_name ""
-            set brandmodelnumber ""
-            if { $calc_sku } {
-                db_0or1row check_product_history_2 {select a.sku as sku,a.last_modified as last_modified, b.brandname as brandname, b.brandmodelnumber as brandmodelnumber from ec_products a, ec_custom_product_field_values b where a.product_id = b.product_id and a.product_id = :product_id }
-                if { [info exists brandname] } {
-                    db_0or1row get_normalized_brand_name_from_alt_spelling "select normalized as brand_name from ecds_alt_spelling_map where alt_spelling =:brandname and context='brand'"
-                } else {
-                    ns_log Warning "ecds_create_product_site_urls: brandname is blank for product_id $product_id"
-                }
-                if { [info exists brand_name] && [string length $brand_name] > 0 } {
-                    set brandname $brand_name
-                }
-    #            ns_log Notice "ecds_create_product_site_urls: brandname $brandname brandmodelnumber $brandmodelnumber "
-                set new_sku [ecds_sku_from_brand $brandname $brandmodelnumber]
-                if { $new_sku ne $sku } {
-                    db_dml update_sku_for_a_product {update ec_products set sku = :new_sku where product_id = :product_id }
-                    ns_log Notice "ecds_create_product_site_urls: updating sku from $sku to ${new_sku} for product_id ${product_id}"
-                }
-            }
-            ecds_product_path_from_id $product_id $sku $brandname $brandmodelnumber
-        }
-    }
-    ns_log Notice "ecds_create_product_site_urls: ended"
-}
-
-
-ad_proc -private ecds_refresh_import_products_from_vendor {
-    vendor_abbrev
-} {
-    creates or updates product info for imported products of a specific vendor
-} {
-
-    set vendor_product_ids_list [db_list_of_lists get_vendor_product_ids "
-        select product_id from ec_custom_product_field_values
-        where vendorabbrev = :vendor_abbrev"]
-    set product_count [llength $vendor_product_ids_list]
-    foreach product_id $vendor_product_ids_list {
-        ecds_import_product_from_vendor_site $vendor_abbrev product_id $product_id
     }
 }
 
@@ -2346,15 +2289,3 @@ adp_abort
     return $site_url
 }
 
-ad_proc -private ecds_product_id_from_path {
-    product_path
-} {
-    returns the product_id from the site's product_url (unique portion of the local url (after ec_url)) for the product derived from ecommerce/www/index.vuh, or -1 if  product_url not found
-} {
-    # we cache the query because this should return a fairly constant value and hopefully will be called repeatedly
-    db_0or1row -cache_key "ec-ds-id-site-url-${product_path}" get_product_id_from_filepath_tail "select product_id from ecds_product_id_site_url_map where site_url = :product_path"
-    if { ![info exists product_id] } {
-        set product_id -1
-    }
-    return $product_id
-}
