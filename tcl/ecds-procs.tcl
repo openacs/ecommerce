@@ -126,7 +126,7 @@ ad_proc -private ecds_base_shipping_price_from_order_value {
 
 ad_proc -private ecds_get_url {
     url
-    {refresh_period "190 days ago"}
+    {refresh_period "80 days ago"}
 } {
     returns page content of url, caches data so as to not clobber other server if page request is newer than refresh_period, 
     where refresh_period is a tcl based relative time reference
@@ -157,8 +157,8 @@ ad_proc -private ecds_get_url {
     
     } else {
         # get file from url
-	ns_log Notice "ecds_get_url: $url waiting 15 seconds before trying, in case we recently grabbed a url"
-			after 15000
+	ns_log Notice "ecds_get_url: $url waiting 20 seconds before trying, in case we recently grabbed a url"
+			after 20000
 
         if { [catch {set get_id [ns_http queue -timeout 65 $url]} err ]} {
             set page $err
@@ -187,6 +187,9 @@ ad_proc -private ecds_get_url {
                 # make the ec_asser_directory recursive
                 set filepath [file dirname $filepathname]
                 ec_assert_directory $filepath
+                if { [file exists ${filepathname} ] } {
+                    file delete ${filepathname}
+                }
                 if { [catch {open $filepathname w} fileId]} {
                     ns_log Error "ecds_get_url: unable to write to file $filepathname"
                     ad_script_abort
@@ -212,7 +215,8 @@ ad_proc -private ecds_get_url {
                         # given $image_url                                                                                                  
                         set file_dir_path [file dirname $filepathname]
                         ec_assert_directory $file_dir_path
-                        if { [catch {exec /usr/local/bin/wget -q -nc -t 1 -P${file_dir_path} -- $image_url} errmsg ] } {
+                        ns_log Notice "ecds_get_url(L215): wget -q -nc -t 1 -P${file_dir_path} -- ${image_url}"
+                        if { [catch {exec /usr/local/bin/wget -q -nc -t 1 -P${file_dir_path} -- ${image_url} } errmsg ] } {
                             set testita $errmsg
                         } else {
                             set testita $filepathname
@@ -249,93 +253,46 @@ ad_proc -private ecds_get_url {
 
 ad_proc -private ecds_get_image_from_url {
     url
-    {refresh_period "190 days ago"}
+    {refresh_period "80 days ago"}
 } {
     returns filepathname of local copy of image at url
     caches data so as to not clobber other server if page request is newer than refresh_period, 
     where refresh_period is a tcl based relative time reference
 } {
-    set status "OK"
-    # if the page has been retrieved previously, just get the filepath
-    set url_cache_dir [parameter::get -parameter CacheDataDirectory -default ecds-url-cache]
-
-    db_0or1row check_url_history {select cache_filepath,last_update,flags from ecds_url_cache_map where url = :url}
-
-    if { [info exists last_update] && [clock scan [string range $last_update 0 18]] > [clock scan $refresh_period] } {
-        # set the filepath
-#        set filepathname [file join [acs_root_dir] $url_cache_dir $cache_filepath]
-        set filepathname $cache_filepath   
-    } else {
-
-        #fetch image, put into cache directory tree
-        # 1 means use wget because aolserver4.0.10 ns_http does not work for images.
-        if { 1 } {
-            # given $url                                                                                                  
-            set base_url [string range $url 7 end]
-            set filepathname [file join [acs_root_dir] $url_cache_dir $base_url]
-            set filepath [file dirname $filepathname]
-            ec_assert_directory $filepath
-            if { [catch {exec /usr/local/bin/wget -q -nc -T 20 -t 1 -P${filepath} -- $url} errmsg ] } {
-                ns_log Error "ecds_get_image_from_url: $errmsg"
-                set status "ERROR"
-            } else {
-                # wait 20 sec to see if file is gotten
-                ns_log Notice "ecds_get_image_from_url: wgetting $url (waiting 20 sec to check)"
-                after 20000
-                if { [file exists $filepathname] } {
-                    # success! file gotten, now we can process it
-                    set flags ""
-                    # log cache into map
-                    if { [db_0or1row check_url_in_cache {select url from ecds_url_cache_map where url = :url}] } {
-                        db_dml update_cache {update ecds_url_cache_map set cache_filepath =:filepathname, last_update=now(), flags=:flags where url=:url}
-                    } else {
-                        db_dml insert_to_cache {insert into ecds_url_cache_map
-                            (url,cache_filepath,last_update,flags)
-                            values (:url,:filepathname,now(), :flags) }
-                    }
-
-                } else {
-                    ns_log Error "ecds_get_image_from_url: file $filepathname does not exist after attempt to fetch from $url"
-                    set status "ERROR"
-                }
-                
-            }
-
-
+    if { [string length $url] > 0 } {
+        set status "OK"
+        # if the page has been retrieved previously, just get the filepath
+        set url_cache_dir [parameter::get -parameter CacheDataDirectory -default ecds-url-cache]
+        
+        db_0or1row check_url_history {select cache_filepath,last_update,flags from ecds_url_cache_map where url = :url}
+        
+        if { [info exists last_update] && [clock scan [string range $last_update 0 18]] > [clock scan $refresh_period] } {
+            # set the filepath
+            #        set filepathname [file join [acs_root_dir] $url_cache_dir $cache_filepath]
+            set filepathname $cache_filepath   
         } else {
-            # ns_http does not work for aolserver 4.0.10, using wget instead
-            # more info at: http://openacs.org/forums/message-view?message_id=1200269
-            # if aolserver4.5, should work to use:
-    
-            if { [catch {set get_id [ns_http queue GET $url]} err ]} {
-                set page $err
-                ns_log Error "ecds_get_image_from_url: $error"
-            } else {
-                ns_log Notice "ecds_get_image_from_url: ns_httping $url"
-                set flags ""
-                set status [ns_http wait $get_id page]
-                
-                if { $page eq "timeout" || [string length $page] < 20 } {
-                    # no page info returned, just return error
-                    set page "Error: url timed out"
-                    set filepathname ""
+            
+            #fetch image, put into cache directory tree
+            # 1 means use wget because aolserver4.0.10 ns_http does not work for images.
+            if { 1 } {
+                # given $url                                                                                                  
+                set base_url [string range $url 7 end]
+                set filepathname [file join [acs_root_dir] $url_cache_dir $base_url]
+                set filepath [file dirname $filepathname]
+                ec_assert_directory $filepath
+                if { [file exists ${filepathname} ] } {
+                    file delete ${filepathname}
+                }
+                if { [catch {exec /usr/local/bin/wget -q -nc -T 20 -t 1 -P${filepath} -- $url} errmsg ] } {
+                    ns_log Error "ecds_get_image_from_url(L279): wget -q -nc -T 20 -t 1 -P${filepath} -- $url ERROR MESSAGE: $errmsg"
                     set status "ERROR"
                 } else {
-                    #ns_log Notice "ecds_get_url: adding page to file cache"
-                    #put page into file cache
-                    set base_url [string range $url 7 end]
-                    set filepathname [file join [acs_root_dir] $url_cache_dir $base_url]
-                    set filepath [file dirname $filepathname]
-                    ec_assert_directory $filepath
-                    if { [catch {open $filepathname w} fileId]} {
-                        ns_log Error "ecds_get_image_from_url: unable to write to file $filepathname"
-                        set status "ERROR"
-                    } else {
-                        # this is an image, prepare to save binary
-                        fconfigure $fileId -translation binary
-                        puts $fileId $page
-                        #ns_log Notice "ecds_get_url: writing $filepathname with content: $page"
-                        close $fileId
+                    # wait 20 sec to see if file is gotten
+                    ns_log Notice "ecds_get_image_from_url: wgetting $url (waiting 20 sec to check)"
+                    after 20000
+                    if { [file exists $filepathname] } {
+                        # success! file gotten, now we can process it
+                        set flags ""
                         # log cache into map
                         if { [db_0or1row check_url_in_cache {select url from ecds_url_cache_map where url = :url}] } {
                             db_dml update_cache {update ecds_url_cache_map set cache_filepath =:filepathname, last_update=now(), flags=:flags where url=:url}
@@ -345,16 +302,74 @@ ad_proc -private ecds_get_image_from_url {
                                 values (:url,:filepathname,now(), :flags) }
                         }
                         
+                    } else {
+                        ns_log Error "ecds_get_image_from_url: file $filepathname does not exist after attempt to fetch from $url"
+                        set status "ERROR"
+                    }
+                    
+                }
+                
+                
+            } else {
+                # ns_http does not work for aolserver 4.0.10, using wget instead
+                # more info at: http://openacs.org/forums/message-view?message_id=1200269
+                # if aolserver4.5, should work to use:
+                
+                if { [catch {set get_id [ns_http queue GET $url]} err ]} {
+                    set page $err
+                    ns_log Error "ecds_get_image_from_url: $error"
+                } else {
+                    ns_log Notice "ecds_get_image_from_url: ns_httping $url"
+                    set flags ""
+                    set status [ns_http wait $get_id page]
+                    
+                    if { $page eq "timeout" || [string length $page] < 20 } {
+                        # no page info returned, just return error
+                        set page "Error: url timed out"
+                        set filepathname ""
+                        set status "ERROR"
+                    } else {
+                        #ns_log Notice "ecds_get_url: adding page to file cache"
+                        #put page into file cache
+                        set base_url [string range $url 7 end]
+                        set filepathname [file join [acs_root_dir] $url_cache_dir $base_url]
+                        set filepath [file dirname $filepathname]
+                        ec_assert_directory $filepath
+                        if { [file exists ${filepathname} ] } {
+                            file delete ${filepathname}
+                        }
+                        if { [catch {open $filepathname w} fileId]} {
+                            ns_log Error "ecds_get_image_from_url: unable to write to file $filepathname"
+                            set status "ERROR"
+                        } else {
+                            # this is an image, prepare to save binary
+                            fconfigure $fileId -translation binary
+                            puts $fileId $page
+                            #ns_log Notice "ecds_get_url: writing $filepathname with content: $page"
+                            close $fileId
+                            # log cache into map
+                            if { [db_0or1row check_url_in_cache {select url from ecds_url_cache_map where url = :url}] } {
+                                db_dml update_cache {update ecds_url_cache_map set cache_filepath =:filepathname, last_update=now(), flags=:flags where url=:url}
+                            } else {
+                                db_dml insert_to_cache {insert into ecds_url_cache_map
+                                    (url,cache_filepath,last_update,flags)
+                                    values (:url,:filepathname,now(), :flags) }
+                            }
+                            
+                        }
                     }
                 }
             }
         }
-    }
-ns_log Notice "ecds_get_image_from_url: status is $status"
-    if { $status eq "OK" } { 
-        return $filepathname   
-    } else { 
-        return $status
+        ns_log Notice "ecds_get_image_from_url: status is $status"
+        if { $status eq "OK" } { 
+            return $filepathname   
+        } else { 
+            return $status
+        }
+    } else {
+        ns_log Warning "ecds_get_image_from_url: The image url is blank. No image fetched."
+        return "ERROR"
     }
 }
 
@@ -448,13 +463,22 @@ ad_proc -private ecds_get_contents_from_tag {
     Returns content of an html/xml or other bracketing tag that is uniquely identified within a page fragment or string.
     helps pan out the golden nuggets of data from the waste text when given some garbage with input for example
 } {
+    set tag_contents ""
     set start_col [string first $start_tag $page $start_index]
     set end_col [string first $end_tag $page $start_col]
     if { $end_col > $start_col && $start_col > -1 } {
         set tag_contents [string trim [string range $page [expr { $start_col + [string length $start_tag] } ] [expr { $end_col -1 } ]]]
     } else {
-        set tag_contents ""
-        ns_log Warning "no contents for tag $start_tag"
+        set starts_with "${start_tag}.*"
+        set ends_with "${end_tag}.*"
+        if { [regexp -- ${starts_with} $page tag_contents ]} {
+            if { [regexp -- ${ends_with} $tag_contents tail_piece] } {
+                set tag_contents [string range $tag_contents 0 [expr { [string length $tag_contents] - [string length $tail_piece] - 1 } ] ]
+            } else {
+                ns_log Notice "Warning no contents for tag $start_tag"
+                set tag_contents ""
+            }
+        }
     }
     return $tag_contents
 }
@@ -1946,7 +1970,7 @@ ad_proc -private ecds_file_cache_product {
                 after 15000
                 if { [catch {set get_id [ns_http queue -timeout 65 $url]} err ]} {
                     set page $err
-                    ns_log Error "ecds_file_cache_product: url=$url error: $err"
+                    ns_log Error "ecds_file_cache_product: ns_http queue url=$url error: $err"
                 } else {
                     ns_log Notice "ecds_file_cache_product: ns_httping $url"
                     # removed -timeout "30" from next statment, because it is unrecognized for this instance..
@@ -2129,7 +2153,7 @@ ad_proc -private ecds_sort_categories {
     set category_ids_sorted_list [db_list_of_lists get_db_sorted_category_ids "
         select category_id from ec_categories order by category_name"]
     set category_count [llength $category_ids_sorted_list]
-    set key_incr [expr { int( 1024. / $category_count ) + 2 } ]
+    set key_incr [expr { int( 1024. / ( $category_count + 1 ) ) + 2 } ]
     set sort_key $key_incr
     foreach category_id $category_ids_sorted_list {
         incr sort_key $key_incr
@@ -2145,7 +2169,7 @@ category_id
     set subcategory_ids_sorted_list [db_list_of_lists get_db_sorted_subcategory_ids "
         select subcategory_id from ec_subcategories where category_id = :category_id order by subcategory_name"]
     set subcategory_count [llength $subcategory_ids_sorted_list]
-    set key_incr [expr { int( 2048. / $subcategory_count ) + 8 } ]
+    set key_incr [expr { int( 8192. / ( $subcategory_count + 1) ) + 8 } ]
     set sort_key $key_incr
     foreach subcategory_id $subcategory_ids_sorted_list {
         incr sort_key $key_incr
