@@ -68,6 +68,8 @@ db_transaction {
 
     # 4. remove the row in ec_subcategories where subcategory_id = $subcategory_id
 
+db_1row get_category_id_from_sub "select category_id , category_name from ec_categories where category_id in (select category_id from ec_subcategories where subcategory_id = :subcategory_id)"
+
     db_dml delete_from_ec_subcats "delete from ec_subcategories where subcategory_id=:subcategory_id"
 
     # audit table
@@ -75,4 +77,4 @@ db_transaction {
 
 }
 
-ad_returnredirect "index"
+ad_returnredirect "category?[export_url_vars category_id category_name]"
