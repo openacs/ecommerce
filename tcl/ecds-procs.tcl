@@ -5,6 +5,7 @@ ad_library {
     @creation-date  Aug 2007
 
     #default import procs requires these ec_custom_product_field_values fields defined as text types of length indicated.
+    #use vendorwebuid for referencing website resources, when vendorsku etc are not directly referenced (such as another site using product_id)
     unitofmeasure 200
     brandname 200
     brandmodelnumber 200
@@ -17,6 +18,8 @@ ad_library {
     unspsccode 200
     vendorsku 200
     vendorabbrev 200
+vendorcost numeric
+vendorwebuid 4000
 }
 
 ad_proc -private ecds_is_natural_number {
