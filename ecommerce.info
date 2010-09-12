@@ -7,7 +7,7 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="5.15" url="http://openacs.org/repository/download/apm/ecommerce-5.15.apm">
+    <version name="5.16" url="http://openacs.org/repository/download/apm/ecommerce-5.16.apm">
         <owner url="mailto:janine@furfly.net">Janine Sisk</owner>
         <owner url="mailto:bart.teeuwisse@7-sisters.com">Bart Teeuwisse</owner>
         <owner url="mailto:alfred@thunderstick.com">Alfred Werner</owner>
@@ -17,7 +17,7 @@
         <description format="text/plain">This module implements a standard business-to-consumer Web store service. A feature summary is included with the documentaion.</description>
         <maturity>0</maturity>
 
-        <provides url="ecommerce" version="5.15"/>
+        <provides url="ecommerce" version="5.16"/>
         <requires url="acs-datetime" version="4.0"/>
         <requires url="acs-kernel" version="5.0"/>
         <requires url="ref-countries" version="0.1d"/>
@@ -39,7 +39,7 @@
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CartDuration"  default="30" description="# of days an 'in_basket' order will remain in the system before a cron job expires it" section_name="shopping cart"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="CartMaxToAdd"  default="999" description="maximum quantity to add to a shoppng basket item's current quantity. Each unit requires a row insert in db table ec_items." section_name="shopping cart"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="CreditCardsAccepted"  default="v m a" description="A single-letter space delimited list of accepted credit card types. See ec_pretty_creditcard_type for details." section_name="payment information"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Currency"  default="USD" description="currency units, USD, dollars, lira, etc." section_name="units"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="Currency"  default="USD" description="currency units, USD, dollars, lira, etc. If using PayPal, this must comply with PayPal currency references also." section_name="units"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="CustomerServiceEmailAddress"  default="service@yourdomain.com" description="all outgoing email is sent from this address" section_name="technical"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="CustomerServiceEmailDescription"  default="Ecommerce Customer Service" description="the description of the outgoing email address" section_name="technical"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="DisplayTransactionMessagesDuringFulfillmentP"  default="1" description="you may or may not wish to have the people recording shipments receive messages like 'unable to authorize payment for shipment' -- depending on whether they they're in a position to do anything about the problem (e.g. abort shipment)" section_name="fulfillment"/>
@@ -87,10 +87,12 @@
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="StockMessageS"  default="Usually Ships Within 2-4 Weeks" description="text of ships slowly message" section_name="messages"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SystemName"  default="Store" description="name of ecommerce system"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="SystemOwner"  description="email address of owner of shop" section_name="technical"/>
-            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassAllowSelfPlacement"  default="1" description="whether a user can request to be a member of a user class" section_name="display"/>
+            <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassAllowSelfPlacement"  default="1" descr<iption="whether a user can request to be a member of a user class" section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassApproveP"  default="1" description="if a user requests to be in a user class, is approval required before that user becomes a member of the user class" section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassUserViewP"  default="1" description="whether users can see what user classes they are in" section_name="display"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="WeightUnits"  default="lbs" description="weight units such as pounds, carats, ounces, etc." section_name="units"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="WeightUnits"  default="lbs" description="weight units such as pounds, carats, ounces, etc. If using PayPal, must comply with PayPal choices." section_name="units"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PayPalEmail"  default="" description="email associated with paypal account." section_name="PayPal"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PayPalBusiness"  default="" description="email associated with paypal account." section_name="PayPal"/>
         </parameters>
 
     </version>
