@@ -91,7 +91,6 @@
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassApproveP"  default="1" description="if a user requests to be in a user class, is approval required before that user becomes a member of the user class" section_name="display"/>
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassUserViewP"  default="1" description="whether users can see what user classes they are in" section_name="display"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="WeightUnits"  default="lbs" description="weight units such as pounds, carats, ounces, etc. If using PayPal, must comply with PayPal choices." section_name="units"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PayPalEmail"  default="" description="email associated with paypal account." section_name="PayPal"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PayPalBusiness"  default="" description="email associated with paypal account." section_name="PayPal"/>
         </parameters>
 
