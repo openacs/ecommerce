@@ -265,7 +265,7 @@ if { !$shipping_gateway_in_use } {
  
     # set base shipping charges
     # reset standard to special shipping rate based on price
-    set order_shipping_cost [expr { [ecds_base_shipping_price_from_order_value $total_price ] + $base_shipping_cost } ] 
+    set order_shipping_cost [expr { [ecds_base_shipping_price_from_order_value $total_price $base_shipping_cost] + $base_shipping_cost } ] 
 
     set shipping_method_standard $order_shipping_cost
 
