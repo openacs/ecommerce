@@ -30,7 +30,7 @@
     </if>
     <tr>
       <td>
-        <a href="product?product_id=@in_cart.product_id@">@in_cart.product_name;noquote@</a>
+       @in_cart.sku;noquote@ <a href="product?product_id=@in_cart.product_id@">@in_cart.product_name;noquote@</a>
       </td>
       <td>
         <if @in_cart.color_choice@ not nil>
@@ -71,6 +71,7 @@ Total:</td>
 @pretty_total_price@</td>
       <td><input type=submit value="update"></td>
     </tr>
+
 <if @shipping_gateway_in_use@ false>
   <if @no_shipping_options@ false>
       <tr>
@@ -81,7 +82,13 @@ Total:</td>
           <td colspan="3" align="right">
       </else>
            @shipping_options@</td>
-      <td align="right">@total_reg_shipping_price@</td><td>standard</td>
+      <td align="right">@total_reg_shipping_price@</td><td>
+<if @paypal_standard_mode@ eq 3>
+@paypal_checkout_button_stand;noquote@
+</if><else>
+standard 
+</else>
+ </td>
       </tr>
 
       <if @offer_express_shipping_p@ true>
@@ -93,7 +100,13 @@ Total:</td>
             <td colspan="3">
         </else>
             &nbsp;</td>
-        <td align="right">@total_exp_shipping_price@</td><td>express</td>
+        <td align="right">@total_exp_shipping_price@</td><td>
+<if @paypal_standard_mode@ eq 3>
+@paypal_checkout_button_expr;noquote@
+</if><else>
+express
+</else>
+</td>
         </tr>
       </if>
 
@@ -118,7 +131,6 @@ Total:</td>
 <p>** - Special message for items marked as @display_price_of_zero_as@</p>
 </td></tr>
 </if>
-
     <multiple name="tax_entries">
       <tr>
         <td colspan="5">
@@ -135,9 +147,21 @@ Total:</td>
     </form>
 
     <center>
+
+<if @paypal_standard_mode@ eq 0>
       <form method=post action="checkout-one-form">
         <input type=submit value="Proceed to Checkout"><br>
       </form>
+</if><else>
+  <if @paypal_standard_mode@ ne 3>
+  @paypal_checkout_button;noquote@
+  </if><else>
+    <if @paypal_shipping_mode@ eq 1>
+    @paypal_checkout_button;noquote@
+    </if>
+   </else>
+</else>
+
     </center>
   </if>
   <else>
