@@ -7,7 +7,7 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="5.17" url="http://openacs.org/repository/download/apm/ecommerce-5.17.apm">
+    <version name="5.18" url="http://openacs.org/repository/download/apm/ecommerce-5.18.apm">
         <owner url="mailto:janine@furfly.net">Janine Sisk</owner>
         <owner url="mailto:bart.teeuwisse@7-sisters.com">Bart Teeuwisse</owner>
         <owner url="mailto:alfred@thunderstick.com">Alfred Werner</owner>
@@ -17,7 +17,7 @@
         <description format="text/plain">This module implements a standard business-to-consumer Web store service. A feature summary is included with the documentaion.</description>
         <maturity>0</maturity>
 
-        <provides url="ecommerce" version="5.17"/>
+        <provides url="ecommerce" version="5.18"/>
         <requires url="acs-datetime" version="4.0"/>
         <requires url="acs-kernel" version="5.0"/>
         <requires url="ref-countries" version="0.1d"/>
@@ -92,7 +92,8 @@
             <parameter datatype="number"  min_n_values="1"  max_n_values="1"  name="UserClassUserViewP"  default="1" description="whether users can see what user classes they are in" section_name="display"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="WeightUnits"  default="lbs" description="weight units such as pounds, carats, ounces, etc. If using PayPal, must comply with PayPal choices." section_name="units"/>
             <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PayPalBusiness"  default="" description="email associated with paypal account." section_name="PayPal"/>
-            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PayPalStandardMode"  default="0" description="PayPal Standard mode: 0 = not used, 1 = shipping by weight, 2 = shipping calculated by price, 3 = custom shipping (as a line item)." section_name="PayPal"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PayPalBusinessRef"  default="" description="PayPal Secure Merchant Account ID for building forms/buttons with paypal account." section_name="PayPal"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="PayPalStandardMode"  default="0" description="PayPal Standard mode: 0 = not used, 1 = shipping by weight, 2 = shipping calculated by price, 3 = custom shipping (as a line item), 5 = use PayPal AddtoCart and ViewCart buttons" section_name="PayPal"/>
         </parameters>
 
     </version>

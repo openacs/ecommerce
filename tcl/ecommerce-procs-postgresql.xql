@@ -51,7 +51,7 @@
   <fullquery name="ec_add_to_cart_link.get_product_info_1">      
     <querytext>
       select case when current_timestamp > available_date  then 1 when current_timestamp-available_date is NULL then 1 else 0 end as available_p,
-      color_list, size_list, style_list, no_shipping_avail_p
+      color_list, size_list, style_list, no_shipping_avail_p, product_name, one_line_description, sku, weight, shipping, shipping_additional
       from ec_products
       where product_id = :product_id
     </querytext>

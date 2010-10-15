@@ -574,68 +574,100 @@ ad_proc ec_add_to_cart_link {
 } { 
     Returns cart link 
 } {
-
     db_1row get_product_info_1 "
-	select decode(sign(sysdate-available_date),1,1,null,1,0) as available_p, color_list, size_list, style_list, no_shipping_avail_p
+	select decode(sign(sysdate-available_date),1,1,null,1,0) as available_p, color_list, size_list, style_list, no_shipping_avail_p, product_name, one_line_description, sku, weight, shipping, shipping_additional
 	from ec_products
 	where product_id = :product_id"
 
     if { ![empty_string_p $color_list] } {
-	set color_widget "Color: <select name=color_choice>"
-	foreach color [split $color_list ","] {
-	    append color_widget "<option value=\"[ad_quotehtml $color]\">$color\n"
-	}
-	append color_widget "\n</select>\n<br>\n"
+        set color_widget "Color: <select name=color_choice>"
+        foreach color [split $color_list ","] {
+            append color_widget "<option value=\"[ad_quotehtml $color]\">$color\n"
+        }
+        append color_widget "\n</select>\n<br>\n"
     } else {
-	set color_widget [ec_hidden_input color_choice ""]
+        set color_widget [ec_hidden_input color_choice ""]
     }
-
+    
     if { ![empty_string_p $size_list] } {
-	set size_widget "Size: <select name=size_choice>
+        set size_widget "Size: <select name=size_choice>
 	"
-	foreach size [split $size_list ","] {
-	    append size_widget "<option value=\"[ad_quotehtml $size]\">$size\n"
-	}
-	append size_widget "\n</select>\n<br>\n"
+        foreach size [split $size_list ","] {
+            append size_widget "<option value=\"[ad_quotehtml $size]\">$size\n"
+        }
+        append size_widget "\n</select>\n<br>\n"
     } else {
-	set size_widget [ec_hidden_input size_choice ""]
+        set size_widget [ec_hidden_input size_choice ""]
     }
-
+    
     if { ![empty_string_p $style_list] } {
-	set style_widget "Style: <select name=style_choice>
+        set style_widget "Style: <select name=style_choice>
 	"
-	foreach style [split $style_list ","] {
-	    append style_widget "<option value=\"[ad_quotehtml $style]\">$style\n"
-	}
-	append style_widget "\n</select>\n<br>\n"
+        foreach style [split $style_list ","] {
+            append style_widget "<option value=\"[ad_quotehtml $style]\">$style\n"
+        }
+        append style_widget "\n</select>\n<br>\n"
     } else {
-	set style_widget [ec_hidden_input style_choice ""]
+        set style_widget [ec_hidden_input style_choice ""]
     }
-
+    
     set warnings ""
-
+    
     if { $no_shipping_avail_p == "t" } {
-      append warnings "(This item does not require shipping.)"
+        append warnings "(This item does not require shipping.)"
     }
     
     if { $available_p } {
-	set r "
+        set paypal_standard_mode [parameter::get -parameter PayPalStandardMode]
+        set user_session_id [ec_get_user_session_id]
+        set n_items_in_cart [db_string get_n_items "select count(*) from ec_orders o, ec_items i
+    where o.order_id=i.order_id and o.user_session_id=:user_session_id and o.order_state='in_basket'"]
+        if { $paypal_standard_mode == 5 && $n_items_in_cart == 0 } {            
+            set currency [parameter::get -parameter Currency]
+            set weight_unit [parameter::get -parameter WeightUnits]
+            set paypal_business_ref [parameter::get -parameter PayPalBusinessRef]
+            set user_id [ad_get_user_id]
+            # actual example from paypal.com:
+            set r "<form target=\"paypal\" action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post\">
+<input type=\"hidden\" name=\"cmd\" value=\"_cart\">
+<input type=\"hidden\" name=\"business\" value=\"${paypal_business_ref}\">
+<input type=\"hidden\" name=\"lc\" value=\"US\">
+<input type=\"hidden\" name=\"item_name\" value=\"${product_name}\">
+<input type=\"hidden\" name=\"item_number\" value=\"$sku\">
+<input type=\"hidden\" name=\"weight\" value=\"$weight\">
+<input type=\"hidden\" name=\"weight_unit\" value=\"${weight_unit}\">
+<input type=\"hidden\" name=\"shipping\" value=\"$shipping\">
+<input type=\"hidden\" name=\"shipping2\" value=\"${shipping_additional}\">
+<input type=\"hidden\" name=\"amount\" value=\"[lindex [ec_lowest_price_and_price_name_for_an_item $product_id $user_id] 0]\">
+<input type=\"hidden\" name=\"currency_code\" value=\"$currency\">
+<input type=\"hidden\" name=\"button_subtype\" value=\"products\">
+<input type=\"hidden\" name=\"no_note\" value=\"0\">
+<input type=\"hidden\" name=\"cn\" value=\"Add special instructions to the seller\">
+<input type=\"hidden\" name=\"no_shipping\" value=\"2\">
+<input type=\"hidden\" name=\"add\" value=\"1\">
+<input type=\"hidden\" name=\"bn\" value=\"PP-ShopCartBF:btn_cart_LG.gif:NonHosted\">
+<input type=\"image\" src=\"https://www.paypal.com/en_US/i/btn/btn_cart_LG.gif\" border=\"0\" name=\"submit\" alt=\"PayPal - The safer, easier way to pay online!\">
+<img alt=\"\" border=\"0\" src=\"https://www.paypal.com/en_US/i/scr/pixel.gif\" width=\"1\" height=\"1\">
+ </form>"
+
+        } else {
+            set r "
         <form method=post action=\"[ec_url]$form_action\">
 	[export_form_vars product_id]
 	[ec_decode $order_id "" "" [export_form_vars order_id]]
 	$color_widget $size_widget $style_widget
-	<input type=submit value=\"[ad_quotehtml $add_to_cart_button_text]\"><br>
+ <input type=submit value=\"[ad_quotehtml $add_to_cart_button_text]\"><br>
         $warnings
-	</form>
-	"
+	</form>"
+        }
     } else {
-	set available_date [db_string available_date_select "
+        set available_date [db_string available_date_select "
         select to_char(available_date,'Month DD, YYYY') available_date
           from ec_products
          where product_id = :product_id
         "]
-	if { [ad_parameter -package_id [ec_id] AllowPreOrdersP ecommerce] } {
-	    set r "
+        if { [ad_parameter -package_id [ec_id] AllowPreOrdersP ecommerce] } {
+            set r "
             <form method=post action=\"[ec_url]$form_action\">
 	    [export_form_vars product_id]
 	    [ec_decode $order_id "" "" [export_form_vars order_id]]
@@ -644,9 +676,9 @@ ad_proc ec_add_to_cart_link {
 	    $warnings
 	    </form>
 	    "
-	} else {
-	    set r "This item cannot yet be ordered.<br>(Available $available_date)"
-	}
+        } else {
+            set r "This item cannot yet be ordered.<br>(Available $available_date)"
+        }
     }
     return $r
 }
