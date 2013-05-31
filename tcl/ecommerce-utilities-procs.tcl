@@ -988,7 +988,7 @@ ad_proc ec_assert_directory {
         foreach directory $dir_list {
             set next_dir_step [file join $dir_step $directory]
             if { ![file exists $next_dir_step]} {
-                ns_mkdir $next_dir_step
+                file mkdir $next_dir_step
             }
             set dir_step $next_dir_step
         }
