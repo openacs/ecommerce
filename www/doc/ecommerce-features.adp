@@ -12,7 +12,7 @@
     <li>Products are divided into categories (like books, journals,
       ...), subcategories (computer, fiction, ...), and
       subsubcategories (operating systems, web publishing, ...)  which
-      are set by the site adminstrator (if desired).  Products can
+      are set by the site administrator (if desired).  Products can
       belong to as many categories / subcategories / subsubcategories
       as needed. Users can search by category / subcategory /
       subsubcategory and the site administrator can make product

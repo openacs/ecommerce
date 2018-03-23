@@ -1525,7 +1525,7 @@ ad_proc -private ec_create_new_session_if_necessary {
 ### ec geo interfaces
 ##################################################
 
-ad_proc ec_state_name_from_usps_abbrev {usps_abbrev} "Takes a USPS abbrevation and returns the full state name, e.g., MA in yields Massachusetts out" {
+ad_proc ec_state_name_from_usps_abbrev {usps_abbrev} "Takes a USPS abbreviation and returns the full state name, e.g., MA in yields Massachusetts out" {
     return [db_string state_name_from_usps_abbrev {
 	select state_name from us_states where abbrev =:usps_abbrev
     } -default ""]

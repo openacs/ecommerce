@@ -729,7 +729,7 @@ ad_proc -private ec_creditcard_validation {
 
     Each card type has the following criteria requirements:
     
-    Card Type        Prefix            Length    Check-Digit Algoritm
+    Card Type        Prefix            Length    Check-Digit Algorithm
     
     MC                51 - 55              16        mod 10
     

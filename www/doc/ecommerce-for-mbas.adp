@@ -23,7 +23,7 @@
   Amazon does?  Not really.  Ecommerce is a fast-moving field.
   Packaged software always embodies last year's business ideas.  The
   interesting thing is how quickly one can extend an open-source
-  software system to accomodate the latest business ideas.</p>
+  software system to accommodate the latest business ideas.</p>
 
   <h3>Feature List</h3>
 
