@@ -12,7 +12,7 @@ needed. Some tables can become very large.</b></p>
 @export_form_vars_html;noquote@
 <ul>
 @table_and_id_html;noquote@
- <li>When do you want to audit back to: (Leave blank to start at the begining of the table's history.)<br>
+ <li>When do you want to audit back to: (Leave blank to start at the beginning of the table's history.)<br>
     @start_point_html;noquote@</li>
  <li>When do you want to audit up to:<br>
     @end_point_html;noquote@</li>
