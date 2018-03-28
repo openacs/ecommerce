@@ -14,7 +14,7 @@
         <summary>The ACS 3.x based e-commerce solution ported to OpenACS.</summary>
         <release-date>2005-02-10</release-date>
         <vendor url="http://www.furfly.net">furfly.net, LLC</vendor>
-        <description format="text/plain">This module implements a standard business-to-consumer Web store service. A feature summary is included with the documentaion.</description>
+        <description format="text/plain">This module implements a standard business-to-consumer Web store service. A feature summary is included with the documentation.</description>
         <maturity>0</maturity>
 
         <provides url="ecommerce" version="5.18"/>
