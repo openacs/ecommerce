@@ -49,7 +49,7 @@ set order_id [db_string  get_order_id_info "
 
 if { [empty_string_p $order_id] } {
     rp_internal_redirect index
-    ad_stript_abort
+    ad_script_abort
 }
 
 set order_summary [ec_order_summary_for_customer $order_id $user_id]
