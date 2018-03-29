@@ -858,7 +858,7 @@ ad_proc ec_order_status {
         if { $shippable_p } {
 	    return "All Items Shipped"
 	} else {
-	    return "All Items Fullfilled"
+	    return "All Items Fulfilled"
 	}
     } elseif { $n_received_back_items == $n_total_items } {
 	return "All Items Returned"

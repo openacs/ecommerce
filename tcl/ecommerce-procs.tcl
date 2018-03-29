@@ -1254,7 +1254,7 @@ ad_proc ec_shipment_summary_sub {
 	group by s.shipment_date, s.carrier, s.tracking_number, s.shipment_id, s.shippable_p" {
 
         if { ![empty_string_p $shipment_date] } {
-	    set to_append_to_shipment_list "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $n_items [ec_decode $shippable_p "t" "shipped" "fullfilled"] on [util_AnsiDatetoPrettyDate $shipment_date]"
+	    set to_append_to_shipment_list "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $n_items [ec_decode $shippable_p "t" "shipped" "fulfilled"] on [util_AnsiDatetoPrettyDate $shipment_date]"
 	    if { ![empty_string_p $carrier] } {
 		append to_append_to_shipment_list " via $carrier"
 	    }
