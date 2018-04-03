@@ -13,7 +13,7 @@
       build shops (Yahoo! Store; Amazon Z Shops)</li>
   </ol>
 
-  <p>OpenaACS supports the first three ways of doing business and will
+  <p>OpenACS supports the first three ways of doing business and will
   eventually support the last one (clone of Yahoo! Store).</p>
 
   <h3>High-level features</h3>
