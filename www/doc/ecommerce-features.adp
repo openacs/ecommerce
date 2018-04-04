@@ -109,7 +109,7 @@
     <li>If a user is not ready to order yet, they can store their
       order and come back to it later (similar to Dell.com).</li>
 
-    <li>User receives an acknowledgment web page and email when their
+    <li>User receives an acknowledgement web page and email when their
       order is confirmed.</li>
 
     <li>The user can reuse an address for billing or shipping that
