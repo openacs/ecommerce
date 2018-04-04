@@ -647,7 +647,7 @@ ad_proc ec_formatted_date {
     # eventually all ecommerce dates should use lc_time_fmt for i8ln
     set ugly_date [lc_time_fmt $ugly_date "%F %T"]
 
-    # Remove the timezone information (-TZ) that PostgresSQL can
+    # Remove the timezone information (-TZ) that PostgreSQL can
     # return or the Tcl command 'clock scan' will choke on it.
 
     regsub -- {(\+|-)[0-9]{2}$} $ugly_date "" ugly_date
