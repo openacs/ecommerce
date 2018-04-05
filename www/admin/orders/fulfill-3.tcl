@@ -184,7 +184,7 @@ ns_log Notice "fulfill-3.tcl,179 shipment_cost gt 0, hard_goods_total_cost=$hard
 ns_log Notice "fulfill-3.tcl,183 shipment_cost eq order_cost"
         # The shipment could be for the entire order but it could also
         # be that a partial shipment, return, and an addition of more
-        # items to the order by the site administrator maked the
+        # items to the order by the site administrator made the
         # order_cost equal the shipment_cost.
 
         # Get the amount that was authorized when the user placed the

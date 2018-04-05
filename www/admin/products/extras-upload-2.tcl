@@ -49,7 +49,7 @@ set rows_updated 0
 set rows_inserted 0
 set errors 0
 # Continue reading the file till the end but stop when an error
-# occured.
+# occurred.
 
 # read line, depending  on file type
 if {[string eq $file_type "csv"]} {

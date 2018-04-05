@@ -406,7 +406,7 @@ ad_proc ec_audit_trail_for_table {
     {restore_url ""}
 } {
     Returns the audit trail for each id from the id_column for updates
-and deletes from main_table_name and audit_table_name that occured
+and deletes from main_table_name and audit_table_name that occurred
 between start_date and end_date. If start_date is blank, then it is
 assumed to be when the table was created, if end_date is blank then it
 is assumed to be the current time. The audit_url, if it exists, will

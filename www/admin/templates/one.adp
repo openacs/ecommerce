@@ -22,7 +22,7 @@
 </if><else>
 <li>Delete (Default template cannot be deleted. To delete this
 template, make another template the default.)</li>
-</esle>
+</else>
 <li><a href="category-associate?@export_url_vars_html@">Associate this template with a product category</a></li>
 <li><a href="@audit_url_html@">Audit Trail</a></li>
 </ul>

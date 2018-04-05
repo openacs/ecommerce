@@ -54,7 +54,7 @@ if { !${serious_errors} } {
     set success_count 0
     
     # Continue reading the file till the end but stop when an error
-    # occured.
+    # occurred.
     
     # read line, depending  on file type
     if {[string eq $file_type "csv"]} {

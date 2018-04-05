@@ -6,7 +6,7 @@ ad_library {
     
     uses ecds_process_control as permissions style process control.
     see ecds-procs.tcl for other requirements
-    procs in this file are separated from other proces in ecds-procs for dynamic re-loading of small changes during process runs.
+    procs in this file are separated from other procs in ecds-procs for dynamic re-loading of small changes during process runs.
 
 }
 

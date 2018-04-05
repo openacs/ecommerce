@@ -5,8 +5,8 @@
 
 
 <p> Note: the customer's credit card is not going to be reauthorized when you add this item to the order 
-(their card was already found to be valid when they placed the intial order).  
-They will, as usual, be automatically billed for this item when it ships.  
+(their card was already found to be valid when they placed the initial order).
+They will, as usual, be automatically billed for this item when it ships.
 If the customer's credit limit is in question, just make a test authorization offline.</p>
 <h3>Product(s) that match your search.</h3>
 <if @product_counter@ gt 0>

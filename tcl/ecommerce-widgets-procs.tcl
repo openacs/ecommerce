@@ -763,7 +763,7 @@ ad_proc ec_date_widget {column {date ""}} {Generates a date widget.} {
 
   set month_names [list \
       "January" \
-      "Febuary" \
+      "February" \
       "March" \
       "April" \
       "May" \

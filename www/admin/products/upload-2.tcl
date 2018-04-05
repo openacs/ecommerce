@@ -78,7 +78,7 @@ if {[string eq $file_type "csv"]} {
     set line_status -1
 }
 
-# Continue reading the file till the end but stop when an error occured.
+# Continue reading the file till the end but stop when an error occurred.
 while { $line_status != -1 && !$errors} {
     incr count
     if { $count == 1 } {

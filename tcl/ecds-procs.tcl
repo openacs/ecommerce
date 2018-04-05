@@ -491,7 +491,7 @@ ad_proc -private ecds_get_contents_from_tags_list {
     end_tag
     page
 } {
-    Returns content (as a list) of all occurances of an html/xml or other bracketing tag that is somewhat uniquely identified within a page fragment or string.
+    Returns content (as a list) of all occurrences of an html/xml or other bracketing tag that is somewhat uniquely identified within a page fragment or string.
     helps pan out the golden nuggets of data from the waste text when given some garbage with input for example
 } {
     set start_index 0
@@ -517,7 +517,7 @@ ad_proc -private ecds_remove_tag_contents {
     page
 } {
     Returns everything but the content between start_tag and end_tag (as a list) 
-    of all occurances on either side of an html/xml or other bracketing tag 
+    of all occurrences on either side of an html/xml or other bracketing tag 
     that is somewhat uniquely identified within a page fragment or string.
     This is handy to remove script tags and < ! - - web comments - - > etc
     helps pan out the golden nuggets of data from the waste text when given some garbage with input for example

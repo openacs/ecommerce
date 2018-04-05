@@ -46,7 +46,7 @@ set errors $serious_errors
 set success_count 0
 
 # Continue reading the file till the end but stop when an error
-# occured.
+# occurred.
 
 set line_status [ns_getcsv $datafilefp elements]
 while { $line_status != -1 && !$errors } {
