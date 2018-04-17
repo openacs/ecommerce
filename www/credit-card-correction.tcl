@@ -27,7 +27,7 @@ ad_page_contract {
 # ec_creditcards table shouldn't get too huge.
 
 # do all the normal url/cookie surgery checks except don't bother with
-# the ones unneccessary for security (like "did they put in an address
+# the ones unnecessary for security (like "did they put in an address
 # for this order?") because finalize-order.tcl (which they'll be going
 # through to authorize their credit card) will take care of those.
 

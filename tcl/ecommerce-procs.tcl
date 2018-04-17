@@ -1310,7 +1310,7 @@ ad_proc ec_admin_present_user {user_id name} { link for admin to view user infor
 
 ad_proc ec_user_class_display { user_id { link_p "f" } } {
 
-    Displays a comma seperated list of the users user classes with a
+    Displays a comma separated list of the users user classes with a
     comment on its approval status if approval is required. If link_p is
     true, then a link is displayed to the \[ec_url_concat \[ec_url]
     /admin]/user-classes/] page for changing the approval status.

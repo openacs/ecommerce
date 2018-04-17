@@ -216,7 +216,7 @@ set order_shipping [db_string get_order_shipping "
 set order_shipping_tax [db_string get_order_shipping_tax "
     select ec_tax(0, :order_shipping, :order_id)"]
 
-# Charge soft goods seperately from hard goods as the hard goods
+# Charge soft goods separately from hard goods as the hard goods
 # transaction will not settled until the goods are shipped while soft
 # goods can be settled right away.
 

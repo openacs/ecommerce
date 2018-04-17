@@ -24,7 +24,7 @@ if {[info exists shipping_gateway] && [string equal $shipping_gateway "true"]} {
 	ad_return_error "A shipping method is required" "
 	    <p>You forgot to select a shipping method.</p>
 	    <p>Please back up your browser and pick a shipping service from the available services.</p>
-	    <p>Should no shiping options be available for your shipping address then back up your browser
+	    <p>Should no shipping options be available for your shipping address then back up your browser
 	      further and pick a different shipping address. Or contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> to arrange for special delivery.</p>"
     }
 } else {

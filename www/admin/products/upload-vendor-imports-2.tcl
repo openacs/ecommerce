@@ -23,7 +23,7 @@ set context_id [ad_conn package_id]
 set title "Import Vendors Products"
 set context [list [list index Products] $title]
 
-# Get the name of the transfered data file
+# Get the name of the transferred data file
 set unix_file_name ${csv_file.tmpfile}
 
 # Check that the file is readable.

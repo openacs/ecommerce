@@ -169,7 +169,7 @@ ad_proc -private ecds_get_url {
         } else {
             ns_log Notice "ecds_get_url: ns_httping $url"
             set flags ""
-# removed -timeout "30" from next statment, because it is unrecognized for this instance..
+# removed -timeout "30" from next statement, because it is unrecognized for this instance..
             if { [catch { ns_http wait -result page -status status $get_id } err2 ]} {
                 ns_log Error "ecds_get_url: ns_http wait $err2"
             }
@@ -1976,11 +1976,11 @@ ad_proc -private ecds_file_cache_product {
                     ns_log Error "ecds_file_cache_product: ns_http queue url=$url error: $err"
                 } else {
                     ns_log Notice "ecds_file_cache_product: ns_httping $url"
-                    # removed -timeout "30" from next statment, because it is unrecognized for this instance..
+                    # removed -timeout "30" from next statement, because it is unrecognized for this instance..
                     if { [catch { ns_http wait -result page -status status $get_id } err2 ]} {
                         ns_log Error "ecds_file_cache_product: ns_http wait $err2"
                     }
-                    
+
                     if { ![info exists status] || $status ne "200" } {
                         # no page info returned, just return error
                         if { ![info exists status] } {
@@ -2005,9 +2005,9 @@ ad_proc -private ecds_file_cache_product {
                         }
                     }
                 }
-                
+
             } else {
-                
+
                 ns_log Notice "ecds_file_cache_product: product_id = $product_id"
                 # create/replace product file using template::adp_include
                 # 

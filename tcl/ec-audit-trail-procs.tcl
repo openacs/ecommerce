@@ -53,7 +53,7 @@ ad_proc ec_audit_trail {
 } {
 ns_log debug "eatp end_date $end_date"
     # These values will be part of an audit entry description
-    # and do not need to be reported seperately
+    # and do not need to be reported separately
     lappend columns_not_reported modifying_user_name
     lappend columns_not_reported last_modifying_user
     lappend columns_not_reported last_modified

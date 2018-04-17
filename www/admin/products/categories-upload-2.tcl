@@ -26,7 +26,7 @@ set title "Uploading Category Mappings"
 set context [list [list index Products] $title]
 
 
-# Get the name of the transfered data file
+# Get the name of the transferred data file
 
 set unix_file_name ${csv_file.tmpfile}
 

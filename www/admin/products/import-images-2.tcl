@@ -26,7 +26,7 @@ set doc_body ""
 set title "Bulk Import Product Images"
 set context [list [list index Products] $title]
 
-# Get the name of the transfered data file
+# Get the name of the transferred data file
 set unix_file_name ${csv_file.tmpfile}
 
 # Check that the file is readable.
