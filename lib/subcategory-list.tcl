@@ -13,14 +13,14 @@ set subcategory_list_count [llength $subcategory_list]
 if { ![info exists columns_count] } {
     if { ![info exists max_per_col] } {
         set max_per_col 35
-    } 
+    }
     set columns_count [expr { floor( $subcategory_list_count / $max_per_col ) + 1 } ]
 } else {
     set max_per_col [expr { floor( $subcategory_list_count / $columns_count ) + 1 } ]
 }
 if { ![info exists col_width] } {
     set col_width 40
-} 
+}
 
 set current_row 1
 set current_col 1
@@ -31,8 +31,7 @@ foreach {subcategory } $subcategory_list {
     set subcategory_name [ecds_abbreviate [lindex $subcategory 0] $col_width]
     set subcategory_id [lindex $subcategory 1]
 
-    append category_list_box "<li><a href=\"[export_var -base "[ec_url]category-browse-subcategory" -override {category_id subcategory_id}]\">${subcategory_name}</a></li>\n"
-
+    append category_list_box "<li><a href=\"[export_vars -base "[ec_url]category-browse-subcategory" -override {category_id subcategory_id}]\">${subcategory_name}</a></li>\n"
 
     if { $current_row >= $max_per_col } {
        set current_row 1
