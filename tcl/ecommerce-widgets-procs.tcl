@@ -146,7 +146,7 @@ ad_proc ec_template_widget { {category_id_list ""} {default ""} } { gives a drop
     set to_return "<select name=template_id>
     <option value=\"\">NONE\n"
 
-    set top_template_list [list]
+    set top_template_list {}
     if { ![empty_string_p $category_id_list] } {
 	
 	set sql "select m.template_id, t.template_name
@@ -535,14 +535,14 @@ ad_proc ec_determine_categorization_widget_defaults {
         return [list]
     }
 
-    set to_return [list]
+    set to_return {}
     foreach category_id $category_list {
 
         if { ![empty_string_p $subcategory_list] } {
             set relevant_subcategory_list [db_list get_sub_list "select subcategory_id from ec_subcategories where category_id=:category_id and subcategory_id in ([join $subcategory_list ","]) order by subcategory_name"]
             regsub -all -- {&} $relevant_subcategory_list {\&amp;} relevant_subcategory_list
         } else {
-            set relevant_subcategory_list [list]
+            set relevant_subcategory_list {}
         }
 
         if { [llength $relevant_subcategory_list] == 0 } {
@@ -554,7 +554,7 @@ ad_proc ec_determine_categorization_widget_defaults {
                     set relevant_subsubcategory_list [db_list get_subsub_list "select subsubcategory_id from ec_subsubcategories where subcategory_id=:subcategory_id and subsubcategory_id in ([join $subsubcategory_list ","]) order by subsubcategory_name"]
                     regsub -all -- {&} $relevant_subsubcategory_list {\&amp;} relevant_subsubcategory_list
                 } else {
-                    set relevant_subsubcategory_list [list]
+                    set relevant_subsubcategory_list {}
                 }
 
                 if { [llength $relevant_subsubcategory_list] == 0 } {
@@ -807,7 +807,7 @@ ad_proc ec_date_text {
 ad_proc ec_date_widget_validate {column} {Validates a date widget.} {
   upvar $column date
 
-  set errmsgs [list]
+  set errmsgs {}
 
   if {[empty_string_p $date(year)] && [empty_string_p $date(day)]} {
     return
@@ -890,7 +890,7 @@ ad_proc ec_time_text {
 
 ad_proc ec_time_widget_validate {column} {Validates time widget input.} {
   upvar $column time
-  set errmsgs [list]
+  set errmsgs {}
 
   if {[empty_string_p $time(second)]} {
     set time(second) "00"

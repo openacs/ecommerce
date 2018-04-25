@@ -35,7 +35,7 @@ if {[info exists shipping_gateway] && [string equal $shipping_gateway "true"]} {
 
 if {[info exists quantity]} {
     set arraynames [array names quantity]
-    set fullarraynames [list]
+    set fullarraynames {}
     foreach arrayname $arraynames {
 	set quantity.$arrayname $quantity($arrayname)
 	lappend fullarraynames "quantity.$arrayname"
