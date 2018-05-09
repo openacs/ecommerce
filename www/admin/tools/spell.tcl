@@ -39,7 +39,7 @@
 proc spell_sorted_list_with_unique_elements {the_list} {
 
     set sorted_list [lsort $the_list]
-    set new_list {}
+    set new_list [list]
 
     set old_element "XXinitial_conditionXX"
     foreach list_element $sorted_list {
@@ -113,7 +113,7 @@ The spell checker was unable to process your document.  Please hit \"Reload\" to
     }
     
     set error_num 0
-    set errors {}
+    set errors [list]
     
     set processed_text ""
     
