@@ -70,7 +70,7 @@ if {$user_id == 0} {
     ad_script_abort
 }
 
-set audit_update "last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address='[DoubleApos [ns_conn peeraddr]]'"
+set audit_update "last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address=[ns_dbquotevalue [ns_conn peeraddr]]"
 
 
 

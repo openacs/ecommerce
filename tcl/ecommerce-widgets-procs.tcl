@@ -956,9 +956,9 @@ ad_proc ec_datetime_sql {column} {Generates a sql datetime expression from a dat
     # needs to be able to handle a null value
     if {![empty_string_p $dt(year)] || ![empty_string_p $dt(day)] || ![empty_string_p $dt(month)]} {
 	if {[info exists dt(ampm)]} {
-	    return "to_date('[DoubleApos "$dt(year)-[format %02u $dt(month)]-[format %02u $dt(day)] $dt(hour):$dt(minute):$dt(second) $dt(ampm)"]', 'YYYY-MM-DD HH12:MI:SS PM')"
+	    return "to_date([ns_dbquotevalue "$dt(year)-[format %02u $dt(month)]-[format %02u $dt(day)] $dt(hour):$dt(minute):$dt(second) $dt(ampm)"], 'YYYY-MM-DD HH12:MI:SS PM')"
 	} else {
-	    return "to_date('[DoubleApos "$dt(year)-[format %02u $dt(month)]-[format %02u $dt(day)]"]', 'YYYY-MM-DD')"
+	    return "to_date([ns_dbquotevalue "$dt(year)-[format %02u $dt(month)]-[format %02u $dt(day)]"], 'YYYY-MM-DD')"
 	}
     } else {
         return "null"

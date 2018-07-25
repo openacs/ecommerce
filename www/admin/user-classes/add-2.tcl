@@ -37,7 +37,7 @@ if { [db_string get_uc_count "select count(*) from ec_user_classes where user_cl
 db_dml insert_new_uc "insert into ec_user_classes
 (user_class_id, user_class_name, last_modified, last_modifying_user, modified_ip_address)
 values
-(:user_class_id,:user_class_name, sysdate, :user_id, '[DoubleApos [ns_conn peeraddr]]')
+(:user_class_id,:user_class_name, sysdate, :user_id, [ns_dbquotevalue [ns_conn peeraddr]])
 "
 db_release_unused_handles
 ad_returnredirect index.tcl

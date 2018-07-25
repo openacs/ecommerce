@@ -45,7 +45,7 @@ db_transaction {
 
 # we have to first remove all references to this template in ec_products and ec_category_template_map
 
-db_dml delete_product_refs "update ec_products set template_id=null, last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address='[DoubleApos [ns_conn peeraddr]]' where template_id=:template_id"
+db_dml delete_product_refs "update ec_products set template_id=null, last_modified=sysdate, last_modifying_user=:user_id, modified_ip_address=[ns_dbquotevalue [ns_conn peeraddr]] where template_id=:template_id"
 
 db_dml delete_from_ec_template_map "delete from ec_category_template_map where template_id=:template_id"
 

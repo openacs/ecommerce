@@ -31,13 +31,13 @@ if {$admin_user_id == 0} {
 
 if { [db_string get_ucm_count "select count(*) from ec_user_class_user_map where user_id=:user_id and user_class_id=:user_class_id"] > 0 } {
     db_dml update_ec_user_class_map "update ec_user_class_user_map
-set user_class_approved_p='t', last_modified=sysdate, last_modifying_user=:admin_user_id, modified_ip_address='[DoubleApos [ns_conn peeraddr]]'
+set user_class_approved_p='t', last_modified=sysdate, last_modifying_user=:admin_user_id, modified_ip_address=[ns_dbquotevalue [ns_conn peeraddr]]
 where user_id=:user_id and user_class_id=:user_class_id"
 } else {
     db_dml insert_new_ucm_mapping "insert into ec_user_class_user_map
 (user_id, user_class_id, user_class_approved_p, last_modified, last_modifying_user, modified_ip_address) 
 values
-(:user_id, :user_class_id, 't', sysdate, :user_id, '[DoubleApos [ns_conn peeraddr]]')
+(:user_id, :user_class_id, 't', sysdate, :user_id, [ns_dbquotevalue [ns_conn peeraddr]])
 "
 }
 db_release_unused_handles

@@ -47,7 +47,7 @@ if {$f != 0} {
 if { [catch {db_dml unused "insert into ec_email_templates
 (email_template_id, title, subject, message, variables, when_sent, issue_type_list, last_modified, last_modifying_user, modified_ip_address)
 values
-(ec_email_template_id_sequence.nextval, :title, :subject, :message, :variables, :when_sent, :issue_type, sysdate, :user_id, '[DoubleApos [ns_conn peeraddr]]')"} errMsg] } {
+(ec_email_template_id_sequence.nextval, :title, :subject, :message, :variables, :when_sent, :issue_type, sysdate, :user_id, [ns_dbquotevalue [ns_conn peeraddr]])"} errMsg] } {
     ad_return_complaint 1 "Failed to add the email template, Suspect double click/ template already created"
     ad_script_abort
 }

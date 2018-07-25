@@ -46,8 +46,7 @@ and 1 <= (select count(*) from ec_cs_issue_type_map map where map.issue_id=issue
 # same query for issues that aren't in issue_type_list
 if { $issue_type_list_len > 0 } {
     # taking advantage of the fact that tcl lists are just strings
-    set safe_issue_type_list [DoubleApos $issue_type_list]
-    set last_bit_of_query "and 1 <= (select count(*) from ec_cs_issue_type_map map where map.issue_id=issues.issue_id and map.issue_type not in ('[join $safe_issue_type_list "', '"]'))"
+    set last_bit_of_query "and 1 <= (select count(*) from ec_cs_issue_type_map map where map.issue_id=issues.issue_id and map.issue_type not in ([template::util::tcl_to_sql_list $issue_type_list]))"
 } else {
     set last_bit_of_query "and 1 <= (select count(*) from ec_cs_issue_type_map map where map.issue_id=issues.issue_id)"
 }

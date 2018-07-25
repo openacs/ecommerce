@@ -57,7 +57,7 @@ if { [catch {db_dml update_ec_email_template "
          issue_type_list=:issue_type, 
          last_modified=sysdate, 
          last_modifying_user=:user_id, 
-         modified_ip_address='[DoubleApos [ns_conn peeraddr]]'
+         modified_ip_address=[ns_dbquotevalue [ns_conn peeraddr]]
      where email_template_id=:email_template_id"} errMsg ]} {
      ad_return_complaint 1 "Failed to update the email template."
 }

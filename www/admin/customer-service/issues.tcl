@@ -111,8 +111,7 @@ if { $view_issue_type == "uncategorized" } {
 } elseif { $view_issue_type == "all others" } {
     if { [llength $important_issue_type_list] > 0 } {
         # taking advantage of the fact that tcl lists are just strings
-        set safe_important_issue_type_list [DoubleApos $important_issue_type_list]
-        set issue_type_query_bit "and m.issue_type not in ('[join $safe_important_issue_type_list "', '"]')"
+        set issue_type_query_bit "and m.issue_type not in ([template::util::tcl_to_sql_list $important_issue_type_list])"
     } else {
         set issue_type_query_bit ""
     }

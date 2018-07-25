@@ -188,7 +188,7 @@ if { ![info exists c_user_identification_id] } {
             set additional_and_clause "and user_identification_id not in ([join $already_selected_user_identification_id_list ", "])"
         }
         if { ![empty_string_p $other_id_info] } {
-            set sql "select user_identification_id as d_user_identification_id from ec_user_identification where other_id_info like '%[DoubleApos $other_id_info]%' $additional_and_clause"
+            set sql "select user_identification_id as d_user_identification_id from ec_user_identification where other_id_info like [ns_dbquotevalue %${other_id_info}%] $additional_and_clause"
             db_foreach get_user_identification_info $sql {
                 append customer_id_html "<li>This may be the non-registered person who has had a previous interaction with us: [ec_user_identification_summary $d_user_identification_id "t"] (check here <input type=checkbox name=d_user_identification_id value=$d_user_identification_id> if this is correct).</li>"
                 lappend already_selected_user_identification_id_list $d_user_identification_id

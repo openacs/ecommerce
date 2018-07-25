@@ -122,8 +122,7 @@ if { $view_info_used == "none" } {
 #    "
 } elseif { $view_info_used == "all others" } {
     if { [llength $important_info_used_list] > 0 } {
-        set safe_important_info_used_list [DoubleApos $important_info_used_list]
-        set info_used_query_bit "and map.info_used not in ('[join $safe_important_info_used_list "', '"]')"
+        set info_used_query_bit "and map.info_used not in ([template::util::tcl_to_sql_list $important_info_used_list])"
     } else {
         set info_used_query_bit ""
     }

@@ -20,7 +20,7 @@ if { [llength $important_issue_type_list] > 0 } {
     set issue_type_decode [db_map initial_issue_type_decode_bit]
     set issue_type_counter 0
     foreach issue_type $important_issue_type_list {
-        #append issue_type_decode "'[DoubleApos $issue_type]',$issue_type_counter,"
+        #append issue_type_decode "[::ns_dbquotevalue $issue_type],$issue_type_counter,"
         append issue_type_decode [db_map middle_issue_type_decode_bit]
         incr issue_type_counter
     }
@@ -82,7 +82,7 @@ if { [llength $important_info_used_list] > 0 } {
     set info_used_decode [db_map initial_info_used_decode_bit]
     set info_used_counter 0
     foreach info_used $important_info_used_list {
-        #append info_used_decode "'[DoubleApos $info_used]',$info_used_counter,"
+        #append info_used_decode "[::ns_dbquotevalue $info_used],$info_used_counter,"
         append info_used_decode [db_map middle_info_used_decode_bit]
         incr info_used_counter
     }

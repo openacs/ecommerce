@@ -58,7 +58,7 @@ if { [db_string get_dclick_temp "select count(*) from ec_templates where templat
 db_dml insert_new_template "insert into ec_templates
 (template_id, template_name, template, last_modified, last_modifying_user, modified_ip_address)
 values
-(:template_id, :template_name, :template, sysdate, :user_id, '[DoubleApos [ns_conn peeraddr]]')"
+(:template_id, :template_name, :template, sysdate, :user_id, [ns_dbquotevalue [ns_conn peeraddr]])"
 db_release_unused_handles
 
 ad_returnredirect index

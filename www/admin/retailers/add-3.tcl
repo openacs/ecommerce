@@ -50,7 +50,7 @@ if {$user_id == 0} {
 
 # we have to generate audit information
 set audit_fields "last_modified, last_modifying_user, modified_ip_address"
-set audit_info "sysdate, :user_id, '[DoubleApos [ns_conn peeraddr]]'"
+set audit_info "sysdate, :user_id, [ns_dbquotevalue [ns_conn peeraddr]]"
 
 db_dml insert_new_retailer "insert into ec_retailers
 (retailer_id, retailer_name, primary_contact_name, secondary_contact_name, primary_contact_info, secondary_contact_info, line1, line2, city, usps_abbrev, zip_code, phone, fax, url, country_code, reach, nexus_states, financing_policy, return_policy, price_guarantee_policy, delivery_policy, installation_policy, $audit_fields)
