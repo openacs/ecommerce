@@ -20,14 +20,14 @@
 
   <fullquery name="get_products_in_cart">      
     <querytext>
-    select p.product_name, p.one_line_description, p.no_shipping_avail_p, p.shipping, p.shipping_additonal, p.weight, p.product_id, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice, '' as price
+    select p.product_name, p.one_line_description, p.no_shipping_avail_p, p.shipping, p.shipping_additional, p.weight, p.product_id, count(*) as quantity, u.offer_code, i.color_choice, i.size_choice, i.style_choice, '' as price
     from ec_orders o, ec_items i, ec_products p, 
         (select product_id, offer_code from ec_user_session_offer_codes usoc where usoc.user_session_id=:user_session_id) u
     where i.product_id=p.product_id
     and o.order_id=i.order_id
     and p.product_id=u.product_id(+)
     and o.user_session_id=:user_session_id and o.order_state='in_basket'
-    group by p.product_name, p.one_line_description, p.no_shipping_avail_p, p.shipping, p.shipping_additonal, p.weight, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice
+    group by p.product_name, p.one_line_description, p.no_shipping_avail_p, p.shipping, p.shipping_additional, p.weight, p.product_id, u.offer_code, i.color_choice, i.size_choice, i.style_choice
     </querytext>
   </fullquery>
 

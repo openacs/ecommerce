@@ -107,7 +107,7 @@
 </else>
 
 <if @gift_certificate_covers_whole_order@ false>
-  <if @gift_certificate_p@>
+  <if @gift_certificate_p;literal@ true>
     <p>If you've received a gift certificate, enter the<br>
       Claim Check: <input type="text" name="claim_check" size="20" maxlength="30" tabindex="40"><br>
       to put the funds into your gift certificate account.

@@ -48,3 +48,4 @@ append page_html "
 "
 
 doc_return  200 text/html $page_html
+ad_script_abort

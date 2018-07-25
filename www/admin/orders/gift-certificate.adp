@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
 <h2>@title@</h2>
 
-<if @found_p@ false>
+<if @found_p;literal@ false>
 <p>Gift certificate not found.</p>
 </if><else>
   <table>

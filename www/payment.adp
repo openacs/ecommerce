@@ -27,7 +27,7 @@
     </else>
 
     <if @gift_certificate_covers_whole_order@ false>
-      <if @gift_certificate_p@>
+      <if @gift_certificate_p;literal@ true>
       <p><a href="gift-certificate-claim?address_id=@billing_address_id@">Click here to claim a
       new gift certificate</a></p>
       </if>

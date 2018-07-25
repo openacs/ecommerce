@@ -2,7 +2,7 @@
     [&nbsp;<a href="@ec_gift_cert_order_link@">gift certificates</a>&nbsp;] 
  </if>
  <if @current_location@ ne "shopping-cart"> 
-  <if @use_paypal_shopping_cart_p@ true>
+  <if @use_paypal_shopping_cart_p;literal@ true>
     [&nbsp;
 <form name="_xclick" target="paypal" action="https://www.paypal.com/us/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_cart">

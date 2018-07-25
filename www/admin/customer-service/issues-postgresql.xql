@@ -51,7 +51,7 @@
 	JOIN ec_user_identification id using (user_identification_id)
 	LEFT JOIN cc_users u on (id.user_id = u.user_id)
 	-- gilbertw
-	-- removed this and used a normal where constraint so I dont have to
+	-- removed this and used a normal where constraint so I don't have to
 	-- worry about setting up the correct and/where statement for the
 	-- dynamic queries
 	-- JOIN ec_cs_issue_type_map m on (i.issue_id = m.issue_id)

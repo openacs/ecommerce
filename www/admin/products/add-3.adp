@@ -32,7 +32,7 @@ Categorization:
 @categorization_html;noquote@
 </td>
 </tr>
-<if @multiple_retailers_p@ true>
+<if @multiple_retailers_p;literal@ true>
 
 
 </if><else>

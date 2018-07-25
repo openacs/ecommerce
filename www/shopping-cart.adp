@@ -91,7 +91,7 @@ standard
  </td>
       </tr>
 
-      <if @offer_express_shipping_p@ true>
+      <if @offer_express_shipping_p;literal@ true>
         <tr>
         <if @product_counter@ gt 1>
             <td colspan="4">
@@ -110,7 +110,7 @@ express
         </tr>
       </if>
 
-      <if @offer_pickup_option_p@ true>
+      <if @offer_pickup_option_p;literal@ true>
         <tr>
         <if @product_counter@ gt 1>
             <td colspan="4">
@@ -169,7 +169,7 @@ express
   </else>
 
   <ul>
-    <if @previous_product_id_p@ eq 1>
+    <if @previous_product_id_p;literal@ true>
       <li> <a href="product?product_id=@previous_product_id@">Continue Shopping</a> </li>
     </if>
     <else>

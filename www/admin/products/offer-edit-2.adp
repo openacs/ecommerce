@@ -28,7 +28,7 @@
 <td>Offer Expires</td>
 <td>@offer_ends_html;noquote@</td>
 </tr>
-<if @special_offer_p@ true>
+<if @special_offer_p;literal@ true>
 <tr><td>Special Offer:</td><td>@special_offer_html;noquote@</td></tr>
 </if>
 </table>

@@ -19,6 +19,7 @@ set export_form_vars_html [export_form_vars email_template_id]
 
 if { ![db_0or1row unused "select * from ec_email_templates where email_template_id=:email_template_id"] } {
     ad_return_complaint 1 "Invalid email_template_id passed in"
+    return
 }
 
 db_release_unused_handles

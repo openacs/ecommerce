@@ -14,7 +14,7 @@
        <a href="edit?@export_product_id_var;noquote@">Edit This Item</a>
 
     <blockquote>
-<if @active_p@ false>
+<if @active_p;literal@ false>
 <p><b>This product is discontinued.</b></p>
 </if>
 
@@ -57,7 +57,7 @@
       </td>
     </tr>
 
-  <if @multiple_retailers_p@ true>
+  <if @multiple_retailers_p;literal@ true>
 
 @stock_status_html;noquote@
 <ul>

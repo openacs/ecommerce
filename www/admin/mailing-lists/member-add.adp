@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
 <h2>@title@</h2>
 
- <if @last_name_p@ true>
+ <if @last_name_p;literal@ true>
   <h3>Users whose last name contains '@last_name@':</h3>
 </if><else>
   <h3>Users whose email contains '@email@':</h3>

@@ -39,7 +39,7 @@
 <li><a href="user-classes/">User Classes</a> <font size=-1>(@n_not_yet_approved@ not yet approved user@n_not_yet_approved_plural@)</font></li>
 </if>
 
-<if @multiple_retailers_p@>
+<if @multiple_retailers_p;literal@ true>
 <li><a href="retailers/">Retailers</a></li>
 </if><else>
 <li><a href="shipping-costs/">Shipping Costs</a></li>

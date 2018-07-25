@@ -132,3 +132,5 @@ Zip <input type=text name=zip_code size=5>
 "
 
 doc_return  200 text/html $page_html
+ad_script_abort
+

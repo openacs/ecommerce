@@ -21,6 +21,7 @@ where c.product_id = p.product_id
 and c. user_id = u.user_id 
 and c.comment_id=:comment_id"] } {
     ad_return_complaint 1 "Invalid Comment ID passed in"
+    return
 }
 
 set comment_date_html [util_AnsiDatetoPrettyDate $comment_date]

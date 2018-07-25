@@ -20,7 +20,7 @@ ad_require_permission [ad_conn package_id] admin
 # Another hack to make this crap code work. The foreach below loops only over
 # the list of issue type already assigned to the issue. Hence, to make this work
 # the new list is concatenated to the old list.
-set issue_type_list [concat $issue_type_list $issue_type]
+lappend issue_type_list {*}$issue_type
 
 db_transaction {
     db_dml delete_from_issue_type_map "delete from ec_cs_issue_type_map where issue_id=:issue_id"

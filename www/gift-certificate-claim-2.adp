@@ -6,7 +6,7 @@
   <include src="/packages/ecommerce/lib/checkout-progress" step="5">
 
     <blockquote>
-      <if @certificate_added_p@>
+      <if @certificate_added_p;literal@ true>
 	<p><%= [ec_pretty_price @amount@] %> has been added to your gift
 	  certificate account!</p>
       </if>

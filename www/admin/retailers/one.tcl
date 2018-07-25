@@ -185,11 +185,4 @@ append page_html "<li><a href=\"[ec_url_concat [ec_url] /admin]/audit?[export_ur
 
 
 doc_return  200 text/html $page_html
-
-
-
-
-
-
-
-
+ad_script_abort

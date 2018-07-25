@@ -31,7 +31,7 @@
 <ul>
 <li><a href="custom-field-edit?field_identifier=@field_identifier@">Edit</a>
 
-<if @active_p@ true>
+<if @active_p;literal@ true>
 <li><a href="custom-field-status-change?field_identifier=@field_identifier@&active_p=f">Make Inactive</a>
 </if><else>
 <li><a href="custom-field-status-change?field_identifier=@field_identifier@&active_p=t">Reactivate</a>

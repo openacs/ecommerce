@@ -5,7 +5,7 @@
       <td align="center"<if @step@ ge 1>class="altback"</if>><if @step@ ge 1><strong></if><code>---></code><if @step@ ge 1></strong></if></td>
       <td align="center"<if @step@ ge 2>class="altback"</if>><if @step@ ge 2><strong></if>Verify order<if @step@ ge 2></strong></if></td>
       <td align="center"<if @step@ ge 2>class="altback"</if>><if @step@ ge 2><strong></if><code>---></code><if @step@ ge 2></strong></if></td>
-      <if @express_shipping_avail_p@>
+      <if @express_shipping_avail_p;literal@ true>
 	<td align="center"<if @step@ ge 3>class="altback"</if>><if @step@ ge 3><strong></if>Shipping method<if @step@ ge 3></strong></if></td>
         <td align="center"<if @step@ ge 3>class="altback"</if>><if @step@ ge 3><strong></if><code>---></code><if @step@ ge 3></strong></if></td>
       </if>

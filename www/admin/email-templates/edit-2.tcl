@@ -41,7 +41,7 @@ if {$f != 0} {
     <P>We're sorry, but templates added here cannot
     have functions in them for security reasons. Only HTML and 
     <%= \$variable %> style code may be used.  We found <tt>$function</tt> in this template"
-
+    ad_script_abort
 }
 
 
@@ -65,3 +65,4 @@ if { [catch {db_dml update_ec_email_template "
 db_release_unused_handles
 
 ad_returnredirect "index.tcl"
+ad_script_abort

@@ -55,6 +55,7 @@ if { ![empty_string_p $start_date(date)] && ![empty_string_p $end_date(date)] } 
       from dual
      where to_date('$start_date(date)','YYYY-MM-DD HH24:MI:SS')  > to_date('$end_date(date)', 'YYYY-MM-DD HH24:MI:SS')"] == 1 } { 
         ad_return_complaint 1 "Please enter a start date before end date."
+	return
     }
 }
 

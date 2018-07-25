@@ -656,7 +656,7 @@ if { [string equal $gift_certificate_covers_cost_p "f"] } {
         # have they entered new credit card info
 
         ad_return_complaint 1 "<li> A credit card is required to complete this order."
-            ad_script_abort
+	ad_script_abort
     } else {
 
         # Then they are using a new credit card and we just have
@@ -692,17 +692,17 @@ if { [string equal $gift_certificate_covers_cost_p "f"] } {
         }
         
         if { $exception_count > 0 } {
-                ns_log Notice "checkout-one-form-2.tcl,ref(683): $exception_count form input exception(s) for user $user_id"
-        ad_return_complaint $exception_count $exception_text
-                ad_script_abort
+	    ns_log Notice "checkout-one-form-2.tcl,ref(683): $exception_count form input exception(s) for user $user_id"
+	    ad_return_complaint $exception_count $exception_text
+	    ad_script_abort
         }
 
         # A valid credit card number has been provided and thus a
         # billing address must exist.
 
         if {![info exists billing_address_id] || ([info exists billing_address_id] && [empty_string_p $billing_address_id])} {
-        ad_return_complaint 1 "<li> A billing address is required.</li>"
-                ad_script_abort
+	    ad_return_complaint 1 "<li> A billing address is required.</li>"
+	    ad_script_abort
         }
     }
     } else {
@@ -736,7 +736,7 @@ if { [string equal $gift_certificate_covers_cost_p "f"] } {
 
     if {![info exists billing_address_id] || ([info exists billing_address_id] && [empty_string_p $billing_address_id])} {
         ad_return_complaint 1 "<li> A billing address is required.</li>"
-            ad_script_abort
+	ad_script_abort
     }
 
     }

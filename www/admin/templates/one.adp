@@ -3,7 +3,7 @@
   <property name="context">@context;noquote@</property>
 <h2>@title@</h2>
 
-<if @default_template_p@ true>
+<if @default_template_p;literal@ true>
   <p>This is the default template used for product display.</p>
 </if>
 <h3>The template: @template_name@</h3>
@@ -16,7 +16,7 @@
   <li><a href="edit?@export_url_vars_html@">Edit</a></li>
   <li><a href="add?based_on=@template_id@">Create new template based
   on this one</a></li>
- <if @default_template_p@ false>
+ <if @default_template_p;literal@ false>
   <li><a href="make-default?@export_url_vars_html@">Make this template be the default template</a></li>
   <li><a href="delete?@export_url_vars_html@">Delete</a></li>
 </if><else>

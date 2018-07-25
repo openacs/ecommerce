@@ -87,7 +87,7 @@ if { [db_0or1row get_ec_product_info "
 	<p>Please contact <a href=\"mailto:[ec_system_owner]\">[ec_system_owner]</a> if you think this is an error.</p>
     <p><a href=\"index\">Continue browsing</a>.</p>"
     ns_log Warning "product.tcl,line88: product_id $product_id_temp requested, not found."
-    return
+    ad_script_abort
 }
 
 if { [parameter::get -parameter CacheProductAsFile -default 0] && $current_url eq "[ec_url]product" } {

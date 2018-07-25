@@ -24,7 +24,7 @@ internal product_id to uniquely distinguish products.</td>
 <td>Choose as many categories as you like.  The product will
 be displayed on the web site in each of the categories you select.</td>
 </tr>
-<if @multiple_retailers_p@ true>
+<if @multiple_retailers_p;literal@ true>
      @stock_status_html;noquote@
 </if><else>
 <tr>

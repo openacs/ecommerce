@@ -330,7 +330,7 @@ db_transaction {
     (issue_id, user_identification_id, order_id, open_date, close_date, closed_by)
     values
     (:issue_id, :uiid_to_insert, :order_id, $date_string, $close_date, $customer_service_rep_bit)"
-        set issue_type_list [concat $issue_type_list $issue_type]
+        lappend issue_type_list {*}$issue_type
 
         foreach issue_type $issue_type_list {
             db_dml insert_into_issue_tm "insert into ec_cs_issue_type_map

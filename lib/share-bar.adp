@@ -1,4 +1,4 @@
-<if @icons_p@ true>
+<if @icons_p;literal@ true>
 <span class="share-class">#acs-subsite.Share#: 
 <a href="http://twitter.com/share?url=@url@&amp;text=@title@" target="_blank"><img src="http://twitter.com/favicon.ico" alt="Tweet" width="16" height="16" border="1">Tweet</a> 
 <a href="http://www.facebook.com/sharer.php?u=@url@&amp;t=@title@" target="_blank" title="Share on Facebook" rel="nofollow"><img src="http://www.facebook.com/favicon.ico" alt="Facebook" width="16" height="16" border="1">Facebook</a> 
