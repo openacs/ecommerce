@@ -13,7 +13,7 @@ ad_proc -public ecds_share_bar {
 } {
     if { $url eq "" } {
         set url [ad_return_url -qualified]
-        # x and y paramters are generated in forms where submit button is type "image"
+        # x and y parameters are generated in forms where submit button is type "image"
         # remove gremilin x and y parameters from form posts by GET
         # ie make urls less ugly when sharing.
         if { [ad_conn method] != "POST" } {

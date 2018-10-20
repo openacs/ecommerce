@@ -311,7 +311,7 @@ ad_proc ec_sweep_for_payment_zombies {
 
 			    # Log this failure in the problem log.
 
-			    set problem_details "Transaction $transaction_id failed to authorize due to repeated 'failure-retry' reponses from the payment gateway"
+			    set problem_details "Transaction $transaction_id failed to authorize due to repeated 'failure-retry' responses from the payment gateway"
 			    db_dml problems_log_insert "
 			    	insert into ec_problems_log
 			    	(problem_id, problem_date, problem_details, order_id)
@@ -804,7 +804,7 @@ ad_proc ec_unauthorized_transactions {
 
 			# Log this failure in the problem log.
 
-			set problem_details "Transaction $transaction_id failed to mark due to repeated 'failure-retry' reponses from the payment gateway"
+			set problem_details "Transaction $transaction_id failed to mark due to repeated 'failure-retry' responses from the payment gateway"
 			db_dml problems_log_insert "
 			    insert into ec_problems_log
 			    (problem_id, problem_date, problem_details, order_id)
@@ -968,7 +968,7 @@ ad_proc ec_unmarked_transactions {
 
 			# Log this failure in the problem log.
 
-			set problem_details "Transaction $transaction_id failed to mark due to repeated 'failure-retry' reponses from the payment gateway"
+			set problem_details "Transaction $transaction_id failed to mark due to repeated 'failure-retry' responses from the payment gateway"
 			db_dml problems_log_insert "
 			    insert into ec_problems_log
 			    (problem_id, problem_date, problem_details, order_id)
@@ -1139,7 +1139,7 @@ ad_proc ec_unrefunded_transactions {
 
 			# Log this failure in the problem log.
 
-			set problem_details "Transaction $transaction_id failed to mark due to repeated 'failure-retry' reponses from the payment gateway"
+			set problem_details "Transaction $transaction_id failed to mark due to repeated 'failure-retry' responses from the payment gateway"
 			db_dml problems_log_insert "
 			    insert into ec_problems_log
 			    (problem_id, problem_date, problem_details, order_id)

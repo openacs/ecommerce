@@ -228,7 +228,7 @@ ad_proc -public ec_creditcard_marking {
     (a) success The outcome in most cases because there are few
     chances for failure
 
-    (b) failure May occure when there is a communications failure
+    (b) failure May occur when there is a communication failure
     with the payment gateway. Also, most payment gateways will fail
     a post authorization if the transaction has already been marked
     or if the post authorization amount is higher than the original
@@ -401,7 +401,7 @@ ad_proc -public ec_creditcard_return {
     (a) success The outcome in most cases because there are few
     chances for failure
 
-    (b) failure May occure when there is a communications failure
+    (b) failure May occur when there is a communication failure
     with the payment gateway. Also, most payment gateways will fail
     a return if the transaction has already been marked or if the
     return amount is higher than the original authorized amount. Of

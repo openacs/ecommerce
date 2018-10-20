@@ -31,7 +31,7 @@ set title "Uploading Extras"
 set context [list [list index Products] $title]
 
 set unix_file_name ${csv_file.tmpfile}
-# Check that the file is readible
+# Check that the file is readable
 if { ![file readable $unix_file_name] } {
     append doc_body "Cannot read file $unix_file_name"
     set serious_errors 1

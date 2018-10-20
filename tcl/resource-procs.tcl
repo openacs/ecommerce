@@ -235,7 +235,7 @@ ad_proc -private ecommerce::resource::resource_path {
     set full_dirname [file join [ec_data_directory] [ec_product_directory] [ec_product_file_directory $product_id] $dirname]
 
     # hmm.. if $dirname was not saved, we might be creating a rogue dir (if product_name is in flux and product_id not in db)
-    # we will be ok so long as a dirname is generated whenver a new product is being created, 
+    # we will be ok so long as a dirname is generated whenever a new product is being created, 
     # by calling ecommerce::resource::dirname and saving the returned dirname into ec_products.
     ec_assert_directory $full_dirname
     return $full_dirname
