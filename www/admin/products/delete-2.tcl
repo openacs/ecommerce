@@ -122,9 +122,6 @@ db_transaction {
   set user_class_id_list [list]
   set user_class_price_list [list]
   db_foreach user_class_select "select user_class_id, price from ec_product_user_class_prices where product_id=:product_id" {
-      if { [empty_string_p $price] } { 
-	  set price [db_null]
-      }
       lappend user_class_id_list $user_class_id
       lappend user_class_price_list $price
   }
