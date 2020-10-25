@@ -75,7 +75,7 @@ create table ec_templates_audit (
 -- A trigger is used to move information from the main table to 
 -- the audit table
 create function ec_templates_audit_tr () 
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_templates_audit (
         template_id, template_name,
@@ -124,7 +124,7 @@ create table ec_categories_audit (
 );
 
 create function ec_categories_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_categories_audit (
         category_id, category_name, sort_key,
@@ -172,7 +172,7 @@ create table ec_subcategories_audit (
 );
 
 create function ec_subcategories_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_subcategories_audit (
         subcategory_id, category_id,
@@ -230,7 +230,7 @@ create table ec_subsubcategories_audit (
 );
 
 create function ec_subsubcategories_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_subsubcategories_audit (
         subsubcategory_id, subcategory_id,
@@ -419,7 +419,7 @@ create table ec_products_audit (
 );
 
 create function ec_products_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_products_audit (
         product_id, product_name, creation_date,
@@ -515,7 +515,7 @@ create table ec_sale_prices_audit (
 
 
 create function ec_sale_prices_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_sale_prices_audit (
         sale_price_id, product_id, sale_price,
@@ -562,7 +562,7 @@ create table ec_product_series_map_audit (
 
 
 create function ec_product_series_map_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_product_series_map_audit (
         series_id, component_id,
@@ -655,7 +655,7 @@ create table ec_user_classes_audit (
 );
 
 create function ec_user_classes_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_user_classes_audit (
         user_class_id, user_class_name,
@@ -699,7 +699,7 @@ create table ec_product_u_c_prices_audit (
 );
 
 create function ec_product_u_c_prices_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_product_u_c_prices_audit (
         product_id, user_class_id,
@@ -762,7 +762,7 @@ create table ec_product_recommend_audit (
 );
 
 create function ec_product_recommend_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_product_recommend_audit (
         recommendation_id, product_id,
@@ -842,7 +842,7 @@ create table ec_user_class_user_map_audit (
 
 
 create function ec_user_class_user_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_user_class_user_map_audit (
         user_id, user_class_id, user_class_approved_p,
@@ -883,7 +883,7 @@ create table ec_product_links_audit (
 );
 
 create function ec_product_links_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_product_links_audit (
         product_a, product_b,
@@ -939,7 +939,7 @@ create table ec_product_comments_audit (
 );
 
 create function ec_product_comments_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_product_comments_audit (
         comment_id, product_id, user_id,
@@ -997,7 +997,7 @@ create table ec_product_reviews_audit (
 );
 
 create function ec_product_reviews_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_product_reviews_audit (
         review_id, product_id,
@@ -1049,7 +1049,7 @@ create table ec_category_product_map_audit (
 -- ec_category_product_map_audit_tr abbreviated as
 -- ec_cat_prod_map_audit_tr
 create function ec_cat_prod_map_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_category_product_map_audit (
         product_id, category_id,
@@ -1096,7 +1096,7 @@ create table ec_subcat_prod_map_audit (
 
 -- ec_subcat_prod_map_audit_tr
 create function ec_subcat_prod_map_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_subcat_prod_map_audit (
         product_id, subcategory_id,
@@ -1141,7 +1141,7 @@ create table ec_subsubcat_prod_map_audit (
 );
 
 create function ec_subsubcat_prod_map_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_subsubcat_prod_map_audit (
         product_id, subsubcategory_id,
@@ -1209,7 +1209,7 @@ create table ec_custom_product_fields_audit (
 );
 
 create function ec_custom_prod_fields_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_custom_product_fields_audit (
         field_identifier, field_name,
@@ -1252,7 +1252,7 @@ create table ec_custom_p_field_values_audit (
 );
 
 create function ec_custom_p_f_values_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_custom_p_field_values_audit (
         product_id,
@@ -1409,7 +1409,7 @@ create index ec_shipments_by_shipment_date on ec_shipments(shipment_date);
 -- fills address_id into ec_shipments if it's missing
 -- (using the shipping_address associated with the order)
 create function ec_shipment_address_update_tr ()
-returns opaque as '
+returns trigger as '
 declare
         v_address_id            ec_addresses.address_id%TYPE;
 begin
@@ -1442,7 +1442,7 @@ create table ec_shipments_audit (
 );
 
 create function ec_shipments_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_shipments_audit (
         shipment_id, order_id, address_id,
@@ -1595,7 +1595,7 @@ group by i.order_id, i.shipment_id, s.shipment_date;
 -- II. row-level trigger which updates ec_state_change_order_ids 
 -- so we know which rows to update in ec_orders
 -- create function ec_order_state_before_tr ()
--- returns opaque as '
+-- returns trigger as '
 -- begin
 --         insert into ec_state_change_order_ids (order_id) values (new.order_id);
 -- 	return new;
@@ -1610,7 +1610,7 @@ group by i.order_id, i.shipment_id, s.shipment_date;
 
 -- gilbertw - I took the trigger procedure from OpenACS 3.2.5.
 create function ec_order_state_after_tr ()
-returns opaque as '
+returns trigger as '
 declare
         -- v_order_id              integer;
         n_items                 integer;
@@ -1702,7 +1702,7 @@ create table ec_admin_settings_audit (
 );
 
 create function ec_admin_settings_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_admin_settings_audit (
         admin_setting_id, base_shipping_cost, default_shipping_per_item,
@@ -1755,7 +1755,7 @@ create table ec_sales_tax_by_state_audit (
 
 -- Jerry - I removed usps_abbrev and/or state here
 create function ec_sales_tax_by_state_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_sales_tax_by_state_audit (
         usps_abbrev, tax_rate,
@@ -1847,7 +1847,7 @@ create table ec_retailers_audit (
 
 -- Jerry - I removed usps_abbrev and/or state here
 create function ec_retailers_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_retailers_audit (
         retailer_id, retailer_name,
@@ -1953,7 +1953,7 @@ create table ec_retailer_locations_audit (
 
 -- Jerry - I removed usps_abbrev and/or state here
 create function ec_retailer_locations_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_retailer_locations_audit (
         retailer_location_id, retailer_id, location_name,
@@ -2052,7 +2052,7 @@ create table ec_offers_audit (
 
 
 create function ec_offers_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_offers_audit (
         offer_id,
@@ -2183,7 +2183,7 @@ create table ec_gift_certificates_audit (
 
 
 create function ec_gift_certificates_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_gift_certificates_audit (
         gift_certificate_id, amount,
@@ -2260,7 +2260,7 @@ create index ec_user_ident_by_postal_code on ec_user_identification(postal_code)
 
 -- puts date_added into ec_user_identification if it's missing
 create function ec_user_identificate_date_tr ()
-returns opaque as '
+returns trigger as '
 begin
         IF new.date_added is null THEN
                 new.date_added := now();
@@ -2290,7 +2290,7 @@ create index ec_csin_by_user_ident_id on ec_customer_serv_interactions(user_iden
 
 -- gilbertw - used the code in OpenACS 3.2.5 as a reference
 create function ec_cs_interaction_inserts ()
-returns opaque as '
+returns trigger as '
 begin
  IF new.interaction_date is null THEN 
     new.interaction_date := now();
@@ -2339,7 +2339,7 @@ create index ec_csitm_by_issue_type on ec_cs_issue_type_map(issue_type);
 -- gilbertw - used code OpenACS 3.2.5 as a reference
 -- removed INSERTING
 create function ec_cs_issue_inserts ()
-returns opaque as '
+returns trigger as '
 begin
  IF new.open_date is null THEN 
     new.open_date := now();
@@ -2399,7 +2399,7 @@ create table ec_picklist_items_audit (
 );
 
 create function ec_picklist_items_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_picklist_items_audit (
         picklist_item_id, picklist_item,
@@ -2473,7 +2473,7 @@ create table ec_email_templates_audit (
 );
 
 create function ec_email_templates_audit_tr ()
-returns opaque as '
+returns trigger as '
 begin
         insert into ec_email_templates_audit (
         email_template_id, title,
@@ -2622,7 +2622,7 @@ or (transaction_type='refund' and failed_p='f');
 -- fills creditcard_id into ec_financial_transactions if it's missing
 -- (using the credit card associated with the order)
 create function fin_trans_ccard_update_tr ()
-returns opaque as '
+returns trigger as '
 declare
         v_creditcard_id         ec_creditcards.creditcard_id%TYPE;
 begin
@@ -3013,7 +3013,7 @@ END;' language 'plpgsql';
 -- trio crap and we have a simple trigger for everything.
 
 create function trig_ec_cert_amount_remains()
-returns opaque
+returns trigger
 as '
 DECLARE
         bal_amount_used         numeric;

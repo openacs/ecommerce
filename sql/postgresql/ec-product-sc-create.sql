@@ -22,21 +22,21 @@ select acs_sc_impl_alias__new(
 
 
 create function ec_products__itrg ()
-returns opaque as '
+returns trigger as '
 begin
     perform search_observer__enqueue(new.product_id,''INSERT'');
     return new;
 end;' language 'plpgsql';
 
 create function ec_products__dtrg ()
-returns opaque as '
+returns trigger as '
 begin
     perform search_observer__enqueue(old.product_id,''DELETE'');
     return old;
 end;' language 'plpgsql';
 
 create function ec_products__utrg ()
-returns opaque as '
+returns trigger as '
 begin
     perform search_observer__enqueue(old.product_id,''UPDATE'');
     return old;
