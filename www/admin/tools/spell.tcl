@@ -76,12 +76,12 @@ if { $merge_p == "" || $merge_p == 0 } {
     
     set lines [split $text "\n"]
     
-    set dictionaryfile [ns_normalizepath "[ns_info pageroot]/../packages/ecommerce/www/admin/tools/ispell-words"]
+    set dictionaryfile [ns_normalizepath "[ns_server pagedir]/../packages/ecommerce/www/admin/tools/ispell-words"]
 
     # The webspell wrapper is necessary because ispell requires
     # the HOME environment set, and setting env(HOME) doesn't appear
     # to work from AOLserver.
-    set spelling_program [ns_normalizepath "[ns_info pageroot]/../packages/ecommerce/www/admin/tools/webspell"]
+    set spelling_program [ns_normalizepath "[ns_server pagedir]/../packages/ecommerce/www/admin/tools/webspell"]
 
     set ispell_proc [open "|$spelling_program $tmpfile $dictionaryfile" r]
 
@@ -95,7 +95,7 @@ if { $merge_p == "" || $merge_p == 0 } {
 	ns_log Notice "spell.tcl had a problem: $errmsg"
     }
     close $ispell_proc
-    ns_unlink $tmpfile
+    file delete $tmpfile
 
     if { $try == $max_retry } {
 	doc_return 200 text/html "[ad_header "Spell Checker Error"]

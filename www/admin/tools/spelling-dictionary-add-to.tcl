@@ -14,7 +14,7 @@ if [catch {ns_db dml $db "insert into ispell_words (ispell_word) values ('$QQerr
 # since one chunk is only to be added to the file at a time, it is impossible for the chunks to
 # become interspersed. 
 
-set ispell_file [open "[ns_info pageroot]/tools/ispell-words" a]
+set ispell_file [open "[ns_server pagedir]/tools/ispell-words" a]
 
 # ispell-words will be of the form: one word per line, with a newline at the end (since -nonewline is not specified)
 puts $ispell_file "$errword"

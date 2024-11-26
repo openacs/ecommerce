@@ -186,7 +186,7 @@ ad_proc -private ecds_get_url {
                 #put page into file cache
                 set base_url [string range $url 7 end]
                 set filepathname [file join [acs_root_dir] $url_cache_dir $base_url]
-                # if ec_assert_directory doesnot work here, try replacing ns_mkdir with 'file mkdir' or
+                # if ec_assert_directory doesnot work here, try replacing file mkdir with 'file mkdir' or
                 # make the ec_asser_directory recursive
                 set filepath [file dirname $filepathname]
                 ec_assert_directory $filepath

@@ -24,6 +24,6 @@ set subdirectory [ec_product_file_directory $product_id]
 
 set full_dirname "[ec_data_directory][ec_product_directory]$subdirectory/$dirname"
 
-ns_unlink $full_dirname/$file
+file delete $full_dirname/$file
 
 ad_returnredirect "supporting-files-upload.tcl?[export_url_vars product_id]"

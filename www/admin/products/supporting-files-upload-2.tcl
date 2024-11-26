@@ -37,6 +37,6 @@ if { [string match {product.[jg][pi][gf]} $client_filename] } {
     
 set perm_filename "$full_dirname/$client_filename"
 
-ns_cp $tmp_filename $perm_filename
+file copy $tmp_filename $perm_filename
 
 ad_returnredirect "supporting-files-upload.tcl?[export_url_vars product_id]"

@@ -31,7 +31,7 @@ ad_proc ec_sendmail_from_service {
     procedure does send the email to the Cc'd email addresses.
 } {
 
-    set extra_headers [ns_set new]
+    set extra_headers [ns_set create]
     ns_set put $extra_headers "Reply-to" $reply_to
     
     if { $bcc != "" } {

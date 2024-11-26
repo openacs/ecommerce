@@ -81,7 +81,7 @@ values
 
 }
 
-set extra_headers [ns_set new]
+set extra_headers [ns_set create]
 if { [info exists cc_to] && $cc_to != "" } {
     ns_set put $extra_headers "Cc" "$cc_to"
     ec_sendmail_from_service $email_to_use [ad_parameter -package_id [ec_id] CustomerServiceEmailAddress ecommerce] $subject $message $extra_headers $bcc_to
